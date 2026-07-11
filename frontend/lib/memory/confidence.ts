@@ -1,0 +1,1 @@
+import type{MemoryConfidence}from"./types.ts";export function deterministicMemoryConfidence(supporting:number,contradicting:number):MemoryConfidence{const net=supporting-contradicting;if(supporting>=5&&net>=4)return"Very High";if(supporting>=3&&net>=2)return"High";if(supporting>=2&&net>=1)return"Moderate";return"Low"}

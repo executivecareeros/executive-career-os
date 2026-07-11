@@ -1,0 +1,1 @@
+import type{MemoryObservation}from"@/lib/memory";import type{SupabaseDataClient}from"@/lib/supabase/client";import{jsonPayloadMapper,SupabaseRepository}from"./base";export class SupabaseAtlasMemoryRepository extends SupabaseRepository<MemoryObservation>{constructor(client:SupabaseDataClient){super("Atlas Memory","atlas_memories",client,jsonPayloadMapper())}}

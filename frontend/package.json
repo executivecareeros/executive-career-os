@@ -13,6 +13,7 @@
     "test:rls": "node scripts/test-rls.mjs",
     "test:repositories": "node --experimental-transform-types scripts/test-repositories.mjs"
     ,"test:import": "node --experimental-transform-types scripts/test-import.mjs"
+    ,"test:memory": "node --experimental-transform-types scripts/test-memory.mjs"
   },
   "dependencies": {
     "next": "16.2.10",

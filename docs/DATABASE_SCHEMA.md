@@ -11,3 +11,4 @@ Core opportunity, company, application, compensation, Blueprint revision, and pr
 ## Constraints
 Foreign keys protect core relationships; membership and domain IDs are workspace-unique; sequences and revisions are positive; currencies use three uppercase letters; compensation cannot be negative; ranges and application dates have safe ordering checks. Rules with uncertain semantics remain in deterministic domain validation.
 > Import schema adds normalized sessions, experiences, achievements, education, certifications, board roles, decisions, conflicts, records, and audit events. See [IMPORT_DATA_MODEL.md](./IMPORT_DATA_MODEL.md).
+> Atlas Memory adds Workspace-scoped memories, evidence, relationships, append-only snapshots, and append-only lifecycle audits.

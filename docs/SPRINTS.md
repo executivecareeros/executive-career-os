@@ -53,3 +53,5 @@ Added versioned PostgreSQL schema, fictional idempotent seeds, workspace RLS pol
 The persistence foundation has passed clean local bootstrap, seed repeatability, RLS isolation, append-only, constraint, and adapter-boundary verification. See [SUPABASE_RUNTIME_VERIFICATION.md](./SUPABASE_RUNTIME_VERIFICATION.md). Production authentication remains deliberately out of scope.
 ## First executive experience
 Deterministic history import, review-before-save, provenance, conflict review, and a fact-based first Executive Brief are established. No direct LinkedIn or AI integration exists.
+## Atlas Memory foundation
+Deterministic, evidence-based memory and Executive Intelligence are established without chat, prediction, or an AI provider.
