@@ -3,6 +3,7 @@
 import { useMobileMenu } from "@/hooks/use-mobile-menu";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
+import { PageContent } from "./page-content";
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   const menu = useMobileMenu();
@@ -35,7 +36,9 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
         </div>
       )}
 
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className="min-w-0 flex-1">
+        <PageContent>{children}</PageContent>
+      </main>
     </div>
   );
 }

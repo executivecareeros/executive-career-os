@@ -1,26 +1,7 @@
-import { ActivityCard } from "@/components/activity-card";
-import { MetricCard } from "@/components/metric-card";
+import { DashboardSection } from "@/components/dashboard-section";
 import { PageHeader } from "@/components/page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { SecondaryButton } from "@/components/secondary-button";
-import { SectionCard } from "@/components/section-card";
-import { StatCard } from "@/components/stat-card";
-import { StatusBadge } from "@/components/status-badge";
-
-const metrics = [
-  { label: "New Opportunities", value: "0", note: "Today" },
-  { label: "Qualified Roles", value: "0", note: "AI screened" },
-  { label: "Applications", value: "0", note: "This week" },
-  { label: "Interviews", value: "0", note: "Active" },
-];
-
-const pipeline = [
-  { label: "Discovered", value: 0 },
-  { label: "Scored", value: 0 },
-  { label: "Ready", value: 0 },
-  { label: "Applied", value: 0 },
-  { label: "Interview", value: 0 },
-];
 
 export default function Home() {
   return (
@@ -28,57 +9,56 @@ export default function Home() {
       <PageHeader
         eyebrow="Good afternoon, Cüneyt"
         title="Executive dashboard"
-        description="Track opportunities, applications, companies, and AI recommendations from one place."
+        description="Your command center for executive career intelligence, relationships, and search momentum."
         actions={
           <>
-            <SecondaryButton href="/reports">View report</SecondaryButton>
-            <PrimaryButton href="/opportunities">Run career agent</PrimaryButton>
+            <SecondaryButton href="/reports">View reports</SecondaryButton>
+            <PrimaryButton href="/opportunities">Explore opportunities</PrimaryButton>
           </>
         }
       />
 
-      <section className="grid gap-4 py-8 sm:grid-cols-2 xl:grid-cols-4" aria-label="Career metrics">
-        {metrics.map((metric) => <StatCard key={metric.label} {...metric} />)}
-      </section>
-
-      <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <SectionCard>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-sm text-slate-400">Today&apos;s executive brief</p>
-              <h2 className="mt-2 text-2xl font-semibold">Your search is ready to begin.</h2>
-            </div>
-            <StatusBadge tone="info">AI brief</StatusBadge>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <ActivityCard title="Market signal" description="No market data yet. The first search run will identify active sectors and regions." />
-            <ActivityCard title="Recommended focus" description="Prioritize senior commercial roles in broadcast, telecom, enterprise software, and AI." />
-            <ActivityCard title="Next action" description="Connect the opportunity database and run the first scoring workflow." />
-          </div>
-        </SectionCard>
-
-        <SectionCard>
-          <h2 className="text-sm font-normal text-slate-400">Top opportunity</h2>
-          <div className="mt-8 flex min-h-52 items-center justify-center rounded-xl border border-dashed border-white/15">
-            <p className="max-w-xs text-center text-sm leading-6 text-slate-500">The strongest opportunity will appear here after the first AI scoring run.</p>
-          </div>
-        </SectionCard>
+      <div className="grid gap-6 py-8 xl:grid-cols-2">
+        <DashboardSection
+          title="Today&apos;s Executive Brief"
+          description="A focused view of the intelligence that needs your attention today."
+          emptyTitle="Your executive brief is ready to take shape"
+          emptyDescription="Relevant career intelligence will appear here when real activity is available."
+        />
+        <DashboardSection
+          title="Executive Metrics"
+          description="A concise view of meaningful progress across your executive career portfolio."
+          emptyTitle="No metrics to report yet"
+          emptyDescription="Metrics will appear after genuine opportunity and application activity exists."
+        />
+        <DashboardSection
+          title="Recent Activity"
+          description="The latest meaningful changes across opportunities, relationships, and applications."
+          emptyTitle="No recent activity"
+          emptyDescription="Your latest verified career activity will be summarized here."
+        />
+        <DashboardSection
+          title="Opportunity Pipeline"
+          description="A stage-by-stage view of active executive opportunities and candidacies."
+          emptyTitle="Your pipeline is clear"
+          emptyDescription="Real opportunities will appear here as they move through your workflow."
+          action={<PrimaryButton href="/opportunities">Open opportunities</PrimaryButton>}
+        />
+        <DashboardSection
+          className="xl:col-span-2"
+          title="Quick Actions"
+          description="Move directly to the workspaces that support your next career decision."
+          emptyTitle="Choose your next workspace"
+          emptyDescription="Start with opportunities, review target companies, or manage active applications."
+          action={
+            <>
+              <PrimaryButton href="/opportunities">Explore opportunities</PrimaryButton>
+              <SecondaryButton href="/companies">Review companies</SecondaryButton>
+              <SecondaryButton href="/applications">View applications</SecondaryButton>
+            </>
+          }
+        />
       </div>
-
-      <SectionCard className="mt-6">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm text-slate-400">Opportunity pipeline</p>
-            <h2 className="mt-2 text-2xl font-semibold">Executive application flow</h2>
-          </div>
-          <p className="text-sm text-slate-500">Discover → Score → Prepare → Apply → Interview</p>
-        </div>
-
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          {pipeline.map((stage) => <MetricCard key={stage.label} {...stage} />)}
-        </div>
-      </SectionCard>
     </div>
   );
 }
