@@ -1,0 +1,73 @@
+# Founder Backlog
+
+> Purpose: Preserve future ideas without implying priority, commitment, or timing.
+
+- Career Capital
+- Executive Reputation
+- Executive Network
+- Executive Simulation
+- Career Passport
+- University Edition
+- Founder Edition
+- Professional Edition
+- Business Edition
+- Blue Collar Edition
+- Legacy
+- Atlas Reflections
+- Executive Operating Rhythm
+- Daily Brief
+- Weekly Review
+- Quarterly Review
+- Annual Review
+- Relationship Intelligence
+- Recruiter Intelligence
+- Mentor Workspace
+- Executive Coach Workspace
+- Verified References
+- Verified Career Records
+- Verified Certifications
+- Verified Board Experience
+- Anonymous Market Intelligence
+- Ethical Community Signals
+- Professional Trust Graph
+- Atlas API
+- Executive Voice
+- Avatar
+- Executive Room
+- Document Intelligence
+- Meeting Intelligence
+- Email Intelligence
+- Calendar Intelligence
+- Executive Search Workspace
+- Enterprise Edition
+- Partner Marketplace
+- Mobile Applications
+- Apple Watch
+- Wearables
+- Internationalization
+- Accessibility enhancements
+- Career decision replay and counterfactual comparison
+- Compensation benchmarking with privacy-preserving cohorts
+- Executive succession and transition planning
+- Portfolio-career workspace
+- Board portfolio management
+- Executive learning ledger
+- Professional identity verification network
+- Secure data inheritance and legacy controls
+- Family career-planning context with explicit consent
+- Geographic mobility intelligence
+- Career-risk early-warning signals
+- Trusted advisor permission rooms
+- Private peer councils
+- Executive document vault
+- Reference-request coordination
+- Alumni and university career memory
+- Skills and capability evidence graph
+- Career Capital longitudinal reporting
+- Responsible agent marketplace
+- Enterprise data-residency controls
+- Offline and local-first modes
+- Professional data portability standards
+- Public-benefit research with consent
+
+Ideas remain unprioritized and unestimated until moved through product discovery.
