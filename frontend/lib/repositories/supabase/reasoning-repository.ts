@@ -1,0 +1,1 @@
+import type{ReasoningSnapshot}from"@/lib/reasoning";import type{SupabaseDataClient}from"@/lib/supabase/client";import{jsonPayloadMapper,SupabaseRepository}from"./base";export class SupabaseReasoningRepository extends SupabaseRepository<ReasoningSnapshot>{constructor(client:SupabaseDataClient){super("Atlas Reasoning","atlas_reasoning_snapshots",client,jsonPayloadMapper(),true)}}

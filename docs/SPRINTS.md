@@ -55,3 +55,5 @@ The persistence foundation has passed clean local bootstrap, seed repeatability,
 Deterministic history import, review-before-save, provenance, conflict review, and a fact-based first Executive Brief are established. No direct LinkedIn or AI integration exists.
 ## Atlas Memory foundation
 Deterministic, evidence-based memory and Executive Intelligence are established without chat, prediction, or an AI provider.
+## Atlas Executive Reasoning Engine
+Deterministic cross-domain reasoning, trade-offs, questions, alternatives, explanations, and Executive Signals are established without chat or model providers.

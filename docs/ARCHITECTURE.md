@@ -67,3 +67,4 @@ Executive Blueprint is the primary, revision-scoped personalization context. Det
 The repository layer now supports explicit `memory-demo` and configuration-dependent `supabase` modes. PostgreSQL schema, RLS, append-only triggers, and PostgREST adapters remain isolated from domain models. Authentication and production deployment are not implemented.
 > Professional-history imports use provider-independent deterministic extraction, temporary review state, authenticated repositories, and Workspace RLS. See [PROFESSIONAL_HISTORY_IMPORT.md](./PROFESSIONAL_HISTORY_IMPORT.md).
 > Atlas Memory is a deterministic interpretation layer over confirmed repositories, persisted with Workspace RLS and append-only snapshots/audits. See [ATLAS_MEMORY.md](./ATLAS_MEMORY.md).
+> Atlas Reasoning consumes confirmed repository evidence and produces immutable, versioned decision artifacts and Executive Signals. See [ATLAS_REASONING_ENGINE.md](./ATLAS_REASONING_ENGINE.md).
