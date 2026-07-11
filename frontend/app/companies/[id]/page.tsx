@@ -1,0 +1,3 @@
+import { notFound } from "next/navigation"; import { CompanyDetail } from "@/components/companies/company-detail"; import { companies,getCompanyById } from "@/data/companies"; import { opportunities } from "@/data/opportunities";
+export function generateStaticParams(){return companies.map(c=>({id:c.id}));}
+export default async function CompanyPage({params}:{params:Promise<{id:string}>}){const {id}=await params;const company=getCompanyById(id);if(!company)notFound();const linked=opportunities.filter(o=>company.opportunityIds.includes(o.id));return <CompanyDetail company={company} linked={linked}/>;}

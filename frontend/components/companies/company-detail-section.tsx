@@ -1,0 +1,1 @@
+import { SectionCard } from "@/components/section-card"; export function CompanyDetailSection({title,children}:{title:string;children:React.ReactNode}) { return <SectionCard><h2 className="text-lg font-semibold">{title}</h2><div className="mt-4 text-sm leading-6 text-slate-400">{children}</div></SectionCard>; }

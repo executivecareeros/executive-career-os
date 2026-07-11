@@ -16,4 +16,10 @@ All opportunity records are clearly labelled local demonstration scenarios. They
 - Temporary status and notes controls
 - Shared dashboard opportunity metrics, top-ranked scenario, and pipeline counts
 
-Sprint 6 has not been started.
+## Sprint 6 — Company Intelligence Workspace
+
+Sprint 6 adds a complete typed frontend workspace for evaluating fictional target employers, monitoring strategic accounts, connecting companies to Sprint 5 opportunity scenarios, and managing temporary relationship actions. It includes search, eleven filter controls, eight sorting modes, grid/list views, static company detail routes, deterministic Company Assessment, dashboard integration, and opportunity-to-company navigation.
+
+All company profiles and signals are local demonstration scenarios. They are not researched, verified, current, or live. No backend, external research, authentication, automation, or persistent state is included.
+
+Sprint 7 has not been started.

@@ -10,6 +10,7 @@ export type EmploymentType = "Full-time" | "Contract" | "Interim";
 
 export type Opportunity = {
   id: string;
+  companyId?: string;
   companyName: string;
   companyInitials: string;
   companyLogo?: string;

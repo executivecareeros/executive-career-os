@@ -8,12 +8,16 @@ import { SectionCard } from "@/components/section-card";
 import { StatCard } from "@/components/stat-card";
 import { MetricCard } from "@/components/metric-card";
 import { opportunities } from "@/data/opportunities";
+import { companies } from "@/data/companies";
+import { CompanyCard } from "@/components/companies/company-card";
 
 export default function Home() {
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
   const ready = opportunities.filter((item) => item.status === "Ready to Apply").length;
   const topOpportunity = [...opportunities].sort((a, b) => b.overallScore - a.overallScore)[0];
   const pipelineStages = ["Discovered", "Evaluating", "Qualified", "Ready to Apply", "Applied", "Interview"] as const;
+  const monitoredCompanies = companies.filter((company) => company.monitoringStatus !== "Not Monitored" && company.monitoringStatus !== "Paused");
+  const topCompany = [...companies].sort((a, b) => b.strategicRelevanceScore - a.strategicRelevanceScore)[0];
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
@@ -34,6 +38,7 @@ export default function Home() {
           <h2 className="text-xl font-semibold">Opportunity Pipeline</h2><p className="mt-2 text-sm text-slate-400">Demo opportunities by workflow stage.</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-6">{pipelineStages.map((stage) => <MetricCard key={stage} label={stage} value={opportunities.filter((item) => item.status === stage).length} />)}</div>
         </SectionCard>
+        <SectionCard className="xl:col-span-2"><h2 className="text-xl font-semibold">Company Intelligence</h2><p className="mt-2 text-sm text-slate-400">Shared demonstration-company monitoring summary.</p><div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Monitored companies" value={monitoredCompanies.length}/><StatCard label="High priority" value={companies.filter(c=>c.priority==="Critical"||c.priority==="High").length}/><StatCard label="Hiring signals" value={companies.filter(c=>c.hiringSignals.length).length}/><StatCard label="Upcoming reviews" value={companies.filter(c=>c.nextReviewAt).length}/></div><div className="mt-6"><CompanyCard company={topCompany} view="list"/></div></SectionCard>
         <DashboardSection className="xl:col-span-2" title="Quick Actions" description="Move directly to the workspaces that support your next career decision." emptyTitle="Choose your next workspace" emptyDescription="Start with opportunities, review target companies, or manage applications." action={<><PrimaryButton href="/opportunities">Explore opportunities</PrimaryButton><SecondaryButton href="/companies">Review companies</SecondaryButton><SecondaryButton href="/applications">View applications</SecondaryButton></>} />
       </div>
     </div>

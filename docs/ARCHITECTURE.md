@@ -29,3 +29,13 @@ Dynamic detail pages use `generateStaticParams`, so each demo opportunity is gen
 - Replace the demonstration source placeholder with validated source metadata and controlled outbound URLs.
 
 No future integration is implemented in Sprint 5.
+
+## Company Intelligence Workspace
+
+`frontend/types/company.ts` defines company profiles, relationship and monitoring stages, priorities, filters, sorting, leadership summaries, signals, scores, and assessment output. `frontend/data/companies.ts` is the single fictional-company source. Company records reference Sprint 5 opportunities by ID; opportunity objects are never duplicated.
+
+`frontend/lib/company-assessment.ts` implements transparent Company Assessment thresholds using quality, strategic relevance, hiring momentum, relationship strength, risks, and exclusions. `frontend/lib/company-filters.ts` contains pure filter, sort, and active-filter-count functions.
+
+Overview and static detail routes pass typed records into focused client workspaces. Relationship, monitoring, priority, review date, and notes changes live only in React state. Future integration can replace the local company collection with a repository, translate filter state into server queries, add reviewed research providers behind an explicit source boundary, and persist company commands without changing presentational contracts.
+
+No external research, live company claim, or future integration is implemented in Sprint 6.

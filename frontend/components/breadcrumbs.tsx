@@ -8,6 +8,7 @@ export function Breadcrumbs() {
   const pathname = usePathname();
   const currentPage = navigationItems.find((item) => item.href === pathname);
   const isOpportunityDetail = pathname.startsWith("/opportunities/");
+  const isCompanyDetail = pathname.startsWith("/companies/");
 
   if (pathname === "/") {
     return (
@@ -23,7 +24,7 @@ export function Breadcrumbs() {
         Dashboard
       </Link>
       <span aria-hidden="true" className="text-slate-700">/</span>
-      {isOpportunityDetail ? <><Link href="/opportunities" className="transition hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Opportunities</Link><span aria-hidden="true" className="text-slate-700">/</span><span aria-current="page" className="text-slate-300">Details</span></> : <span aria-current="page" className="text-slate-300">{currentPage?.label ?? "Page"}</span>}
+      {isOpportunityDetail || isCompanyDetail ? <><Link href={isCompanyDetail ? "/companies" : "/opportunities"} className="transition hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">{isCompanyDetail ? "Companies" : "Opportunities"}</Link><span aria-hidden="true" className="text-slate-700">/</span><span aria-current="page" className="text-slate-300">Details</span></> : <span aria-current="page" className="text-slate-300">{currentPage?.label ?? "Page"}</span>}
     </nav>
   );
 }
