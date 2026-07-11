@@ -25,3 +25,4 @@ The function derives the provider identifier from `auth.uid()`, accepts no calle
 ## Progressive memory
 
 The welcome experience explains that Career Ledger, Executive Blueprint, and Atlas are ready without presenting invented career content. Future context is requested naturally as the executive uses the product.
+> After Workspace creation, the executive may import professional history through the separate consent and review flow. Blueprint suggestions remain opt-in.

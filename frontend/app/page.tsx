@@ -16,6 +16,7 @@ import { assessBlueprintCompleteness } from "@/lib/blueprint-completeness";
 import { identifyBlueprintConflicts } from "@/lib/blueprint-conflicts";
 
 export default function Home() {
+  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <FirstExecutiveSetup />;
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
   const ready = opportunities.filter((item) => item.status === "Ready to Apply").length;
   const topOpportunity = [...opportunities].sort((a, b) => b.overallScore - a.overallScore)[0];
@@ -52,3 +53,5 @@ export default function Home() {
     </div>
   );
 }
+
+function FirstExecutiveSetup(){return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader eyebrow="Your private professional home" title="Begin your first Executive Brief" description="Bring in verified professional history to begin your Career Ledger and prepare Blueprint suggestions." actions={<PrimaryButton href="/import">Import professional history</PrimaryButton>}/><div className="grid gap-6 py-8 lg:grid-cols-2"><DashboardSection title="Today&apos;s Executive Brief" description="Your brief will distinguish confirmed facts, suggestions, missing information, and unresolved conflicts." emptyTitle="Professional history not yet confirmed" emptyDescription="Review an import before anything is added to your permanent Career Memory." action={<PrimaryButton href="/import">Start secure import</PrimaryButton>}/><SectionCard><h2 className="text-xl font-semibold">Setup status</h2><div className="mt-6 grid gap-4 sm:grid-cols-2"><StatCard label="History import" value="Not started"/><StatCard label="Career Ledger events" value="0"/><StatCard label="Blueprint completeness" value="0%"/><StatCard label="Unresolved conflicts" value="0"/></div><p className="mt-5 text-sm text-slate-400">Compensation preferences remain unset. No demo opportunity or application metrics are shown in an authenticated Workspace.</p></SectionCard></div></div>}

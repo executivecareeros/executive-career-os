@@ -15,13 +15,11 @@ const check = (name, passed, detail) => {
 const explicitTables = [...sql.matchAll(/create table public\.([a-z_]+)/g)].map((match) => match[1]);
 const businessTables = [...sql.matchAll(/create_business_table\('([a-z_]+)'/g)].map((match) => match[1]);
 const exposedTables = [...new Set([...explicitTables, ...businessTables])];
-const rlsStatement = sql.indexOf("enable row level security");
-const rlsLoopStart = sql.lastIndexOf("foreach t in array array[", rlsStatement);
-const rlsLoop = rlsLoopStart >= 0 ? sql.slice(rlsLoopStart, sql.indexOf("end loop", rlsLoopStart)) : "";
+const rlsLoops = [...sql.matchAll(/foreach t in array array\[([^;]+?)\] loop execute format\('alter table public\.%I enable row level security'/g)].map((match) => match[1]).join(" ");
 
 check("Migrations discovered", migrationFiles.length > 0, migrationFiles.join(", "));
 check("Core tables declared", exposedTables.length >= 25, `${exposedTables.length} tables`);
-check("RLS coverage", exposedTables.every((table) => rlsLoop.includes(`'${table}'`)), exposedTables.filter((table) => !rlsLoop.includes(`'${table}'`)).join(", ") || "all exposed tables included");
+check("RLS coverage", exposedTables.every((table) => rlsLoops.includes(`'${table}'`)), exposedTables.filter((table) => !rlsLoops.includes(`'${table}'`)).join(", ") || "all exposed tables included");
 const workspaceExempt = new Set(["executive_identities", "workspaces", "workspace_permissions"]);
 const explicitWorkspaceTables = explicitTables.filter((table) => !workspaceExempt.has(table));
 const explicitWorkspaceScoped = explicitWorkspaceTables.every((table) => new RegExp(`create table public\\.${table}\\([^;]*workspace_id`).test(sql));

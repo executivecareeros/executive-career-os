@@ -12,6 +12,7 @@
     ,"test:database": "node scripts/test-database.mjs",
     "test:rls": "node scripts/test-rls.mjs",
     "test:repositories": "node --experimental-transform-types scripts/test-repositories.mjs"
+    ,"test:import": "node --experimental-transform-types scripts/test-import.mjs"
   },
   "dependencies": {
     "next": "16.2.10",

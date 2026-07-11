@@ -11,3 +11,4 @@ Small helper functions evaluate active membership and explicit permission withou
 ## Limitations
 Policies were statically inspected, not executed against a local PostgreSQL runtime. Authentication, token issuance, claims validation, multi-workspace tests, and privileged administrative procedures remain future work.
 > Runtime evidence: see [RLS_TEST_MATRIX.md](./RLS_TEST_MATRIX.md). Authenticated users receive only select, insert, and update subject to policy; delete is revoked and anonymous users receive no protected-table privileges.
+> Professional-history tables require active Workspace membership. Composite session and experience relationships preserve Workspace integrity; anonymous and delete privileges remain revoked.

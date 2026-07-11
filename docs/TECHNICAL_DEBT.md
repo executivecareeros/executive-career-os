@@ -28,3 +28,4 @@ No live providers, persistence, authentication, billing, AI, background scheduli
 - Production authentication and cookie-backed SSR session acquisition do not yet exist.
 - Repository CRUD has not been exercised through authenticated PostgREST sessions; database policies, constraints, provider selection, and row mapping are verified independently.
 - The small fictional dataset supports plan inspection but not meaningful performance benchmarking.
+- PDF/DOCX parsing, encrypted document retention, malware scanning, and authenticated browser upload integration remain future production work.

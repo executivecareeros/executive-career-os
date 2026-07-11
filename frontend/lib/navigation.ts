@@ -4,6 +4,7 @@ export const navigationItems: readonly NavigationItem[] = [
   { label: "Dashboard", href: "/", marker: "D" },
   { label: "Workspace", href: "/workspace", marker: "W" },
   { label: "Executive Blueprint", href: "/blueprint", marker: "BP" },
+  { label: "Import History", href: "/import", marker: "IH" },
   { label: "Opportunities", href: "/opportunities", marker: "O" },
   { label: "Discovery", href: "/discovery", marker: "DI" },
   { label: "Knowledge", href: "/knowledge", marker: "K" },
