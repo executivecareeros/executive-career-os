@@ -2,10 +2,11 @@ import type { Repository, RepositoryCapabilities, RepositoryContext, RepositoryH
 import type { SupabaseDataClient } from "@/lib/supabase/client";
 import { mapSupabaseError } from "@/lib/supabase/errors";
 import type { SupabaseRow } from "@/lib/supabase/types";
+import type { SupabaseMapper } from "./mapper";
+
+export { jsonPayloadMapper } from "./mapper";
 
 const capabilities: RepositoryCapabilities = { read: true, write: true, append: true, archive: true, transactions: false, search: true, optimisticConcurrency: true, migrations: true };
-export interface SupabaseMapper<T> { toDomain(row: SupabaseRow): T; toInsert(entity: T, context: RepositoryContext): Readonly<Record<string, unknown>>; toUpdate(changes: Partial<T>): Readonly<Record<string, unknown>> }
-
 export class SupabaseRepository<T extends { id: string }> implements Repository<T> {
   readonly capabilities = capabilities;
   constructor(readonly name: string, readonly table: string, protected client: SupabaseDataClient, protected mapper: SupabaseMapper<T>, protected appendOnly = false) {}
@@ -25,8 +26,4 @@ export class SupabaseRepository<T extends { id: string }> implements Repository<
   async search(term: string, context?: RepositoryContext) { const workspace = this.workspace(context); const response = await this.client.request<SupabaseRow[]>(`${this.table}?workspace_id=eq.${workspace}&payload=cs.${encodeURIComponent(JSON.stringify({ search: term }))}`); if (response.error) return this.failure<readonly T[]>(response.error, response.status); const values = (response.data ?? []).map((row) => this.mapper.toDomain(row)); return { ok: true as const, value: values, metadata: this.metadata(values.length) }; }
   validate(entity: T) { return { ok: true as const, value: entity.id.trim() ? [] : ["ID_REQUIRED"], metadata: this.metadata() }; }
   async health(): Promise<RepositoryHealth> { return { status: await this.client.health() ? "healthy" : "unavailable", checkedAt: new Date().toISOString(), provider: "Supabase", message: "Supabase PostgREST repository health." }; }
-}
-
-export function jsonPayloadMapper<T extends { id: string }>(): SupabaseMapper<T> {
-  return { toDomain(row) { return { ...(row.payload as T), id: row.domain_id }; }, toInsert(entity, context) { const { id, ...payload } = entity; return { domain_id: id, workspace_id: context.workspace!.workspaceId, payload, created_by: context.workspace!.executiveId }; }, toUpdate(changes) { return { payload: changes, updated_at: new Date().toISOString() }; } };
 }

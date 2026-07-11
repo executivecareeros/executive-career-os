@@ -8,3 +8,4 @@ Generate and review a schema diff, test on a disposable database, back up before
 Production rollback is not assumed. Prefer corrective forward migrations. Destructive changes require verified backups, restore rehearsal, and explicit data-owner impact review.
 ## Atomicity
 Single PostgREST mutations are database-atomic. Independent browser calls are not a transaction. Multi-step workflows require future database functions or thin authenticated server operations. Current memory operations are process-local and non-atomic. Append-only writes are individually durable only when Supabase mode is configured and authorized.
+> Runtime status: two ordered migrations are clean-reset verified. The second adds workspace-integrity constraints, foundational indexes, and least-privilege table grants. See [DATABASE_TESTING.md](./DATABASE_TESTING.md).

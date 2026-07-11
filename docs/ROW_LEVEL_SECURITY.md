@@ -10,3 +10,4 @@ RLS grants reads/inserts where appropriate but no update/delete policies. Databa
 Small helper functions evaluate active membership and explicit permission without recursive policies. Their search path is fixed, public execution is revoked, and only the authenticated role may execute them.
 ## Limitations
 Policies were statically inspected, not executed against a local PostgreSQL runtime. Authentication, token issuance, claims validation, multi-workspace tests, and privileged administrative procedures remain future work.
+> Runtime evidence: see [RLS_TEST_MATRIX.md](./RLS_TEST_MATRIX.md). Authenticated users receive only select, insert, and update subject to policy; delete is revoked and anonymous users receive no protected-table privileges.

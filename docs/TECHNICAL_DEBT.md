@@ -23,3 +23,8 @@
 - Architecture diagrams are textual; a versioned domain/dependency diagram would improve onboarding.
 ## Accepted Release Limitations
 No live providers, persistence, authentication, billing, AI, background scheduling, or autonomous action are in Release 0.1.
+## Persistence verification limitations
+
+- Production authentication and cookie-backed SSR session acquisition do not yet exist.
+- Repository CRUD has not been exercised through authenticated PostgREST sessions; database policies, constraints, provider selection, and row mapping are verified independently.
+- The small fictional dataset supports plan inspection but not meaningful performance benchmarking.

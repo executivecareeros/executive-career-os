@@ -48,3 +48,6 @@ Added the versioned Blueprint domain, guided demonstration workspace, determinis
 # Supabase Persistence and Data-Isolation Foundation
 
 Added versioned PostgreSQL schema, fictional idempotent seeds, workspace RLS policies, append-only triggers, typed Supabase repository adapters, memory fallback, and static database validation. Authentication and production deployment remain excluded.
+## Supabase runtime verification
+
+The persistence foundation has passed clean local bootstrap, seed repeatability, RLS isolation, append-only, constraint, and adapter-boundary verification. See [SUPABASE_RUNTIME_VERIFICATION.md](./SUPABASE_RUNTIME_VERIFICATION.md). Production authentication remains deliberately out of scope.
