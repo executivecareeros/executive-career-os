@@ -47,3 +47,9 @@ No external research, live company claim, or future integration is implemented i
 Attention and health calculations are deterministic pure helpers. Date comparisons use the fixed demo date `2026-07-11`, preventing changing results across builds. Client state owns temporary stage, priority, scheduling, blocker, note, response, interview, outcome, withdrawal, and archive actions.
 
 Future repositories can persist the same models; email, calendar, document, and automation adapters can append typed activities behind explicit service boundaries without redesigning the UI. None are implemented in Sprint 7.
+
+## Executive Career Agent Foundation
+
+`frontend/lib/agents` defines shared tasks, results, recommendations, memory, context, logs, lifecycle status, priorities, typed events, schedules, and notification-provider boundaries. Domain agents implement a common four-method contract. `CareerAgent` is the orchestration root and communicates through the event bus rather than importing domain-agent implementations.
+
+Schedules describe hourly, daily, weekly, and manual intent but do not execute. Notification contracts reserve dashboard, email, Slack, and push delivery without providers. `frontend/prompts` is the sole prompt registry; its templates are draft architecture assets and are never sent to a model. The Assistant dashboard uses local mock observability data only.
