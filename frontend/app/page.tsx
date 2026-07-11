@@ -1,13 +1,5 @@
-const navItems = [
-  "Dashboard",
-  "Opportunities",
-  "Companies",
-  "Recruiters",
-  "Applications",
-  "Reports",
-  "AI Assistant",
-  "Settings",
-];
+import Link from "next/link";
+import { PageHeader } from "@/components/page-header";
 
 const metrics = [
   { label: "New Opportunities", value: "0", note: "Today" },
@@ -26,68 +18,22 @@ const pipeline = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <div className="flex min-h-screen">
-        <aside className="hidden w-72 shrink-0 border-r border-white/10 bg-slate-950 px-6 py-8 lg:flex lg:flex-col">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
-              Executive Career OS
-            </p>
-            <h1 className="mt-3 text-2xl font-semibold tracking-tight">
-              Career Command Center
-            </h1>
-          </div>
-
-          <nav className="mt-10 space-y-2">
-            {navItems.map((item, index) => (
-              <button
-                key={item}
-                className={`w-full rounded-xl px-4 py-3 text-left text-sm transition ${
-                  index === 0
-                    ? "bg-white text-slate-950"
-                    : "text-slate-400 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </nav>
-
-          <div className="mt-auto rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-            <p className="text-sm font-medium">Agent status</p>
-            <p className="mt-2 text-sm text-slate-400">
-              Waiting for the first opportunity search.
-            </p>
-            <div className="mt-4 flex items-center gap-2 text-sm text-emerald-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-300" />
-              System ready
-            </div>
-          </div>
-        </aside>
-
-        <section className="flex-1">
-          <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
-            <header className="flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-sm text-slate-400">Good afternoon, Cüneyt</p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                  Executive dashboard
-                </h2>
-                <p className="mt-3 max-w-2xl text-slate-400">
-                  Track opportunities, applications, companies, and AI
-                  recommendations from one place.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <button className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/5">
+    <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
+            <PageHeader
+              eyebrow="Good afternoon, Cüneyt"
+              title="Executive dashboard"
+              description="Track opportunities, applications, companies, and AI recommendations from one place."
+              actions={
+                <>
+                <Link href="/reports" className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                   View report
-                </button>
-                <button className="rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950">
+                </Link>
+                <Link href="/opportunities" className="rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                   Run career agent
-                </button>
-              </div>
-            </header>
+                </Link>
+                </>
+              }
+            />
 
             <section className="grid gap-4 py-8 sm:grid-cols-2 xl:grid-cols-4">
               {metrics.map((metric) => (
@@ -170,10 +116,7 @@ export default function Home() {
                 ))}
               </div>
             </section>
-          </div>
-        </section>
-      </div>
-    </main>
+    </div>
   );
 }
 
