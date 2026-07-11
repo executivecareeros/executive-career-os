@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isNavigationItemActive, navigationItems } from "@/lib/navigation";
 import { SectionCard } from "./section-card";
+import { logoutAction } from "@/app/auth-actions";
 
 type SidebarProps = {
   mobile?: boolean;
@@ -65,6 +66,9 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
           System ready
         </div>
       </SectionCard>
+      <form action={logoutAction} className="mt-3">
+        <button className="w-full rounded-xl px-4 py-2 text-left text-sm text-slate-500 transition hover:bg-white/5 hover:text-white">Sign out</button>
+      </form>
     </aside>
   );
 }

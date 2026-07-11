@@ -4,9 +4,12 @@ import { useMobileMenu } from "@/hooks/use-mobile-menu";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { PageContent } from "./page-content";
+import { usePathname } from "next/navigation";
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   const menu = useMobileMenu();
+  const pathname = usePathname();
+  if (["/login", "/register", "/forgot-password", "/reset-password", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white lg:flex">
