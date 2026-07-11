@@ -1,0 +1,1 @@
+import { ArchiveWorkspace } from "@/components/archive/archive-workspace";import { careerLedgerEntries } from "@/data/career-ledger";export default function ArchivePage(){return <ArchiveWorkspace entries={careerLedgerEntries}/>}

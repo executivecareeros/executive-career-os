@@ -1,0 +1,2 @@
+export function formatCurrency(value:number|undefined,currency:string){if(value===undefined||!Number.isFinite(value))return "Undisclosed";return new Intl.NumberFormat("en-GB",{style:"currency",currency,maximumFractionDigits:0}).format(value)}
+export function formatCurrencyRange(min:number|undefined,max:number|undefined,currency:string){if(min===undefined&&max===undefined)return "Undisclosed";if(min!==undefined&&max!==undefined)return `${formatCurrency(min,currency)}–${formatCurrency(max,currency)}`;return formatCurrency(min??max,currency)}

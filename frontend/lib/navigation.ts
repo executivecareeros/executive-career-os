@@ -6,6 +6,8 @@ export const navigationItems: readonly NavigationItem[] = [
   { label: "Companies", href: "/companies", marker: "C" },
   { label: "Recruiters", href: "/recruiters", marker: "R" },
   { label: "Applications", href: "/applications", marker: "A" },
+  { label: "Archive", href: "/archive", marker: "AR" },
+  { label: "Compensation", href: "/compensation", marker: "CO" },
   { label: "Reports", href: "/reports", marker: "P" },
   { label: "AI Assistant", href: "/assistant", marker: "AI" },
   { label: "Settings", href: "/settings", marker: "S" },

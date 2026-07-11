@@ -33,3 +33,8 @@ Sprint 8 has not been started.
 Sprint 8 introduces typed agent, event, scheduling, notification, orchestration, memory, logging, and prompt-library contracts plus a mock observability dashboard. It deliberately performs no AI calls, external communication, or scheduled execution.
 
 Sprint 9 has not been started.
+## Sprint 9 — Career Ledger, Archive & Compensation Intelligence Foundation
+
+Sprint 9 introduces append-only historical memory, corrective archive events, compensation lifecycle records, safe money helpers, Career Replay, archive/detail routes, and compensation intelligence using fictional local data only.
+
+Sprint 10 has not been started.
