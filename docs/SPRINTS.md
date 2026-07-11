@@ -45,3 +45,6 @@ Sprint 9.1 completes optional recruitment lifecycle dates, observed duration cal
 # Sprint 11 — Executive Blueprint and Product Entitlements Foundation
 
 Added the versioned Blueprint domain, guided demonstration workspace, deterministic assessments and cross-product context, plus centralized Free, Atlas Pro, and Atlas Executive entitlement definitions. No billing, AI, authentication, or persistence was introduced.
+# Supabase Persistence and Data-Isolation Foundation
+
+Added versioned PostgreSQL schema, fictional idempotent seeds, workspace RLS policies, append-only triggers, typed Supabase repository adapters, memory fallback, and static database validation. Authentication and production deployment remain excluded.

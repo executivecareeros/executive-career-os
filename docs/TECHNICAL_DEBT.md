@@ -1,5 +1,12 @@
 # Technical Debt Register
 > **Purpose:** Preserve verified Release 0.1 debt without broad speculative refactoring.
+
+## Durable Provider Verification
+
+- Supabase migrations, RLS policies, triggers, and seeds require live local-runtime execution and adversarial cross-workspace tests.
+- Supabase workspace/identity row mapping needs authenticated end-to-end verification.
+- Multi-step atomic workflows require database functions or thin authenticated server operations.
+- Generated database types are deferred until a real local or remote schema is available; no generated synchronization is claimed.
 ## High
 - No automated behavioral test runner; lint, build, deterministic dataset checks, and browser inspection provide partial coverage only.
 - No persistence boundary enforcing append-only Career Ledger or Blueprint revisions at runtime.

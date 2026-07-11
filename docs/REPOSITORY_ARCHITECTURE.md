@@ -2,6 +2,8 @@
 
 > **Purpose:** Define the provider-independent persistence boundary for Executive Career OS.
 
+Supabase PostgreSQL is the first durable adapter. Provider selection is explicit; memory-demo remains the safe default. Supabase mode requires valid environment configuration and a future authenticated access token for RLS-protected operations.
+
 ## Repository Pattern
 
 Domain and decision logic depend on repository interfaces, not storage technologies. A repository exposes consistent find, query, create, update, archive, restore, append, existence, count, search, validation, and health operations. Results carry typed errors and provider metadata.

@@ -1,5 +1,7 @@
 # Security and Privacy Boundaries
 > **Purpose:** Record Release 0.1 trust boundaries and requirements that must precede production data handling.
+
+The database foundation now defines workspace RLS, restricted compensation access, and append-only triggers. These controls are not production-verified until migrations and adversarial policy tests run against a real Supabase PostgreSQL instance with authentication.
 ## Current Boundary
 Release 0.1 is a local demonstration with fictional records. It has no authentication, authorization, database, provider credentials, uploads, live integrations, or multi-tenant storage. It must not be treated as production-safe for personal information.
 ## Sensitive Data

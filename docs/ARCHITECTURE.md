@@ -62,3 +62,6 @@ Applications contain optional `RecruitmentLifecycleDates`. Missing milestones re
 # Sprint 11 Architecture Addendum
 
 Executive Blueprint is the primary, revision-scoped personalization context. Deterministic completeness, conflict, opportunity, and company matching services remain separate from UI and Atlas. Product access is resolved through one typed feature registry and pure entitlement helpers; billing remains outside the platform boundary.
+# Durable Provider Boundary
+
+The repository layer now supports explicit `memory-demo` and configuration-dependent `supabase` modes. PostgreSQL schema, RLS, append-only triggers, and PostgREST adapters remain isolated from domain models. Authentication and production deployment are not implemented.

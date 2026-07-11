@@ -1,0 +1,1 @@
+import type {CurrentUserBoundary,CurrentUserIdentity} from "./types";export class UnauthenticatedCurrentUserBoundary implements CurrentUserBoundary{async current():Promise<CurrentUserIdentity|undefined>{return undefined}}
