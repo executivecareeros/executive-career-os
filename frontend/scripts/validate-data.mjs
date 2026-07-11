@@ -36,7 +36,7 @@ const featureKeys = [...features.matchAll(/featureKey:\s*"([^"]+)"/g)].map((matc
 record("Feature registry unique keys", duplicates(featureKeys).length === 0, duplicates(featureKeys).join(", ") || `${featureKeys.length} keys checked`);
 
 const routeDirectories = await readdir(resolve(root, "app"));
-const requiredRoutes = ["opportunities", "companies", "applications", "assistant", "archive", "compensation", "discovery", "blueprint", "knowledge", "recruiters", "reports", "settings"];
+const requiredRoutes = ["opportunities", "companies", "applications", "assistant", "archive", "compensation", "discovery", "blueprint", "knowledge", "repositories", "workspace", "recruiters", "reports", "settings"];
 record("Required route directories", requiredRoutes.every((route) => routeDirectories.includes(route)), requiredRoutes.filter((route) => !routeDirectories.includes(route)).join(", ") || `${requiredRoutes.length} routes checked`);
 
 for (const check of checks) console.log(`${check.passed ? "PASS" : "FAIL"} ${check.name} — ${check.detail}`);

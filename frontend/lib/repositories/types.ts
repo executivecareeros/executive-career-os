@@ -1,5 +1,5 @@
 export type RepositoryOperation<T>=T|Promise<T>;export type RepositoryProviderKind="Memory"|"Local Storage"|"IndexedDB"|"Supabase"|"PostgreSQL"|"REST"|"GraphQL"|"Enterprise";
-export interface RepositoryContext{requestId:string;actorId:string;correlationId:string;timestamp:string;transactionId?:string}
+export interface RepositoryContext{requestId:string;actorId:string;correlationId:string;timestamp:string;transactionId?:string;workspace?:import("@/lib/workspaces").WorkspaceContext}
 export interface RepositoryMetadata{provider:RepositoryProviderKind;repository:string;version:string;durationMs:number;recordCount?:number;fromCache?:boolean}
 export interface RepositoryError{code:"NOT_FOUND"|"VALIDATION"|"CONFLICT"|"CONCURRENCY"|"PROVIDER"|"READ_ONLY"|"APPEND_ONLY";message:string;retryable:boolean;details?:Readonly<Record<string,string|number|boolean>>}
 export type RepositoryResult<T>={ok:true;value:T;metadata:RepositoryMetadata}|{ok:false;error:RepositoryError;metadata:RepositoryMetadata};
