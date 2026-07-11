@@ -6,6 +6,7 @@ export type StatusTone = "neutral" | "info" | "success" | "warning";
 export type CardProps = {
   children: ReactNode;
   className?: string;
+  id?: string;
 };
 
 export type ButtonLinkProps = {

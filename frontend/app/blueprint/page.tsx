@@ -1,0 +1,1 @@
+import { BlueprintWorkspace } from "@/components/blueprint/blueprint-workspace";import { demoExecutiveBlueprint } from "@/data/executive-blueprint";export default function BlueprintPage(){return <BlueprintWorkspace initial={demoExecutiveBlueprint}/>}

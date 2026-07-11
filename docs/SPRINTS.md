@@ -42,3 +42,6 @@ Sprint 10 has not been started.
 ### Sprint 9.1 completion
 
 Sprint 9.1 completes optional recruitment lifecycle dates, observed duration calculations, application/opportunity/company compensation timelines, dashboard historical widgets, full archive filters, Career Replay grouping and focus modes, append-only demo corrections, historical query helpers, and Atlas history-access contracts.
+# Sprint 11 — Executive Blueprint and Product Entitlements Foundation
+
+Added the versioned Blueprint domain, guided demonstration workspace, deterministic assessments and cross-product context, plus centralized Free, Atlas Pro, and Atlas Executive entitlement definitions. No billing, AI, authentication, or persistence was introduced.

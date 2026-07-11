@@ -137,6 +137,16 @@ export interface DiscoveryConfiguration {
   priority: number;
   maximumResults: number;
   filters: DiscoveryFilter;
+  blueprintContext?: {
+    revisionId: string;
+    rolePreferences: readonly string[];
+    salaryExpectation?: number;
+    travelMaximumPercent?: number;
+    workArrangements: readonly string[];
+    companySizes: readonly string[];
+    ownershipTypes: readonly string[];
+    nonNegotiablePrincipleIds: readonly string[];
+  };
 }
 
 export interface DiscoveryStatistics {

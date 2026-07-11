@@ -1,0 +1,1 @@
+import type { EntitlementContext } from "@/types/entitlements";export const demoEntitlementContext:EntitlementContext={plan:"free",usage:[{featureKey:"atlas-basic",used:1,periodStartedAt:"2026-07-01"}],isDemo:true};

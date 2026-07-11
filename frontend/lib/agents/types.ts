@@ -64,6 +64,18 @@ export type AgentContext = {
   confidence?: number;
   evidenceReferences?: ReadonlyArray<string>;
   history?: AgentHistoryAccess;
+  blueprint?: {
+    blueprintId: string;
+    revisionId: string;
+    completenessState: import("@/types/executive-blueprint").BlueprintCompletenessState;
+    decisionPriorities: ReadonlyArray<import("@/types/executive-blueprint").DecisionPriority>;
+    constraints: ReadonlyArray<import("@/types/executive-blueprint").CareerConstraint>;
+    exclusions: ReadonlyArray<import("@/types/executive-blueprint").StructuredPreference>;
+    conflicts: ReadonlyArray<import("@/types/executive-blueprint").BlueprintConflict>;
+    confidence: number;
+    evidenceReferences: ReadonlyArray<string>;
+    lastConfirmedAt: string;
+  };
 };
 
 export type AgentLog = {

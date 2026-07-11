@@ -2,6 +2,8 @@
 
 > **Purpose:** Define the enduring strategic profile that guides decisions throughout Executive Career OS.
 
+The Blueprint is versioned, evidence-aware, and explicit about confidence and conflicts. Earlier approved revisions remain part of the Career Ledger. Future Atlas output should name the revision and facts it used.
+
 ## Overview
 
 The Executive Blueprint is a living articulation of the career an executive intends to build and the conditions under which that career should develop.

@@ -11,6 +11,9 @@ import { opportunities } from "@/data/opportunities";
 import { companies } from "@/data/companies";
 import { CompanyCard } from "@/components/companies/company-card";
 import { HistoricalIntelligence } from "@/components/dashboard/historical-intelligence";
+import { demoExecutiveBlueprint } from "@/data/executive-blueprint";
+import { assessBlueprintCompleteness } from "@/lib/blueprint-completeness";
+import { identifyBlueprintConflicts } from "@/lib/blueprint-conflicts";
 
 export default function Home() {
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
@@ -19,12 +22,15 @@ export default function Home() {
   const pipelineStages = ["Discovered", "Evaluating", "Qualified", "Ready to Apply", "Applied", "Interview"] as const;
   const monitoredCompanies = companies.filter((company) => company.monitoringStatus !== "Not Monitored" && company.monitoringStatus !== "Paused");
   const topCompany = [...companies].sort((a, b) => b.strategicRelevanceScore - a.strategicRelevanceScore)[0];
+  const blueprintCompleteness = assessBlueprintCompleteness(demoExecutiveBlueprint);
+  const blueprintConflicts = identifyBlueprintConflicts(demoExecutiveBlueprint);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
       <PageHeader eyebrow="Good afternoon, Cüneyt" title="Executive dashboard" description="Your command center for executive career intelligence, relationships, and search momentum." actions={<><SecondaryButton href="/reports">View reports</SecondaryButton><PrimaryButton href="/opportunities">Explore opportunities</PrimaryButton></>} />
       <div className="mt-6"><DemoDataBanner /></div>
       <div className="grid gap-6 py-8 xl:grid-cols-2">
+        <SectionCard className="xl:col-span-2"><div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="text-xl font-semibold">Executive Blueprint</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">{demoExecutiveBlueprint.vision.threeYearObjective}</p></div><SecondaryButton href="/blueprint">Open Blueprint</SecondaryButton></div><div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5"><StatCard label="Completeness" value={`${blueprintCompleteness.score}%`} note={blueprintCompleteness.state}/><StatCard label="Unresolved conflicts" value={blueprintConflicts.length}/><StatCard label="Last revision" value={`#${demoExecutiveBlueprint.revisionNumber}`}/><StatCard label="Next review" value={demoExecutiveBlueprint.nextReviewAt}/><StatCard label="Decision ready" value={blueprintCompleteness.state==="Decision Ready"?"Yes":"Not yet"}/></div><p className="mt-5 text-sm text-slate-400">Top priorities: {demoExecutiveBlueprint.decisionPriorities.slice(0,3).map(p=>p.factor).join(" · ")}</p></SectionCard>
         <DashboardSection title="Today&apos;s Executive Brief" description="A focused view of the intelligence that needs your attention today." emptyTitle="No verified brief available" emptyDescription="A brief will appear when connected intelligence sources are available." />
         <SectionCard>
           <h2 className="text-xl font-semibold">Executive Metrics</h2><p className="mt-2 text-sm text-slate-400">Counts derived from the shared local demonstration dataset.</p>

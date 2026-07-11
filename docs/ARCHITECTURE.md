@@ -59,3 +59,6 @@ Schedules describe hourly, daily, weekly, and manual intent but do not execute. 
 Applications contain optional `RecruitmentLifecycleDates`. Missing milestones remain absent. Pure helpers create ordered display events and observed durations without prediction, and populated milestones link to immutable Career Ledger entries.
 
 `AgentContext` optionally receives an `AgentHistoryAccess` port. Future Atlas runs can retrieve entity, compensation, lifecycle, and decision history or append attributed ledger events. Context preserves run ID, agent ID, timestamp, confidence, evidence, correlation, and causation. No provider implements this port in Sprint 9.1.
+# Sprint 11 Architecture Addendum
+
+Executive Blueprint is the primary, revision-scoped personalization context. Deterministic completeness, conflict, opportunity, and company matching services remain separate from UI and Atlas. Product access is resolved through one typed feature registry and pure entitlement helpers; billing remains outside the platform boundary.

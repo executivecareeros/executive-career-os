@@ -1,5 +1,6 @@
-import { ProductPage } from "@/components/product-page";
+import { PlanOverview } from "@/components/entitlements/plan-overview";
+import { PageHeader } from "@/components/page-header";
 
 export default function SettingsPage() {
-  return <ProductPage title="Settings" description="Manage the preferences that will shape your Executive Career OS experience." emptyTitle="No settings require attention" emptyDescription="Search preferences, notification controls, and workspace options will be added here as those product capabilities become available." actionLabel="Return to dashboard" actionHref="/" />;
+  return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader title="Settings" description="Review product-plan demonstrations and future workspace controls."/><div className="mt-6"><PlanOverview/></div></div>;
 }

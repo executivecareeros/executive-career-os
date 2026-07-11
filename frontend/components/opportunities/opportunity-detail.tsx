@@ -18,6 +18,7 @@ import { OpportunityPriorityBadge } from "./opportunity-priority-badge";
 import { OpportunityStatusBadge } from "./opportunity-status-badge";
 import { RecommendationBadge } from "./recommendation-badge";
 import { ScoreIndicator } from "./score-indicator";
+import { OpportunityBlueprintAlignment } from "@/components/blueprint/opportunity-alignment";
 
 export function OpportunityDetail({ opportunity, company }: { opportunity: Opportunity; company?: Company }) {
   const [status, setStatus] = useState<OpportunityStatus>(opportunity.status);
@@ -40,6 +41,7 @@ export function OpportunityDetail({ opportunity, company }: { opportunity: Oppor
       <section className="mt-6 grid gap-5 md:grid-cols-3" aria-label="Score overview"><ScoreIndicator label="Executive Fit Score" score={opportunity.executiveFitScore} /><ScoreIndicator label="Strategic Opportunity Score" score={opportunity.strategicOpportunityScore} /><ScoreIndicator label="Overall Score" score={opportunity.overallScore} /></section>
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-6">
+          <OpportunityBlueprintAlignment opportunity={opportunity} />
           <OpportunityDetailSection title="Opportunity Assessment"><RecommendationBadge recommendation={assessment.recommendation} /><ul className="mt-4 list-disc space-y-2 pl-5">{assessment.rationale.map((item) => <li key={item}>{item}</li>)}</ul><p className="mt-4">{opportunity.decisionRationale}</p></OpportunityDetailSection>
           <OpportunityDetailSection title="Role summary"><p>{opportunity.summary}</p></OpportunityDetailSection>
           <OpportunityDetailSection title="Fit explanation"><ListGroup title="Matching strengths" items={opportunity.matchingStrengths} /><ListGroup title="Missing requirements" items={opportunity.missingRequirements} /><ListGroup title="Risk flags" items={opportunity.riskFlags} empty="No risk flags identified in this demo assessment." /></OpportunityDetailSection>

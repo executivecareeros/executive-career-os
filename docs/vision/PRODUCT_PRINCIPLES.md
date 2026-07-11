@@ -2,6 +2,10 @@
 
 > **Purpose:** Establish the standards used to evaluate product decisions across Executive Career OS.
 
+## Keep the Core Useful and Owned
+
+Free access must remain genuinely useful. Career Ledger, archive, and exported history must never be held hostage by a premium tier. Paid plans may deepen intelligence, memory, guidance, and supervised autonomy, but limits and availability must remain transparent.
+
 ## Improve Executive Decision-Making
 
 Every feature must improve an executive’s ability to understand context, evaluate alternatives, or act with greater clarity. Activity without decision value is not progress.
