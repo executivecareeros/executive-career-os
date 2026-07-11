@@ -5,15 +5,18 @@ import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { PageContent } from "./page-content";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ExecutiveCommandBar } from "./executive-command-bar";
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   const menu = useMobileMenu();
   const pathname = usePathname();
+  const [focusMode, setFocusMode] = useState(false);
   if (["/login", "/register", "/forgot-password", "/reset-password", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white lg:flex">
-      <Sidebar />
+      {!focusMode && <Sidebar />}
 
       <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} />
 
@@ -40,6 +43,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
       )}
 
       <main className="min-w-0 flex-1">
+        <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} />
         <PageContent>{children}</PageContent>
       </main>
     </div>

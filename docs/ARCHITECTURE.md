@@ -69,3 +69,4 @@ The repository layer now supports explicit `memory-demo` and configuration-depen
 > Atlas Memory is a deterministic interpretation layer over confirmed repositories, persisted with Workspace RLS and append-only snapshots/audits. See [ATLAS_MEMORY.md](./ATLAS_MEMORY.md).
 > Atlas Reasoning consumes confirmed repository evidence and produces immutable, versioned decision artifacts and Executive Signals. See [ATLAS_REASONING_ENGINE.md](./ATLAS_REASONING_ENGINE.md).
 > Executive Productivity consumes confirmed domain records through deterministic generators and stores Workspace-scoped briefs, preparations, notes, decisions, tasks, and follow-ups.
+> Release 0.5 preserves domain and persistence architecture while applying the shared Atlas Design Language through existing application-shell and design-system components.

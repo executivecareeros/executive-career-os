@@ -3,6 +3,12 @@
 :root {
   --background: #020617;
   --foreground: #f8fafc;
+  --atlas-surface: rgba(15, 23, 42, 0.72);
+  --atlas-surface-raised: rgba(30, 41, 59, 0.62);
+  --atlas-border: rgba(148, 163, 184, 0.14);
+  --atlas-accent: #60a5fa;
+  --atlas-radius: 1rem;
+  --atlas-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
 }
 
 @theme inline {
@@ -16,7 +22,14 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
+
+::selection { background: rgba(96, 165, 250, .28); color: #fff; }
+:focus-visible { outline: 2px solid var(--atlas-accent); outline-offset: 3px; }
+a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+textarea { font: inherit; }
 
 button,
 input,
@@ -36,11 +49,19 @@ select {
 }
 
 .page-enter {
-  animation: page-enter 180ms ease-out;
+  animation: page-enter 220ms cubic-bezier(.2,.8,.2,1);
 }
+
+.atlas-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.25) transparent; }
+.atlas-surface { background: var(--atlas-surface); border: 1px solid var(--atlas-border); box-shadow: var(--atlas-shadow); }
+.atlas-kicker { font-size: .6875rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #93c5fd; }
+
+@keyframes atlas-pulse { 0%,100%{opacity:.45} 50%{opacity:.8} }
+.atlas-skeleton { animation: atlas-pulse 1.5s ease-in-out infinite; background: rgba(148,163,184,.1); border-radius: .75rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .page-enter {
     animation: none;
   }
+  .atlas-skeleton { animation: none; }
 }

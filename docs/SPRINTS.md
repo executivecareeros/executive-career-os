@@ -59,3 +59,5 @@ Deterministic, evidence-based memory and Executive Intelligence are established 
 Deterministic cross-domain reasoning, trade-offs, questions, alternatives, explanations, and Executive Signals are established without chat or model providers.
 ## Executive Productivity Workspace
 Deterministic briefs, preparation, comparison, notes, tasks, follow-ups, and deadlines are established without automation or model providers.
+## Atlas Executive Experience
+The application shell, hierarchy, motion, loading, health summaries, focus mode, responsive surfaces, and component standards are unified without new backend domains.
