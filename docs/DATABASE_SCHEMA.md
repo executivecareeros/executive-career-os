@@ -13,3 +13,4 @@ Foreign keys protect core relationships; membership and domain IDs are workspace
 > Import schema adds normalized sessions, experiences, achievements, education, certifications, board roles, decisions, conflicts, records, and audit events. See [IMPORT_DATA_MODEL.md](./IMPORT_DATA_MODEL.md).
 > Atlas Memory adds Workspace-scoped memories, evidence, relationships, append-only snapshots, and append-only lifecycle audits.
 > Atlas Reasoning adds append-only snapshots, append-only stage audits, and Workspace-scoped Executive Signals.
+> Productivity persistence adds Executive Briefs, interview preparations, negotiation planners, decision workspaces, notes, tasks, and follow-ups with RLS and deadline indexes.

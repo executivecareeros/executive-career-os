@@ -10,6 +10,8 @@ export const navigationItems: readonly NavigationItem[] = [
   { label: "Knowledge", href: "/knowledge", marker: "K" },
   { label: "Executive Memory", href: "/memory", marker: "M" },
   { label: "Executive Reasoning", href: "/reasoning", marker: "ER" },
+  { label: "Productivity", href: "/productivity", marker: "PX" },
+  { label: "Tasks", href: "/tasks", marker: "T" },
   { label: "Repositories", href: "/repositories", marker: "DB" },
   { label: "Companies", href: "/companies", marker: "C" },
   { label: "Recruiters", href: "/recruiters", marker: "R" },
