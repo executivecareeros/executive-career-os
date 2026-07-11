@@ -1,4 +1,4 @@
-type EmptyStateProps = {
+export type EmptyStateProps = {
   eyebrow?: string;
   title: string;
   description: string;

@@ -1,5 +1,7 @@
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
+import { PrimaryButton } from "@/components/primary-button";
+import { SearchInput } from "@/components/search-input";
 
 const inputClassName =
   "mt-2 w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20";
@@ -14,14 +16,8 @@ export default function OpportunitiesPage() {
 
       <section className="grid gap-4 py-8 sm:grid-cols-2 xl:grid-cols-4" aria-labelledby="opportunity-filters">
         <h2 id="opportunity-filters" className="sr-only">Opportunity filters</h2>
-        <label className="text-sm text-slate-400">
-          Title
-          <input className={inputClassName} type="search" name="title" placeholder="e.g. Chief Commercial Officer" />
-        </label>
-        <label className="text-sm text-slate-400">
-          Country
-          <input className={inputClassName} type="search" name="country" placeholder="Select a target country" />
-        </label>
+        <SearchInput label="Title" name="title" placeholder="e.g. Chief Commercial Officer" />
+        <SearchInput label="Country" name="country" placeholder="Select a target country" />
         <label className="text-sm text-slate-400">
           Industry
           <select className={inputClassName} name="industry" defaultValue="">
@@ -47,7 +43,7 @@ export default function OpportunitiesPage() {
         eyebrow="No opportunities yet"
         title="Start your first executive opportunity search"
         description="Your matched roles will appear here after a search. Nothing is shown until real opportunities are available."
-        action={<button type="button" className="rounded-xl bg-white px-5 py-3 text-sm font-medium text-slate-950 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Run opportunity search</button>}
+        action={<PrimaryButton className="px-5 py-3">Run opportunity search</PrimaryButton>}
       />
     </div>
   );

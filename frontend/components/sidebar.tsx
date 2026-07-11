@@ -2,17 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const navigation = [
-  { label: "Dashboard", href: "/", marker: "D" },
-  { label: "Opportunities", href: "/opportunities", marker: "O" },
-  { label: "Companies", href: "/companies", marker: "C" },
-  { label: "Recruiters", href: "/recruiters", marker: "R" },
-  { label: "Applications", href: "/applications", marker: "A" },
-  { label: "Reports", href: "/reports", marker: "P" },
-  { label: "AI Assistant", href: "/assistant", marker: "AI" },
-  { label: "Settings", href: "/settings", marker: "S" },
-] as const;
+import { isNavigationItemActive, navigationItems } from "@/lib/navigation";
+import { SectionCard } from "./section-card";
 
 type SidebarProps = {
   mobile?: boolean;
@@ -37,9 +28,8 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       </Link>
 
       <nav className="mt-10 space-y-2" aria-label="Primary navigation">
-        {navigation.map((item) => {
-          const isActive =
-            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+        {navigationItems.map((item) => {
+          const isActive = isNavigationItemActive(pathname, item.href);
 
           return (
             <Link
@@ -65,7 +55,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
         })}
       </nav>
 
-      <div className="mt-auto rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+      <SectionCard className="mt-auto p-5 sm:p-5">
         <p className="text-sm font-medium text-white">Agent status</p>
         <p className="mt-2 text-sm text-slate-400">
           Waiting for the first opportunity search.
@@ -74,7 +64,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
           <span className="h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
           System ready
         </div>
-      </div>
+      </SectionCard>
     </aside>
   );
 }
