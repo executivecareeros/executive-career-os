@@ -1,0 +1,1 @@
+export type CVProfile={id:string;name:string;summary:string;isDemo:true}; export type CoverLetterRecord={id:string;name:string;status:string;isDemo:true}; export type ScreeningAnswerSet={id:string;name:string;answerCount:number;isDemo:true}; export type ApplicationDocumentReference={id:string;name:string;type:string;version:string;isDemo:true};

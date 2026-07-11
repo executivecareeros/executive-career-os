@@ -23,3 +23,8 @@ Sprint 6 adds a complete typed frontend workspace for evaluating fictional targe
 All company profiles and signals are local demonstration scenarios. They are not researched, verified, current, or live. No backend, external research, authentication, automation, or persistent state is included.
 
 Sprint 7 has not been started.
+## Sprint 7 — Applications CRM Workspace
+
+Sprint 7 adds a typed local application CRM with eight demonstration records, responsive pipeline and list views, filtering and sorting, deterministic attention and health logic, static detail routes, timeline and document references, temporary workflow actions, and opportunity/application linking. No application is real or submitted.
+
+Sprint 8 has not been started.

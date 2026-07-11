@@ -39,3 +39,11 @@ No future integration is implemented in Sprint 5.
 Overview and static detail routes pass typed records into focused client workspaces. Relationship, monitoring, priority, review date, and notes changes live only in React state. Future integration can replace the local company collection with a repository, translate filter state into server queries, add reviewed research providers behind an explicit source boundary, and persist company commands without changing presentational contracts.
 
 No external research, live company claim, or future integration is implemented in Sprint 6.
+
+## Applications CRM Workspace
+
+`frontend/types/application.ts` defines applications, activity events, stages, outcomes, filters, and workflow references. Applications reference company and opportunity IDs only. Supporting document contracts live separately in `application-document.ts` with lightweight demo records.
+
+Attention and health calculations are deterministic pure helpers. Date comparisons use the fixed demo date `2026-07-11`, preventing changing results across builds. Client state owns temporary stage, priority, scheduling, blocker, note, response, interview, outcome, withdrawal, and archive actions.
+
+Future repositories can persist the same models; email, calendar, document, and automation adapters can append typed activities behind explicit service boundaries without redesigning the UI. None are implemented in Sprint 7.

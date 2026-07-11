@@ -7,6 +7,7 @@ import { SecondaryButton } from "@/components/secondary-button";
 import { assessOpportunity } from "@/lib/opportunity-assessment";
 import type { Opportunity, OpportunityStatus } from "@/types/opportunity";
 import type { Company } from "@/types/company";
+import { getApplicationsByOpportunity } from "@/data/applications";
 import { DemoDataBanner } from "./demo-data-banner";
 import { OpportunityDetailSection } from "./opportunity-detail-section";
 import { OpportunityPriorityBadge } from "./opportunity-priority-badge";
@@ -18,12 +19,14 @@ export function OpportunityDetail({ opportunity, company }: { opportunity: Oppor
   const [status, setStatus] = useState<OpportunityStatus>(opportunity.status);
   const [notes, setNotes] = useState(opportunity.notes);
   const assessment = assessOpportunity(opportunity);
+  const linkedApplications = getApplicationsByOpportunity(opportunity.id);
   const compensation = opportunity.salaryMin && opportunity.salaryMax && opportunity.salaryCurrency ? `${opportunity.salaryCurrency} ${opportunity.salaryMin.toLocaleString("en-GB")}–${opportunity.salaryMax.toLocaleString("en-GB")}` : "Not disclosed in demo data";
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
       <Link href="/opportunities" className="text-sm text-slate-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">← Back to opportunities</Link>
       {company && <Link href={`/companies/${company.id}`} className="ml-4 text-sm text-blue-300 hover:text-blue-200">Open company intelligence →</Link>}
       <header className="mt-6 border-b border-white/10 pb-8">
+        <div className="mb-4 text-sm text-slate-400">{linkedApplications.length ? <Link href={`/applications/${linkedApplications[0].id}`} className="text-blue-300">Application exists: {linkedApplications[0].stage} →</Link> : <span>No application exists · Create application (placeholder)</span>}</div>
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 font-semibold text-slate-300">{opportunity.companyInitials}</div><div><p className="text-sm text-slate-400">{opportunity.companyName}</p><h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">{opportunity.jobTitle}</h1><p className="mt-3 text-slate-400">{opportunity.location} · {opportunity.workArrangement} · {opportunity.employmentType}</p></div></div>
           <div className="flex flex-wrap gap-2"><OpportunityStatusBadge status={status} /><OpportunityPriorityBadge priority={opportunity.priority} /></div>
