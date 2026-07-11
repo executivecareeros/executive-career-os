@@ -53,3 +53,9 @@ Future repositories can persist the same models; email, calendar, document, and 
 `frontend/lib/agents` defines shared tasks, results, recommendations, memory, context, logs, lifecycle status, priorities, typed events, schedules, and notification-provider boundaries. Domain agents implement a common four-method contract. `CareerAgent` is the orchestration root and communicates through the event bus rather than importing domain-agent implementations.
 
 Schedules describe hourly, daily, weekly, and manual intent but do not execute. Notification contracts reserve dashboard, email, Slack, and push delivery without providers. `frontend/prompts` is the sole prompt registry; its templates are draft architecture assets and are never sent to a model. The Assistant dashboard uses local mock observability data only.
+
+## Historical integration and Atlas memory access
+
+Applications contain optional `RecruitmentLifecycleDates`. Missing milestones remain absent. Pure helpers create ordered display events and observed durations without prediction, and populated milestones link to immutable Career Ledger entries.
+
+`AgentContext` optionally receives an `AgentHistoryAccess` port. Future Atlas runs can retrieve entity, compensation, lifecycle, and decision history or append attributed ledger events. Context preserves run ID, agent ID, timestamp, confidence, evidence, correlation, and causation. No provider implements this port in Sprint 9.1.

@@ -43,12 +43,27 @@ export type AgentMemory<TValue = unknown> = {
   expiresAt?: string;
 };
 
+export type AgentHistoryQuery = { entityType: string; entityId: string; correlationId?: string };
+export type AgentHistoricalDecision = { ledgerEntryId: string; recommendation: string; reason: string; confidence: number; occurredAt: string; evidenceReferences: string[] };
+export interface AgentHistoryAccess {
+  readEntityHistory(query: AgentHistoryQuery): Promise<ReadonlyArray<import("@/types/career-ledger").CareerLedgerEntry>>;
+  appendLedgerEvent(entry: import("@/types/career-ledger").CareerLedgerEntry): Promise<void>;
+  retrieveCompensationHistory(entityId: string): Promise<ReadonlyArray<import("@/types/compensation").CompensationRecord>>;
+  retrieveLifecycleDates(applicationId: string): Promise<import("@/types/application").RecruitmentLifecycleDates | undefined>;
+  retrievePriorDecisions(entityId: string): Promise<ReadonlyArray<AgentHistoricalDecision>>;
+}
+
 export type AgentContext = {
   runId: string;
   requestedBy: "scheduler" | "manual" | "agent";
   now: string;
   memory: ReadonlyArray<AgentMemory>;
   correlationId?: string;
+  causationId?: string;
+  agentId?: string;
+  confidence?: number;
+  evidenceReferences?: ReadonlyArray<string>;
+  history?: AgentHistoryAccess;
 };
 
 export type AgentLog = {

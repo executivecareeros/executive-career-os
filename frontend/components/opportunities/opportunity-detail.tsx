@@ -8,6 +8,10 @@ import { assessOpportunity } from "@/lib/opportunity-assessment";
 import type { Opportunity, OpportunityStatus } from "@/types/opportunity";
 import type { Company } from "@/types/company";
 import { getApplicationsByOpportunity } from "@/data/applications";
+import { compensationForEntity } from "@/data/compensation";
+import { ledgerForEntity } from "@/data/career-ledger";
+import { CompensationTimeline } from "@/components/compensation/compensation-timeline";
+import { LedgerHistoryPanel } from "@/components/archive/ledger-history-panel";
 import { DemoDataBanner } from "./demo-data-banner";
 import { OpportunityDetailSection } from "./opportunity-detail-section";
 import { OpportunityPriorityBadge } from "./opportunity-priority-badge";
@@ -41,6 +45,8 @@ export function OpportunityDetail({ opportunity, company }: { opportunity: Oppor
           <OpportunityDetailSection title="Fit explanation"><ListGroup title="Matching strengths" items={opportunity.matchingStrengths} /><ListGroup title="Missing requirements" items={opportunity.missingRequirements} /><ListGroup title="Risk flags" items={opportunity.riskFlags} empty="No risk flags identified in this demo assessment." /></OpportunityDetailSection>
           <OpportunityDetailSection title="Role requirements"><ListGroup title="Key responsibilities" items={opportunity.keyResponsibilities} /><ListGroup title="Required skills" items={opportunity.requiredSkills} /><ListGroup title="Preferred skills" items={opportunity.preferredSkills} /></OpportunityDetailSection>
           <OpportunityDetailSection title="CV and cover-letter positioning"><p><strong className="text-slate-200">Recommended CV profile:</strong> {opportunity.recommendedCVProfile}</p><p className="mt-3"><strong className="text-slate-200">Cover letter:</strong> {opportunity.coverLetterRecommended ? "Recommended for this demonstration scenario." : "Not currently recommended for this demonstration scenario."}</p></OpportunityDetailSection>
+          <OpportunityDetailSection title="Compensation history"><CompensationTimeline records={compensationForEntity(opportunity.id)} title="Opportunity Compensation Timeline" /></OpportunityDetailSection>
+          <OpportunityDetailSection title="Career history"><LedgerHistoryPanel entries={ledgerForEntity(opportunity.id)} title="Linked Career Ledger events" /></OpportunityDetailSection>
         </div>
         <div className="space-y-6">
           <OpportunityDetailSection title="Opportunity details"><dl><Definition label="Industry" value={opportunity.industry} /><Definition label="Company size" value={opportunity.companySize} /><Definition label="Compensation" value={compensation} /><Definition label="Travel" value={opportunity.travelRequirement} /><Definition label="Application deadline" value={opportunity.applicationDeadline ?? "Not disclosed"} /><Definition label="Source" value={opportunity.source} /></dl><p className="mt-4 text-xs text-slate-500">Source link placeholder — no live listing is connected.</p></OpportunityDetailSection>

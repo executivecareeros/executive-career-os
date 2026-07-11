@@ -38,3 +38,7 @@ Sprint 9 has not been started.
 Sprint 9 introduces append-only historical memory, corrective archive events, compensation lifecycle records, safe money helpers, Career Replay, archive/detail routes, and compensation intelligence using fictional local data only.
 
 Sprint 10 has not been started.
+
+### Sprint 9.1 completion
+
+Sprint 9.1 completes optional recruitment lifecycle dates, observed duration calculations, application/opportunity/company compensation timelines, dashboard historical widgets, full archive filters, Career Replay grouping and focus modes, append-only demo corrections, historical query helpers, and Atlas history-access contracts.
