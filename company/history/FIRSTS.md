@@ -10,6 +10,7 @@
 | First architecture | 2026-07-11 | Early Sprint commits/docs | Established product structure | Verify exact artifact |
 | First repository | 2026-07-10 | `4453c1a` | Source-control foundation | Verified |
 | First company domain purchase | 2026-07-12 | Porkbun order `10969058`; `company/assets/DOMAIN_REGISTER.md` | Established the first company-controlled production identity at `orendalis.com` | Verified |
+| First company GitHub organization | 2026-07-12 | `https://github.com/Orendalis`; `company/assets/COMPANY_ASSET_REGISTER.md` | Established the company-controlled organization boundary for future source-code ownership | Verified |
 | First successful build | [DATE] | [BUILD LOG/COMMIT] | Demonstrated deployable integrity | Placeholder |
 | First login UI | 2026-07-12 | `fa525aa` | Authentication experience | Verified by Git |
 | First successful authentication | 2026-07-12 | Sprint 17 local runtime record | Proved live local Supabase Auth | Repository report; preserve raw evidence separately |

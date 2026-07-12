@@ -4,7 +4,7 @@
 
 | Service | Account Owner | Business Email | Recovery Email | MFA | Recovery Codes Stored | Shared | Emergency Access | Status/Notes |
 |---|---|---|---|---|---|---|---|---|
-| GitHub | [OWNER] | [BUSINESS EMAIL] | [RECOVERY] | [ ] | [SECURE LOCATION—NO CODE] | No shared password | [BACKUP ADMIN] | Verify organization/repository owner |
+| GitHub | Founder | Founder-controlled; not stored in Git | Founder-controlled; not stored in Git | Not yet verified | [SECURE LOCATION—NO CODE] | No shared password | No backup owner yet | `Orendalis` organization created 2026-07-12 on GitHub Free; one owner; no repositories; organization-wide 2FA enforcement pending |
 | Vercel | [OWNER] | [BUSINESS EMAIL] | [RECOVERY] | [ ] | [LOCATION] | No | [BACKUP ADMIN] | Planned/configuration needed |
 | Supabase | [OWNER] | [BUSINESS EMAIL] | [RECOVERY] | [ ] | [LOCATION] | No | [BACKUP ADMIN] | Local active; production pending |
 | Registrar | [OWNER] | [BUSINESS EMAIL] | [RECOVERY] | [ ] | [LOCATION] | No | [BACKUP ADMIN] | Pending |

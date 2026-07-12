@@ -107,6 +107,14 @@
 - **Operational state:** Purchase confirmed. Registrar initialization, renewal settings, recovery contacts, privacy, lock, DNSSEC, DNS, email, and deployment remain to be verified or configured separately.
 - **Lesson:** Acquisition establishes control of the domain; security configuration and trademark clearance remain independent responsibilities.
 
+## 2026-07-12 — Orendalis GitHub organization created
+
+- **Summary:** The founder created the `Orendalis` organization on GitHub Free.
+- **Why it mattered:** The company gained a dedicated organization boundary for future source-code ownership, access control, and production integrations.
+- **Evidence:** `https://github.com/Orendalis`; organization settings showed one owner and no repositories at verification.
+- **Operational state:** The existing repository remains at `executivecareeros/executive-career-os`. No repository was renamed or transferred. Organization-wide 2FA enforcement and repository security controls remain pending.
+- **Lesson:** Organization creation and repository migration are separate milestones with separate access and rollback risks.
+
 ## Future milestones
 
 - **Private beta planning:** Playbook complete; invitations and live beta remain unverified.
