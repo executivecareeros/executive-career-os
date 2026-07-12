@@ -1,0 +1,49 @@
+# Version Readiness Checklist
+
+> Purpose: Define evidence gates for increasing product exposure, commitment, scale, and organizational complexity.
+
+## Universal Gates
+
+- [ ] Scope and success criteria are approved.
+- [ ] Product, engineering, security, privacy, legal, support, and operational owners are identified.
+- [ ] Required tests pass and residual risks are recorded.
+- [ ] Monitoring, incident response, rollback, backup, and recovery are verified.
+- [ ] Documentation, known limitations, and support paths are current.
+- [ ] Release authority explicitly approves the evidence and exposure level.
+
+## Private Beta
+
+- [ ] Invitation-only access and participant expectations are defined.
+- [ ] Production authentication, isolation, email, HTTPS, recovery, and support are validated.
+- [ ] Feedback, issue reporting, deletion, privacy, and rollback processes exist.
+- [ ] Known limitations are shared without marketing claims.
+
+## Public Beta
+
+- [ ] Capacity, abuse prevention, rate limits, monitoring, and support can handle public access.
+- [ ] Legal notices, privacy controls, accessibility, security review, and status communication are ready.
+- [ ] Onboarding, recovery, data export/deletion, and incident escalation are validated at realistic load.
+- [ ] Public claims match verified product behavior.
+
+## Version 1
+
+- [ ] Core workflows meet defined reliability, usability, and accessibility standards.
+- [ ] Data integrity, migration, backup, recovery, and support commitments are sustainable.
+- [ ] Pricing, billing, terms, service expectations, and financial controls are approved if commercialized.
+- [ ] Technical and operational debt is within explicitly accepted limits.
+
+## Enterprise
+
+- [ ] Governance, roles, audit, provisioning, isolation, retention, export, and deletion satisfy approved requirements.
+- [ ] Security assurance, vendor review, incident notification, contractual support, and business continuity are mature.
+- [ ] Sales commitments cannot exceed product and operating capability.
+- [ ] Enterprise configuration does not weaken individual data ownership or explainability principles.
+
+## International Expansion
+
+- [ ] Target-country customer evidence and operating rationale are documented.
+- [ ] Legal, privacy, tax, employment, accessibility, language, data-location, and support requirements are reviewed professionally.
+- [ ] Localization covers meaning, workflow, policy, and support—not translation alone.
+- [ ] Currency, payment, vendor, incident, recovery, and time-zone operations are sustainable.
+
+Readiness is earned by evidence. An unchecked gate remains a blocker unless an authorized decision explicitly accepts and records the residual risk.
