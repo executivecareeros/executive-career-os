@@ -99,6 +99,14 @@
 - **Lesson:** A launch requires operational memory as much as product capability.
 - **Commits:** `bbe2121`, `6a7599a`, `bddd48e`.
 
+## 2026-07-12 — Orendalis domain acquired
+
+- **Summary:** The founder purchased `orendalis.com` from Porkbun for a one-year registration term.
+- **Why it mattered:** The company gained control of its primary production identity for future website, email, and private-beta use.
+- **Evidence:** Porkbun order `10969058`; registration status `SUCCESS`; purchase amount USD 11.08.
+- **Operational state:** Purchase confirmed. Registrar initialization, renewal settings, recovery contacts, privacy, lock, DNSSEC, DNS, email, and deployment remain to be verified or configured separately.
+- **Lesson:** Acquisition establishes control of the domain; security configuration and trademark clearance remain independent responsibilities.
+
 ## Future milestones
 
 - **Private beta planning:** Playbook complete; invitations and live beta remain unverified.
