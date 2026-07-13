@@ -11,7 +11,7 @@
 | Source | GitHub founder account | `executivecareeros/executive-career-os`, branch `main` | Active; not in Orendalis org |
 | Company GitHub | GitHub `Orendalis` organization | No company-owned repository documented | Free; one owner; 2FA enforcement pending |
 | Legacy hosting | Vercel `executivecareeros' projects` | `executive-career-os`, `executive-career-os-play` | Hobby; unchanged |
-| Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | First deployment marked Ready but serves only Vercel `404`; project root/framework configuration is incorrect |
+| Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | Next.js deployment `4hTYNCufvM2sErX6N5JCzxhV8vqN` Ready; unauthenticated smoke test passed |
 | Local database | Local Supabase | `executive-career-os-local` | Active; fictional data only |
 | Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; Auth URLs and ten migrations complete; no seed or users |
 | AI work tools | OpenAI | ChatGPT Team; GPT Work / Codex | Use confirmed; account and billing details need verification |
@@ -21,7 +21,7 @@
 ## Environments and URLs
 
 - **Local:** `http://localhost:3000`; local Supabase; fictional data only.
-- **Staging:** Vercel and Supabase resources exist. The first Vercel deployment used commit `cf9e1b4`, but the assigned origin returns Vercel `404` because `frontend` was not selected as the project root.
+- **Staging:** Vercel and Supabase resources exist. Vercel builds `frontend` as Next.js and serves commit `cf9e1b4` at `https://project-qmvs1.vercel.app`.
 - **Production:** Not created or accepted. No real personal data is allowed.
 - **Domain:** `orendalis.com`; no application custom hostname configured.
 - **Supabase API origin:** provider-generated URL exists; consult the provider dashboard rather than copying values into documentation.
@@ -40,7 +40,7 @@
 
 ## Critical Blockers
 
-1. Staging deployment exists but did not build the application because Vercel uses an empty root directory and framework preset `Other`.
+1. Complete supervised fictional Founder Acceptance; no user or invitation has been created yet.
 2. Critical provider MFA, recovery, and backup-owner controls are not evidenced.
 3. Microsoft DKIM remains blocked by an open support case.
 4. Restore proof and monitoring remain incomplete.
@@ -48,8 +48,8 @@
 
 ## Next Five Founder Actions
 
-1. Approve correcting the Vercel root directory to `frontend` and confirming Next.js detection.
-2. Redeploy once, then run the unauthenticated smoke and security checks before founder acceptance.
+1. Approve and execute the fictional staging Founder Acceptance journey.
+2. Add and validate the missing application security headers before production acceptance.
 3. Complete a staging backup-and-restore rehearsal and record measured recovery evidence.
 4. Establish minimal staging monitoring and ownership.
 5. Review Microsoft case `2607130050001139` and record the factual response without changing DNS prematurely.

@@ -34,8 +34,8 @@ No item in the provisioning section may begin until the founder approves the nam
 
 - [ ] Founder creates/approves the Orendalis-controlled project.
 - [ ] Connect only the approved repository and commit/branch.
-- [ ] Set project root to `frontend`. **Blocked:** first deployment used an empty root and served only Vercel `404`.
-- [ ] Confirm Vercel detects Next.js, then use Node 24 and `npm run build`.
+- [x] Set project root to `frontend`. The failed empty-root deployment remains documented as historical evidence.
+- [x] Confirm Vercel detects Next.js, then use Node 24 and the default Next.js build.
 - [ ] Keep the standard Next.js output; no custom output directory.
 - [ ] Use a provider-generated staging hostname; do not alter DNS.
 - [ ] Restrict team access and enable MFA/recovery controls.
@@ -134,15 +134,15 @@ No item in the provisioning section may begin until the founder approves the nam
 
 ## 11. Smoke and Founder Acceptance
 
-- [ ] Landing/login surface loads over HTTPS.
-- [ ] Public registration without invitation is blocked.
+- [x] Landing/login surface loads over HTTPS.
+- [x] Public registration without invitation is blocked.
 - [ ] Founder creates a fictional invitation.
 - [ ] Fictional executive registers, verifies email, and completes onboarding.
 - [ ] Beta Journey naturally reaches History, Blueprint, Opportunity, Atlas Assessment, Decision, Career Ledger, and Feedback.
 - [ ] Logout and return preserve the Workspace.
 - [ ] Export and account-closure requests remain controlled.
 - [ ] Desktop, tablet, 390-pixel mobile, and keyboard-only checks pass.
-- [ ] Browser console and provider logs show no unexplained error.
+- [x] Browser console and provider logs show no unexplained error during the unauthenticated route checks.
 - [ ] No real personal data was used.
 
 **Rollback:** revoke the fictional invitation/session, disable the staging deployment, preserve issue evidence, and return the candidate to development.
