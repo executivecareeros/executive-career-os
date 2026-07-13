@@ -19,7 +19,7 @@
 
 | Stage | Status | Expected behavior | Observation | Friction, confusion, trust, UX, or delight evidence |
 |---|---|---|---|---|
-| Invitation | Blocked | Founder creates one expiring invitation and sees its secret once. | Public registration was denied and a valid, expiring local invitation opened the invited-registration screen. The application exposes no founder invitation-creation control, so the acceptance invitation required a local database fixture. | The access boundary is clear and reassuring. Founder self-service invitation operations cannot be accepted through the product; see FA-001. |
+| Invitation | Passed after correction | Founder creates one expiring invitation and sees its secret once. | The founder created a fictional invitation in Company Control, copied the one-time development link, completed invited registration and onboarding, and observed its state become Accepted. The same management route returned 404 for the invited non-founder account. | FA-001 is resolved. Delivery is honestly labeled Development Mode and email resend remains unavailable until verified email infrastructure is connected. |
 | Registration | Passed | Only the matching invited email can register. | The founder's first submission displayed `Invitation is invalid.` The invitation remained valid and Pending. A controlled retry with the exact invited email created the fictional account and reached Welcome. | The invitation link does not preserve or identify the invited email. The generic error clears both fields and led to repeated failure; see FA-002. |
 | Email verification | Blocked | Verification succeeds without exposing tokens. | The local Supabase configuration has automatic email confirmation enabled. Registration created an immediately authenticated account, so no verification message or link could be evaluated. | The page promises email verification, but this RC1 environment cannot prove that journey; see FA-003. |
 | Login | Passed | Verified account starts a secure session. | The fictional account authenticated successfully, rendered the secure Welcome screen, and accepted the still-pending invitation. | Copy is calm and appropriately positions the Career Ledger. No password or token was recorded. |
@@ -68,6 +68,8 @@ FA-008 applied the same accepted progression behavior after the founder saved Bl
 FA-011 replaced the raw persisted reasoning JSON with an executive-readable assessment. The deterministic engine and snapshot were not changed. The decision control now defaults to Atlas's displayed recommendation and remains disabled until reasoning exists.
 
 FA-012 standardized all six stage headings in title case. FA-013 and FA-014 made successful decision and feedback stages visibly final and advanced the next stage. FA-015 corrected returning-user routing by preserving a validated local route and bypassing first-time Welcome for established Workspaces.
+
+FA-001 was corrected after the original journey required a database fixture. Company Control now provides founder-only invitation creation, status visibility, revocation, and one-time development-link copying. The complete create, register, onboard, and Accepted-state journey passed direct retest; a non-founder received the not-found boundary.
 
 ## Founder Suggestions Preserved
 

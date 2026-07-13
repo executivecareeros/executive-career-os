@@ -11,20 +11,20 @@
 ### FA-001 — Founder cannot create or manage a private-beta invitation in the product
 
 - Severity: High
-- Status: Open
+- Status: Resolved
 - Stage: Invitation
 - Reproduction steps:
   1. Sign in as the configured founder.
   2. Open the founder Company Control surface.
   3. Attempt to create an expiring invitation for a fictional Executive Design Partner.
 - Expected result: A founder-only control creates one expiring invitation, displays its secret once, and exposes status without revealing the secret again.
-- Actual result: No invitation-creation or invitation-management control is available. A local database fixture was required to continue acceptance.
-- Evidence or screenshot: `screenshots/01-public-registration-blocked.png` and `screenshots/02-invited-registration.png` prove enforcement and consumption, but no product surface exists for creation.
+- Actual result: The founder-only Company Control surface now creates, lists, and revokes invitations; shows a secure development link once; and records Pending, Accepted, Expired, and Revoked states.
+- Evidence or screenshot: Founder retest on 13 July 2026 created a fictional invitation in Company Control, opened its generated link, registered the matching fictional account, completed onboarding, and observed the invitation change to Accepted. The same route returned 404 for the invited non-founder account.
 - Probable subsystem: Founder operations / invitation administration
 - Regression risk: Medium. Adding a control could weaken authorization or expose invitation secrets unless it reuses the existing permissioned server contract.
 - Trust impact: High for private-beta operations because the founder cannot independently invite the first Executive Design Partner through the approved product.
-- Workaround: Engineering can create a local or supervised database invitation; this is not an acceptable founder workflow.
-- Retest evidence: Pending.
+- Workaround: None required for development-mode invitation delivery. Email resend remains explicitly unavailable until verified email infrastructure is connected.
+- Retest evidence: Passed on 13 July 2026. Deterministic tests also cover creation, listing, duplicate prevention, expiry, revocation, replay prevention, state transitions, founder authorization, and unauthorized access.
 
 ### FA-002 — Invitation registration loses email context and gives a non-recoverable generic error
 

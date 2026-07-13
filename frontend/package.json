@@ -18,7 +18,8 @@
     "test:productivity": "node --experimental-transform-types scripts/test-productivity.mjs",
     "test:company-intelligence": "node --experimental-transform-types scripts/test-company-intelligence.mjs",
     "test:beta-workflow": "node scripts/test-beta-workflow.mjs",
-    "test:beta-isolation": "node scripts/test-beta-isolation.mjs"
+    "test:beta-isolation": "node scripts/test-beta-isolation.mjs",
+    "test:invitations": "node scripts/test-invitation-management.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",
