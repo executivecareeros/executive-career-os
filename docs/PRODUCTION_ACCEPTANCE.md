@@ -4,7 +4,7 @@
 
 ## Current Status
 
-**Not accepted.** No Release 0.6 staging or production deployment was created or changed during this audit.
+**Not accepted.** The first staging deployment was created from commit `cf9e1b4`, but Vercel used the repository root with framework preset `Other`. The Next.js application under `frontend` was not built, and the staging origin returns Vercel `404: NOT_FOUND`. Production was not created or changed.
 
 Local evidence now covers invitation enforcement, durable workflow repositories, deterministic persisted reasoning, atomic finalization, feedback isolation, and supervised lifecycle request intake. This evidence does not satisfy staging, restore, monitoring, legal, or founder-acceptance gates.
 

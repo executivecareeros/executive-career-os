@@ -34,8 +34,8 @@ No item in the provisioning section may begin until the founder approves the nam
 
 - [ ] Founder creates/approves the Orendalis-controlled project.
 - [ ] Connect only the approved repository and commit/branch.
-- [ ] Set project root to `frontend`.
-- [ ] Use Node 24 and `npm run build`.
+- [ ] Set project root to `frontend`. **Blocked:** first deployment used an empty root and served only Vercel `404`.
+- [ ] Confirm Vercel detects Next.js, then use Node 24 and `npm run build`.
 - [ ] Keep the standard Next.js output; no custom output directory.
 - [ ] Use a provider-generated staging hostname; do not alter DNS.
 - [ ] Restrict team access and enable MFA/recovery controls.
