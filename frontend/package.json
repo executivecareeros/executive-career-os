@@ -17,6 +17,7 @@
     ,"test:reasoning": "node --experimental-transform-types scripts/test-reasoning.mjs"
     ,"test:productivity": "node --experimental-transform-types scripts/test-productivity.mjs"
     ,"test:company-intelligence": "node --experimental-transform-types scripts/test-company-intelligence.mjs"
+    ,"test:beta-workflow": "node scripts/test-beta-workflow.mjs"
   },
   "dependencies": {
     "next": "16.2.10",
