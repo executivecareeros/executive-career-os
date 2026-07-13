@@ -53,3 +53,9 @@ Email-verification product correctness passed on 13 July 2026 through Supabase l
 - [ ] Currency, payment, vendor, incident, recovery, and time-zone operations are sustainable.
 
 Readiness is earned by evidence. An unchecked gate remains a blocker unless an authorized decision explicitly accepts and records the residual risk.
+## Founder bootstrap gate
+
+- [ ] One-time founder migration applied alone in staging.
+- [ ] Protected founder email configured and locked after success.
+- [ ] Verified founder, Owner membership, immutable audit, replay prevention, and Invitation Management confirmed.
+- [ ] No design-partner invitation created before separate approval.

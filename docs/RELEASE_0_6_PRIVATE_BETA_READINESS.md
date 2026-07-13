@@ -100,3 +100,6 @@ The local Supabase containers were started only for the runtime test and returne
 **A. READY FOR FOUNDER ACCEPTANCE ONLY** is the evidence-supported decision after workflow completion.
 
 Local architecture, the durable journey, and deterministic security checks are healthy. They do not prove staging or production operation. No design partner may be invited and no real personal data may be collected until founder acceptance and all external gates pass.
+## Founder bootstrap correction
+
+The fresh-environment circular dependency is resolved in code by migration `202607130011` and `/founder-bootstrap`. Release readiness remains pending until that migration is applied alone in staging, the protected founder address is configured, real email verification succeeds, and the atomic bootstrap acceptance checklist passes.

@@ -15,3 +15,6 @@
 Proxy is an early usability boundary, not the authorization authority. Every sensitive server mutation resolves the session again, and PostgreSQL remains fail-closed.
 
 Invitation cookies are single-purpose and removed after acceptance or a mismatched returning login. Callback acceptance is strict; ordinary login cannot be poisoned by stale invitation state. All generated URLs use the configured application origin to preserve cookie scope and prevent caller-controlled redirects.
+## Founder bootstrap session
+
+The founder bootstrap uses the same HTTP-only Supabase session lifecycle as every other authenticated route. The callback returns to `/founder-bootstrap`; the server and database independently require a confirmed email. No service-role session or browser-accessible administrative token is introduced.

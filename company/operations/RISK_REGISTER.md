@@ -23,3 +23,10 @@ Likelihood and impact use `Low`, `Medium`, `High`, or `Critical`. Status uses `O
 | R-015 | Delivery | CI is defined but has not executed in the GitHub organization | Medium | High | Run required checks after founder-approved repository integration; do not treat configuration as evidence | Founder / Engineering | Before staging | Open |
 
 Add evidence references without secrets. Closed risks remain in history with closure date and rationale.
+## Founder bootstrap risks
+
+| Risk | Likelihood | Impact | Mitigation | Owner | Review |
+|---|---|---|---|---|---|
+| Fresh environment cannot establish its first Owner | Low after staging acceptance | Critical | One-time verified, configured-email bootstrap with atomic creation and immutable shutdown audit | Founder / Security | Before staging acceptance |
+| Bootstrap is replayed or used by another account | Low | Critical | Auth-derived identity, verified-email equality, advisory lock, singleton audit constraint, and permanent configuration lock | Security | After first bootstrap |
+| SQL Editor history causes earlier migrations to be rerun | Medium | High | Apply only `202607130011`, verify checksum, preserve manual inventory, and baseline before automated pushes | Database Owner | Before migration |

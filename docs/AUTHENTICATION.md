@@ -25,3 +25,7 @@ After authentication, the active membership resolves the executive ID, workspace
 Set `NEXT_PUBLIC_DATA_ACCESS_MODE=supabase`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and one approved `NEXT_PUBLIC_APP_URL`. Server-only aliases may be used on the server. Configure Supabase Auth site URL and allow only the approved `/auth/confirm` and password-recovery destinations. Never configure a service-role value in a public variable.
 
 Local acceptance enables provider confirmation and captures fictional messages in Supabase Mailpit. This is simulated local delivery, not accepted external delivery.
+
+## Initial founder exception
+
+Invitation-only registration remains the default. A fresh environment has one narrow initialization route, `/founder-bootstrap`, guarded by verified Supabase Auth, the server-only founder address, a protected database configuration, empty-state checks, and permanent database replay protection. It creates no arbitrary users and exposes no privileged credential. After success, every later account requires a founder-issued invitation.

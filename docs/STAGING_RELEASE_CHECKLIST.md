@@ -149,6 +149,13 @@ No item in the provisioning section may begin until the founder approves the nam
 
 ## 12. Staging Acceptance Decision
 
+Before general founder acceptance:
+
+- [ ] Apply only migration `202607130011_initial_founder_bootstrap.sql` and record checksum `28c7b52857f5cd690a9e9099c76ca533b75ac5d7c17540aaf5f56f173d7792c3`.
+- [ ] Configure the protected founder email through the privileged function.
+- [ ] Complete the one-time verified founder bootstrap and replay check.
+- [ ] Stop before the first design-partner invitation.
+
 All of the following are mandatory:
 
 - [ ] Costs and owners are recorded.

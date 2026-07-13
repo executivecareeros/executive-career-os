@@ -35,6 +35,7 @@
 - No seed file, user, invitation, service-role credential, Supabase/Vercel integration, or deployment was created.
 - Migrations were applied in committed order and the schema is validated, but SQL Editor execution did not populate the Supabase CLI migration-history ledger. Reconcile or baseline that history before automated push workflows; do not blindly re-apply migrations.
 - Monitoring is limited to provider signals and manual checks; no external monitoring account or integration exists.
-- Current blocker: none for supervised staging Founder Acceptance. Production acceptance remains blocked by security-header hardening, restore proof, monitoring, and other production gates.
-- Next approval gate: explicit founder approval to begin the fictional staging Founder Acceptance journey; do not create an invitation or user before approval.
+- Founder bootstrap migration `202607130011_initial_founder_bootstrap.sql` exists locally with SHA-256 `28c7b52857f5cd690a9e9099c76ca533b75ac5d7c17540aaf5f56f173d7792c3`; it is not yet applied to staging. The earlier ten SQL Editor migrations must not be replayed.
+- Current blocker: the protected founder configuration and one-time bootstrap do not exist in staging until the new migration is applied and accepted. Production acceptance also remains blocked by security-header hardening, restore proof, monitoring, and other production gates.
+- Next approval gate: apply only migration `202607130011`, configure the founder email in the privileged database context, and run founder-bootstrap acceptance. Do not create a design-partner invitation.
 - No production Vercel or Supabase resource is claimed.

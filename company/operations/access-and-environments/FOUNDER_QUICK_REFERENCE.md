@@ -55,3 +55,6 @@
 5. Review Microsoft case `2607130050001139` and record the factual response without changing DNS prematurely.
 
 Detailed authoritative records are in this folder. Never place credentials or recovery material in them.
+## Immediate founder action — bootstrap
+
+Approve the controlled application of migration `202607130011` to staging. Then personally register or sign in at `/founder-bootstrap`, complete the real mailbox verification, review the Atlas Promise, and initialize once. Stop before issuing a design-partner invitation.

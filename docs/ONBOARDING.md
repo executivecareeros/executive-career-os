@@ -26,3 +26,6 @@ The function derives the provider identifier from `auth.uid()`, checks `auth.use
 
 The welcome experience explains that Career Ledger, Executive Blueprint, and Atlas are ready without presenting invented career content. Future context is requested naturally as the executive uses the product.
 > After Workspace creation, the executive may import professional history through the separate consent and review flow. Blueprint suggestions remain opt-in.
+## Founder initialization
+
+The founding user is established before normal invited onboarding through the one-time `/founder-bootstrap` flow. It creates only empty career contexts and a pending onboarding profile; it does not invent professional facts. All subsequent executives follow accepted-invitation provisioning.
