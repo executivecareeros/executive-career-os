@@ -119,3 +119,55 @@ There is no DNS mismatch and no incorrect Orendalis CNAME identified. DKIM signi
 Make no configuration change. Wait for Microsoft's DKIM key publication and synchronization window, then perform one read-only verification. If both Microsoft destination names remain `NXDOMAIN` and Defender still reports `CnameMissing` after 48 hours, escalate to Microsoft Support with this evidence.
 
 No DKIM, DNS, MX, SPF, DMARC, Proton, or mail-routing setting was changed during this verification.
+
+---
+
+## Final Migration Gate Verification — 2026-07-13 12:03:05 +03
+
+### Gate Result
+
+**EMAIL INFRASTRUCTURE NOT ACCEPTED**
+
+The mandatory DKIM decision gate failed. Microsoft Defender continues to report `CnameMissing` for `orendalis.com`, and DKIM remains disabled. In accordance with the approved stopping rule, no migration phase after DKIM readiness was started.
+
+### Microsoft Evidence
+
+- Custom accepted domain: `orendalis.com`
+- Domain type: Authoritative
+- DKIM status: `CnameMissing`
+- Signing state: Disabled
+- Selector recognition: Not complete
+- Default tenant domain status: `NoDKIMKeys` for `Orendalis.onmicrosoft.com`
+
+### Fresh Public DNS Evidence
+
+Public resolver: Cloudflare `1.1.1.1`.
+
+| Query | TTL | Result |
+| --- | ---: | --- |
+| `selector1._domainkey.orendalis.com` CNAME | 3600 | `selector1-orendalis-com._domainkey.orendalis.w-v1.dkim.mail.microsoft.` |
+| `selector2._domainkey.orendalis.com` CNAME | 3600 | `selector2-orendalis-com._domainkey.orendalis.w-v1.dkim.mail.microsoft.` |
+| Selector1 Microsoft destination TXT | Not applicable | `NXDOMAIN` |
+| Selector2 Microsoft destination TXT | Not applicable | `NXDOMAIN` |
+
+Both Orendalis CNAME records remain present and exactly match Microsoft's previously displayed requirements. Microsoft has still not published either destination hostname.
+
+### Blocker
+
+Microsoft-side DKIM key publication and synchronization remain incomplete. This is not an Orendalis CNAME mismatch.
+
+### Stopped Work
+
+The following actions were not performed:
+
+- DKIM signing was not enabled.
+- SPF was not modified.
+- MX records were not changed.
+- Autodiscover was not changed.
+- Mail-flow cutover and validation were not started.
+- Proton records were not removed.
+- DMARC and all other DNS records were not changed.
+
+### Recommended Next Action
+
+Use `MICROSOFT_DKIM_SUPPORT_PACKAGE.md` to open a Microsoft 365 support case. Do not resume the migration until Microsoft publishes both selector destinations, Defender no longer reports `CnameMissing`, and a separate controlled readiness verification succeeds.
