@@ -108,8 +108,9 @@ export function createCompanySnapshot(now = new Date()): CompanySnapshot {
     health: { generatedAt: now.toISOString(), overallHealth: "Unknown", departments: departmentHealth, metrics: companyMetrics },
     beta: {
       stagingReadiness: "Not Connected", productionReadiness: "Critical", supportCases: 1, betaHealth: "At Risk", dataState: "Unavailable",
-      summary: "Release 0.6 scope and operating gates are documented. The persistent journey, staging, restore, monitoring, lifecycle, legal, and founder-acceptance gates remain incomplete. No participant activity source is connected.",
+      summary: "The invitation-gated durable workflow passes local database and isolation tests. Staging, restore, monitoring, destructive lifecycle execution, legal review, and founder acceptance remain incomplete. No participant activity source is connected.",
       sourceReference: "docs/RELEASE_0_6_PRIVATE_BETA_READINESS.md",
+      workflowGates: { "Invitation enforcement":"Complete", "Durable import":"Complete", "Durable Blueprint":"Complete", "Durable opportunity":"Complete", "Atlas persistence":"Complete", "Atomic finalization":"Complete", "Ledger append":"Complete", "Feedback persistence":"Complete", "Lifecycle requests":"In Progress", "Staging readiness":"Not Connected", "CI status":"In Progress", "Founder acceptance":"Founder Acceptance Required" },
     },
     actions: rankFounderActions(founderActions, now), alerts: operationalAlerts, deadlines, risks: companyRisks, vendors: vendorHealth, supportCases, brief: buildDailyBrief(now, founderActions),
   };

@@ -58,6 +58,7 @@ export function CompanyControlCenter({ snapshot, betaTriage }: { snapshot: Compa
           ].map(([label, value]) => <article key={String(label)} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{label}</p><p className="mt-2 text-base font-semibold text-white">{value === undefined ? "Not Connected" : String(value)}</p><p className="mt-2 text-[11px] text-slate-600">{value === undefined ? "No operational source" : "Factual record"}</p></article>)}
         </div>
         <p className="mt-5 text-xs text-slate-600">Source: {snapshot.beta.sourceReference}. Missing participant activity is not represented as zero.</p>
+        <div className="mt-6 border-t border-white/10 pt-5"><h3 className="font-medium text-white">Workflow gates</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{Object.entries(snapshot.beta.workflowGates).map(([gate,status])=><article key={gate} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-sm text-slate-300">{gate}</p><StatusBadge tone={status==="Complete"?"success":status==="Blocked"?"warning":"neutral"}>{status}</StatusBadge></article>)}</div></div>
       </SectionCard>
 
       <SectionCard className="mt-8">

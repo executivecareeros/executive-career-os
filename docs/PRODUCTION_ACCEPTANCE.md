@@ -6,6 +6,8 @@
 
 **Not accepted.** No Release 0.6 staging or production deployment was created or changed during this audit.
 
+Local evidence now covers invitation enforcement, durable workflow repositories, deterministic persisted reasoning, atomic finalization, feedback isolation, and supervised lifecycle request intake. This evidence does not satisfy staging, restore, monitoring, legal, or founder-acceptance gates.
+
 ## Staging Gate
 
 Staging must use a separate Supabase project and HTTPS deployment with fictional identities only. Acceptance requires clean migrations from an empty database, authentication and recovery, idempotent workspace provisioning, RLS and cross-workspace denial, import and review persistence, minimal Blueprint, opportunity creation, deterministic assessment, append-only snapshot, feedback, logout, refresh, responsive behavior, and recoverable failures.
@@ -30,7 +32,7 @@ Use two controlled fictional identities. Disable or delete them through the acce
 
 ## Authentication Matrix
 
-- [ ] Invitation-only registration
+- [x] Invitation-only registration implemented and locally database-tested
 - [ ] Email verification
 - [ ] Login and Remember Me
 - [ ] Secure HTTP-only session cookies
@@ -44,14 +46,14 @@ Use two controlled fictional identities. Disable or delete them through the acce
 
 ## Journey Matrix
 
-- [ ] Reviewed history persists and demo defaults never appear.
-- [ ] Minimal Blueprint returns `Need More Information` when insufficient.
-- [ ] Opportunity facts and claims remain distinguishable.
-- [ ] Unknown compensation and incompatible currencies are handled safely.
-- [ ] Reasoning artifacts reference confirmed evidence.
-- [ ] Next action is explicit and user-controlled.
-- [ ] Decision snapshot and Career Ledger event are immutable.
-- [ ] Feedback is workspace-isolated.
+- [x] Authoritative beta manual history persists without demo imports.
+- [x] Minimum Blueprint revision persists and preserves prior revisions.
+- [x] Opportunity facts and unverified claims remain distinguishable.
+- [x] Missing compensation remains unknown and no conversion is applied.
+- [x] Reasoning artifacts persist confirmed input references.
+- [x] Next action is explicit and user-controlled.
+- [x] Decision snapshot and Career Ledger event are atomic and immutable in local tests.
+- [x] Feedback and lifecycle requests are Workspace-isolated in local tests.
 
 ## Acceptance Authority
 

@@ -66,4 +66,6 @@ The application shell, hierarchy, motion, loading, health summaries, focus mode,
 
 Release 0.6 is frozen around one Executive Opportunity Decision journey for 3–5 founder-selected design partners. The current-state audit found authentication and workspace provisioning foundations, but persistent import, minimal Blueprint, opportunity creation, user-bound reasoning, immutable journey completion, feedback, lifecycle controls, staging, restore proof, monitoring, legal acceptance, and founder acceptance remain incomplete.
 
-Current decision: **Not Ready**. Preparation is limited to fictional or sanitized data. No staging or production provider was connected and no participant was invited.
+The workflow-completion sprint added invitation-gated registration, a durable repository-backed `/beta-workflow`, persisted deterministic Atlas reasoning, atomic decision finalization, isolated feedback, and supervised lifecycle requests. Local database and RLS tests pass.
+
+Current decision: **Ready for founder acceptance only**. Preparation remains limited to fictional or sanitized data. No staging or production provider was connected and no participant was invited.

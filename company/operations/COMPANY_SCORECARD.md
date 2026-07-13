@@ -32,9 +32,9 @@ Use measured outcomes where possible. Label estimates and unknowns. Never conver
 
 | Area | Current | Status | Evidence | Next action |
 | --- | --- | --- | --- | --- |
-| Product | Primary beta journey audited; durable post-onboarding journey incomplete | At Risk | `docs/RELEASE_0_6_PRIVATE_BETA_READINESS.md` | Implement only the frozen workflow |
+| Product | Durable invitation-to-lifecycle beta route implemented locally | Watch | `docs/BETA_WORKFLOW_PERSISTENCE.md` | Complete founder acceptance in staging |
 | Infrastructure | No staging or production acceptance environment | Unknown | `docs/PRODUCTION_ACCEPTANCE.md` | Founder approval required before external setup |
-| Security | Local RLS evidence exists; production and lifecycle acceptance absent | At Risk | `docs/BETA_DATA_BOUNDARIES.md` | Keep real data blocked |
+| Security | Invitation, atomic finalization, and feedback/lifecycle isolation pass locally; production acceptance absent | At Risk | `docs/BETA_DATA_LIFECYCLE.md` | Keep real data blocked |
 | Recovery | No restore exercise | At Risk | `docs/BACKUP_AND_RESTORE_VERIFICATION.md` | Approve staging, then run isolated restore |
 | Operations | Design-partner procedures created; no invitations sent | Watch | `company/beta/` | Preserve No-Go until critical gates pass |
 | Customers | No design partners active | Unknown | No live source | Do not display zero as measured customer evidence |

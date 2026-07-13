@@ -1,0 +1,55 @@
+name: Release 0.6 Beta Workflow
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DOCKER_BIN: docker
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run validate:data
+      - run: npm run validate:database
+      - run: npm run test:repositories
+      - run: npm run test:import
+      - run: npm run test:memory
+      - run: npm run test:reasoning
+      - run: npm run test:productivity
+      - run: npm run test:company-intelligence
+      - name: Start isolated PostgreSQL validation container
+        working-directory: .
+        run: docker run --detach --name supabase_db_executive-career-os-local --env POSTGRES_PASSWORD=postgres supabase/postgres:15.8.1.060
+      - name: Replay migrations and fictional seed
+        working-directory: .
+        run: |
+          for attempt in {1..30}; do docker exec supabase_db_executive-career-os-local pg_isready -U postgres && break; sleep 2; done
+          docker exec supabase_db_executive-career-os-local psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "create schema if not exists auth; create or replace function auth.uid() returns uuid language sql stable as \$\$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid\$\$; create or replace function auth.jwt() returns jsonb language sql stable as \$\$select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb\$\$;"
+          for file in supabase/migrations/*.sql; do docker exec -i supabase_db_executive-career-os-local psql -U postgres -d postgres -v ON_ERROR_STOP=1 < "$file"; done
+          docker exec -i supabase_db_executive-career-os-local psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/seed.sql
+      - run: npm run test:database
+      - run: npm run test:rls
+      - run: npm run test:beta-workflow
+      - run: npm run test:beta-isolation
+      - name: Secret-pattern scan
+        working-directory: .
+        run: |
+          ! git grep -nEi '(service[_-]?role[_-]?key|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|sk-[A-Za-z0-9]{20,})' -- ':!company/operations/email/*'
+      - run: npm run build

@@ -127,3 +127,10 @@
 - **Evidence:** Release audit, environment and data boundaries, design-partner operations, go/no-go checklist, and acceptance documents.
 - **Operational state:** No staging or production environment was created, no real personal data was authorized, and no design partner was invited. Current decision is No-Go.
 - **Lesson:** Architectural coverage is not an accepted user journey; persistence, recovery, monitoring, lifecycle, and human acceptance require independent evidence.
+
+## 2026-07-13 — Release 0.6 beta workflow completed locally
+
+- **Summary:** The invitation-gated Executive Opportunity Decision journey gained durable history, Blueprint, opportunity, deterministic reasoning, atomic decision, feedback, and lifecycle request boundaries.
+- **Evidence:** Migrations `202607130008`, local PostgreSQL/RLS tests, `/beta-workflow`, Company Control triage, and Release 0.6 architecture documents.
+- **Operational state:** Ready for founder acceptance only. No external staging, production deployment, provider configuration, real personal data, or invitation occurred.
+- **Lesson:** Local transactional evidence is necessary but does not replace staging, recovery, monitoring, legal, or founder acceptance.

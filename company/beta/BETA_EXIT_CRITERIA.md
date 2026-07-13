@@ -24,3 +24,7 @@ Extend only to answer a specific unresolved learning question. Do not expand pro
 ## Progression
 
 Completion does not authorize public beta, billing, automation, or real-data expansion. Each requires a separate release and evidence gate.
+
+## Current Evidence
+
+The durable workflow and local isolation tests are implemented. No participant sessions have occurred, so none of the successful-completion criteria have been demonstrated with a design partner.

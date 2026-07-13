@@ -27,13 +27,16 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','72000000-0000-4000-8000-000000000002',true);
 select public.finalize_beta_decision('{"workspaceId":"73000000-0000-4000-8000-000000000001","blueprintRevisionId":"75000000-0000-4000-8000-000000000002","opportunityId":"76000000-0000-4000-8000-000000000002","opportunityVersion":1,"reasoningSnapshotId":"77000000-0000-4000-8000-000000000001","idempotencyKey":"78000000-0000-4000-8000-000000000001","selectedAction":"Monitor"}'::jsonb);
 select public.finalize_beta_decision('{"workspaceId":"73000000-0000-4000-8000-000000000001","blueprintRevisionId":"75000000-0000-4000-8000-000000000002","opportunityId":"76000000-0000-4000-8000-000000000002","opportunityVersion":1,"reasoningSnapshotId":"77000000-0000-4000-8000-000000000001","idempotencyKey":"78000000-0000-4000-8000-000000000001","selectedAction":"Monitor"}'::jsonb);
+do $$begin begin perform public.finalize_beta_decision('{"workspaceId":"73000000-0000-4000-8000-000000000001","blueprintRevisionId":"75000000-0000-4000-8000-000000000002","opportunityId":"76000000-0000-4000-8000-000000000002","opportunityVersion":2,"reasoningSnapshotId":"77000000-0000-4000-8000-000000000001","idempotencyKey":"78000000-0000-4000-8000-000000000002","selectedAction":"Apply"}'::jsonb);raise exception 'stale opportunity accepted';exception when serialization_failure then null;end;end$$;
 reset role;
 select 'decision_commits',count(*) from public.beta_decision_commits where workspace_id='73000000-0000-4000-8000-000000000001';
 select 'decision_snapshots',count(*) from public.atlas_decision_snapshots where domain_id='beta-decision-78000000-0000-4000-8000-000000000001';
 select 'ledger_events',count(*) from public.career_ledger_entries where domain_id='beta-decision-ledger-78000000-0000-4000-8000-000000000001';
 select 'next_actions',count(*) from public.executive_tasks where domain_id='beta-next-action-78000000-0000-4000-8000-000000000001';
+select 'partial_writes_after_failure',count(*) from public.beta_decision_commits where workspace_id='73000000-0000-4000-8000-000000000001' and idempotency_key='78000000-0000-4000-8000-000000000002';
 rollback;`).trim().split("\n");
 
 const counts = new Map(output.filter((line) => line.includes("|")).map((line) => { const [label, value] = line.split("|"); return [label, Number(value)]; }));
 for (const label of ["accepted_invites", "decision_commits", "decision_snapshots", "ledger_events", "next_actions"]) if (counts.get(label) !== 1) throw new Error(`${label}: expected 1, got ${counts.get(label)}`);
-pass("Beta workflow", "invitation acceptance/replay protection and atomic idempotent decision finalization passed");
+if(counts.get("partial_writes_after_failure")!==0)throw new Error("Stale finalization produced a partial write");
+pass("Beta workflow", "invitation acceptance/replay protection, stale-version rollback, and atomic idempotent finalization passed");

@@ -52,9 +52,9 @@ Automatic applications, live discovery, autonomous email or calendar actions, Wh
 
 ## Readiness Classification
 
-Current decision: **D. NOT READY**.
+Current decision: **A. READY FOR FOUNDER ACCEPTANCE ONLY**.
 
-The architecture is substantial, but the central user journey is not durably connected after onboarding. Staging, production isolation acceptance, backup/restore proof, monitoring, lifecycle controls, legal review, and founder acceptance also lack evidence.
+The authoritative beta route is durably connected after onboarding and local security tests pass. Staging, production isolation acceptance, backup/restore proof, monitoring, legal review, and founder acceptance still lack evidence. Real personal data and design-partner invitations remain prohibited.
 
 ## Critical Gates
 
@@ -96,6 +96,6 @@ The local Supabase containers were started only for the runtime test and returne
 
 ## Final Audit Decision
 
-**D. NOT READY** remains the only evidence-supported decision.
+**A. READY FOR FOUNDER ACCEPTANCE ONLY** is the evidence-supported decision after workflow completion.
 
-Local architecture and deterministic security checks are healthy, but they do not repair the missing persistent decision journey or prove its production operation. No design partner may be invited and no real personal data may be collected under the current evidence state.
+Local architecture, the durable journey, and deterministic security checks are healthy. They do not prove staging or production operation. No design partner may be invited and no real personal data may be collected until founder acceptance and all external gates pass.

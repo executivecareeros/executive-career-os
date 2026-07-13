@@ -20,7 +20,7 @@
 
 ### Release 0.6 evidence note — 2026-07-13
 
-Scope, participant profile, operating procedures, and evidence gates are documented under `company/beta/`. Invitation enforcement, end-to-end persistence, staging, production acceptance, restore proof, monitoring, lifecycle controls, legal approval, and founder acceptance remain incomplete. Status remains **No-Go**; fictional or sanitized data only.
+Scope, participant profile, operating procedures, and evidence gates are documented under `company/beta/`. Invitation enforcement, durable workflow persistence, atomic finalization, feedback isolation, and supervised lifecycle request intake pass local validation. Staging, production acceptance, restore proof, monitoring, destructive lifecycle execution, legal approval, and founder acceptance remain incomplete. Status is **Founder Acceptance Only**; fictional or sanitized data only.
 
 ## Public Beta
 

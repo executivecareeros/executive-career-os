@@ -43,9 +43,23 @@ Pages and components consume domain repositories. They do not import demonstrati
 
 ## Invitation Boundary
 
-Public registration is out of scope. A future invitation record must be founder-created, single-use, time-limited, normalized to the invited email, and consumed atomically during signup or provisioning. Invitation status must not reveal whether an email belongs to an account.
+Public registration is disabled. Founder-created invitations are Workspace-scoped, single-use, time-limited, normalized to the invited email, stored as digests, and accepted only by the matching authenticated identity. No invitation was created or sent during implementation.
 
-No invitation infrastructure is active in this release audit.
+## Staging Setup — Prepared, Not Executed
+
+1. Obtain founder approval identifying the selected Vercel and Supabase plans and exact cost.
+2. Create projects named as staging resources; never reuse production projects.
+3. Configure `NEXT_PUBLIC_DATA_ACCESS_MODE=supabase`, staging Supabase URL and anonymous key, `COMPANY_CONTROL_FOUNDER_EMAIL`, and a stable staging Server Action encryption key in the hosting secret store.
+4. Allow only the exact staging HTTPS authentication callback, recovery, and application origins.
+5. Disable public sign-up at the provider layer where supported; retain application invitation enforcement.
+6. Replay every migration from an empty database and load only documented fictional acceptance identities.
+7. Configure non-production email behavior so messages reach only founder-controlled test inboxes.
+8. Run RLS, invitation, persistence, decision, feedback, lifecycle, and browser acceptance.
+9. Test a database backup and restore into a separately isolated restore target.
+10. Enable approved error, uptime, authentication-abuse, and database alerts without payload or personal-data capture.
+11. Reset staging by deleting fictional Workspaces through the approved reset procedure; never copy production data into staging.
+
+Stop before steps 1–2 until founder approval is recorded.
 
 ## Acceptance Sequence
 
@@ -68,4 +82,4 @@ Founder approval is required before creating Supabase or hosting projects, conne
 
 ## Current State
 
-Local build, static database validation, PostgreSQL runtime constraints, append-only enforcement, and RLS identity tests pass. No staging or production environment has been created or accepted as part of Release 0.6.
+Local build, migration replay, PostgreSQL runtime constraints, append-only enforcement, invitation replay protection, atomic finalization, and feedback/lifecycle RLS tests pass. The founder acceptance script has not been performed. No staging or production environment has been created or accepted as part of Release 0.6.

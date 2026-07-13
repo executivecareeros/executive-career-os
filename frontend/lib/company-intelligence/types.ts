@@ -241,6 +241,7 @@ export interface BetaOperationalStatus {
   dataState: "Factual" | "Unavailable" | "Not Connected";
   summary: string;
   sourceReference: string;
+  workflowGates: Readonly<Record<"Invitation enforcement"|"Durable import"|"Durable Blueprint"|"Durable opportunity"|"Atlas persistence"|"Atomic finalization"|"Ledger append"|"Feedback persistence"|"Lifecycle requests"|"Staging readiness"|"CI status"|"Founder acceptance", "Complete"|"In Progress"|"Blocked"|"Not Started"|"Not Connected"|"Founder Acceptance Required">>;
 }
 export interface CompanySnapshot { generatedAt: string; environment: string; betaStage: string; health: CompanyScorecard; beta: BetaOperationalStatus; actions: FounderAction[]; alerts: OperationalAlert[]; deadlines: CompanyDeadline[]; risks: CompanyRisk[]; vendors: VendorHealth[]; supportCases: SupportCase[]; brief: DailyBrief; }
 export interface BoardSnapshot { generatedAt: string; companyHealth: CompanyHealth; criticalRisks: CompanyRisk[]; decisions: CompanyDecision[]; objectives: CompanyObjective[]; milestones: CompanyMilestone[]; }

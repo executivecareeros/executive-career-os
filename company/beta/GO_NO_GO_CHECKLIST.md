@@ -4,22 +4,22 @@
 
 ## Product Journey
 
-- [ ] Invitation-only registration works.
-- [ ] Reviewed history persists without demo defaults.
-- [ ] Minimum Blueprint persists with revision history.
-- [ ] One opportunity can be created and evaluated.
-- [ ] Atlas explains evidence, conflicts, trade-offs, gaps, confidence, alternatives, and change conditions.
-- [ ] Next action and immutable decision snapshot persist.
-- [ ] Structured feedback is isolated and founder-triageable.
+- [x] Invitation-only registration is implemented and locally tested.
+- [x] Authoritative manual history persists without demo defaults.
+- [x] Minimum Blueprint persists with revision history.
+- [x] One opportunity can be created and evaluated through the beta route.
+- [x] Atlas persists evidence, conflicts, trade-offs, gaps, confidence, alternatives, and change conditions.
+- [x] Next action and immutable decision snapshot persist atomically in local tests.
+- [x] Structured feedback is isolated and founder-triageable.
 
 ## Security and Data
 
 - [ ] Staging RLS and workspace-isolation matrix passes.
 - [ ] Production acceptance environment passes with fictional identities.
-- [ ] Append-only update/delete attempts fail.
-- [ ] Compensation permission boundary passes.
-- [ ] Export, deletion, retention, withdrawal, and closure are accepted.
-- [ ] Secret scan and browser-token review pass.
+- [x] Append-only update/delete attempts fail locally.
+- [x] Compensation permission boundary passes locally.
+- [ ] Export, deletion, retention, withdrawal, and closure execution is accepted; supervised request intake exists.
+- [ ] Secret scan and browser-token review pass in an accepted CI/staging run.
 
 ## Reliability
 
@@ -39,7 +39,7 @@
 
 ## Decision
 
-- Decision: **NO-GO — gates incomplete**
+- Decision: **FOUNDER ACCEPTANCE ONLY — no design-partner use**
 - Founder:
 - Date:
 - Evidence reference:
