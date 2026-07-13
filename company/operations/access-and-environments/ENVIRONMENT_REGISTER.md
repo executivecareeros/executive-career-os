@@ -11,7 +11,7 @@
 | Database project | `executive-career-os-local` | `Orendalis/orendalis-staging`; ref `ymprcckbrgkijnuwhdne` | Not Configured |
 | Region | Founder workstation | Central EU (Frankfurt), `eu-central-1` | Not Configured |
 | Authentication | Local Supabase Auth | Supabase Auth healthy; staging Site URL and six explicit staging/local redirect URLs configured | Not Configured |
-| Email | Local capture/test behavior | No accepted transactional path; Microsoft mailbox is company communications only | Not Configured |
+| Email | Local capture/test behavior | Resend custom SMTP configured in Supabase; sender verified; Microsoft quarantine blocker remains | Not Configured |
 | Repository | `executivecareeros/executive-career-os` | Same repository connected to Vercel | Same repository intended; not configured |
 | Branch | Current local branch; normally `main` | Production branch `main` | Not Configured |
 | Deployment | Local only | Commit `cf9e1b4`, Vercel deployment `4hTYNCufvM2sErX6N5JCzxhV8vqN`; Ready, 40-second Next.js build | None |
@@ -20,7 +20,7 @@
 | Monitoring | Local logs and deterministic tests | Provider signals only; external monitoring not configured | Not Configured |
 | Backup | Recreate from migrations and fictional seed | Provider backup observed as recent on 2026-07-13; restore proof not performed | Not Configured |
 | Readiness | Active development | Application deployed; unauthenticated smoke test passed. Authenticated founder acceptance, security-header hardening, monitoring, and restore rehearsal remain incomplete | Not created or accepted |
-| Blockers | None for local fictional development | No blocker to supervised Founder Acceptance. Security headers require hardening before production; migration-history baseline is required before future automated database push workflows | Full architecture, provider creation, security, legal/privacy, deployment, and acceptance |
+| Blockers | None for local fictional development | Authentication mail is quarantined by Microsoft Defender despite all authentication checks passing; security headers, restore proof, monitoring, and migration-history baseline also remain | Full architecture, provider creation, security, legal/privacy, deployment, and acceptance |
 | Owner | Founder / Engineering | Founder / Release Manager / Database Owner | Founder; future assignment required |
 
 ## Staging Facts
@@ -36,6 +36,9 @@
 - Migrations were applied in committed order and the schema is validated, but SQL Editor execution did not populate the Supabase CLI migration-history ledger. Reconcile or baseline that history before automated push workflows; do not blindly re-apply migrations.
 - Monitoring is limited to provider signals and manual checks; no external monitoring account or integration exists.
 - Founder bootstrap migration `202607130011_initial_founder_bootstrap.sql`, SHA-256 `28c7b52857f5cd690a9e9099c76ca533b75ac5d7c17540aaf5f56f173d7792c3`, was applied alone through the staging SQL Editor on 13 July 2026. The protected founder email configuration function then completed successfully. The earlier ten migrations were not replayed and the manual-history warning remains.
-- Current blocker: the three founder-bootstrap commits are local and cannot deploy until the authenticated GitHub Desktop session pushes `main`. Browser acceptance has therefore not begun. Production acceptance also remains blocked by security-header hardening, restore proof, monitoring, and other production gates.
-- Next approval gate: push the three reviewed commits, verify the Vercel staging deployment, and run the founder-bootstrap acceptance journey. Do not create a design-partner invitation.
+- Resend Free is verified for `auth.orendalis.com`. Supabase custom SMTP uses `Orendalis <no-reply@auth.orendalis.com>`; the credential is held only by Supabase and is not recorded here.
+- A controlled confirmation on 14 July 2026 passed SPF, DKIM, DMARC, and composite authentication. Microsoft Defender quarantined it as high-confidence phishing; it reached the Inbox only after administrator release.
+- The founder Auth user is email-confirmed. Read-only validation showed zero Executive Identities, Workspaces, founder-bootstrap audit events, and email-verification audit events, so bootstrap remains unexecuted.
+- Current blocker: unassisted authentication-email Inbox delivery has not passed.
+- Next approval gate: review the Microsoft Defender classification and approve one controlled deliverability retest before founder bootstrap or design-partner invitations.
 - No production Vercel or Supabase resource is claimed.
