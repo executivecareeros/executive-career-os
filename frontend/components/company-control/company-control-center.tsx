@@ -6,6 +6,7 @@ import { DailyBriefing } from "./daily-briefing";
 import { DepartmentCard } from "./department-card";
 import { FounderActionCard } from "./founder-action-card";
 import { HealthCard } from "./health-card";
+import type { FounderBetaTriage } from "@/lib/beta/types";
 
 function metricDisplay(metric: CompanyMetric) {
   const { observation } = metric;
@@ -13,7 +14,7 @@ function metricDisplay(metric: CompanyMetric) {
   return String(observation.value);
 }
 
-export function CompanyControlCenter({ snapshot }: { snapshot: CompanySnapshot }) {
+export function CompanyControlCenter({ snapshot, betaTriage }: { snapshot: CompanySnapshot; betaTriage?: FounderBetaTriage }) {
   const metric = (id: string) => snapshot.health.metrics.find((item) => item.definition.id === id)!;
   const healthCards = [
     ["Overall Company Health", snapshot.health.overallHealth, "Insufficient connected operational data for a reliable aggregate."],
@@ -57,6 +58,11 @@ export function CompanyControlCenter({ snapshot }: { snapshot: CompanySnapshot }
           ].map(([label, value]) => <article key={String(label)} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{label}</p><p className="mt-2 text-base font-semibold text-white">{value === undefined ? "Not Connected" : String(value)}</p><p className="mt-2 text-[11px] text-slate-600">{value === undefined ? "No operational source" : "Factual record"}</p></article>)}
         </div>
         <p className="mt-5 text-xs text-slate-600">Source: {snapshot.beta.sourceReference}. Missing participant activity is not represented as zero.</p>
+      </SectionCard>
+
+      <SectionCard className="mt-8">
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Founder-only triage</p><h2 className="mt-2 text-xl font-semibold">Beta Feedback and Lifecycle Requests</h2><p className="mt-2 text-sm text-slate-400">Workspace isolation is enforced by RLS. Descriptions are visible only to the submitting executive and the Workspace founder.</p></div><StatusBadge tone={betaTriage?"info":"neutral"}>{betaTriage?"Connected":"Not Connected"}</StatusBadge></div>
+        {betaTriage?<div className="mt-6 grid gap-6 xl:grid-cols-2"><div><h3 className="font-medium text-white">Feedback · {betaTriage.feedback.length}</h3><div className="mt-3 space-y-3">{betaTriage.feedback.length?betaTriage.feedback.map(item=><article key={item.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><div className="flex flex-wrap gap-2"><StatusBadge tone={item.severity==="Critical"?"warning":"neutral"}>{item.severity}</StatusBadge><StatusBadge>{item.status}</StatusBadge><span className="text-xs text-slate-500">{item.category} · {item.workflowStep}</span></div><p className="mt-3 text-sm text-slate-300">{item.description}</p><p className="mt-3 text-xs text-slate-600">Follow-up consent: {item.consentToFollowUp?"Yes":"No"} · {item.createdAt}</p></article>):<p className="text-sm text-slate-500">No feedback submitted.</p>}</div></div><div><h3 className="font-medium text-white">Lifecycle requests · {betaTriage.lifecycle.length}</h3><div className="mt-3 space-y-3">{betaTriage.lifecycle.length?betaTriage.lifecycle.map(item=><article key={item.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><div className="flex flex-wrap items-center justify-between gap-2"><p className="font-medium text-white">{item.requestType}</p><StatusBadge>{item.status}</StatusBadge></div><p className="mt-2 text-sm text-slate-400">{item.retentionStatus}</p><p className="mt-3 text-xs text-slate-600">{item.submittedAt}</p></article>):<p className="text-sm text-slate-500">No lifecycle requests submitted.</p>}</div></div></div>:<p className="mt-6 rounded-xl border border-white/10 bg-slate-950/35 p-4 text-sm text-slate-500">Operational beta data is unavailable outside authenticated Supabase mode.</p>}
       </SectionCard>
 
       <SectionCard className="mt-8"><div><p className="atlas-kicker">Founder action center</p><h2 className="mt-2 text-xl font-semibold">Today&apos;s Founder Priorities</h2><p className="mt-2 text-sm text-slate-400">Deterministically ordered by urgency, importance, deadline, and blocker state.</p></div><div className="mt-6 grid gap-4 xl:grid-cols-3">{snapshot.actions.slice(0, 7).map((action, index) => <FounderActionCard key={action.id} action={action} rank={index + 1}/>)}</div></SectionCard>

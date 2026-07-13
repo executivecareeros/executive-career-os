@@ -11,5 +11,5 @@ export async function resolveAuthenticatedRepositoryContext(): Promise<{ context
   const response = await client.request<ContextRow[]>("workspace_memberships?select=id,role,workspace_id,executive_identity_id&status=eq.Active&archived_at=is.null&limit=1");
   const row = response.data?.[0]; if (!row) return undefined;
   const requestId = randomUUID();
-  return { accessToken: session.accessToken, context: { requestId, actorId: row.executive_identity_id, correlationId: requestId, timestamp: new Date().toISOString(), workspace: { workspaceId: row.workspace_id, executiveId: row.executive_identity_id, membershipId: row.id, role: row.role, permissionScope: [], language: "en", timezone: "UTC", capabilities: [], requestId, isDemo: true } } };
+  return { accessToken: session.accessToken, context: { requestId, actorId: row.executive_identity_id, correlationId: requestId, timestamp: new Date().toISOString(), workspace: { workspaceId: row.workspace_id, executiveId: row.executive_identity_id, membershipId: row.id, role: row.role, permissionScope: [], language: "en", timezone: "UTC", capabilities: [], requestId, isDemo: false } } };
 }
