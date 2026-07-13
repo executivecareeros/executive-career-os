@@ -37,3 +37,24 @@ A material change proposal states purpose, owner, scope, affected systems and pe
 
 Emergency changes must be minimal, logged in real time where possible, validated immediately, and reviewed after stabilization. Emergency status does not authorize unrelated work.
 
+## Operational Change Standard
+
+| Change type | Examples | Approval | Validation | Rollback authority |
+| --- | --- | --- | --- | --- |
+| Standard | Repeated low-risk procedure with approved runbook and no production/data/security boundary change | Procedure owner within pre-approved scope | Runbook verification and evidence | Procedure owner; founder informed if rollback occurs |
+| Major release | Staging/production release, migration, integration, callback, security, domain, email, architecture, or data-boundary change | Explicit founder approval after evidence review | Full checklist and observation | Founder / Release Manager; Security Officer may order containment |
+| Emergency | Minimal action required to contain active harm or restore critical service | Founder or incident commander; retrospective approval if delay increases harm | Immediate targeted checks, then full regression | Incident commander within containment scope; database restore remains restricted |
+
+## Emergency Change Procedure
+
+1. Declare incident and severity.
+2. State why normal process would increase harm.
+3. Define the smallest reversible change, owner, evidence, and stop condition.
+4. Preserve the last known-good state and recovery path.
+5. Execute with a second reviewer when available; record single-founder execution explicitly.
+6. Verify security, integrity, authentication, and core service.
+7. Schedule retrospective review within two business days.
+
+## Release Approval
+
+Feature freeze does not imply release approval. Staging and production require separate decisions. Deployment does not imply acceptance until smoke tests, logs, security controls, and rollback evidence pass.

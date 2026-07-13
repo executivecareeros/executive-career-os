@@ -20,3 +20,5 @@
 5. Reconcile logs, decisions, costs, and lessons.
 
 Conduct an annual tabletop exercise. This is operational guidance, not legal succession authority.
+
+The executable continuity scenarios, minimum operating mode, verification, and exercise cadence are maintained in `company/operations/BUSINESS_CONTINUITY_PLAN.md`. This asset-level summary does not by itself prove recovery readiness.

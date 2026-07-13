@@ -22,6 +22,8 @@
 6. Validate security, data integrity, and user-visible behavior.
 7. Communicate facts, uncertainty, impact, and next update time.
 
+Classify every incident using `INCIDENT_SEVERITY.md` and select the applicable procedure under `runbooks/`. When severity is uncertain, begin at the higher credible level and reduce it only with evidence.
+
 ## Scenario Guidance
 
 | Scenario | Immediate action | Recovery principle |
@@ -44,4 +46,3 @@ Communicate promptly, calmly, and accurately. Distinguish confirmed facts from i
 ## Postmortem
 
 For material incidents, record timeline, impact, detection, contributing conditions, response, recovery, evidence, what worked, what failed, corrective actions, owners, dates, and verification. Use blameless analysis without removing accountability. Update playbooks, risks, tests, and architecture decisions where required.
-

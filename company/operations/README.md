@@ -30,3 +30,13 @@ The founder owns Operations until responsibility is formally delegated. Every op
 
 This folder contains the company operating system, founder routines, review templates, incident and change controls, risk register, company scorecard, readiness gates, and service-specific operational records such as `email/`.
 
+## Operational Readiness Library
+
+- `runbooks/` contains executable deployment and incident procedures.
+- `INCIDENT_SEVERITY.md` defines response and notification expectations.
+- `RELEASE_CALENDAR.md` defines feature-freeze through post-release rhythm.
+- `SECURITY_RECOVERY.md` defines provider and credential recovery paths.
+- `BUSINESS_CONTINUITY_PLAN.md` defines minimum operation during disruption.
+- `CHANGE_MANAGEMENT.md` defines standard, major, and emergency authority.
+
+These documents prepare operations; they do not prove that a live environment, restore, recovery method, or continuity exercise has passed.
