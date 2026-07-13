@@ -61,3 +61,9 @@ Deterministic cross-domain reasoning, trade-offs, questions, alternatives, expla
 Deterministic briefs, preparation, comparison, notes, tasks, follow-ups, and deadlines are established without automation or model providers.
 ## Atlas Executive Experience
 The application shell, hierarchy, motion, loading, health summaries, focus mode, responsive surfaces, and component standards are unified without new backend domains.
+
+## Release 0.6 — Private Beta Readiness
+
+Release 0.6 is frozen around one Executive Opportunity Decision journey for 3–5 founder-selected design partners. The current-state audit found authentication and workspace provisioning foundations, but persistent import, minimal Blueprint, opportunity creation, user-bound reasoning, immutable journey completion, feedback, lifecycle controls, staging, restore proof, monitoring, legal acceptance, and founder acceptance remain incomplete.
+
+Current decision: **Not Ready**. Preparation is limited to fictional or sanitized data. No staging or production provider was connected and no participant was invited.

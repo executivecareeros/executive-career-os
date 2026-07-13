@@ -18,6 +18,10 @@
 - [ ] Feedback, issue reporting, deletion, privacy, and rollback processes exist.
 - [ ] Known limitations are shared without marketing claims.
 
+### Release 0.6 evidence note — 2026-07-13
+
+Scope, participant profile, operating procedures, and evidence gates are documented under `company/beta/`. Invitation enforcement, end-to-end persistence, staging, production acceptance, restore proof, monitoring, lifecycle controls, legal approval, and founder acceptance remain incomplete. Status remains **No-Go**; fictional or sanitized data only.
+
 ## Public Beta
 
 - [ ] Capacity, abuse prevention, rate limits, monitoring, and support can handle public access.

@@ -16,6 +16,9 @@ Likelihood and impact use `Low`, `Medium`, `High`, or `Critical`. Status uses `O
 | R-008 | Single founder | Founder unavailability stops critical decisions and recovery | Medium | Critical | Authority matrix, continuity plan, backup administrator, secure recovery | Founder | Quarterly | Open |
 | R-009 | Security | Production data or secrets are exposed through configuration or access error | Low | Critical | Least privilege, RLS, secret controls, reviews, tests, incident plan | Security / Engineering | Monthly | Mitigating |
 | R-010 | Operational | Microsoft DKIM synchronization delays email migration | Medium | Medium | Preserve current routing, change freeze, timed recheck, support escalation after threshold | Founder / Operations | 2026-07-14 | Monitoring |
+| R-011 | Product | The primary beta journey is not durably connected after onboarding | High | Critical | Freeze scope; implement repository-backed import, Blueprint, opportunity, reasoning, snapshot, ledger, and feedback before invitations | Founder / Product | Before staging | Open |
+| R-012 | Privacy | Export, deletion, retention, consent withdrawal, and account closure are not accepted | High | Critical | Limit all preparation to fictional or sanitized data until technical and legal controls pass | Founder / Security | Before real data | Mitigating |
+| R-013 | Reliability | Backup and restore capability has policy but no successful exercise | High | Critical | Run an isolated provider-backed restore exercise with fictional data before beta | Founder / Infrastructure | Before production acceptance | Open |
+| R-014 | Operations | No accepted production monitoring or founder alert path exists | High | High | Approve a minimal provider, configure safe signals, and test escalation before invitations | Founder / Infrastructure | Before staging acceptance | Open |
 
 Add evidence references without secrets. Closed risks remain in history with closure date and rationale.
-

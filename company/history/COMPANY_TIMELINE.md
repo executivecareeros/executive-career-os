@@ -120,3 +120,10 @@
 - **Private beta planning:** Playbook complete; invitations and live beta remain unverified.
 - **First private beta:** [DATE / EVIDENCE / LESSON]
 - **Version 1.0:** [DATE / COMMIT / LESSON]
+
+## 2026-07-13 — Release 0.6 private-beta scope frozen
+
+- **Summary:** Orendalis selected the Executive Opportunity Decision as its single beta journey and created the design-partner operating and acceptance framework.
+- **Evidence:** Release audit, environment and data boundaries, design-partner operations, go/no-go checklist, and acceptance documents.
+- **Operational state:** No staging or production environment was created, no real personal data was authorized, and no design partner was invited. Current decision is No-Go.
+- **Lesson:** Architectural coverage is not an accepted user journey; persistence, recovery, monitoring, lifecycle, and human acceptance require independent evidence.
