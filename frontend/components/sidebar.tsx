@@ -19,7 +19,11 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       className={`${mobile ? "flex h-full" : "hidden h-screen lg:sticky lg:top-0 lg:flex"} atlas-scrollbar w-72 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-slate-950 px-5 py-6`}
       aria-label="Application sidebar"
     >
-      <Link href="/" onClick={onNavigate} className="group block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+      <Link
+        href="/"
+        onClick={onNavigate}
+        className="group block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+      >
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500 group-hover:text-slate-400">
           Executive Career OS
         </p>
@@ -58,14 +62,22 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
 
       <SectionCard className="mt-6 p-4 sm:p-4">
         <p className="text-sm font-medium text-white">Workspace health</p>
-        <p className="mt-1 text-xs leading-5 text-slate-500">Memory, reasoning, and productivity systems ready.</p>
+        <p className="mt-1 text-xs leading-5 text-slate-500">
+          Memory, reasoning, and productivity systems ready.
+        </p>
         <div className="mt-3 flex items-center gap-2 text-xs text-emerald-300">
-          <span className="h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
+          <span
+            className="h-2 w-2 rounded-full bg-emerald-300"
+            aria-hidden="true"
+          />
           System ready
         </div>
       </SectionCard>
       <form action={logoutAction} className="mt-3">
-        <button className="w-full rounded-xl px-4 py-2 text-left text-sm text-slate-500 transition hover:bg-white/5 hover:text-white">Sign out</button>
+        <input type="hidden" name="next" value={pathname} />
+        <button className="w-full rounded-xl px-4 py-2 text-left text-sm text-slate-500 transition hover:bg-white/5 hover:text-white">
+          Sign out
+        </button>
       </form>
     </aside>
   );

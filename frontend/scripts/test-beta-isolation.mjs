@@ -4,14 +4,14 @@ const output=psql(`begin;
 insert into public.executive_identities(id,auth_user_id,profile) values
 ('81000000-0000-4000-8000-000000000001','82000000-0000-4000-8000-000000000001','{"isDemo":true}'),
 ('81000000-0000-4000-8000-000000000002','82000000-0000-4000-8000-000000000002','{"isDemo":true}'),
-('81000000-0000-4000-8000-000000000003','82000000-0000-4000-8000-000000000003','{"isDemo":true}');
+('81000000-0000-4000-8000-000000000003','82000000-0000-4000-8000-000000000003','{"isDemo":true}') on conflict do nothing;
 insert into public.workspaces(id,owner_identity_id,name,workspace_type,created_by) values
 ('83000000-0000-4000-8000-000000000001','81000000-0000-4000-8000-000000000001','Fictional A','Personal','81000000-0000-4000-8000-000000000001'),
-('83000000-0000-4000-8000-000000000002','81000000-0000-4000-8000-000000000003','Fictional B','Personal','81000000-0000-4000-8000-000000000003');
+('83000000-0000-4000-8000-000000000002','81000000-0000-4000-8000-000000000003','Fictional B','Personal','81000000-0000-4000-8000-000000000003') on conflict do nothing;
 insert into public.workspace_memberships(id,workspace_id,executive_identity_id,role,status,created_by) values
 (gen_random_uuid(),'83000000-0000-4000-8000-000000000001','81000000-0000-4000-8000-000000000001','Owner','Active','81000000-0000-4000-8000-000000000001'),
 (gen_random_uuid(),'83000000-0000-4000-8000-000000000001','81000000-0000-4000-8000-000000000002','Executive','Active','81000000-0000-4000-8000-000000000001'),
-(gen_random_uuid(),'83000000-0000-4000-8000-000000000002','81000000-0000-4000-8000-000000000003','Owner','Active','81000000-0000-4000-8000-000000000003');
+(gen_random_uuid(),'83000000-0000-4000-8000-000000000002','81000000-0000-4000-8000-000000000003','Owner','Active','81000000-0000-4000-8000-000000000003') on conflict do nothing;
 insert into public.beta_feedback(id,domain_id,workspace_id,executive_identity_id,route,workflow_step,category,severity,description,product_version) values
 (gen_random_uuid(),'feedback-a','83000000-0000-4000-8000-000000000001','81000000-0000-4000-8000-000000000002','/beta-workflow','Reasoning','Trust Concern','High','Fictional feedback A','0.6'),
 (gen_random_uuid(),'feedback-b','83000000-0000-4000-8000-000000000002','81000000-0000-4000-8000-000000000003','/beta-workflow','Blueprint','Friction','Low','Fictional feedback B','0.6');

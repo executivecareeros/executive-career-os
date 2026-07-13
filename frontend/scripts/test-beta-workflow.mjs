@@ -16,7 +16,7 @@ select set_config('request.jwt.claims','{"sub":"72000000-0000-4000-8000-00000000
 select public.accept_beta_invitation(invite_token) from beta_test_invite;
 do $$declare token text:=(select invite_token from beta_test_invite);begin begin perform public.accept_beta_invitation(token);raise exception 'invite replay accepted';exception when sqlstate '55000' then null;end;end$$;
 reset role;
-select 'accepted_invites',count(*) from public.workspace_invitations where status='Accepted' and accepted_by_auth_user is not null;
+select 'accepted_invites',count(*) from public.workspace_invitations where workspace_id='73000000-0000-4000-8000-000000000001' and status='Accepted' and accepted_by_auth_user is not null;
 insert into public.executive_blueprints(id,domain_id,workspace_id,payload,created_by) values('75000000-0000-4000-8000-000000000001','beta-blueprint','73000000-0000-4000-8000-000000000001','{}','71000000-0000-4000-8000-000000000002');
 insert into public.executive_blueprint_revisions(id,domain_id,workspace_id,sequence_number,occurred_at,correlation_id,payload,created_by,blueprint_id,revision_number) values('75000000-0000-4000-8000-000000000002','beta-blueprint-r1','73000000-0000-4000-8000-000000000001',1,now(),gen_random_uuid(),'{"status":"Active"}','71000000-0000-4000-8000-000000000002','75000000-0000-4000-8000-000000000001',1);
 insert into public.companies(id,domain_id,workspace_id,name,payload,created_by) values('76000000-0000-4000-8000-000000000001','fictional-company','73000000-0000-4000-8000-000000000001','Fictional Company','{}','71000000-0000-4000-8000-000000000002');

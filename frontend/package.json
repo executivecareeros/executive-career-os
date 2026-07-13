@@ -6,24 +6,26 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
-    ,"validate:data": "node scripts/validate-data.mjs",
-    "validate:database": "node scripts/validate-database.mjs"
-    ,"test:database": "node scripts/test-database.mjs",
+    "lint": "eslint",
+    "validate:data": "node scripts/validate-data.mjs",
+    "validate:database": "node scripts/validate-database.mjs",
+    "test:database": "node scripts/test-database.mjs",
     "test:rls": "node scripts/test-rls.mjs",
-    "test:repositories": "node --experimental-transform-types scripts/test-repositories.mjs"
-    ,"test:import": "node --experimental-transform-types scripts/test-import.mjs"
-    ,"test:memory": "node --experimental-transform-types scripts/test-memory.mjs"
-    ,"test:reasoning": "node --experimental-transform-types scripts/test-reasoning.mjs"
-    ,"test:productivity": "node --experimental-transform-types scripts/test-productivity.mjs"
-    ,"test:company-intelligence": "node --experimental-transform-types scripts/test-company-intelligence.mjs"
-    ,"test:beta-workflow": "node scripts/test-beta-workflow.mjs"
-    ,"test:beta-isolation": "node scripts/test-beta-isolation.mjs"
+    "test:repositories": "node --experimental-transform-types scripts/test-repositories.mjs",
+    "test:import": "node --experimental-transform-types scripts/test-import.mjs",
+    "test:memory": "node --experimental-transform-types scripts/test-memory.mjs",
+    "test:reasoning": "node --experimental-transform-types scripts/test-reasoning.mjs",
+    "test:productivity": "node --experimental-transform-types scripts/test-productivity.mjs",
+    "test:company-intelligence": "node --experimental-transform-types scripts/test-company-intelligence.mjs",
+    "test:beta-workflow": "node scripts/test-beta-workflow.mjs",
+    "test:beta-isolation": "node scripts/test-beta-isolation.mjs"
   },
   "dependencies": {
+    "mammoth": "^1.12.0",
     "next": "16.2.10",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "unpdf": "^1.6.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
