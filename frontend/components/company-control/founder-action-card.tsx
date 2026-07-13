@@ -3,7 +3,7 @@ import type { FounderAction } from "@/lib/company-intelligence";
 
 export function FounderActionCard({ action, rank }: { action: FounderAction; rank: number }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-slate-950/35 p-5">
+    <article className="min-w-0 rounded-2xl border border-white/10 bg-slate-950/35 p-5">
       <div className="flex items-start gap-4">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-400/10 text-sm font-semibold text-blue-300" aria-label={`Priority ${rank}`}>{rank}</span>
         <div className="min-w-0 flex-1">
@@ -18,7 +18,7 @@ export function FounderActionCard({ action, rank }: { action: FounderAction; ran
             <div><dt className="text-slate-600">Owner</dt><dd className="mt-1 text-slate-300">{action.owner}</dd></div>
             <div><dt className="text-slate-600">Founder approval</dt><dd className="mt-1 text-slate-300">{action.approvalRequired ? "Required" : "Not required for the next read-only step"}</dd></div>
           </dl>
-          <Link href={`/company-control#sources`} className="mt-4 inline-flex text-xs font-medium text-blue-300 hover:text-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Source: {action.sourceLink}</Link>
+          <Link href="/company-control#sources" className="mt-4 inline-flex max-w-full break-all text-xs font-medium text-blue-300 hover:text-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Source: {action.sourceLink}</Link>
         </div>
       </div>
     </article>
