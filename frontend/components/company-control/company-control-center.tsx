@@ -45,6 +45,20 @@ export function CompanyControlCenter({ snapshot }: { snapshot: CompanySnapshot }
 
       <div className="mt-8"><DailyBriefing brief={snapshot.brief}/></div>
 
+      <SectionCard className="mt-8">
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Release 0.6</p><h2 className="mt-2 text-xl font-semibold">Private Beta Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{snapshot.beta.summary}</p></div><StatusBadge tone="warning">No-Go · {snapshot.beta.betaHealth}</StatusBadge></div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+          {[
+            ["Staging readiness", snapshot.beta.stagingReadiness], ["Production readiness", snapshot.beta.productionReadiness],
+            ["Active design partners", snapshot.beta.activeDesignPartners], ["Invitations sent", snapshot.beta.invitationsSent],
+            ["Invitations accepted", snapshot.beta.invitationsAccepted], ["Onboarding completed", snapshot.beta.onboardingCompleted],
+            ["Assessments completed", snapshot.beta.assessmentsCompleted], ["Feedback waiting", snapshot.beta.feedbackWaiting],
+            ["Critical bugs", snapshot.beta.criticalBugs], ["Privacy requests", snapshot.beta.privacyRequests], ["Support cases", snapshot.beta.supportCases],
+          ].map(([label, value]) => <article key={String(label)} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{label}</p><p className="mt-2 text-base font-semibold text-white">{value === undefined ? "Not Connected" : String(value)}</p><p className="mt-2 text-[11px] text-slate-600">{value === undefined ? "No operational source" : "Factual record"}</p></article>)}
+        </div>
+        <p className="mt-5 text-xs text-slate-600">Source: {snapshot.beta.sourceReference}. Missing participant activity is not represented as zero.</p>
+      </SectionCard>
+
       <SectionCard className="mt-8"><div><p className="atlas-kicker">Founder action center</p><h2 className="mt-2 text-xl font-semibold">Today&apos;s Founder Priorities</h2><p className="mt-2 text-sm text-slate-400">Deterministically ordered by urgency, importance, deadline, and blocker state.</p></div><div className="mt-6 grid gap-4 xl:grid-cols-3">{snapshot.actions.slice(0, 7).map((action, index) => <FounderActionCard key={action.id} action={action} rank={index + 1}/>)}</div></SectionCard>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[1.4fr_.6fr]">

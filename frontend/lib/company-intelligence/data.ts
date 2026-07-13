@@ -106,6 +106,11 @@ export function createCompanySnapshot(now = new Date()): CompanySnapshot {
   return {
     generatedAt: now.toISOString(), environment: process.env.NODE_ENV === "production" ? "Production build" : "Local development", betaStage: "Private beta preparation",
     health: { generatedAt: now.toISOString(), overallHealth: "Unknown", departments: departmentHealth, metrics: companyMetrics },
+    beta: {
+      stagingReadiness: "Not Connected", productionReadiness: "Critical", supportCases: 1, betaHealth: "At Risk", dataState: "Unavailable",
+      summary: "Release 0.6 scope and operating gates are documented. The persistent journey, staging, restore, monitoring, lifecycle, legal, and founder-acceptance gates remain incomplete. No participant activity source is connected.",
+      sourceReference: "docs/RELEASE_0_6_PRIVATE_BETA_READINESS.md",
+    },
     actions: rankFounderActions(founderActions, now), alerts: operationalAlerts, deadlines, risks: companyRisks, vendors: vendorHealth, supportCases, brief: buildDailyBrief(now, founderActions),
   };
 }

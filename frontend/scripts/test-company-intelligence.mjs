@@ -39,6 +39,8 @@ assert.ok(snapshot.brief.sections.every((section) => section.evidence.length > 0
 assert.ok(snapshot.actions.length >= 3);
 assert.equal(snapshot.health.departments.length, 15);
 assert.equal(snapshot.health.metrics.find((metric) => metric.definition.id === "revenue").observation.value, undefined);
+assert.equal(snapshot.beta.activeDesignPartners, undefined, "Missing beta activity must remain unavailable rather than becoming zero.");
+assert.equal(snapshot.beta.productionReadiness, "Critical");
 assert.equal(new Set(metricRegistry.map((metric) => metric.canonicalKey)).size, metricRegistry.length, "Canonical metric keys must be unique.");
 assert.ok(metricRegistry.length >= 60, "The registry must cover company, users, sales, marketing, support, finance, and engineering foundations.");
 

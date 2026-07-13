@@ -225,7 +225,24 @@ export interface RecommendedFounderAction { action: FounderAction; expectedOutco
 export interface DailyBrief { id: string; title: string; generatedAt: string; status: "Demonstration Briefing" | "Live Briefing"; sections: BriefingSection[]; recommendations: RecommendedFounderAction[]; unknowns: string[]; }
 
 export interface CompanyScorecard { generatedAt: string; overallHealth: CompanyHealth; departments: DepartmentHealth[]; metrics: CompanyMetric[]; }
-export interface CompanySnapshot { generatedAt: string; environment: string; betaStage: string; health: CompanyScorecard; actions: FounderAction[]; alerts: OperationalAlert[]; deadlines: CompanyDeadline[]; risks: CompanyRisk[]; vendors: VendorHealth[]; supportCases: SupportCase[]; brief: DailyBrief; }
+export interface BetaOperationalStatus {
+  stagingReadiness: CompanyHealth;
+  productionReadiness: CompanyHealth;
+  activeDesignPartners?: number;
+  invitationsSent?: number;
+  invitationsAccepted?: number;
+  onboardingCompleted?: number;
+  assessmentsCompleted?: number;
+  feedbackWaiting?: number;
+  criticalBugs?: number;
+  privacyRequests?: number;
+  supportCases: number;
+  betaHealth: CompanyHealth;
+  dataState: "Factual" | "Unavailable" | "Not Connected";
+  summary: string;
+  sourceReference: string;
+}
+export interface CompanySnapshot { generatedAt: string; environment: string; betaStage: string; health: CompanyScorecard; beta: BetaOperationalStatus; actions: FounderAction[]; alerts: OperationalAlert[]; deadlines: CompanyDeadline[]; risks: CompanyRisk[]; vendors: VendorHealth[]; supportCases: SupportCase[]; brief: DailyBrief; }
 export interface BoardSnapshot { generatedAt: string; companyHealth: CompanyHealth; criticalRisks: CompanyRisk[]; decisions: CompanyDecision[]; objectives: CompanyObjective[]; milestones: CompanyMilestone[]; }
 
 export interface CompanyDataSource {
