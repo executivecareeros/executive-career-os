@@ -79,17 +79,17 @@ The following evidence is local only. It does not substitute for isolated stagin
 | Validation | Result | Evidence or limitation |
 |---|---|---|
 | Lint | Pass | ESLint completed without an error. |
-| Production build | Pass | Next.js 16.2.10 compiled, type-checked, and generated 113 pages. The successful run required network access for the existing Google Fonts dependency. |
+| Production build | Pass | Next.js 16.2.10 compiled, type-checked, and generated 114 pages, including `/beta-workflow`. The successful run required network access for the existing Google Fonts dependency. |
 | Deterministic data validation | Pass | 13 integrity checks passed. |
 | Static database validation | Pass | Seven migrations, 52 tables, RLS coverage, append-only trigger coverage, authenticated membership policies, and seed safety checks passed. |
-| PostgreSQL runtime validation | Pass | Local PostgreSQL 15.8 reported 52 tables, 133 policies, 11 triggers, and three security-definer helpers; runtime constraints and authenticated onboarding passed. |
+| PostgreSQL runtime validation | Pass | Local PostgreSQL 15.8 reported 58 tables, 143 policies, 11 triggers, and eight security-definer helpers; invited onboarding and clean migration replay passed. |
 | RLS identity matrix | Pass | Local tests denied cross-workspace, unentitled compensation, invited-only, no-membership, and anonymous access. |
 | Append-only history | Pass | Local runtime tests rejected update and delete for all seven protected historical tables and accepted a corrective append. |
 | Repository, import, memory, reasoning, productivity, and Company Control tests | Pass | All existing deterministic suites passed. Node emitted non-blocking experimental TypeScript-transform and module-type warnings. |
-| Company Control browser smoke test | Pass with correction | `/company-control` returned HTTP 200, rendered the factual Release 0.6 readiness panel, and produced no captured console warnings or errors. Long evidence references were corrected so cards remain within the mobile content column. |
+| Browser smoke test | Pass within local boundary | `/register` returned HTTP 200 and refused registration without an invitation. `/company-control` returned HTTP 200 and displayed Atomic Finalization as Complete, Staging as Not Connected, and Founder Acceptance Required. No captured console warnings or errors. |
 | Desktop and mobile responsive inspection | Partial pass | The readiness panel is usable at 1440 × 1000 and 390 × 844. The Next.js development toolbar contributes non-product overflow in local development; product content was contained after the correction. Tablet, keyboard-only, screen-reader, and production-device acceptance remain unperformed. |
 | Local response observations | Informational | Five development requests to `/company-control` completed in 39–107 ms after the first 475 ms compilation request. This is not a production performance baseline. |
-| CI checks on every pull request | Not established | No verified CI execution evidence was produced in this release audit. |
+| CI checks on every pull request | Prepared, not executed | `.github/workflows/release-0.6.yml` defines install, lint, static validation, clean migration replay, runtime/RLS/beta tests, secret-pattern scan, and build. GitHub execution is not yet evidence. |
 | Staging, restore, monitoring, legal, lifecycle, and founder acceptance | Not performed | Each requires a separate implementation or external approval gate. |
 
 The local Supabase containers were started only for the runtime test and returned to their prior stopped state afterward. No staging, production, provider, DNS, Microsoft, or participant-data change was made.
