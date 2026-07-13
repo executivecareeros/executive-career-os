@@ -9,7 +9,6 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 | Item | Owner | Blocker | Next action | Dependency | Target | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | Verify founder recovery controls for Porkbun, GitHub, Vercel, Supabase, Microsoft, OpenAI, and password manager | Founder / Security | MFA, passkeys, backup factors, recovery material, and backup owners are not evidenced | Conduct provider-by-provider access review without recording secrets | Trusted founder device | Before staging secrets/deployment | Open |
-| Configure Vercel staging variables | Founder / Release Manager | Supabase Auth and migration acceptance | Add the seven approved variable names/scopes without exposing values; do not add service-role credentials | Successful database configuration | Founder to Set | Not Started |
 | Complete first staging deployment and acceptance | Founder / Release Manager | Variables, callbacks, migrations, security checks | Deploy once, smoke test full fictional journey, collect evidence, decide readiness | Prior critical items | Founder to Set | Not Started |
 
 ## High

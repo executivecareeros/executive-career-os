@@ -4,6 +4,15 @@
 
 > **Historical audit notice — 13 July 2026:** This audit predates resource creation. Vercel Pro workspace/project and Supabase Pro organization/project now exist. Current staging truth is maintained in `company/operations/access-and-environments/ENVIRONMENT_REGISTER.md`; this document remains the pre-creation audit baseline.
 
+## Current Operational Addendum — 13 July 2026
+
+- `Orendalis/orendalis-staging` exists in Vercel Pro and is connected to `executivecareeros/executive-career-os` on `main`.
+- Exactly seven approved variables are configured for the staging project's **Production** environment. Preview and Development are intentionally unconfigured. All seven are marked Sensitive in Vercel; no value is recorded in the repository.
+- No service-role key, database password, connection string, JWT secret, deployment, custom domain, user, or invitation was introduced.
+- The validated staging schema contains all ten committed migrations in order. Because they were executed through Supabase SQL Editor, the Supabase CLI migration-history ledger is not populated.
+- The missing CLI ledger is an operational limitation, not a schema failure. Future automated push workflows must reconcile or baseline migration history first; migrations must not be blindly re-applied.
+- No first staging deployment has occurred. Founder approval remains required before deployment.
+
 **Audit date:** 13 July 2026
 
 **Scope:** Repository and documented provider state only

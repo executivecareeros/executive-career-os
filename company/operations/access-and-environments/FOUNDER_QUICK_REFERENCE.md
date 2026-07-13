@@ -11,7 +11,7 @@
 | Source | GitHub founder account | `executivecareeros/executive-career-os`, branch `main` | Active; not in Orendalis org |
 | Company GitHub | GitHub `Orendalis` organization | No company-owned repository documented | Free; one owner; 2FA enforcement pending |
 | Legacy hosting | Vercel `executivecareeros' projects` | `executive-career-os`, `executive-career-os-play` | Hobby; unchanged |
-| Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | Repository connected; assigned hostname confirmed; no deployment, variables, or custom domain |
+| Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | Repository connected; seven Production variables configured; no deployment or custom domain |
 | Local database | Local Supabase | `executive-career-os-local` | Active; fictional data only |
 | Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; Auth URLs and ten migrations complete; no seed or users |
 | AI work tools | OpenAI | ChatGPT Team; GPT Work / Codex | Use confirmed; account and billing details need verification |
@@ -40,7 +40,7 @@
 
 ## Critical Blockers
 
-1. Staging has no Vercel environment variables or deployment.
+1. Staging has no deployment; seven Production-scope variables are configured.
 2. Critical provider MFA, recovery, and backup-owner controls are not evidenced.
 3. Microsoft DKIM remains blocked by an open support case.
 4. Restore proof and monitoring remain incomplete.
@@ -48,8 +48,8 @@
 
 ## Next Five Founder Actions
 
-1. Approve and configure the seven reviewed Vercel staging variables without a service-role credential.
-2. Deploy staging and run the full fictional founder-acceptance journey.
+1. Approve the first staging deployment.
+2. Deploy once and run the full fictional founder-acceptance journey.
 3. Complete a staging backup-and-restore rehearsal and record measured recovery evidence.
 4. Establish minimal staging monitoring and ownership.
 5. Review Microsoft case `2607130050001139` and record the factual response without changing DNS prematurely.
