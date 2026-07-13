@@ -58,6 +58,7 @@ select 'promise_status',count(*) from public.bootstrap_initial_founder(false) wh
 select 'promise_rejection_records',count(*) from public.executive_identities;
 
 create temporary table bootstrap_result as select * from public.bootstrap_initial_founder(true);
+reset role;
 select 'identity',count(*) from public.executive_identities where auth_user_id='97000000-0000-4000-8000-000000000001';
 select 'workspace',count(*) from public.workspaces;
 select 'owner',count(*) from public.workspace_memberships where role='Owner' and status='Active';
@@ -68,6 +69,8 @@ select 'atlas',count(*) from public.atlas_decision_snapshots;
 select 'audit',count(*) from public.founder_bootstrap_audit_events;
 select 'beta_workflow',count(*) from public.beta_workflow_states where executive_identity_id=(select identity_id from bootstrap_result);
 select 'locked',count(*) from public.founder_bootstrap_configuration where locked_at is not null;
+set local role authenticated;
+select set_config('request.jwt.claim.sub','97000000-0000-4000-8000-000000000001',true);
 select 'replay_status',count(*) from public.bootstrap_initial_founder(true) where status='ALREADY_BOOTSTRAPPED';
 select 'replay_identity_count',count(*) from public.executive_identities;
 select 'founder_permission',count(*) from public.workspaces w where public.has_workspace_permission(w.id,'Invite Members');
