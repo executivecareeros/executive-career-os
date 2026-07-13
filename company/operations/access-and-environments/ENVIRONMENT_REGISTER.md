@@ -38,7 +38,9 @@
 - Founder bootstrap migration `202607130011_initial_founder_bootstrap.sql`, SHA-256 `28c7b52857f5cd690a9e9099c76ca533b75ac5d7c17540aaf5f56f173d7792c3`, was applied alone through the staging SQL Editor on 13 July 2026. The protected founder email configuration function then completed successfully. The earlier ten migrations were not replayed and the manual-history warning remains.
 - Resend Free is verified for `auth.orendalis.com`. Supabase custom SMTP uses `Orendalis <no-reply@auth.orendalis.com>`; the credential is held only by Supabase and is not recorded here.
 - A controlled confirmation on 14 July 2026 passed SPF, DKIM, DMARC, and composite authentication. Microsoft Defender quarantined it as high-confidence phishing; it reached the Inbox only after administrator release.
-- The founder Auth user is email-confirmed. Read-only validation showed zero Executive Identities, Workspaces, founder-bootstrap audit events, and email-verification audit events, so bootstrap remains unexecuted.
+- The founder Auth user is email-confirmed. Founder bootstrap completed once on 14 July 2026 in approximately three seconds. Exactly one Executive Identity, Workspace, Owner membership, settings record, Blueprint context, Career Ledger initialization, Atlas context, and immutable bootstrap audit exists.
+- Replay returned `ALREADY_BOOTSTRAPPED`; the initialization route now reports completion and the Company Control indicators are permanently closed.
+- Dashboard, Company Control, Invitation Management, and the protected Workspace route were accessible to the verified founder session. All eight bootstrap-relevant tables have RLS enabled.
 - Current blocker: unassisted authentication-email Inbox delivery has not passed.
-- Next approval gate: review the Microsoft Defender classification and approve one controlled deliverability retest before founder bootstrap or design-partner invitations.
+- Next approval gate: review the Microsoft Defender classification and approve one controlled deliverability retest before any design-partner invitation.
 - No production Vercel or Supabase resource is claimed.

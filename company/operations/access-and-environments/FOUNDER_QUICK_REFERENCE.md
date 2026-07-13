@@ -13,7 +13,7 @@
 | Legacy hosting | Vercel `executivecareeros' projects` | `executive-career-os`, `executive-career-os-play` | Hobby; unchanged |
 | Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | Next.js deployment `4hTYNCufvM2sErX6N5JCzxhV8vqN` Ready; unauthenticated smoke test passed |
 | Local database | Local Supabase | `executive-career-os-local` | Active; fictional data only |
-| Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; Auth URLs and ten migrations complete; no seed or users |
+| Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; founder Auth verified and one-time bootstrap complete; no seed data |
 | AI work tools | OpenAI | ChatGPT Team; GPT Work / Codex | Use confirmed; account and billing details need verification |
 | Monitoring / analytics | None | None | Not Configured |
 | Legal / trademark provider | None evidenced | None | Not Configured |
@@ -40,7 +40,7 @@
 
 ## Critical Blockers
 
-1. Complete supervised fictional Founder Acceptance; no user or invitation has been created yet.
+1. Resolve the Microsoft Defender quarantine blocker before creating a design-partner invitation.
 2. Critical provider MFA, recovery, and backup-owner controls are not evidenced.
 3. Microsoft DKIM remains blocked by an open support case.
 4. Restore proof and monitoring remain incomplete.
@@ -48,13 +48,13 @@
 
 ## Next Five Founder Actions
 
-1. Approve and execute the fictional staging Founder Acceptance journey.
+1. Review and remediate the Microsoft Defender classification, then approve one controlled deliverability retest.
 2. Add and validate the missing application security headers before production acceptance.
 3. Complete a staging backup-and-restore rehearsal and record measured recovery evidence.
 4. Establish minimal staging monitoring and ownership.
 5. Review Microsoft case `2607130050001139` and record the factual response without changing DNS prematurely.
 
 Detailed authoritative records are in this folder. Never place credentials or recovery material in them.
-## Immediate founder action — bootstrap
+## Founder bootstrap
 
-Approve the controlled application of migration `202607130011` to staging. Then personally register or sign in at `/founder-bootstrap`, complete the real mailbox verification, review the Atlas Promise, and initialize once. Stop before issuing a design-partner invitation.
+Completed once on 14 July 2026. Replay protection returned `ALREADY_BOOTSTRAPPED`; Company Control and Invitation Management are available. No design-partner invitation has been created.

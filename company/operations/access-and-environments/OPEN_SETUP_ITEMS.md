@@ -9,7 +9,7 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 | Item | Owner | Blocker | Next action | Dependency | Target | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | Verify founder recovery controls for Porkbun, GitHub, Vercel, Supabase, Microsoft, OpenAI, and password manager | Founder / Security | MFA, passkeys, backup factors, recovery material, and backup owners are not evidenced | Conduct provider-by-provider access review without recording secrets | Trusted founder device | Before staging secrets/deployment | Open |
-| Complete first staging deployment and acceptance | Founder / Release Manager | Variables, callbacks, migrations, security checks | Deploy once, smoke test full fictional journey, collect evidence, decide readiness | Prior critical items | Founder to Set | Not Started |
+| Complete staging acceptance after transactional-email remediation | Founder / Release Manager | Microsoft Defender quarantines the authenticated confirmation message | Resolve classification, run one controlled email retest, then resume the fictional journey | Founder bootstrap complete | Founder to Set | In Progress |
 
 ## High
 

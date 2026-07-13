@@ -14,7 +14,7 @@
 - Provider delivery: Successful
 - Authentication: SPF pass, DKIM pass, DMARC pass, composite authentication pass
 - Founder Auth user: Email confirmed on 14 July 2026
-- Founder bootstrap: Not executed
+- Founder bootstrap: Completed once on 14 July 2026; replay protection verified
 
 ## Acceptance Blocker
 
