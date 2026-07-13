@@ -2,6 +2,8 @@
 
 > Purpose: Record the factual Vercel state established during the first staging creation phase.
 
+> **Historical milestone notice — 13 July 2026:** This file preserves the repository-connection milestone. Vercel later displayed the assigned hostname `https://project-qmvs1.vercel.app`; no deployment or environment variables exist. Use `company/operations/access-and-environments/ENVIRONMENT_REGISTER.md` for current state.
+
 **Verified:** 13 July 2026
 
 ## Project Metadata

@@ -8,10 +8,10 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 
 | Item | Owner | Blocker | Next action | Dependency | Target | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| Confirm Supabase staging dashboard health and first backup state | Founder / Database Owner | Automated dashboard session lacks project access; earlier record showed provisioning | Verify database, Auth, Storage, REST, dashboard, plan, and backup from the owning account; record metadata only | Supabase owner access | Before migrations | Open |
+| Restore controlled access to the owning Supabase staging project | Founder / Database Owner | Founder Safari session shows the healthy project, but the controlled operations session is authenticated to a non-owning account | Sign into the controlled browser using the exact account that owns project `ymprcckbrgkijnuwhdne`; do not share credentials | Trusted founder access | Before Auth configuration or migrations | Open |
 | Verify founder recovery controls for Porkbun, GitHub, Vercel, Supabase, Microsoft, OpenAI, and password manager | Founder / Security | MFA, passkeys, backup factors, recovery material, and backup owners are not evidenced | Conduct provider-by-provider access review without recording secrets | Trusted founder device | Before staging secrets/deployment | Open |
-| Apply and validate staging migrations | Founder / Database Owner | Health and explicit migration approval | Replay ten migrations in order; exclude seed; run RLS/database validation | Healthy Supabase staging project | Founder to Set | Not Started |
-| Configure staging variables and Supabase Auth callbacks | Founder / Release Manager | Final Vercel hostname and explicit configuration approval | Add seven approved variable names/scopes and exact staging-only callback URLs without exposing values | Migrations and verified project access | Founder to Set | Not Started |
+| Configure Supabase Auth URLs and apply/validate staging migrations | Founder / Database Owner | Correct project-owner access in controlled session | Set Site URL and exact route allowlist for `https://project-qmvs1.vercel.app`; replay ten migrations in order; exclude seed; validate database controls | Healthy Supabase staging project and restored owner access | Founder to Set | Not Started |
+| Configure Vercel staging variables | Founder / Release Manager | Supabase Auth and migration acceptance | Add the seven approved variable names/scopes without exposing values; do not add service-role credentials | Successful database configuration | Founder to Set | Not Started |
 | Complete first staging deployment and acceptance | Founder / Release Manager | Variables, callbacks, migrations, security checks | Deploy once, smoke test full fictional journey, collect evidence, decide readiness | Prior critical items | Founder to Set | Not Started |
 
 ## High
@@ -29,7 +29,7 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 | Item | Owner | Blocker | Next action | Dependency | Target | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | Verify invoices, renewals, tax, auto-renewal, and spend controls | Founder / FinOps | Provider billing portals not reviewed in this task | Review Porkbun, Microsoft, Vercel, Supabase, OpenAI invoices and alerts | Founder billing access | Month end | Open |
-| Select staging hostname | Founder / Release Manager | No deployment URL yet; DNS changes excluded | Prefer provider-generated hostname for first acceptance or separately approve custom hostname | First deployment | Founder to Set | Open |
+| Decide whether to retain the assigned staging hostname | Founder / Release Manager | Assigned hostname is confirmed but not deployed | Use `https://project-qmvs1.vercel.app` for first acceptance or separately approve a future custom hostname | Before Auth URL configuration | Founder to Set | Open |
 | Assign backup administrative authority | Founder | Single-founder governance | Designate a trusted backup owner with least privilege and documented activation rules | Company governance decision | Founder to Set | Open |
 | Reconcile stale asset and recovery records | Founder Operations | Older records intentionally preserved | Update their current-state summaries to point to this register without deleting history | Register approval | Next documentation review | Open |
 | Complete legal and privacy readiness | Founder / Legal | No legal provider, entity, or final trademark clearance evidenced | Obtain qualified advice and define private-beta documents/ownership | Founder decision | Before design partners | Open |
@@ -41,4 +41,3 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 | Decide monitoring/analytics vendors | Founder / Product / Privacy | Product need and privacy basis not approved | Compare only when staging signals require external tooling | Staging acceptance evidence | Founder to Set | Deferred |
 | Decide Meta/WhatsApp operational use | Founder | No approved use case | Keep unconfigured unless a justified notification workflow is approved | Future operations design | Future | Deferred |
 | Review repository transfer to `Orendalis` | Founder | Transfer not approved; governance controls incomplete | Prepare separate reversible transfer plan | GitHub security review | Future | Deferred |
-

@@ -11,9 +11,9 @@
 | Source | GitHub founder account | `executivecareeros/executive-career-os`, branch `main` | Active; not in Orendalis org |
 | Company GitHub | GitHub `Orendalis` organization | No company-owned repository documented | Free; one owner; 2FA enforcement pending |
 | Legacy hosting | Vercel `executivecareeros' projects` | `executive-career-os`, `executive-career-os-play` | Hobby; unchanged |
-| Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging` | Repository connected; no deployment/variables/domain |
+| Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | Repository connected; assigned hostname confirmed; no deployment, variables, or custom domain |
 | Local database | Local Supabase | `executive-career-os-local` | Active; fictional data only |
-| Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Created; final dashboard health/backup evidence open |
+| Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; no migrations; recent provider backup observed; Auth URLs not configured |
 | AI work tools | OpenAI | ChatGPT Team; GPT Work / Codex | Use confirmed; account and billing details need verification |
 | Monitoring / analytics | None | None | Not Configured |
 | Legal / trademark provider | None evidenced | None | Not Configured |
@@ -21,7 +21,7 @@
 ## Environments and URLs
 
 - **Local:** `http://localhost:3000`; local Supabase; fictional data only.
-- **Staging:** Vercel and Supabase resources exist. No deployed application URL exists yet.
+- **Staging:** Vercel and Supabase resources exist. Assigned origin: `https://project-qmvs1.vercel.app`; it has no deployment yet.
 - **Production:** Not created or accepted. No real personal data is allowed.
 - **Domain:** `orendalis.com`; no application custom hostname configured.
 - **Supabase API origin:** provider-generated URL exists; consult the provider dashboard rather than copying values into documentation.
@@ -40,19 +40,18 @@
 
 ## Critical Blockers
 
-1. Supabase owner-dashboard health and backup state are not yet recorded as accepted.
-2. Staging has no migrations, Auth callbacks, environment variables, or deployment.
+1. The controlled operations session cannot access the Supabase project that the founder can see in Safari.
+2. Staging has no migrations, Auth Site URL/redirects, environment variables, or deployment.
 3. Critical provider MFA, recovery, and backup-owner controls are not evidenced.
 4. Microsoft DKIM remains blocked by an open support case.
 5. Restore proof, monitoring, GitHub protection, and legal/private-beta readiness remain incomplete.
 
 ## Next Five Founder Actions
 
-1. Verify Supabase project health and backup state in the owning account.
-2. Review MFA, passkeys, recovery, and owner access for all critical providers.
-3. Approve the controlled staging migration and configuration phase.
-4. Review Microsoft case `2607130050001139` and record the factual response.
-5. Verify current invoices, renewals, auto-renewal, and spend alerts for Porkbun, Microsoft, Vercel, Supabase, and OpenAI.
+1. Sign the controlled browser into the Supabase account that owns `ymprcckbrgkijnuwhdne`, then complete Auth URL configuration and the ten migrations.
+2. Configure the seven approved Vercel staging variables only after database acceptance.
+3. Deploy staging and run the full fictional founder-acceptance journey.
+4. Complete a staging backup-and-restore rehearsal and record measured recovery evidence.
+5. Review Microsoft case `2607130050001139` and record the factual response without changing DNS prematurely.
 
 Detailed authoritative records are in this folder. Never place credentials or recovery material in them.
-

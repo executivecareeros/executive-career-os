@@ -19,3 +19,16 @@
 
 Recovery evidence records only readiness, owner, date, and outcome. It never records the actual factor, code, password, token, or precise physical location. A recovery path is not accepted until a controlled test succeeds.
 
+## Prioritized Founder Verification Checklist
+
+Complete this checklist from trusted founder-controlled devices. Record only **Verified**, **Not Verified**, **Not Configured**, or **Not Applicable**; never record factor values, codes, phone numbers, or exact recovery locations.
+
+| Priority | Provider / account | MFA verified | Passkey verified | Backup factor verified | Recovery codes stored | Billing owner verified | Recovery email verified | Recovery phone verified | Backup administrator | Last recovery test | Next required action |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Porkbun founder account | Not Verified | Not Verified | Not Verified | Not Verified | Founder documented; portal verification required | Not Verified | Not Verified | Not Configured | Never evidenced | Verify MFA, passkey availability, recovery, auto-renewal, domain lock, and DNS authority |
+| 2 | Microsoft 365 Orendalis tenant | Not Verified | Not Verified | Not Verified | Not Verified | Founder documented; invoice verification required | Not Verified | Not Verified | Not Configured | Never evidenced | Verify Global Administrator recovery and add an approved backup authority when governance permits |
+| 3 | GitHub founder account | Not Verified | Not Verified | Not Verified | Not Verified | Free plan; owner identity verification required | Not Verified | Not Verified | Not Configured | Never evidenced | Verify account recovery, active sessions, authorized apps, and organization ownership |
+| 4 | GitHub `Orendalis` organization | Organization enforcement not verified | Inherited from owner accounts | Owner-account backup not verified | Not Applicable at organization level | Free plan documented | Not Applicable | Not Applicable | Not Configured | Never evidenced | Review 2FA enforcement and add a second trusted owner before repository transfer |
+| 5 | Vercel `Orendalis` workspace | Not Verified | Not Verified | Not Verified | Not Verified | Founder documented; billing portal verification required | Not Verified | Not Verified | Not Configured | Never evidenced | Verify team owner, recovery, spend alerts, and Pro billing access before deployment |
+| 6 | Supabase `Orendalis` organization | Not Verified | Not Verified | Not Verified | Not Verified | Founder documented; billing portal verification required | Not Verified | Not Verified | Not Configured | Never evidenced | Resolve the account mismatch that prevents controlled project access, then verify recovery and backup access |
+| 7 | OpenAI ChatGPT Team / workspace | Not Verified | Not Verified | Not Verified | Not Verified | Not Verified | Not Verified | Not Verified | Founder to Verify | Never evidenced | Verify workspace owner, plan, billing, MFA, recovery, retention, and export access |

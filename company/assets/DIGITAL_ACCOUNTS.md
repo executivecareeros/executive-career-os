@@ -2,6 +2,8 @@
 
 > Purpose: Track control and recoverability of every important digital account without storing credentials.
 
+> **Historical register notice — 13 July 2026:** Current account and recovery state is maintained in `company/operations/access-and-environments/`. Rows describing Vercel or cloud Supabase as planned, Google Workspace as the intended email provider, or other setup placeholders are superseded current-state references. They remain here to preserve the earlier asset inventory.
+
 | Service | Account Owner | Business Email | Recovery Email | MFA | Recovery Codes Stored | Shared | Emergency Access | Status/Notes |
 |---|---|---|---|---|---|---|---|---|
 | GitHub | Founder | Founder-controlled; not stored in Git | Founder-controlled; not stored in Git | Not yet verified | [SECURE LOCATION—NO CODE] | No shared password | No backup owner yet | `Orendalis` organization created 2026-07-12 on GitHub Free; one owner; no repositories; organization-wide 2FA enforcement pending |

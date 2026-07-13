@@ -2,6 +2,8 @@
 
 > Purpose: Define safe recovery paths for company accounts and credentials without recording secrets.
 
+> **Current-state pointer — 13 July 2026:** Recovery procedures remain valid, but provider-state assertions such as “No project exists” are historical. Use `company/operations/access-and-environments/ACCESS_AND_RECOVERY_REGISTER.md` for current gaps and founder verification status.
+
 ## Universal Recovery Rules
 
 1. Use a trusted, patched device and independently typed provider URL.

@@ -2,6 +2,8 @@
 
 > Purpose: Control SaaS cost, renewal risk, ownership, and vendor dependency.
 
+> **Superseded current-state notice — 13 July 2026:** The authoritative subscription view is `company/operations/access-and-environments/SUBSCRIPTION_AND_BILLING_REGISTER.md`. Planned Vercel, local-only Supabase, and Google Workspace entries below reflect an earlier planning stage. Vercel Pro and Supabase Pro staging now exist; Microsoft 365 Business Basic is the selected email platform.
+
 | Provider | Purpose | Plan | Seats | Monthly Cost | Annual Cost | Renewal | Billing Account | Criticality | Alternative | Cancellation Difficulty | Status |
 |---|---|---|---:|---:|---:|---|---|---|---|---|---|
 | GitHub | Source control | [VERIFY] | [ ] | [VERIFY] | [VERIFY] | [DATE/N/A] | [OWNER] | Critical | GitLab/self-hosted | Medium—export and permissions | Active—verify |

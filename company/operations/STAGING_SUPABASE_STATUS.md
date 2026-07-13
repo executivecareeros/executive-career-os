@@ -2,6 +2,8 @@
 
 Purpose: Record safe operational metadata for the isolated Supabase staging project without storing credentials or secrets.
 
+> **Historical milestone notice — 13 July 2026:** This file records project creation while status was `Coming up…`. Later founder-dashboard evidence showed the project Healthy, with no migrations and a recent provider backup. Use `company/operations/access-and-environments/ENVIRONMENT_REGISTER.md` for current state.
+
 ## Project
 
 | Field | Verified value |

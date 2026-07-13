@@ -2,6 +2,8 @@
 
 > Purpose: Record every evidenced founder-funded contribution to Orendalis without assigning unverified prices or accounting treatment.
 
+> **Current-state pointer — 13 July 2026:** Vercel Pro and Supabase Pro staging are now active provider commitments. Their safe current plan and cost status is authoritative in `company/operations/access-and-environments/SUBSCRIPTION_AND_BILLING_REGISTER.md`. The original ledger rows remain unchanged until founder invoices complete the investment amounts.
+
 ## Ledger
 
 | Date | Vendor | Description | Category | Amount | Currency | VAT Included? | Paid By | Recurring? | Renewal Date | Repository Reference | Notes |
@@ -28,4 +30,3 @@ Domains; Hosting; Cloud; Microsoft 365; Supabase; Vercel; GitHub; OpenAI / ChatG
 | One-time monetary investment | Founder to complete. |
 
 Totals must not combine currencies until an approved reporting currency and exchange-rate policy exist.
-

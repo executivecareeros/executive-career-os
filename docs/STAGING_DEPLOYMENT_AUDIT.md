@@ -2,6 +2,8 @@
 
 > Purpose: Record the deployment requirements, provider position, operational dependencies, and unresolved approval gates for an isolated Orendalis staging environment.
 
+> **Historical audit notice — 13 July 2026:** This audit predates resource creation. Vercel Pro workspace/project and Supabase Pro organization/project now exist. Current staging truth is maintained in `company/operations/access-and-environments/ENVIRONMENT_REGISTER.md`; this document remains the pre-creation audit baseline.
+
 **Audit date:** 13 July 2026
 
 **Scope:** Repository and documented provider state only

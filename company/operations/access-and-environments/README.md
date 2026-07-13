@@ -17,6 +17,8 @@
 
 These files are authoritative for current operating state as of **13 July 2026**. Historical asset, launch, email, investment, and staging records remain evidence and must not be rewritten merely to look current.
 
+Current staging reconciliation: Vercel assigned `https://project-qmvs1.vercel.app` but no deployment exists; Supabase project `ymprcckbrgkijnuwhdne` is Healthy with no migrations and a recent provider backup; Auth URLs and Vercel variables are not configured. The controlled operations browser still requires access to the owning Supabase account before configuration can resume.
+
 ## Evidence Rules
 
 - Record only facts supported by provider evidence, repository history, or a founder-confirmed event.
@@ -38,4 +40,3 @@ When an older document conflicts with this register, preserve the older record a
 ## Security Boundary
 
 Never record passwords, access tokens, API keys, database passwords, service-role keys, card details, full recovery codes, session material, private messages, or secret callback values in this folder.
-

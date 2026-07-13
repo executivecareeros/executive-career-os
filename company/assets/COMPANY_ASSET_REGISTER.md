@@ -2,6 +2,8 @@
 
 > Purpose: Provide the master inventory of company-controlled and planned assets.
 
+> **Historical state notice — 13 July 2026:** Use `company/operations/access-and-environments/` for current provider, environment, access, and billing state. The Vercel, cloud Supabase, and Google Workspace rows below predate creation of Orendalis staging and selection of Microsoft 365. They are preserved as historical inventory rather than silently rewritten.
+
 ## Master inventory
 
 | Asset Name | Category | Owner | Status | Provider | Purchase Date | Renewal Date | Cost | Billing Cycle | Auto Renewal | Account Owner | Recovery Email | Criticality | Business Impact | Backup | Location | Notes |
