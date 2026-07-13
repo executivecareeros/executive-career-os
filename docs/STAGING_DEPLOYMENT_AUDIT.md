@@ -2,8 +2,10 @@
 
 > Purpose: Record the deployment requirements, provider position, operational dependencies, and unresolved approval gates for an isolated Orendalis staging environment.
 
-**Audit date:** 13 July 2026  
-**Scope:** Repository and documented provider state only  
+**Audit date:** 13 July 2026
+
+**Scope:** Repository and documented provider state only
+
 **External changes made:** None
 
 ## Executive Finding
