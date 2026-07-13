@@ -65,6 +65,21 @@ export function CompanyControlCenter({ snapshot, betaTriage }: { snapshot: Compa
       </SectionCard>
 
       <SectionCard className="mt-8">
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Operating discipline</p><h2 className="mt-2 text-xl font-semibold">Operations Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">Deployment, incident, recovery, security, release, and continuity procedures are documented before staging exists. Exercises and provider-specific verification remain pending.</p></div><StatusBadge tone="warning">Prepared · Not Exercised</StatusBadge></div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            ["Runbooks", "8 Documented", "Staging, production, rollback, database, authentication, Supabase, Vercel, and Microsoft procedures."],
+            ["Recovery Readiness", "Planned", "Recovery paths are defined; cloud restore, backup authority, and provider account recovery are unverified."],
+            ["Incident Readiness", "Severity Model Ready", "Severity 1–4, response targets, notifications, closure, and postmortem rules are documented but unexercised."],
+            ["Release Readiness", "Calendar Prepared", "Freeze, candidate, staging, production, observation, and hotfix gates are defined; no live release is scheduled."],
+            ["Business Continuity", "Plan Documented", "Single-founder, device, Internet, billing, domain, Microsoft, Supabase, Vercel, and GitHub scenarios are covered; exercises remain open."],
+            ["Provider Health", "Partial · Manual", "Microsoft is Watch; Vercel and Supabase are not connected; GitHub controls require verification."],
+          ].map(([label, value, detail]) => <article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></article>)}
+        </div>
+        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: company/operations/runbooks/ and company/operations/BUSINESS_CONTINUITY_PLAN.md</p><p className="mt-2 text-xs text-slate-600">Documentation is not proof of recovery. Readiness advances only after controlled exercises in an approved staging environment.</p></div>
+      </SectionCard>
+
+      <SectionCard className="mt-8">
         <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Release 0.6</p><h2 className="mt-2 text-xl font-semibold">Private Beta Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{snapshot.beta.summary}</p></div><StatusBadge tone="warning">No-Go · {snapshot.beta.betaHealth}</StatusBadge></div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
           {[
