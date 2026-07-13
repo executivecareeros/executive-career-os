@@ -4,7 +4,7 @@ import { psql, pass, sqlFile } from "./database-runtime.mjs";
 const migration=readFileSync(sqlFile("supabase/migrations/202607130011_initial_founder_bootstrap.sql"),"utf8");
 const proxy=readFileSync(sqlFile("frontend/proxy.ts"),"utf8");
 if(!proxy.includes('"/founder-bootstrap"'))throw new Error("Founder bootstrap is unreachable before authentication.");
-for(const evidence of ["pg_advisory_xact_lock","email_confirmed_at","Founder bootstrap requires a fresh environment","atlas_promise_accepted","founder_bootstrap_audit_events","revoke all on public.founder_bootstrap_configuration"]){if(!migration.includes(evidence))throw new Error(`Missing bootstrap safeguard: ${evidence}`);}
+for(const evidence of ["pg_advisory_xact_lock","email_confirmed_at","FRESH_STATE_REQUIRED","atlas_promise_accepted","founder_bootstrap_audit_events","revoke all on public.founder_bootstrap_configuration"]){if(!migration.includes(evidence))throw new Error(`Missing bootstrap safeguard: ${evidence}`);}
 
 const output=psql(`begin;
 truncate table public.executive_identities cascade;
@@ -66,6 +66,7 @@ select 'blueprint',count(*) from public.executive_blueprints;
 select 'ledger',count(*) from public.career_ledger_entries;
 select 'atlas',count(*) from public.atlas_decision_snapshots;
 select 'audit',count(*) from public.founder_bootstrap_audit_events;
+select 'beta_workflow',count(*) from public.beta_workflow_states where executive_identity_id=(select identity_id from bootstrap_result);
 select 'locked',count(*) from public.founder_bootstrap_configuration where locked_at is not null;
 select 'replay_status',count(*) from public.bootstrap_initial_founder(true) where status='ALREADY_BOOTSTRAPPED';
 select 'replay_identity_count',count(*) from public.executive_identities;
@@ -78,6 +79,6 @@ do $$begin begin perform public.configure_initial_founder_email('replacement@exa
 rollback;`).trim().split("\n");
 
 const values=new Map(output.filter(line=>line.includes("|")).map(line=>{const[label,value]=line.split("|");return[label,Number(value)]}));
-const expected={missing_configuration_status:1,existing_state_status:1,atomic_rollback:0,wrong_email_status:1,wrong_email_records:0,unverified_status:1,unverified_records:0,promise_status:1,promise_rejection_records:0,identity:1,workspace:1,owner:1,settings:1,blueprint:1,ledger:1,atlas:1,audit:1,locked:1,replay_status:1,replay_identity_count:1,founder_permission:1,invitation_after_bootstrap:1};
+const expected={missing_configuration_status:1,existing_state_status:1,atomic_rollback:0,wrong_email_status:1,wrong_email_records:0,unverified_status:1,unverified_records:0,promise_status:1,promise_rejection_records:0,identity:1,workspace:1,owner:1,settings:1,blueprint:1,ledger:1,atlas:1,audit:1,beta_workflow:1,locked:1,replay_status:1,replay_identity_count:1,founder_permission:1,invitation_after_bootstrap:1};
 for(const[label,value]of Object.entries(expected))if(values.get(label)!==value)throw new Error(`${label}: expected ${value}, got ${values.get(label)}`);
 pass("One-time founder bootstrap",Object.entries(expected).map(([key,value])=>`${key}=${value}`).join(", "));
