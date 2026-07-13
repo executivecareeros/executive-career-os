@@ -13,6 +13,11 @@ const publicPaths = [
 const demoOnlyModules: Array<[prefix: string, module: string]> = [
   ["/workspace", "workspace"],
   ["/assistant", "atlas"],
+  ["/archive", "ledger"],
+  ["/blueprint", "blueprint"],
+  ["/opportunities", "opportunities"],
+  ["/tasks", "tasks"],
+  ["/productivity", "today"],
   ["/companies", "companies"],
   ["/applications", "applications"],
   ["/compensation", "compensation"],
