@@ -19,8 +19,9 @@ const rlsLoops = [...sql.matchAll(/foreach t in array array\[([^;]+?)\] loop exe
 
 check("Migrations discovered", migrationFiles.length > 0, migrationFiles.join(", "));
 check("Core tables declared", exposedTables.length >= 25, `${exposedTables.length} tables`);
-check("RLS coverage", exposedTables.every((table) => rlsLoops.includes(`'${table}'`)), exposedTables.filter((table) => !rlsLoops.includes(`'${table}'`)).join(", ") || "all exposed tables included");
-const workspaceExempt = new Set(["executive_identities", "workspaces", "workspace_permissions"]);
+const rlsCovered=(table)=>rlsLoops.includes(`'${table}'`)||sql.includes(`alter table public.${table} enable row level security`);
+check("RLS coverage", exposedTables.every(rlsCovered), exposedTables.filter((table) => !rlsCovered(table)).join(", ") || "all exposed tables included");
+const workspaceExempt = new Set(["executive_identities", "workspaces", "workspace_permissions", "founder_bootstrap_configuration", "founder_bootstrap_configuration_audit", "founder_bootstrap_audit_events", "email_verification_audit_events"]);
 const explicitWorkspaceTables = explicitTables.filter((table) => !workspaceExempt.has(table));
 const explicitWorkspaceScoped = explicitWorkspaceTables.every((table) => new RegExp(`create table public\\.${table}\\([^;]*workspace_id`).test(sql));
 check("Workspace ownership columns", sql.includes("workspace_id uuid not null") && explicitWorkspaceScoped, "workspace-owned tables scoped");

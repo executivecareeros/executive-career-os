@@ -22,6 +22,7 @@
     "test:invitations": "node scripts/test-invitation-management.mjs",
     "test:email-verification": "node scripts/test-email-verification.mjs",
     "test:beta-discoverability": "node scripts/test-beta-discoverability.mjs"
+    ,"test:founder-bootstrap": "node scripts/test-founder-bootstrap.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",
