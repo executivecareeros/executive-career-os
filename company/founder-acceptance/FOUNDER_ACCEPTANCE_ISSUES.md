@@ -47,19 +47,19 @@
 ### FA-003 — RC1 acceptance environment bypasses email verification
 
 - Severity: High
-- Status: Open
+- Status: Resolved
 - Stage: Email verification
 - Reproduction steps:
   1. Register a fictional account with a valid invitation in the local RC1 environment.
   2. Observe the post-registration authentication state.
 - Expected result: Registration pauses until the fictional mailbox verification link is used, after which login becomes available.
-- Actual result: Local Supabase automatically confirms the account and returns an authenticated session. No verification email or verification link is exercised.
-- Evidence or screenshot: `screenshots/04-welcome-authenticated.png`; local auth configuration reported automatic confirmation enabled.
+- Actual result: Local Supabase now requires confirmation. A fictional message was captured, its single-use link established the verified session, and only then were the invitation and Workspace accepted.
+- Evidence or screenshot: Direct token-free desktop and 390-pixel mobile browser inspection on 13 July 2026. No token-bearing email or callback view was retained.
 - Probable subsystem: Acceptance environment / local Supabase auth configuration
 - Regression risk: High if staging is approved without independently proving verification and redirect handling.
 - Trust impact: High for release assurance; this does not prove a production authentication defect, but it leaves a required security journey unaccepted.
-- Workaround: Execute the verification stage in an isolated staging auth environment with confirmation enabled.
-- Retest evidence: Pending.
+- Workaround: None for local product acceptance. External Internet delivery remains a separate staging/production dependency.
+- Retest evidence: Passed on 13 July 2026 through Supabase local mail capture. Unverified route denial, callback replay, invalid callback, safe redirect handling, rate-limited resend, onboarding, workflow access, logout/login return, and founder-visible Accepted status were observed. Deterministic enforcement tests also passed.
 
 ### FA-004 — One onboarding validation error erases every completed field
 

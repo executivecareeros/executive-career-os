@@ -22,6 +22,8 @@
 
 Scope, participant profile, operating procedures, and evidence gates are documented under `company/beta/`. Invitation enforcement, durable workflow persistence, atomic finalization, feedback isolation, and supervised lifecycle request intake pass local validation. Staging, production acceptance, restore proof, monitoring, destructive lifecycle execution, legal approval, and founder acceptance remain incomplete. Status is **Founder Acceptance Only**; fictional or sanitized data only.
 
+Email-verification product correctness passed on 13 July 2026 through Supabase local mail capture: unverified access failed closed, a fictional message and callback worked, onboarding and beta workflow access succeeded, replay failed, and logout/login persistence held. External delivery, production sender authentication, and staging acceptance remain unchecked.
+
 ## Public Beta
 
 - [ ] Capacity, abuse prevention, rate limits, monitoring, and support can handle public access.

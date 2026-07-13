@@ -15,9 +15,11 @@ export async function inspectInvitation(email: string, token: string) {
 
 export async function rememberInvitation(token: string) { (await cookies()).set(INVITE_COOKIE, token, cookieOptions); }
 
-export async function acceptRememberedInvitation(accessToken: string) {
+export async function inspectRememberedInvitation(email:string){const token=(await cookies()).get(INVITE_COOKIE)?.value;if(!token)return {invitation_id:null,invitation_status:"Invalid" as const,expires_at:null};return inspectInvitation(email,token);}
+
+export async function acceptRememberedInvitation(accessToken: string,strict=false) {
   const jar = await cookies(); const token = jar.get(INVITE_COOKIE)?.value; if (!token) return;
   const response = await createServerSupabaseClient(accessToken).request<string>("rpc/accept_beta_invitation", { method: "POST", body: JSON.stringify({ invite_token: token }) });
-  if (response.error && !response.error.message.includes("not pending")) throw new Error(response.error.message);
   jar.delete(INVITE_COOKIE);
+  if (response.error&&strict)throw new Error(response.error.message);
 }

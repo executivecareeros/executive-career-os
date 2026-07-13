@@ -12,3 +12,13 @@ major_version = 15
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/confirm", "http://127.0.0.1:3000/auth/confirm"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+max_frequency = "1m"
+
+[auth.email.template.confirmation]
+subject = "Confirm your Orendalis email"
+content_path = "./supabase/templates/confirmation.html"

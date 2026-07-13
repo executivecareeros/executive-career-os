@@ -5,6 +5,7 @@
 ## Product Journey
 
 - [x] Invitation-only registration is implemented and locally tested.
+- [x] Fictional email verification, callback, replay denial, resend behavior, onboarding, and durable return pass through local provider capture.
 - [x] Authoritative manual history persists without demo defaults.
 - [x] Minimum Blueprint persists with revision history.
 - [x] One opportunity can be created and evaluated through the beta route.
@@ -27,7 +28,7 @@
 - [ ] Monitoring and founder alerts are tested.
 - [ ] Failure and recovery scenarios are accepted.
 - [ ] CI required checks pass.
-- [ ] Desktop, tablet, mobile, and keyboard journey pass.
+- [ ] Full desktop, tablet, mobile, and keyboard journey pass. Email verification passed desktop and 390-pixel mobile inspection; tablet and complete keyboard-only journey remain open.
 
 ## Legal and Operations
 
@@ -46,3 +47,5 @@
 - Accepted residual risks:
 
 Unchecked critical gates cannot be waived silently.
+
+Local Supabase mail capture proves the product verification path only. It is not a safe accepted alternative for real participants and does not satisfy the Microsoft/external-delivery gate.

@@ -1,14 +1,15 @@
 "use server";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { clearSession, storeSession } from "@/lib/auth/cookies";
 import { currentSession } from "@/lib/auth/session";
 import { supabaseAuth } from "@/lib/auth/supabase-auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseOnboardingRepository } from "@/lib/repositories/supabase/onboarding-repository";
+import {applicationOrigin} from "@/lib/auth/application-origin";
 import {
   acceptRememberedInvitation,
   inspectInvitation,
+  inspectRememberedInvitation,
   rememberInvitation,
 } from "@/lib/beta/invitations";
 
@@ -21,8 +22,7 @@ function safePath(candidate: string) {
     : undefined;
 }
 async function origin() {
-  const h = await headers();
-  return h.get("origin") ?? "http://localhost:3000";
+  return applicationOrigin();
 }
 
 export async function loginAction(form: FormData) {
@@ -55,7 +55,6 @@ export async function registerAction(form: FormData) {
     redirect(
       `/register?invite=${encodeURIComponent(inviteToken)}&error=Password%20must%20contain%20at%20least%208%20characters`,
     );
-  let session;
   try {
     const invitation = await inspectInvitation(email, inviteToken);
     if (invitation.invitation_status !== "Pending")
@@ -63,23 +62,19 @@ export async function registerAction(form: FormData) {
         `Invitation is ${invitation.invitation_status.toLowerCase()}.`,
       );
     await rememberInvitation(inviteToken);
-    session = await supabaseAuth.signUp(
+    await supabaseAuth.signUp(
       email,
       password,
-      `${await origin()}/login?verified=1`,
+      `${await origin()}/auth/confirm?next=/onboarding`,
     );
-    if (session.access_token) {
-      await acceptRememberedInvitation(session.access_token);
-      await storeSession(session, true);
-    }
   } catch (error) {
     redirect(
       `/register?invite=${encodeURIComponent(inviteToken)}&error=${encodeURIComponent(error instanceof Error ? error.message : "Unable to register")}`,
     );
   }
-  if (!session?.access_token) redirect("/login?verification=sent");
-  redirect("/welcome");
+  redirect(`/verify-email?email=${encodeURIComponent(email)}&sent=1`);
 }
+export async function resendVerificationAction(form:FormData){const email=value(form,"email").toLowerCase();let outcome="sent";try{const invitation=await inspectRememberedInvitation(email);if(invitation.invitation_status!=="Pending")outcome=invitation.invitation_status.toLowerCase();else await supabaseAuth.resendVerification(email,`${await origin()}/auth/confirm?next=/onboarding`);}catch{}redirect(`/verify-email?email=${encodeURIComponent(email)}&${outcome}=1`);}
 export async function forgotPasswordAction(form: FormData) {
   try {
     await supabaseAuth.recover(

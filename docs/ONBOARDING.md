@@ -6,7 +6,7 @@
 
 Onboarding collects preferred name, current role, optional employer, country, preferred language, timezone, and long-term career ambition. Blueprint depth is intentionally deferred and gathered progressively.
 
-Before provisioning, the executive explicitly accepts the Atlas Promise. The acceptance timestamp is retained on Executive Identity and in workspace settings.
+Before onboarding can open, the provider email must be confirmed and the matching invitation accepted. Before provisioning, the executive explicitly accepts the Atlas Promise. The acceptance timestamp is retained on Executive Identity and in workspace settings.
 
 ## Atomic workspace creation
 
@@ -20,7 +20,7 @@ The authenticated provisioning repository function is idempotent and atomic. It 
 - empty Career Ledger context
 - initial Atlas ready context
 
-The function derives the provider identifier from `auth.uid()`, accepts no caller-supplied identity or workspace ID, has a fixed search path, and grants execution only to authenticated users. A repeated call returns the existing personal workspace.
+The function derives the provider identifier from `auth.uid()`, checks `auth.users.email_confirmed_at`, requires an Accepted invitation for that user, accepts no caller-supplied identity or workspace ID, has a fixed search path, and grants execution only to authenticated users. A repeated call returns the existing personal workspace.
 
 ## Progressive memory
 

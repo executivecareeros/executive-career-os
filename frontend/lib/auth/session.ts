@@ -7,8 +7,8 @@ import type { CurrentExecutiveSession } from "./types";
 export async function currentSession(): Promise<CurrentExecutiveSession | undefined> {
   const jar = await cookies();
   let accessToken = jar.get(ACCESS_COOKIE)?.value;
-  if (accessToken) try { return { user: await supabaseAuth.user(accessToken), accessToken }; } catch { accessToken = undefined; }
+  if (accessToken) try { const user=await supabaseAuth.user(accessToken);if(!user.email_confirmed_at)return undefined;return { user, accessToken }; } catch { accessToken = undefined; }
   const refreshToken = jar.get(REFRESH_COOKIE)?.value;
   if (!refreshToken) return undefined;
-  try { const session = await supabaseAuth.refresh(refreshToken); await storeSession(session, true); return { user: session.user, accessToken: session.access_token, expiresAt: session.expires_at }; } catch { return undefined; }
+  try { const session = await supabaseAuth.refresh(refreshToken);if(!session.user.email_confirmed_at)return undefined;await storeSession(session, true); return { user: session.user, accessToken: session.access_token, expiresAt: session.expires_at }; } catch { return undefined; }
 }

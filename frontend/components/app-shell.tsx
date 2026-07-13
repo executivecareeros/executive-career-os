@@ -12,7 +12,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
   const menu = useMobileMenu();
   const pathname = usePathname();
   const [focusMode, setFocusMode] = useState(false);
-  if (["/login", "/register", "/forgot-password", "/reset-password", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
+  if (["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white lg:flex">

@@ -1,6 +1,10 @@
 import { psql, pass } from "./database-runtime.mjs";
 
 const output=psql(`begin;
+insert into auth.users(id,email,email_confirmed_at) values
+('92000000-0000-4000-8000-000000000001','fictional.founder@example.invalid',now()),
+('92000000-0000-4000-8000-000000000002','fictional.executive@example.invalid',now()),
+('96000000-0000-4000-8000-000000000001','invited.one@example.invalid',now());
 insert into public.executive_identities(id,auth_user_id,profile) values
 ('91000000-0000-4000-8000-000000000001','92000000-0000-4000-8000-000000000001','{"preferredName":"Fictional Founder","isDemo":true}'),
 ('91000000-0000-4000-8000-000000000002','92000000-0000-4000-8000-000000000002','{"preferredName":"Fictional Executive","isDemo":true}');
