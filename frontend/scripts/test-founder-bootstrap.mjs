@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { psql, pass, sqlFile } from "./database-runtime.mjs";
 
 const migration=readFileSync(sqlFile("supabase/migrations/202607130011_initial_founder_bootstrap.sql"),"utf8");
+const proxy=readFileSync(sqlFile("frontend/proxy.ts"),"utf8");
+if(!proxy.includes('"/founder-bootstrap"'))throw new Error("Founder bootstrap is unreachable before authentication.");
 for(const evidence of ["pg_advisory_xact_lock","email_confirmed_at","Founder bootstrap requires a fresh environment","atlas_promise_accepted","founder_bootstrap_audit_events","revoke all on public.founder_bootstrap_configuration"]){if(!migration.includes(evidence))throw new Error(`Missing bootstrap safeguard: ${evidence}`);}
 
 const output=psql(`begin;
