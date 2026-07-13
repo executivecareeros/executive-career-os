@@ -2,6 +2,7 @@ import type { NavigationItem } from "@/types/design-system";
 
 export const navigationItems: readonly NavigationItem[] = [
   { label: "Dashboard", href: "/", marker: "D" },
+  { label: "Company Control", href: "/company-control", marker: "CC" },
   { label: "Workspace", href: "/workspace", marker: "W" },
   { label: "Executive Blueprint", href: "/blueprint", marker: "BP" },
   { label: "Import History", href: "/import", marker: "IH" },
