@@ -50,18 +50,18 @@ export function CompanyControlCenter({ snapshot, betaTriage }: { snapshot: Compa
       <SectionCard className="mt-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Private beta access</p><h2 className="mt-2 text-xl font-semibold">Founder Invitation Management</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">Create, review, and revoke secure executive invitations without database access.</p></div><Link href="/company-control/invitations" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Manage Invitations</Link></div></SectionCard>
 
       <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Release Candidate 2</p><h2 className="mt-2 text-xl font-semibold">Staging Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">The isolated staging architecture, provider review, environment inventory, security review, rollback plan, and release checklist are documented. No staging resource has been created.</p></div><StatusBadge tone="warning">Founder Approval Required</StatusBadge></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Final creation review</p><h2 className="mt-2 text-xl font-semibold">Staging Approval Package</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">The provider, cost, domain, GitHub, security, risk, rollback, and ordered execution decisions are documented. No staging resource has been created and no spend is authorized.</p></div><StatusBadge tone="warning">Ready · Founder Approval Required</StatusBadge></div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            ["Staging Prepared", "Plan Prepared", "Architecture and checklist documented; environment not provisioned."],
-            ["Provider Review", "Complete", "Vercel, Supabase, GitHub, and Microsoft 365 reviewed from factual records and official pricing."],
-            ["Deployment Ready", "Pending Provisioning", "Build is deployable; provider projects, callbacks, and variables do not exist."],
-            ["Founder Approval Required", "Required", "Plan, live checkout totals, region, ownership, hostname, and spend caps require approval."],
-            ["Costs Pending", "Checkout Confirmation", "Published base prices are documented; tax, regional pricing, and account totals are unconfirmed."],
-            ["Rollback Ready", "Plan Documented", "Application, database, and credential rollback sequences are prepared but not rehearsed in staging."],
+            ["Current Decision", "Ready to Create Staging", "Local evidence supports controlled creation only; deployment and acceptance remain separate gates."],
+            ["Recommended Providers", "Vercel Pro · Supabase Pro", "Published base commitment is USD 45/month before tax, exchange rate, add-ons, and usage."],
+            ["Supabase Region", "Central EU (Frankfurt)", "Recommended for current European operating context; founder approval is required because region change requires migration."],
+            ["Security Gate", "Pending Live Verification", "MFA, recovery, owner identity, repository-only GitHub scope, and spend controls must be confirmed in provider screens."],
+            ["Execution", "12 Controlled Steps", "Each step has an approval gate, verification, expected duration, and rollback."],
+            ["Residual Risk", "Staging Only", "Runbooks and recovery remain unexercised; fictional data only until staging is separately accepted."],
           ].map(([label, value, detail]) => <article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></article>)}
         </div>
-        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Source: docs/STAGING_RELEASE_CHECKLIST.md</p><p className="mt-2 text-xs text-slate-600">No external resources, DNS records, Microsoft settings, deployment automation, or monitoring were changed.</p></div>
+        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: docs/STAGING_FINAL_APPROVAL.md and company/operations/STAGING_EXECUTION_PLAN.md</p><p className="mt-2 text-xs text-slate-600">Creation readiness is not deployment authority. Live checkout totals, provider permissions, ownership, and spend limits remain founder approval gates.</p></div>
       </SectionCard>
 
       <SectionCard className="mt-8">
