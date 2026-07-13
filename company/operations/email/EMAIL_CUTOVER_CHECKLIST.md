@@ -1,6 +1,6 @@
 # Orendalis Email Cutover Checklist
 
-Purpose: Track the remaining verified actions required before migrating `orendalis.com` email routing from Proton to Microsoft 365.
+Purpose: Preserve the verified migration controls and track the remaining validation after migrating `orendalis.com` email routing from Proton to Microsoft 365.
 
 ## Confirmed ready
 
@@ -33,33 +33,33 @@ Purpose: Track the remaining verified actions required before migrating `orendal
 - [x] Record the exact Microsoft-provided Selector2 CNAME host and destination.
 - [ ] Do not infer or construct DKIM destinations.
 
-Microsoft currently reports `NoDKIMKeys` and DKIM is disabled for both accepted domains. Microsoft creates the two managed key pairs when DKIM setup is initiated; this is not a passive provisioning delay. The DNS cutover must not begin until the custom-domain selector values are generated, displayed, and recorded.
+Historical note: Microsoft originally reported `NoDKIMKeys`. The managed key pairs and selector values were subsequently generated and recorded. Microsoft later reported `CnameMissing` because its selector destinations were not published; DKIM signing remains disabled and is tracked through Microsoft support.
 
 ## Pre-cutover verification
 
-- [ ] Refresh and preserve a complete Porkbun DNS rollback snapshot.
-- [ ] Confirm the existing Proton MX, SPF, DKIM, verification, DMARC, wildcard, website, and ACME records have not changed.
-- [ ] Confirm the founder-approved cutover window.
-- [ ] Confirm access to Porkbun, Microsoft 365 Admin, Exchange Admin, Defender, and Outlook Web.
-- [ ] Confirm rollback values and rollback order before the first DNS change.
-- [ ] Confirm aliases remain attached to `cuneyt.sen@orendalis.com`.
-- [ ] Confirm the existing DMARC policy remains `p=quarantine` unless the founder separately approves a change.
+- [x] Refresh and preserve a complete Porkbun DNS rollback snapshot.
+- [x] Confirm the existing Proton MX, SPF, DKIM, verification, DMARC, wildcard, website, and ACME records before the change.
+- [x] Confirm the founder-approved cutover window.
+- [x] Confirm access to Porkbun, Microsoft 365 Admin, and Outlook Web.
+- [x] Confirm rollback values and rollback order before the first DNS change.
+- [x] Confirm aliases remain attached to `cuneyt.sen@orendalis.com`.
+- [x] Confirm the existing DMARC policy remains `p=quarantine` unless the founder separately approves a change.
 
 ## Controlled DNS migration
 
-- [ ] Replace all root SPF policies with one Microsoft SPF TXT record.
-- [ ] Add the explicit Microsoft Autodiscover CNAME.
-- [ ] Add both exact Microsoft DKIM CNAME records.
-- [ ] Verify public DKIM CNAME propagation.
+- [x] Replace all root SPF policies with one Microsoft SPF TXT record.
+- [x] Add the explicit Microsoft Autodiscover CNAME.
+- [x] Add both exact Microsoft DKIM CNAME records.
+- [x] Verify public DKIM CNAME propagation.
 - [ ] Enable DKIM in Microsoft only after both selector records resolve correctly.
-- [ ] Replace Proton MX records with the exact Microsoft MX record.
-- [ ] Do not change website, wildcard, or ACME records.
-- [ ] Do not remove Proton records until Microsoft mail flow is validated.
+- [x] Replace Proton MX records with the exact Microsoft MX record.
+- [x] Do not change website, wildcard, or ACME records.
+- [x] Do not remove Proton DKIM or verification records during the cutover.
 
 ## Post-cutover validation
 
-- [ ] Verify inbound mail to the primary address.
-- [ ] Verify outbound mail from the primary address.
+- [x] Verify inbound mail to the primary address.
+- [ ] Revalidate outbound mail from the primary address and inspect the delivered headers.
 - [ ] Verify delivery to every approved alias.
 - [ ] Verify Outlook Web and Outlook for macOS synchronization.
 - [ ] Verify SPF passes and aligns.
@@ -67,7 +67,8 @@ Microsoft currently reports `NoDKIMKeys` and DKIM is disabled for both accepted 
 - [ ] Verify DMARC passes with the existing policy.
 - [ ] Verify TLS for inbound and outbound delivery.
 - [ ] Observe spam placement and message headers.
-- [ ] Remove Proton MX, SPF, DKIM, and verification records only after successful validation and separate approval.
+- [x] Remove Proton MX and SPF records as part of the approved routing change.
+- [ ] Remove retained Proton DKIM and verification records only after successful validation and separate approval.
 - [ ] Recheck public DNS and Microsoft service health.
 
 ## Rollback trigger
