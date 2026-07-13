@@ -20,7 +20,7 @@
 | `NEXT_PUBLIC_SUPABASE_URL` | Staging project API URL | Browser | Public; Provider Generated | Supabase staging project | Staging only | Replace only after project/key rotation; redeploy and retest callbacks. |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Staging publishable/anonymous key | Browser | Public; Provider Generated | Supabase staging project | Staging only | Rotate in Supabase, update Vercel, redeploy, invalidate prior key, rerun RLS tests. |
 | `SUPABASE_URL` | Same staging project API URL | Server | Server; Provider Generated | Supabase staging project | Staging only | Keep aligned with the public URL; remove during project rollback. |
-| `SUPABASE_ANON_KEY` | Same staging publishable/anonymous key | Server | Server; Provider Generated | Supabase staging project | Staging only | Rotate with the browser key; it is not an administrator credential. |
+| `SUPABASE_ANON_KEY` | Same staging publishable/anonymous key | Server | Server; Provider Generated | Supabase staging project | Staging only | Rotate with the browser key; it is the same publishable/public-role credential, not a service-role key. |
 | `COMPANY_CONTROL_FOUNDER_EMAIL` | Approved staging founder identity | Server | Confidential; Founder Managed | Founder | Staging only | Change only with verified founder access and a recovery plan. Never expose in client code. |
 
 ## Provider-Controlled Runtime Values
@@ -46,8 +46,8 @@ Adding any of these requires a separate design and security review.
 
 | Boundary | Development | Staging | Production |
 | --- | --- | --- | --- |
-| Host | Local machine | New approved Vercel project/environment | Future, not created in this sprint |
-| Supabase project | Local Supabase | New staging-only project | Future independent project |
+| Host | Local machine | Approved Vercel project/environment | Future, not created in this sprint |
+| Supabase project | Local Supabase | Isolated staging project | Future independent project |
 | Auth users | Fictional local users | Fictional acceptance users only | Future real invited users |
 | Variables | Local uncommitted values | Vercel staging scope | Future production scope |
 | Callback origin | `localhost` / `127.0.0.1` | Exact staging HTTPS origin | Future production HTTPS origin |
@@ -66,6 +66,10 @@ Adding any of these requires a separate design and security review.
 - [ ] The founder email is server-only.
 - [ ] Preview deployments do not inherit staging secrets unless explicitly approved.
 - [ ] Build logs and client bundles reveal no server-only variable value.
+
+## Current Gate
+
+The staging database and Auth URL allowlist are prepared. None of these variables has been added to Vercel. Configuration and deployment remain separate founder approval gates.
 
 ## Rollback
 

@@ -13,7 +13,7 @@
 | Legacy hosting | Vercel `executivecareeros' projects` | `executive-career-os`, `executive-career-os-play` | Hobby; unchanged |
 | Staging hosting | Vercel `Orendalis` Pro | `orendalis-staging`; `https://project-qmvs1.vercel.app` | Repository connected; assigned hostname confirmed; no deployment, variables, or custom domain |
 | Local database | Local Supabase | `executive-career-os-local` | Active; fictional data only |
-| Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; no migrations; recent provider backup observed; Auth URLs not configured |
+| Staging database | Supabase `Orendalis` Pro | `orendalis-staging`; ref `ymprcckbrgkijnuwhdne`; Frankfurt | Healthy; Auth URLs and ten migrations complete; no seed or users |
 | AI work tools | OpenAI | ChatGPT Team; GPT Work / Codex | Use confirmed; account and billing details need verification |
 | Monitoring / analytics | None | None | Not Configured |
 | Legal / trademark provider | None evidenced | None | Not Configured |
@@ -40,18 +40,18 @@
 
 ## Critical Blockers
 
-1. The controlled operations session cannot access the Supabase project that the founder can see in Safari.
-2. Staging has no migrations, Auth Site URL/redirects, environment variables, or deployment.
-3. Critical provider MFA, recovery, and backup-owner controls are not evidenced.
-4. Microsoft DKIM remains blocked by an open support case.
-5. Restore proof, monitoring, GitHub protection, and legal/private-beta readiness remain incomplete.
+1. Staging has no Vercel environment variables or deployment.
+2. Critical provider MFA, recovery, and backup-owner controls are not evidenced.
+3. Microsoft DKIM remains blocked by an open support case.
+4. Restore proof and monitoring remain incomplete.
+5. GitHub protection and legal/private-beta readiness remain incomplete.
 
 ## Next Five Founder Actions
 
-1. Sign the controlled browser into the Supabase account that owns `ymprcckbrgkijnuwhdne`, then complete Auth URL configuration and the ten migrations.
-2. Configure the seven approved Vercel staging variables only after database acceptance.
-3. Deploy staging and run the full fictional founder-acceptance journey.
-4. Complete a staging backup-and-restore rehearsal and record measured recovery evidence.
+1. Approve and configure the seven reviewed Vercel staging variables without a service-role credential.
+2. Deploy staging and run the full fictional founder-acceptance journey.
+3. Complete a staging backup-and-restore rehearsal and record measured recovery evidence.
+4. Establish minimal staging monitoring and ownership.
 5. Review Microsoft case `2607130050001139` and record the factual response without changing DNS prematurely.
 
 Detailed authoritative records are in this folder. Never place credentials or recovery material in them.

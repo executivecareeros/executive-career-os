@@ -17,7 +17,7 @@
 
 These files are authoritative for current operating state as of **13 July 2026**. Historical asset, launch, email, investment, and staging records remain evidence and must not be rewritten merely to look current.
 
-Current staging reconciliation: Vercel assigned `https://project-qmvs1.vercel.app` but no deployment exists; Supabase project `ymprcckbrgkijnuwhdne` is Healthy with no migrations and a recent provider backup; Auth URLs and Vercel variables are not configured. The controlled operations browser still requires access to the owning Supabase account before configuration can resume.
+Current staging reconciliation: Vercel assigned `https://project-qmvs1.vercel.app` but no deployment exists. Supabase project `ymprcckbrgkijnuwhdne` is Healthy; its staging Auth URL allowlist and all ten committed migrations are configured and validated. No seed, users, Vercel variables, integration, or deployment exists. Founder approval to configure Vercel staging variables is the next gate.
 
 ## Evidence Rules
 

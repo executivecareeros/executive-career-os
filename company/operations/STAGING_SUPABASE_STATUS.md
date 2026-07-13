@@ -2,7 +2,7 @@
 
 Purpose: Record safe operational metadata for the isolated Supabase staging project without storing credentials or secrets.
 
-> **Historical milestone notice — 13 July 2026:** This file records project creation while status was `Coming up…`. Later founder-dashboard evidence showed the project Healthy, with no migrations and a recent provider backup. Use `company/operations/access-and-environments/ENVIRONMENT_REGISTER.md` for current state.
+> **Historical milestone notice — 13 July 2026:** This file records project creation while status was `Coming up…`. The project later became Healthy, and Auth/migration preparation was completed. Use `company/operations/access-and-environments/ENVIRONMENT_REGISTER.md` for current state.
 
 ## Project
 
@@ -36,4 +36,4 @@ At the time of this record, Supabase showed the project as **Coming up…**. Dat
 
 ## Next Approved Step
 
-Wait until Supabase reports the staging project as healthy. Configuration, migrations, authentication settings, environment variables, and Vercel connection require a separate founder-approved phase.
+Historical next step completed. The current approval gate is Vercel staging environment-variable configuration; no deployment is authorized by this record.
