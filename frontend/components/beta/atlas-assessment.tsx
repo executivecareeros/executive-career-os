@@ -9,7 +9,7 @@ export function AtlasAssessment({ output }: { output: ReasoningOutput }) {
   const unresolved = output.questions.length;
   const summary = output.recommendation.action === "Wait"
     ? `Pause the decision while ${unresolved} material question${unresolved === 1 ? "" : "s"} remain unresolved.`
-    : `${output.recommendation.action} is the current deterministic recommendation based on the confirmed evidence below.`;
+    : `${output.recommendation.action} is Atlas’s current recommendation based on the confirmed evidence below.`;
 
   return (
     <section className="mt-5 space-y-5" aria-label="Atlas executive assessment">
@@ -44,9 +44,10 @@ export function AtlasAssessment({ output }: { output: ReasoningOutput }) {
       </section>
 
       <section>
-        <h3 className="text-base font-semibold text-white">Questions that would improve confidence</h3>
+        <h3 className="text-base font-semibold text-white">Questions Atlas recommends asking next</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-400">Resolve the questions that could change the decision—not every detail that could be known.</p>
         {output.questions.length ? <ol className="mt-3 space-y-2">
-          {output.questions.map(question => <li key={question.id} className="rounded-xl border border-amber-300/15 bg-amber-300/[.04] p-4 text-sm leading-6 text-slate-200"><span className="font-medium text-amber-200">{question.priority}</span> · {question.question}</li>)}
+          {output.questions.map((question, index) => <li key={question.id} className="rounded-xl border border-amber-300/15 bg-amber-300/[.04] p-4 text-sm leading-6 text-slate-200"><span className="font-medium text-amber-200">{index + 1}. {question.priority}</span> · {question.question}<p className="mt-1 text-xs text-slate-500">Why it matters: {question.improves}</p></li>)}
         </ol> : <div className="mt-3"><EmptyFinding>No material information question was identified by the current rules.</EmptyFinding></div>}
       </section>
 
@@ -54,7 +55,7 @@ export function AtlasAssessment({ output }: { output: ReasoningOutput }) {
         <section>
           <h3 className="text-base font-semibold text-white">Conflicts</h3>
           <div className="mt-3 space-y-2">
-            {output.conflicts.length ? output.conflicts.map(conflict => <article key={conflict.id} className="rounded-xl border border-rose-300/20 bg-rose-300/[.05] p-4"><p className="font-medium text-rose-100">{conflict.title}</p><p className="mt-2 text-sm leading-6 text-slate-300">{conflict.reason}</p>{conflict.resolutionQuestion&&<p className="mt-2 text-sm text-rose-200">Resolve: {conflict.resolutionQuestion}</p>}</article>) : <EmptyFinding>No deterministic conflict was found in the evidence currently available. This is not proof that no conflict exists.</EmptyFinding>}
+            {output.conflicts.length ? output.conflicts.map(conflict => <article key={conflict.id} className="rounded-xl border border-rose-300/20 bg-rose-300/[.05] p-4"><p className="font-medium text-rose-100">{conflict.title}</p><p className="mt-2 text-sm leading-6 text-slate-300">{conflict.reason}</p>{conflict.resolutionQuestion&&<p className="mt-2 text-sm text-rose-200">Resolve: {conflict.resolutionQuestion}</p>}</article>) : <EmptyFinding>Atlas found no conflict in the evidence currently available. This does not mean no conflict exists.</EmptyFinding>}
           </div>
         </section>
         <section>
@@ -73,7 +74,8 @@ export function AtlasAssessment({ output }: { output: ReasoningOutput }) {
       </section>
 
       <section>
-        <h3 className="text-base font-semibold text-white">What would change this recommendation</h3>
+        <h3 className="text-base font-semibold text-white">Challenge the recommendation</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-400">Atlas should earn agreement. Test its view against the evidence below before you decide.</p>
         {output.whatWouldChange.length ? <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-300">{output.whatWouldChange.map(item => <li key={item}>{item}</li>)}</ul> : <div className="mt-3"><EmptyFinding>No change condition was produced by the current rules.</EmptyFinding></div>}
       </section>
     </section>

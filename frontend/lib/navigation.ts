@@ -25,6 +25,22 @@ export const navigationItems: readonly NavigationItem[] = [
   { label: "Settings", href: "/settings", marker: "S" },
 ];
 
+export const executiveNavigationItems: readonly NavigationItem[] = [
+  { label: "Today", href: "/", marker: "T" },
+  { label: "Atlas", href: "/assistant", marker: "A" },
+  { label: "Opportunities", href: "/opportunities", marker: "O" },
+  { label: "Company Intelligence", href: "/companies", marker: "C" },
+  { label: "Executive Blueprint", href: "/blueprint", marker: "B" },
+  { label: "Career Ledger", href: "/archive", marker: "L" },
+  { label: "Tasks", href: "/tasks", marker: "✓" },
+];
+
+export const executiveUtilityItems: readonly NavigationItem[] = [
+  { label: "Career Memory", href: "/workspace", marker: "M" },
+  { label: "Settings", href: "/settings", marker: "S" },
+  { label: "Founder Controls", href: "/company-control", marker: "F" },
+];
+
 export function isNavigationItemActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }

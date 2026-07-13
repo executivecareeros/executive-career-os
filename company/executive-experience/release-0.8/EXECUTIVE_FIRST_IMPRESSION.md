@@ -1,0 +1,40 @@
+# Executive First Impression
+
+Purpose: Capture the first-session and return-session impression of Orendalis from a senior executive perspective.
+
+## First Ten Minutes
+
+The visual tone is calm, serious, and appropriately private. “Your private Career Memory” is strong positioning. The product avoids inflated claims and repeatedly makes clear that confirmed evidence and the executive’s judgment matter.
+
+The guided journey is easy to begin. Professional History, Blueprint, Opportunity, Atlas Assessment, Decision, Career Ledger, and Feedback form a logical sequence. Placeholder examples reduce uncertainty about what to enter. Completed stages visibly close, so progress feels earned.
+
+The first negative impression arrives outside that flow. The navigation exposes a large system map before the executive has a reason to visit most of it. Labels such as Repositories, Discovery, Executive Memory, Executive Reasoning, Productivity, Reports, and AI Assistant compete for attention. This feels like a portfolio of modules rather than one executive workspace.
+
+## Return Visit
+
+The strongest evidence of product memory—the completed journey—survives refresh, logout, and sign-in. However, the dashboard ignores that state and asks the executive to confirm Professional History again. For a product built around permanent career memory, this is disproportionately damaging.
+
+Today correctly reflects the finalized decision, follow-up, and eight outstanding questions. It is a better return surface than the dashboard, but the product does not make it the obvious home after completion.
+
+## Emotional Response
+
+### Confidence builders
+
+- restrained dark visual design;
+- explicit privacy and Workspace boundaries;
+- confirmed-evidence labels;
+- clear uncertainty;
+- immutable decision language;
+- executive ownership of the final action.
+
+### Confidence reducers
+
+- stale dashboard guidance;
+- unfinished Company research;
+- internal beta and demonstration language;
+- excessive primary navigation;
+- summary pages that confirm records without helping the next decision.
+
+## First-Impression Verdict
+
+Orendalis makes a strong intellectual first impression and a weaker product-completeness impression. I would accept an invitation to become a design partner. I would not yet assume the product could manage my career without founder support.

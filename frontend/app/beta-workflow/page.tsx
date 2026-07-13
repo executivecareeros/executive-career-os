@@ -111,7 +111,7 @@ export default async function BetaWorkflowPage({
     return (
       <PageContent>
         <PageHeader
-          eyebrow="Private beta"
+          eyebrow="Your private decision workspace"
           title="Workflow unavailable"
           description={
             error instanceof Error
@@ -126,9 +126,9 @@ export default async function BetaWorkflowPage({
   return (
     <PageContent>
       <PageHeader
-        eyebrow="Release 0.6 · Invitation only"
-        title="Executive Opportunity Decision"
-        description="A durable, evidence-led workflow. Saved stages are Workspace-scoped and survive refresh, logout, and return."
+        eyebrow="Your private decision workspace"
+        title="Executive Opportunity Review"
+        description="Move from confirmed career context to a clear decision. Your progress is preserved when you leave and return."
       />
       <BetaJourneyProgress completedSteps={complete}/>
       {q.error && (
@@ -319,7 +319,7 @@ export default async function BetaWorkflowPage({
                   3. Opportunity Context
                 </h2>
                 <p className="mt-2 text-sm text-slate-400">
-                  Fictional opportunity context preserved for Atlas assessment.
+                  Confirmed opportunity context preserved for Atlas review.
                 </p>
               </div>
               <StatusBadge tone="success">Complete</StatusBadge>
@@ -453,8 +453,8 @@ export default async function BetaWorkflowPage({
             <form action={runReasoningAction} className="mt-5">
               <Submit>
                 {view.reasoning
-                  ? "Re-run deterministic assessment"
-                  : "Run deterministic assessment"}
+                  ? "Refresh Atlas assessment"
+                  : "Ask Atlas to assess"}
               </Submit>
             </form>
           )}
@@ -505,7 +505,7 @@ export default async function BetaWorkflowPage({
                 value={view.state.activeReasoningSnapshotId ?? ""}
               />
               <Submit disabled={!view.reasoning}>
-                Finalize immutable decision
+                Preserve final decision
               </Submit>
             </form>
           )}
@@ -513,13 +513,13 @@ export default async function BetaWorkflowPage({
             Decision commit: {view.state.finalizedDecisionId ?? "Not finalized"}
           </p>
         </SectionCard>}
-        {!complete.has("Decision Finalized")?<LockedStage number={5} title="Structured Beta Feedback" after="the executive decision"/>:<SectionCard id="feedback">
+        {!complete.has("Decision Finalized")?<LockedStage number={5} title="Private Feedback" after="the executive decision"/>:<SectionCard id="feedback">
           {complete.has("Decision Finalized") && !complete.has("Feedback") && (
             <p className="text-xs font-semibold uppercase tracking-[.18em] text-blue-300">
               Current stage
             </p>
           )}
-          <h2 className="text-xl font-semibold">5. Structured Beta Feedback</h2>
+          <h2 className="text-xl font-semibold">5. Private Feedback</h2>
           {complete.has("Feedback") ? (
             <div className="mt-5 rounded-xl border border-emerald-400/20 bg-emerald-400/[.06] p-4">
               <p className="text-sm font-semibold text-emerald-200">

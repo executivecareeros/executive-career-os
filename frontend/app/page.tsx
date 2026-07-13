@@ -18,9 +18,14 @@ import { demoAtlasMemories } from "@/data/atlas-memory";
 import { demoExecutiveSignals, demoReasoningOutput } from "@/data/atlas-reasoning";
 import { demoExecutiveBrief, demoTasks } from "@/data/productivity";
 import { ExecutiveHealthStrip } from "@/components/dashboard/executive-health-strip";
+import { StatusBadge } from "@/components/status-badge";
+import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
+import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
+import type { BetaWorkflowView } from "@/lib/beta/types";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export default function Home() {
-  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <FirstExecutiveSetup />;
+export default async function Home() {
+  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <ExecutiveBriefing />;
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
   const ready = opportunities.filter((item) => item.status === "Ready to Apply").length;
   const topOpportunity = [...opportunities].sort((a, b) => b.overallScore - a.overallScore)[0];
@@ -62,4 +67,64 @@ export default function Home() {
   );
 }
 
-function FirstExecutiveSetup(){return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader eyebrow="Your private professional home" title="Continue Your First Opportunity Assessment" description="Your guided Beta Journey shows what is complete, what Atlas needs next, and how each step contributes to your decision." actions={<PrimaryButton href="/beta-workflow">Continue Beta Journey</PrimaryButton>}/><div className="grid gap-6 py-8 lg:grid-cols-2"><DashboardSection title="Your next step" description="Professional History gives Atlas the confirmed context needed to shape your Executive Blueprint." emptyTitle="Confirm your professional history" emptyDescription="Add one role manually or review a CV/resume draft, then continue directly to your Blueprint." action={<PrimaryButton href="/beta-workflow#professional-history">Continue</PrimaryButton>}/><SectionCard><h2 className="text-xl font-semibold">What Happens Next</h2><ol className="mt-5 space-y-3 text-sm text-slate-300"><li><span className="text-blue-300">1.</span> Confirm Professional History</li><li><span className="text-slate-500">2.</span> Build the minimum Executive Blueprint</li><li><span className="text-slate-500">3.</span> Assess one opportunity with Atlas</li><li><span className="text-slate-500">4.</span> Preserve your decision and feedback</li></ol><p className="mt-5 text-sm text-slate-400">Each completed stage reveals the next. You can return through Beta Workflow at any time.</p></SectionCard></div></div>}
+const display = (value: unknown, fallback: string) => typeof value === "string" && value.trim() ? value : fallback;
+
+async function ExecutiveBriefing() {
+  const resolved = await resolveAuthenticatedRepositoryContext();
+  let view: BetaWorkflowView | undefined;
+  if (resolved) {
+    try {
+      view = await new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken), resolved.context).load();
+    } catch {
+      view = undefined;
+    }
+  }
+
+  if (!view) return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader eyebrow="Your private career office" title="Build the context Atlas needs" description="Begin with one confirmed role. Your career direction, opportunities, and decisions will remain connected from that point forward." actions={<PrimaryButton href="/beta-workflow">Begin</PrimaryButton>}/><div className="mt-8"><DashboardSection title="Your first step" description="A small amount of confirmed context is enough to begin." emptyTitle="Confirm your professional history" emptyDescription="Add one role manually or review a CV or resume draft. Nothing enters your Career Memory until you confirm it." action={<PrimaryButton href="/beta-workflow#professional-history">Add career context</PrimaryButton>}/></div></div>;
+
+  const recommendation = view.reasoning?.output.recommendation;
+  const questions = view.reasoning?.output.questions ?? [];
+  const decisionComplete = Boolean(view.state.finalizedDecisionId);
+  const opportunityTitle = display(view.opportunity?.title, "No opportunity selected");
+  const companyName = display(view.opportunity?.companyName, "Company not recorded");
+  const currentStep = view.state.currentStep === "Complete" ? "Journey complete" : view.state.currentStep;
+  const lastCompleted = view.state.completedSteps.at(-1) ?? "Workspace created";
+  const primaryHref = decisionComplete ? "/assistant" : "/beta-workflow";
+  const primaryLabel = decisionComplete ? "Review Atlas guidance" : "Continue your decision";
+
+  return (
+    <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
+      <PageHeader eyebrow="Today’s Executive Brief" title={decisionComplete ? "Your decision is preserved. Here is what deserves attention." : "One clear next step for your career decision."} description={decisionComplete ? "Atlas has organized the confirmed evidence, unresolved questions, and follow-up from your latest opportunity review." : `You are currently at ${currentStep}. Atlas will not move ahead without confirmed context.`} actions={<><SecondaryButton href="/productivity">Open today’s brief</SecondaryButton><PrimaryButton href={primaryHref}>{primaryLabel}</PrimaryButton></>} />
+
+      <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <SectionCard className="lg:col-span-2">
+          <p className="atlas-kicker">What changed</p>
+          <h2 className="mt-3 text-2xl font-semibold">{lastCompleted} is now part of your Career Memory</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">Your latest confirmed work is preserved and available to Atlas across your private workspace.</p>
+        </SectionCard>
+        <SectionCard>
+          <p className="atlas-kicker">Needs attention</p>
+          <p className="mt-3 text-4xl font-semibold text-white">{questions.length}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-400">material questions could change the recommendation.</p>
+          <div className="mt-5"><SecondaryButton href="/assistant">Review questions</SecondaryButton></div>
+        </SectionCard>
+      </div>
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        <SectionCard>
+          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Opportunity in focus</p><h2 className="mt-3 text-xl font-semibold">{opportunityTitle}</h2><p className="mt-2 text-sm text-slate-400">{companyName} · {display(view.opportunity?.location, "Location not confirmed")}</p></div><StatusBadge tone={decisionComplete ? "success" : "info"}>{decisionComplete ? "Decision preserved" : currentStep}</StatusBadge></div>
+          <div className="mt-6"><SecondaryButton href="/opportunities">Open opportunity</SecondaryButton></div>
+        </SectionCard>
+        <SectionCard>
+          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Atlas recommends</p><h2 className="mt-3 text-xl font-semibold">{recommendation?.action ?? "More context required"}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{recommendation ? `${view.reasoning?.output.confidence} confidence. The recommendation changes when the evidence changes.` : "Atlas is waiting for enough confirmed evidence to offer a recommendation."}</p></div>{recommendation && <StatusBadge tone="info">{recommendation.priority}</StatusBadge>}</div>
+          <div className="mt-6"><PrimaryButton href="/assistant">Ask what could change</PrimaryButton></div>
+        </SectionCard>
+      </div>
+
+      <SectionCard className="mt-5">
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Your next conversation</p><h2 className="mt-3 text-xl font-semibold">Questions worth resolving before you act</h2><p className="mt-2 text-sm text-slate-400">Atlas prioritizes uncertainty so you can spend time on the conversations that matter.</p></div><SecondaryButton href="/tasks">Open follow-up</SecondaryButton></div>
+        {questions.length ? <ol className="mt-6 grid gap-3 md:grid-cols-3">{questions.slice(0,3).map((question, index) => <li key={question.id} className="rounded-xl border border-white/10 bg-slate-950/45 p-4"><p className="text-xs font-semibold uppercase tracking-[.16em] text-blue-300">{index + 1} · {question.priority}</p><p className="mt-2 text-sm leading-6 text-slate-200">{question.question}</p></li>)}</ol> : <p className="mt-6 text-sm text-slate-400">No unresolved question is available yet. Continue the guided decision to give Atlas more context.</p>}
+      </SectionCard>
+    </div>
+  );
+}

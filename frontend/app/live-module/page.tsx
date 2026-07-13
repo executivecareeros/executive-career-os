@@ -12,7 +12,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 const modules = {
   workspace: ["Your Workspace", "Your private professional home is active.", "Begin with confirmed career context"],
   atlas: ["Atlas", "Evidence-led decision support grounded only in your confirmed records.", "Atlas is waiting for your first opportunity context"],
-  companies: ["Companies", "Research and compare companies connected to your career decisions.", "No confirmed companies yet"],
+  companies: ["Company Intelligence", "Understand the company behind the opportunity before you commit your time or reputation.", "No company is in focus yet"],
   applications: ["Applications", "Track applications that you choose to pursue.", "No applications yet"],
   compensation: ["Compensation", "Preserve confirmed compensation evidence and negotiation history.", "No compensation records yet"],
   discovery: ["Discovery", "Review opportunities from connected, attributable sources.", "No discovery sources are active"],
@@ -44,6 +44,7 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
   const recommendation = view.reasoning?.output.recommendation;
   const confidence = view.reasoning?.output.confidence;
   const decisionComplete = Boolean(view.state.finalizedDecisionId);
+  const questions = view.reasoning?.output.questions ?? [];
 
   let heading = "Confirmed Workspace context";
   let summary = `${view.historyCount} professional-history record${view.historyCount === 1 ? "" : "s"} confirmed.`;
@@ -63,16 +64,22 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
     details = [text(view.opportunity.workModel, "Work model not recorded"), "Executive-entered and confirmed", decisionComplete ? "Decision finalized" : "Decision in progress"];
   } else if (module === "atlas" && recommendation) {
     heading = `Atlas recommends: ${recommendation.action}`;
-    summary = `${confidence} confidence based only on confirmed Workspace evidence.`;
-    details = [`${view.reasoning?.output.evidence.length ?? 0} evidence records used`, `${view.reasoning?.output.questions.length ?? 0} open questions`, `${view.reasoning?.output.tradeoffs.length ?? 0} evidence-supported trade-offs`];
+    summary = `${confidence} confidence based only on evidence you confirmed. Atlas will change its view when the evidence changes.`;
+    details = questions.slice(0,3).map((question, index) => `${index + 1}. ${question.question}`);
+  } else if (module === "companies" && view.opportunity) {
+    heading = companyName;
+    summary = `Executive briefing for the company behind ${opportunityTitle}.`;
+    const knownFacts = Array.isArray(view.opportunity.knownFacts) ? view.opportunity.knownFacts.filter((item): item is string => typeof item === "string") : [];
+    details = knownFacts.slice(0,3);
+    if (!details.length) details = ["No company facts have been confirmed", "No live company source is connected", "Atlas will not infer missing intelligence"];
   } else if (module === "ledger" && decisionComplete) {
     heading = "First executive decision preserved";
     summary = `${opportunityTitle} at ${companyName} is recorded with its evidence and Atlas snapshot.`;
     details = ["Immutable decision recorded", "Career Ledger entry created", "Replay protection active"];
   } else if (module === "tasks" && decisionComplete) {
     heading = `Follow up on ${opportunityTitle}`;
-    summary = "A follow-up task was created atomically with the finalized decision.";
-    details = ["Linked to the confirmed opportunity", "Linked to the preserved decision", "No demonstration tasks shown"];
+    summary = "A follow-up was created with the finalized decision so the next conversation does not get lost.";
+    details = ["Connected to the opportunity", "Connected to the preserved decision", "Ready for executive review"];
   } else if (module === "today" && decisionComplete) {
     heading = recommendation ? `${recommendation.action} on ${opportunityTitle}` : `Review ${opportunityTitle}`;
     summary = "Your current brief reflects only the completed founder journey.";
@@ -89,13 +96,13 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
             <h2 className="mt-3 text-xl font-semibold">{heading}</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">{summary}</p>
           </div>
-          <StatusBadge tone="success">Workspace only</StatusBadge>
+          <StatusBadge tone="success">Private</StatusBadge>
         </div>
         <ul className="mt-6 grid gap-3 text-sm text-slate-300 sm:grid-cols-3">
           {details.map((detail) => <li className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3" key={detail}>{detail}</li>)}
         </ul>
-        <p className="mt-5 text-xs leading-5 text-slate-500">Demonstration datasets remain isolated from this staging Workspace.</p>
-        <div className="mt-6"><PrimaryButton href="/beta-workflow">Review guided journey</PrimaryButton></div>
+        <p className="mt-5 text-xs leading-5 text-slate-500">Only information you confirm appears in this private career space.</p>
+        <div className="mt-6"><PrimaryButton href="/beta-workflow">Review your decision</PrimaryButton></div>
       </SectionCard>
     </div>
   );
@@ -122,5 +129,5 @@ export default async function LiveModulePage({ searchParams }: { searchParams: P
     Boolean(view.state.finalizedDecisionId)
   ));
   if (view && hasRelevantContext) return <ConfirmedWorkspaceModule module={key} view={view} />;
-  return <LiveWorkspaceEmptyState title={title} description={description} emptyTitle={emptyTitle} emptyDescription="Complete the guided founder journey to add the first confirmed record. Demonstration data is isolated from this staging Workspace." actionHref="/beta-workflow" actionLabel="Continue your guided journey" />;
+  return <LiveWorkspaceEmptyState eyebrow="Your private career office" title={title} description={description} emptyTitle={emptyTitle} emptyDescription="Add confirmed context when you are ready. Atlas will never fill gaps with invented information." actionHref="/beta-workflow" actionLabel="Continue your decision" />;
 }
