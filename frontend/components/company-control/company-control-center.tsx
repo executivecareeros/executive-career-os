@@ -15,7 +15,7 @@ function metricDisplay(metric: CompanyMetric) {
   return String(observation.value);
 }
 
-export function CompanyControlCenter({ snapshot, betaTriage }: { snapshot: CompanySnapshot; betaTriage?: FounderBetaTriage }) {
+export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapComplete=false }: { snapshot: CompanySnapshot; betaTriage?: FounderBetaTriage; founderBootstrapComplete?: boolean }) {
   const metric = (id: string) => snapshot.health.metrics.find((item) => item.definition.id === id)!;
   const healthCards = [
     ["Overall Company Health", snapshot.health.overallHealth, "Insufficient connected operational data for a reliable aggregate."],
@@ -46,6 +46,8 @@ export function CompanyControlCenter({ snapshot, betaTriage }: { snapshot: Compa
       <section aria-labelledby="health-title" className="mt-8"><div className="mb-4"><p className="atlas-kicker">Company health</p><h2 id="health-title" className="mt-2 text-xl font-semibold">Evidence before status</h2></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{healthCards.map(([label, status, detail]) => <HealthCard key={label} label={label} status={status} detail={detail}/>)}</div></section>
 
       <div className="mt-8"><DailyBriefing brief={snapshot.brief}/></div>
+
+      <SectionCard className="mt-8"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Identity control plane</p><h2 className="mt-2 text-xl font-semibold">Founder Bootstrap</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">The one-time founding identity boundary is derived from the authenticated, verified account and protected database configuration.</p></div><StatusBadge tone={founderBootstrapComplete?"success":"warning"}>{founderBootstrapComplete?"Complete · Permanently Closed":"Status Unverified"}</StatusBadge></div><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Authentication","Verified session"],["Identity","Founder identity created"],["Ownership","Owner membership active"],["Audit","Immutable bootstrap event"]].map(([label,value])=><article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{founderBootstrapComplete?value:"Not verified"}</p></article>)}</div></SectionCard>
 
       <SectionCard className="mt-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Private beta access</p><h2 className="mt-2 text-xl font-semibold">Founder Invitation Management</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">Create, review, and revoke secure executive invitations without database access.</p></div><Link href="/company-control/invitations" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Manage Invitations</Link></div></SectionCard>
 
