@@ -5,6 +5,7 @@ import { SectionCard } from "@/components/section-card";
 import { StatusBadge } from "@/components/status-badge";
 import { AtlasAssessment } from "@/components/beta/atlas-assessment";
 import { HistoryFileImport } from "@/components/beta/history-file-import";
+import {BetaJourneyProgress} from "@/components/beta/beta-journey-progress";
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -88,6 +89,7 @@ function Submit({
     </button>
   );
 }
+function LockedStage({number,title,after}:{number:number;title:string;after:string}){return <SectionCard><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-slate-500">Locked</p><h2 className="mt-2 text-xl font-semibold text-slate-300">{number}. {title}</h2><p className="mt-2 text-sm text-slate-500">Complete {after} first. This stage will open automatically when its required context is ready.</p></div><StatusBadge tone="neutral">Locked</StatusBadge></div></SectionCard>}
 export default async function BetaWorkflowPage({
   searchParams,
 }: {
@@ -128,26 +130,7 @@ export default async function BetaWorkflowPage({
         title="Executive Opportunity Decision"
         description="A durable, evidence-led workflow. Saved stages are Workspace-scoped and survive refresh, logout, and return."
       />
-      <div className="mb-6 flex flex-wrap gap-2">
-        {[
-          "Invitation",
-          "Onboarding",
-          "Professional History",
-          "Blueprint",
-          "Opportunity",
-          "Reasoning",
-          "Decision Finalized",
-          "Feedback",
-          "Lifecycle",
-        ].map((step) => (
-          <StatusBadge
-            key={step}
-            tone={complete.has(step) ? "success" : "neutral"}
-          >
-            {step}: {complete.has(step) ? "Complete" : "Pending"}
-          </StatusBadge>
-        ))}
-      </div>
+      <BetaJourneyProgress completedSteps={complete}/>
       {q.error && (
         <p
           role="alert"
@@ -158,7 +141,7 @@ export default async function BetaWorkflowPage({
       )}
       <div className="grid gap-6 xl:grid-cols-2">
         {complete.has("Professional History") ? (
-          <SectionCard>
+          <SectionCard id="professional-history">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[.18em] text-emerald-300">
@@ -176,7 +159,7 @@ export default async function BetaWorkflowPage({
             </div>
           </SectionCard>
         ) : (
-          <SectionCard>
+          <SectionCard id="professional-history">
             <h2 className="text-xl font-semibold">
               1. Essential Professional History
             </h2>
@@ -252,7 +235,7 @@ export default async function BetaWorkflowPage({
               <StatusBadge tone="success">Complete</StatusBadge>
             </div>
           </SectionCard>
-        ) : (
+        ) : complete.has("Professional History") ? (
           <SectionCard id="blueprint">
             <p className="text-xs font-semibold uppercase tracking-[.18em] text-blue-300">
               Current stage
@@ -322,6 +305,8 @@ export default async function BetaWorkflowPage({
               Active revision: Not created
             </p>
           </SectionCard>
+        ) : (
+          <LockedStage number={2} title="Minimum Executive Blueprint" after="Professional History"/>
         )}
         {complete.has("Opportunity") ? (
           <SectionCard id="opportunity">
@@ -340,7 +325,7 @@ export default async function BetaWorkflowPage({
               <StatusBadge tone="success">Complete</StatusBadge>
             </div>
           </SectionCard>
-        ) : (
+        ) : complete.has("Blueprint") ? (
           <SectionCard id="opportunity">
             {complete.has("Blueprint") && (
               <p className="text-xs font-semibold uppercase tracking-[.18em] text-blue-300">
@@ -440,8 +425,10 @@ export default async function BetaWorkflowPage({
               Active opportunity: Not created
             </p>
           </SectionCard>
+        ) : (
+          <LockedStage number={3} title="Opportunity Context" after="the Executive Blueprint"/>
         )}
-        <SectionCard id="assessment">
+        {!complete.has("Opportunity")?<LockedStage number={4} title="Atlas Assessment and Decision" after="Opportunity Context"/>:<SectionCard id="assessment">
           {complete.has("Decision Finalized") && (
             <p className="text-xs font-semibold uppercase tracking-[.18em] text-emerald-300">
               Stage complete
@@ -525,8 +512,8 @@ export default async function BetaWorkflowPage({
           <p className="mt-4 text-xs text-slate-500">
             Decision commit: {view.state.finalizedDecisionId ?? "Not finalized"}
           </p>
-        </SectionCard>
-        <SectionCard>
+        </SectionCard>}
+        {!complete.has("Decision Finalized")?<LockedStage number={5} title="Structured Beta Feedback" after="the executive decision"/>:<SectionCard id="feedback">
           {complete.has("Decision Finalized") && !complete.has("Feedback") && (
             <p className="text-xs font-semibold uppercase tracking-[.18em] text-blue-300">
               Current stage
@@ -597,8 +584,8 @@ export default async function BetaWorkflowPage({
               <Submit>Submit private feedback</Submit>
             </form>
           )}
-        </SectionCard>
-        <SectionCard>
+        </SectionCard>}
+        {complete.has("Feedback")&&<SectionCard>
           {complete.has("Feedback") && !complete.has("Lifecycle") && (
             <p className="text-xs font-semibold uppercase tracking-[.18em] text-blue-300">
               Current stage
@@ -639,7 +626,7 @@ export default async function BetaWorkflowPage({
               </p>
             ))}
           </div>
-        </SectionCard>
+        </SectionCard>}
       </div>
     </PageContent>
   );

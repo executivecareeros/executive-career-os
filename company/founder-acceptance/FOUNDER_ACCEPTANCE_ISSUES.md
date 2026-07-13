@@ -82,20 +82,20 @@
 ### FA-005 — The accepted beta decision workflow is not discoverable after onboarding
 
 - Severity: High
-- Status: Open
+- Status: Resolved
 - Stage: Transition from Onboarding to Professional History
 - Reproduction steps:
   1. Complete invited onboarding.
   2. Select `Enter Executive Career OS`.
   3. Attempt to begin the Release 0.6 Executive Opportunity Decision journey from the dashboard or navigation.
 - Expected result: A clear next action opens the accepted decision journey.
-- Actual result: The founder lands on a general dashboard whose primary action is professional-history import. No navigation item or dashboard action exposes `/beta-workflow`; direct URL navigation is required.
-- Evidence or screenshot: `screenshots/06-onboarding-ready.png`; source and rendered navigation contain no beta-workflow destination.
+- Actual result: The post-onboarding success screen now provides one primary `Continue` action into Professional History. The authenticated dashboard provides `Continue Beta Journey`, and the journey itself identifies Complete, Current, Not Started, and Locked stages while explaining what Atlas needs next.
+- Evidence or screenshot: Founder acceptance browser journey on 13 July 2026; deterministic discoverability checks confirm the onboarding handoff, dashboard resume action, complete journey sequence, prerequisite locks, and automatic stage targets.
 - Probable subsystem: Post-onboarding information architecture / application navigation
 - Regression risk: Low if the existing workflow is linked without duplicating layout or weakening route protection.
 - Trust impact: High for founder acceptance because an invited design partner cannot independently find the core RC1 journey.
-- Workaround: Navigate directly to `/beta-workflow`.
-- Retest evidence: Pending.
+- Workaround: None required.
+- Retest evidence: Passed on 13 July 2026. A user can enter the guided journey from onboarding or the dashboard without typing a URL. Professional History, Blueprint, Opportunity, Atlas Assessment, Decision, Career Ledger, and Feedback are presented in sequence; each current stage explains why it matters and completed saves target the next stage.
 
 ### FA-006 — Local acceptance form resets itself while the founder is typing
 

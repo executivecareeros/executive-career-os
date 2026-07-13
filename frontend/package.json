@@ -20,7 +20,8 @@
     "test:beta-workflow": "node scripts/test-beta-workflow.mjs",
     "test:beta-isolation": "node scripts/test-beta-isolation.mjs",
     "test:invitations": "node scripts/test-invitation-management.mjs",
-    "test:email-verification": "node scripts/test-email-verification.mjs"
+    "test:email-verification": "node scripts/test-email-verification.mjs",
+    "test:beta-discoverability": "node scripts/test-beta-discoverability.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",
