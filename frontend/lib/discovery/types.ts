@@ -1,7 +1,9 @@
 import type { Opportunity } from "@/types/opportunity";
 
 export const discoverySourceKinds = ["linkedin", "indeed", "glassdoor", "stepstone", "wellfound", "greenhouse", "lever", "workday", "sap-successfactors", "smartrecruiters", "ashby", "icims", "corporate-career-site", "executive-search-firm", "manual-import", "csv-import", "rss-feed"] as const;
-export type DiscoverySourceKind = (typeof discoverySourceKinds)[number];
+export type KnownDiscoverySourceKind = (typeof discoverySourceKinds)[number];
+/** Open provider identifier. The catalog is illustrative; new compliant providers do not require a domain-model change. */
+export type DiscoverySourceKind = KnownDiscoverySourceKind | (string & {});
 
 export const sourceReliabilityTypes = ["Official API", "Verified Feed", "Corporate Website", "Executive Search Firm", "Job Board", "Recruiter", "Referral", "Manual Import", "Unknown"] as const;
 export type SourceReliabilityType = (typeof sourceReliabilityTypes)[number];
@@ -20,6 +22,8 @@ export interface DiscoverySource {
 
 export interface DiscoveryCompany {
   sourceId: string;
+  /** Stable cross-provider company identity when the provider can supply or resolve one. */
+  canonicalKey?: string;
   name: string;
   website?: string;
   industry?: string;
@@ -226,6 +230,32 @@ export interface OpportunityProvider {
   readonly reliability: SourceReliability;
   collect(request: ProviderCollectionRequest): Promise<ProviderCollectionBatch>;
   health(): Promise<DiscoveryHealth>;
+}
+
+export type ProviderAccessModel = "official-api" | "public-feed" | "authorized-import" | "manual";
+export type ProviderReviewStatus = "approved" | "evaluation" | "disabled";
+export type ProviderEvaluationRating = "low" | "moderate" | "high" | "unknown";
+export interface OpportunityProviderEvaluation {
+  executiveCoverage: ProviderEvaluationRating;
+  executiveRelevance: ProviderEvaluationRating;
+  dataQuality: ProviderEvaluationRating;
+  freshness: ProviderEvaluationRating;
+  legalCompliance: ProviderEvaluationRating;
+  reliability: ProviderEvaluationRating;
+  scalability: ProviderEvaluationRating;
+  engineeringEfficiency: ProviderEvaluationRating;
+  accessModel: ProviderAccessModel;
+  reviewStatus: ProviderReviewStatus;
+  reviewedAt: string;
+}
+
+/** Plug-in descriptor used to discover and construct providers without branching in the coverage engine. */
+export interface OpportunityProviderAdapter {
+  readonly id: DiscoverySourceKind;
+  readonly name: string;
+  readonly evaluation: OpportunityProviderEvaluation;
+  supports(locator: URL): boolean;
+  create(locator: string): OpportunityProvider;
 }
 
 export type IngestionDisposition = "inserted" | "updated" | "duplicate" | "rejected";

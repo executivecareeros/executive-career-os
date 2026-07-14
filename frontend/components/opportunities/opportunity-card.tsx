@@ -25,7 +25,7 @@ export function OpportunityCard({ opportunity, view }: { opportunity: Opportunit
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2"><OpportunityStatusBadge status={opportunity.status} /><OpportunityPriorityBadge priority={opportunity.priority} /></div>
-        <p className="mt-4 text-sm leading-6 text-slate-400">{opportunity.decisionRationale}</p><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500"><span>Source: {opportunity.source}</span><StatusBadge tone={freshness.status === "Fresh" ? "success" : freshness.status === "Recent" ? "info" : freshness.status === "Stale" ? "warning" : "neutral"}>{freshness.status === "Unknown" ? "Freshness unknown" : `${freshness.status} · observed ${freshness.ageHours}h ago`}</StatusBadge></div>
+        <p className="mt-4 text-sm leading-6 text-slate-400">{opportunity.decisionRationale}</p><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500"><span>{opportunity.sources?.length ?? 1} verified source{(opportunity.sources?.length ?? 1) === 1 ? "" : "s"}</span><StatusBadge tone={freshness.status === "Fresh" ? "success" : freshness.status === "Recent" ? "info" : freshness.status === "Stale" ? "warning" : "neutral"}>{freshness.status === "Unknown" ? "Freshness unknown" : `${freshness.status} · observed ${freshness.ageHours}h ago`}</StatusBadge></div>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:mt-0">
         <ScoreIndicator compact label="Overall Match" score={opportunity.overallScore} />

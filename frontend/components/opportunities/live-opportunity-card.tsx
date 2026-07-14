@@ -10,7 +10,7 @@ export function LiveOpportunityCard({ opportunity }: { opportunity: LiveOpportun
         <p className="mt-5 text-sm text-blue-300"><Link href="/companies/current" className="hover:text-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">{opportunity.companyName}</Link></p>
         <h2 className="mt-1 text-xl font-semibold text-white">{opportunity.title}</h2>
         <p className="mt-2 text-sm text-slate-400">{opportunity.location} · {opportunity.workModel}</p>
-        <p className="mt-4 text-xs text-slate-500">Source: {opportunity.source}</p>
+        <p className="mt-4 text-xs text-slate-500">Verified opportunity evidence</p>
       </div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="min-w-28 rounded-xl border border-white/10 bg-slate-950/50 p-4">

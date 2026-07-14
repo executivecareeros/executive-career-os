@@ -25,6 +25,7 @@ Orendalis work must be intentional, evidence-led, secure, reversible where possi
 | [Founder Approval Protocol](FOUNDER_APPROVAL_PROTOCOL.md) | Actions requiring explicit founder authority |
 | [AI Agent Protocol](AI_AGENT_PROTOCOL.md) | Safe, scoped, evidence-based AI-agent behavior |
 | [Product Development Protocol](PRODUCT_DEVELOPMENT_PROTOCOL.md) | Product discovery, scope, UX, and acceptance |
+| [Executive Opportunity Universe Directive](EXECUTIVE_OPPORTUNITY_UNIVERSE_DIRECTIVE.md) | Permanent product and architecture rules for opportunity coverage and provider expansion |
 | [Engineering Protocol](ENGINEERING_PROTOCOL.md) | Implementation, architecture, source control, and review |
 | [Quality Assurance Protocol](QUALITY_ASSURANCE_PROTOCOL.md) | Test strategy, defects, regression, and acceptance |
 | [Security and Privacy Protocol](SECURITY_AND_PRIVACY_PROTOCOL.md) | Data, access, secrets, threat, and privacy controls |

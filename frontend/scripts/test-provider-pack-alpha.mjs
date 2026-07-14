@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { AshbyOpportunityProvider, parseAshbyBoard } from "../lib/discovery/providers/ashby.ts";
 import { LeverOpportunityProvider, parseLeverBoard } from "../lib/discovery/providers/lever.ts";
 import { providerFromCareersUrl } from "../lib/discovery/providers/factory.ts";
+import { OpportunityProviderCatalog } from "../lib/discovery/providers/catalog.ts";
+import { productionProviderAdapters } from "../lib/discovery/providers/production-catalog.ts";
 import { OpportunityCoverageEngine } from "../lib/discovery/coverage-engine.ts";
 import { MemoryOpportunityIngestionSink } from "../lib/discovery/pipeline.ts";
 
@@ -10,7 +12,12 @@ assert.equal(parseAshbyBoard("https://jobs.ashbyhq.com/Acme/job-id"), "Acme");
 assert.equal(providerFromCareersUrl("https://boards.greenhouse.io/acme").id, "greenhouse");
 assert.equal(providerFromCareersUrl("https://jobs.lever.co/acme").id, "lever");
 assert.equal(providerFromCareersUrl("https://jobs.ashbyhq.com/acme").id, "ashby");
-assert.throws(() => providerFromCareersUrl("https://example.com/jobs"), /not supported/);
+assert.throws(() => providerFromCareersUrl("https://example.com/jobs"), /not available/);
+assert.equal(productionProviderAdapters.every((adapter) => adapter.evaluation.reviewStatus === "approved" && adapter.evaluation.legalCompliance === "high"), true);
+
+const customProvider = { id: "future-approved-provider", source: { id: "future-approved-provider", name: "Future provider", category: "Verified Feed", description: "Test adapter", capabilities: ["jobs"] }, reliability: { type: "Verified Feed", rating: "high", score: 80, rationale: "Test", assessedAt: "2026-07-14T00:00:00Z" }, async collect() { return { providerId: "future-approved-provider", collectedAt: "2026-07-14T00:00:00Z", jobs: [] }; }, async health() { return { source: "future-approved-provider", status: "available", checkedAt: "2026-07-14T00:00:00Z", message: "Ready" }; } };
+const extensibleCatalog = new OpportunityProviderCatalog().register({ id: "future-approved-provider", name: "Future provider", supports: (url) => url.hostname === "careers.future.example", create: () => customProvider, evaluation: { executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high", accessModel: "public-feed", reviewStatus: "approved", reviewedAt: "2026-07-14T00:00:00Z" } });
+assert.equal(providerFromCareersUrl("https://careers.future.example/jobs", extensibleCatalog).id, "future-approved-provider", "A future provider must plug in without changing the engine or domain model");
 
 const leverFetch = async () => new Response(JSON.stringify([{ id: "lever-1", text: "Chief Revenue Officer", categories: { location: "London", commitment: "Full-time", department: "Sales" }, country: "GB", descriptionPlain: "Lead global revenue.", hostedUrl: "https://jobs.lever.co/acme/lever-1", workplaceType: "hybrid", salaryRange: { currency: "GBP", min: 200000, max: 250000 } }]), { status: 200 });
 const ashbyFetch = async () => new Response(JSON.stringify({ apiVersion: "1", jobs: [{ title: "Chief Revenue Officer", location: "London", department: "Sales", isListed: true, workplaceType: "Hybrid", descriptionPlain: "Lead global revenue.", publishedAt: "2026-07-14T08:00:00Z", employmentType: "FullTime", address: { postalAddress: { addressCountry: "GB" } }, jobUrl: "https://jobs.ashbyhq.com/acme/ashby-1", compensation: { summaryComponents: [{ compensationType: "Salary", currencyCode: "GBP", minValue: 200000, maxValue: 250000 }] } }] }), { status: 200 });

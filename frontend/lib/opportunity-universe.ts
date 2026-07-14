@@ -41,9 +41,30 @@ export function normalizeIdentityPart(value: string) {
 }
 
 export function opportunityDuplicateKey(opportunity: Opportunity) {
-  return [opportunity.companyName, opportunity.jobTitle, opportunity.country, opportunity.location]
+  const companyIdentity = opportunity.companyProfile?.canonicalKey || opportunity.companyId || opportunity.companyName;
+  return [companyIdentity, opportunity.jobTitle, opportunity.country, opportunity.location]
     .map(normalizeIdentityPart)
     .join("|");
+}
+
+const unspecified = new Set(["", "not specified", "unknown"]);
+
+/** Conservative cross-provider identity match. Uncertain records remain separate for review instead of being falsely merged. */
+export function isCanonicalOpportunityMatch(left: Opportunity, right: Opportunity) {
+  const leftCompanyKey = normalizeIdentityPart(left.companyProfile?.canonicalKey ?? left.companyId ?? "");
+  const rightCompanyKey = normalizeIdentityPart(right.companyProfile?.canonicalKey ?? right.companyId ?? "");
+  const companyMatches = leftCompanyKey && rightCompanyKey
+    ? leftCompanyKey === rightCompanyKey
+    : normalizeIdentityPart(left.companyName) === normalizeIdentityPart(right.companyName);
+  if (!companyMatches || normalizeIdentityPart(left.jobTitle) !== normalizeIdentityPart(right.jobTitle)) return false;
+  const leftLocation = normalizeIdentityPart(`${left.country}|${left.location}`);
+  const rightLocation = normalizeIdentityPart(`${right.country}|${right.location}`);
+  if (leftLocation === rightLocation) return true;
+  return unspecified.has(normalizeIdentityPart(left.country)) || unspecified.has(normalizeIdentityPart(right.country));
+}
+
+export function findCanonicalOpportunityIndex(opportunities: readonly Opportunity[], candidate: Opportunity) {
+  return opportunities.findIndex((opportunity) => isCanonicalOpportunityMatch(opportunity, candidate));
 }
 
 export function assessOpportunityFreshness(opportunity: Opportunity, now = new Date().toISOString()): OpportunityFreshness {
@@ -88,12 +109,13 @@ export type OpportunityDuplicateCluster = {
 };
 
 export function clusterDuplicateOpportunities(opportunities: Opportunity[]): OpportunityDuplicateCluster[] {
-  const groups = new Map<string, Opportunity[]>();
+  const groups: Array<{ key: string; observations: Opportunity[] }> = [];
   for (const opportunity of opportunities) {
-    const key = opportunityDuplicateKey(opportunity);
-    groups.set(key, [...(groups.get(key) ?? []), opportunity]);
+    const group = groups.find((candidate) => isCanonicalOpportunityMatch(candidate.observations[0], opportunity));
+    if (group) group.observations.push(opportunity);
+    else groups.push({ key: opportunityDuplicateKey(opportunity), observations: [opportunity] });
   }
-  return [...groups.entries()].map(([key, observations]) => {
+  return groups.map(({ key, observations }) => {
     const canonical = [...observations].sort((a, b) => {
       if (b.confidenceScore !== a.confidenceScore) return b.confidenceScore - a.confidenceScore;
       return b.discoveredAt.localeCompare(a.discoveredAt);

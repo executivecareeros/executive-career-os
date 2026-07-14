@@ -41,6 +41,7 @@ export type OpportunityLifecycleEvent = {
 
 export type OpportunityCompanyProfile = {
   companyId?: string;
+  canonicalKey?: string;
   name: string;
   website?: string;
   industry?: string;

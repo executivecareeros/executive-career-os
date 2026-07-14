@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { canTransitionOpportunity, clusterDuplicateOpportunities, isInUniverseStage, opportunityDuplicateKey, resolveUniverseStage, summarizeOpportunityUniverse } from "../lib/opportunity-universe.ts";
+import { canTransitionOpportunity, clusterDuplicateOpportunities, isCanonicalOpportunityMatch, isInUniverseStage, opportunityDuplicateKey, resolveUniverseStage, summarizeOpportunityUniverse } from "../lib/opportunity-universe.ts";
 import { toLiveOpportunity } from "../lib/live-opportunity.ts";
 
 const base = {
@@ -24,6 +24,8 @@ assert.equal(clusters.length, 1);
 assert.equal(clusters[0].canonical.id, "one");
 assert.equal(clusters[0].sourceCount, 2);
 assert.equal(clusters[0].requiresReview, true);
+assert.equal(isCanonicalOpportunityMatch({ ...base, companyName: "Provider A label", companyProfile: { canonicalKey: "company:global-123", name: "Provider A label", evidenceStatus: "Partial" } }, { ...duplicate, companyName: "Provider B label", companyProfile: { canonicalKey: "company:global-123", name: "Provider B label", evidenceStatus: "Partial" } }), true, "Resolved company identity must reconcile cross-provider labels");
+assert.equal(isCanonicalOpportunityMatch(base, { ...duplicate, jobTitle: "Chief Operating Officer" }), false, "Different roles must never be merged");
 
 const summary = summarizeOpportunityUniverse([base, { ...base, id: "three", universeStage: "Universe", source: "Recruiter" }]);
 assert.equal(summary.total, 2);
