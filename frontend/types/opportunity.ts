@@ -8,6 +8,38 @@ export const workArrangements = ["Remote", "Hybrid", "On-site"] as const;
 export type WorkArrangement = (typeof workArrangements)[number];
 export type EmploymentType = "Full-time" | "Contract" | "Interim";
 
+export const opportunityUniverseStages = ["Universe", "Qualified", "Recommended"] as const;
+export type OpportunityUniverseStage = (typeof opportunityUniverseStages)[number];
+
+export const opportunitySourceKinds = ["Employer", "Job Board", "Recruiter", "Referral", "Manual", "Document", "URL"] as const;
+export type OpportunitySourceKind = (typeof opportunitySourceKinds)[number];
+export type OpportunitySource = {
+  id: string;
+  name: string;
+  kind: OpportunitySourceKind;
+  originalId?: string;
+  originalUrl?: string;
+  collectedAt: string;
+  confidence: "High" | "Medium" | "Low" | "Unknown";
+};
+
+export type OpportunityLifecycleEvent = {
+  status: OpportunityStatus;
+  occurredAt: string;
+  reason: string;
+  source: "Executive" | "Atlas" | "System";
+};
+
+export type OpportunityCompanyProfile = {
+  companyId?: string;
+  name: string;
+  website?: string;
+  industry?: string;
+  headquarters?: string;
+  size?: string;
+  evidenceStatus: "Confirmed" | "Partial" | "Unknown";
+};
+
 export type Opportunity = {
   id: string;
   companyId?: string;
@@ -23,6 +55,10 @@ export type Opportunity = {
   companySize: string;
   source: string;
   sourceUrl?: string;
+  sources?: OpportunitySource[];
+  universeStage?: OpportunityUniverseStage;
+  lifecycle?: OpportunityLifecycleEvent[];
+  companyProfile?: OpportunityCompanyProfile;
   publishedAt: string;
   discoveredAt: string;
   salaryMin?: number;

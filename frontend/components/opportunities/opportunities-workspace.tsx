@@ -7,9 +7,12 @@ import { SecondaryButton } from "@/components/secondary-button";
 import { StatCard } from "@/components/stat-card";
 import { countActiveFilters, defaultOpportunityFilters, filterOpportunities, sortOpportunities } from "@/lib/opportunity-filters";
 import type { Opportunity, OpportunityFiltersState, OpportunitySort } from "@/types/opportunity";
+import type { OpportunityUniverseStage } from "@/types/opportunity";
+import { isInUniverseStage, summarizeOpportunityUniverse } from "@/lib/opportunity-universe";
 import { DemoDataBanner } from "./demo-data-banner";
 import { OpportunityCard } from "./opportunity-card";
 import { OpportunityFilters } from "./opportunity-filters";
+import { OpportunityUniverseOverview } from "./opportunity-universe-overview";
 
 const sortOptions: { value: OpportunitySort; label: string }[] = [
   { value: "newest", label: "Newest" }, { value: "overall", label: "Highest overall score" },
@@ -21,24 +24,27 @@ export function OpportunitiesWorkspace({ opportunities }: { opportunities: Oppor
   const [filters, setFilters] = useState<OpportunityFiltersState>(defaultOpportunityFilters);
   const [sort, setSort] = useState<OpportunitySort>("overall");
   const [view, setView] = useState<"grid" | "list">("list");
+  const [universeStage, setUniverseStage] = useState<OpportunityUniverseStage>("Recommended");
   const activeCount = countActiveFilters(filters);
-  const visible = useMemo(() => sortOpportunities(filterOpportunities(opportunities, filters), sort), [opportunities, filters, sort]);
+  const summary = useMemo(() => summarizeOpportunityUniverse(opportunities), [opportunities]);
+  const visible = useMemo(() => sortOpportunities(filterOpportunities(opportunities, filters).filter((item) => isInUniverseStage(item, universeStage)), sort), [opportunities, filters, sort, universeStage]);
   const industries = useMemo(() => [...new Set(opportunities.map((item) => item.industry))].sort(), [opportunities]);
   const countries = useMemo(() => [...new Set(opportunities.map((item) => item.country))].sort(), [opportunities]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
-      <PageHeader title="Opportunities" description="Discover, assess, and manage executive career opportunities through a transparent decision framework." />
+      <PageHeader title="Opportunity Universe" description="Discover across sources, qualify against your Blueprint, and focus on the opportunities Atlas can explain." />
       <div className="mt-6"><DemoDataBanner /></div>
+      <div className="mt-6"><OpportunityUniverseOverview activeStage={universeStage} counts={summary.stages} sourceCount={summary.sourceCount} onStageChange={setUniverseStage} /></div>
       <section className="grid gap-4 py-6 sm:grid-cols-2 xl:grid-cols-4" aria-label="Opportunity metrics">
-        <StatCard label="Total opportunities" value={opportunities.length} note="Demo scenarios" />
-        <StatCard label="Qualified" value={opportunities.filter((item) => item.status === "Qualified").length} note="Assessment complete" />
-        <StatCard label="High priority" value={opportunities.filter((item) => item.priority === "High").length} note="Requires attention" />
-        <StatCard label="Applications ready" value={opportunities.filter((item) => item.status === "Ready to Apply").length} note="Demo workflow" />
+        <StatCard label="Universe" value={summary.total} note="Attributed opportunities" />
+        <StatCard label="Qualified" value={summary.stages.Qualified} note="Blueprint threshold" />
+        <StatCard label="Recommended" value={summary.stages.Recommended} note="Atlas attention set" />
+        <StatCard label="Sources" value={summary.sourceCount} note={summary.duplicateClusters ? `${summary.duplicateClusters} duplicate groups` : "No duplicate groups"} />
       </section>
       <OpportunityFilters filters={filters} industries={industries} countries={countries} activeCount={activeCount} onChange={setFilters} onClear={() => setFilters(defaultOpportunityFilters)} />
       <div className="flex flex-col gap-4 py-6 sm:flex-row sm:items-end sm:justify-between">
-        <p className="text-sm text-slate-400" aria-live="polite">Showing <strong className="text-white">{visible.length}</strong> of {opportunities.length} opportunities</p>
+        <p className="text-sm text-slate-400" aria-live="polite">Showing <strong className="text-white">{visible.length}</strong> {universeStage.toLowerCase()} opportunities</p>
         <div className="flex flex-wrap items-end gap-3">
           <label className="text-sm text-slate-400">Sort by<select className="ml-2 rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-blue-400" value={sort} onChange={(event) => setSort(event.target.value as OpportunitySort)}>{sortOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           <div className="flex rounded-lg border border-white/10 p-1" aria-label="Opportunity view">
@@ -47,7 +53,7 @@ export function OpportunitiesWorkspace({ opportunities }: { opportunities: Oppor
           </div>
         </div>
       </div>
-      {visible.length === 0 ? <EmptyState eyebrow="No matching demo data" title="No opportunities match these filters" description="Adjust or clear the active filters to see demonstration opportunities." action={<SecondaryButton onClick={() => setFilters(defaultOpportunityFilters)}>Clear all filters</SecondaryButton>} /> : <div className={view === "grid" ? "grid gap-5 xl:grid-cols-2" : "space-y-5"}>{visible.map((opportunity) => <OpportunityCard key={opportunity.id} opportunity={opportunity} view={view} />)}</div>}
+      {visible.length === 0 ? <EmptyState eyebrow={`${universeStage} view`} title={`No ${universeStage.toLowerCase()} opportunities match`} description={activeCount ? "Clear the active filters to restore this executive shortlist." : "No opportunity currently meets this stage. Atlas will move opportunities forward only when the evidence supports it."} action={activeCount ? <SecondaryButton onClick={() => setFilters(defaultOpportunityFilters)}>Clear all filters</SecondaryButton> : undefined} /> : <div className={view === "grid" ? "grid gap-5 xl:grid-cols-2" : "space-y-5"}>{visible.map((opportunity) => <OpportunityCard key={opportunity.id} opportunity={opportunity} view={view} />)}</div>}
     </div>
   );
 }
