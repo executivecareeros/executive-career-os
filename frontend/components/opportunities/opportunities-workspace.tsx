@@ -47,7 +47,7 @@ export function OpportunitiesWorkspace({ opportunities }: { opportunities: Oppor
       </section>
       {experienceView === "Search" && <div className="mt-6"><OpportunityFilters filters={filters} industries={industries} countries={countries} activeCount={activeCount} onChange={setFilters} onClear={() => setFilters(defaultOpportunityFilters)} /></div>}
       <div className="flex flex-col gap-4 py-6 sm:flex-row sm:items-end sm:justify-between">
-        <p className="text-sm text-slate-400" aria-live="polite">Showing <strong className="text-white">{visible.length}</strong> {experienceView.toLowerCase()} opportunities</p>
+        <p className="text-sm text-slate-400" aria-live="polite">Showing <strong className="text-white">{visible.length}</strong> opportunities in {experienceView}</p>
         <div className="flex flex-wrap items-end gap-3">
           <label className="text-sm text-slate-400">Sort by<select className="ml-2 rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-white outline-none focus:ring-2 focus:ring-blue-400" value={sort} onChange={(event) => setSort(event.target.value as OpportunitySort)}>{sortOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           <div className="flex rounded-lg border border-white/10 p-1" aria-label="Opportunity view">
