@@ -89,15 +89,16 @@ export async function importLinkedInOpportunity(formData: FormData) {
   if (!resolved) redirect("/login?next=/opportunities");
   if (formData.get("consent") !== "yes") redirect("/opportunities?linkedin=error&message=Confirm%20that%20you%20chose%20to%20import%20these%20visible%20job%20details.");
   const client = createServerSupabaseClient(resolved.accessToken);
+  let result: Awaited<ReturnType<typeof runLinkedInBridge>>;
   try {
-    const result = await runLinkedInBridge({ linkedInUrl: String(formData.get("linkedinUrl") ?? ""), visibleDetails: String(formData.get("visibleDetails") ?? ""), employerApplicationUrl: String(formData.get("employerUrl") ?? "") }, new SupabaseOpportunityIngestionSink(client, resolved.context));
-    try { if (result.employerOutcome) await recordDiscoveryRun(client, resolved.context, result.employerOutcome); await recordDiscoveryRun(client, resolved.context, result.linkedInOutcome); } catch { /* The opportunity remains available if secondary monitoring persistence is interrupted. */ }
-    revalidatePath("/opportunities");
-    if (result.opportunityId) revalidatePath(`/opportunities/${result.opportunityId}`);
-    redirect(`/opportunities?linkedin=complete&verification=${encodeURIComponent(result.verificationStatus)}&opportunity=${encodeURIComponent(result.opportunityId ?? "")}`);
+    result = await runLinkedInBridge({ linkedInUrl: String(formData.get("linkedinUrl") ?? ""), visibleDetails: String(formData.get("visibleDetails") ?? ""), employerApplicationUrl: String(formData.get("employerUrl") ?? "") }, new SupabaseOpportunityIngestionSink(client, resolved.context));
   } catch (error) {
     redirect(`/opportunities?linkedin=error&message=${encodeURIComponent(error instanceof Error ? error.message : "The LinkedIn job could not be imported safely.")}`);
   }
+  try { if (result.employerOutcome) await recordDiscoveryRun(client, resolved.context, result.employerOutcome); await recordDiscoveryRun(client, resolved.context, result.linkedInOutcome); } catch { /* The opportunity remains available if secondary monitoring persistence is interrupted. */ }
+  revalidatePath("/opportunities");
+  if (result.opportunityId) revalidatePath(`/opportunities/${result.opportunityId}`);
+  redirect(`/opportunities?linkedin=complete&verification=${encodeURIComponent(result.verificationStatus)}&opportunity=${encodeURIComponent(result.opportunityId ?? "")}`);
 }
 
 export async function importLinkedInJobAlert(formData: FormData) {
@@ -116,9 +117,9 @@ export async function importLinkedInJobAlert(formData: FormData) {
       if (result.linkedInOutcome.run.status !== "failed") imported += 1;
       try { await recordDiscoveryRun(client, resolved.context, result.linkedInOutcome); } catch { /* Monitoring is secondary to the private opportunity record. */ }
     }
-    revalidatePath("/opportunities");
-    redirect(`/opportunities?linkedin=complete&verification=Unverified%20LinkedIn%20observation&imported=${imported}`);
   } catch (error) {
     redirect(`/opportunities?linkedin=error&message=${encodeURIComponent(error instanceof Error ? error.message : "The job alert could not be imported safely.")}`);
   }
+  revalidatePath("/opportunities");
+  redirect(`/opportunities?linkedin=complete&verification=Unverified%20LinkedIn%20observation&imported=${imported}`);
 }
