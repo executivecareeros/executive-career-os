@@ -51,3 +51,9 @@ For autonomous daily use without direct support: not yet. The product needs cons
 3. Make Company research and Opportunity intelligence substantively useful or clearly unavailable.
 4. Provide a concise “why this is here” and “what Atlas used” view on every record summary.
 5. Align all product naming around Atlas and Orendalis.
+
+## Post-Polish Trust Review — 14 July 2026
+
+The largest trust contradiction has been removed: the dashboard now remembers and accurately reflects the completed decision journey. Atlas is consistently named, its recommendation remains bounded by confirmed evidence, and the interface distinguishes what is known from what still needs to be asked.
+
+Company Intelligence does not imply research that is unavailable; it presents only confirmed facts and an honest next step. The live executive journey no longer exposes internal release or system terminology. These changes support a supervised design-partner trial without weakening the executive's ownership of the final decision.

@@ -78,3 +78,11 @@ The surrounding product is not yet equally coherent. The return dashboard does n
 **READY AFTER EXECUTIVE POLISH**
 
 The product is suitable for a tightly supported design-partner engagement after the high-impact experience inconsistencies are corrected. It is not yet a self-explanatory paid executive product.
+
+## Post-Polish Validation — 14 July 2026
+
+The approved executive polish is deployed and verified in staging. The return dashboard now opens as a state-aware Executive Briefing, reflects the preserved decision, identifies eight material questions, names the opportunity in focus, and presents Atlas's current recommendation without inventing evidence.
+
+Primary navigation is reduced to seven executive destinations, with three account and founder controls separated from daily work. Company Intelligence now presents confirmed company facts only. Atlas presents the three questions most likely to change the decision. Internal release, staging, demo, repository, replay, and identifier language has been removed from the reviewed executive journey.
+
+Desktop and 390-pixel mobile validation passed without horizontal overflow. The authenticated return journey, Atlas, Company Intelligence, Settings, and Decision Journey were reviewed successfully on the deployed revision. The final release decision is **READY FOR DESIGN PARTNERS**.
