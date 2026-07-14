@@ -1,0 +1,31 @@
+import assert from "node:assert/strict";
+import { AshbyOpportunityProvider, parseAshbyBoard } from "../lib/discovery/providers/ashby.ts";
+import { LeverOpportunityProvider, parseLeverBoard } from "../lib/discovery/providers/lever.ts";
+import { providerFromCareersUrl } from "../lib/discovery/providers/factory.ts";
+import { OpportunityCoverageEngine } from "../lib/discovery/coverage-engine.ts";
+import { MemoryOpportunityIngestionSink } from "../lib/discovery/pipeline.ts";
+
+assert.deepEqual(parseLeverBoard("https://jobs.eu.lever.co/Acme/jobs/123"), { site: "Acme", region: "eu" });
+assert.equal(parseAshbyBoard("https://jobs.ashbyhq.com/Acme/job-id"), "Acme");
+assert.equal(providerFromCareersUrl("https://boards.greenhouse.io/acme").id, "greenhouse");
+assert.equal(providerFromCareersUrl("https://jobs.lever.co/acme").id, "lever");
+assert.equal(providerFromCareersUrl("https://jobs.ashbyhq.com/acme").id, "ashby");
+assert.throws(() => providerFromCareersUrl("https://example.com/jobs"), /not supported/);
+
+const leverFetch = async () => new Response(JSON.stringify([{ id: "lever-1", text: "Chief Revenue Officer", categories: { location: "London", commitment: "Full-time", department: "Sales" }, country: "GB", descriptionPlain: "Lead global revenue.", hostedUrl: "https://jobs.lever.co/acme/lever-1", workplaceType: "hybrid", salaryRange: { currency: "GBP", min: 200000, max: 250000 } }]), { status: 200 });
+const ashbyFetch = async () => new Response(JSON.stringify({ apiVersion: "1", jobs: [{ title: "Chief Revenue Officer", location: "London", department: "Sales", isListed: true, workplaceType: "Hybrid", descriptionPlain: "Lead global revenue.", publishedAt: "2026-07-14T08:00:00Z", employmentType: "FullTime", address: { postalAddress: { addressCountry: "GB" } }, jobUrl: "https://jobs.ashbyhq.com/acme/ashby-1", compensation: { summaryComponents: [{ compensationType: "Salary", currencyCode: "GBP", minValue: 200000, maxValue: 250000 }] } }] }), { status: 200 });
+const lever = new LeverOpportunityProvider("acme", "global", leverFetch);
+const ashby = new AshbyOpportunityProvider("acme", ashbyFetch);
+const sink = new MemoryOpportunityIngestionSink();
+const engine = new OpportunityCoverageEngine(sink).register(lever, { priority: 1, enabled: true, maximumResults: 20 }).register(ashby, { priority: 2, enabled: true, maximumResults: 20 });
+await engine.enqueue("lever", undefined, "2026-07-14T10:00:00Z");
+await engine.enqueue("ashby", undefined, "2026-07-14T10:00:00Z");
+await engine.runNext("2026-07-14T10:00:00Z");
+await engine.runNext("2026-07-14T10:00:00Z");
+const records = await sink.list();
+assert.equal(records.length, 1, "Equivalent postings from Lever and Ashby must reconcile to one opportunity");
+assert.equal(records[0].sources.length, 2);
+assert.equal(records[0].salaryCurrency, "GBP");
+assert.equal(records[0].workArrangement, "Hybrid");
+assert.equal((await engine.snapshot()).metrics.duplicateObservations, 0);
+console.log("Opportunity Provider Pack Alpha checks passed.");
