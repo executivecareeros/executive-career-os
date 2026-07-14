@@ -8,13 +8,13 @@ export function SearchInput({ label, id, className = "", ...props }: SearchInput
   const inputId = id ?? props.name;
 
   return (
-    <label htmlFor={inputId} className="text-sm text-slate-400">
+    <label htmlFor={inputId} className="text-sm text-[#565c62]">
       {label}
       <input
         {...props}
         id={inputId}
         type="search"
-        className={`mt-2 w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 ${className}`}
+        className={`mt-2 w-full rounded-xl border border-[#d9dcde] bg-white px-4 py-3 text-sm text-[#17191c] outline-none placeholder:text-[#9aa0a5] focus:border-[#7894a6] focus:ring-2 focus:ring-[#7894a6]/20 ${className}`}
       />
     </label>
   );

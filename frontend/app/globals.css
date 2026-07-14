@@ -84,6 +84,18 @@ select {
 .atlas-surface { background: var(--atlas-surface); border: 1px solid var(--atlas-border); box-shadow: var(--atlas-shadow); }
 .atlas-kicker { font-size: .6875rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #9eb6c5; }
 
+[data-executive-shell] [class~="text-white"],
+[data-executive-shell] [class*="text-[#f4f0e8]"] { color: #17191c; }
+[data-executive-shell] [class*="text-slate-2"],
+[data-executive-shell] [class*="text-slate-3"],
+[data-executive-shell] [class*="text-slate-4"],
+[data-executive-shell] [class*="text-slate-5"] { color: #6f757b; }
+[data-executive-shell] [class*="bg-slate-950"],
+[data-executive-shell] [class*="bg-slate-900"] { background-color: #fff; }
+[data-executive-shell] [class*="bg-white/[."] { background-color: #fff; }
+[data-executive-shell] [class*="border-white/"] { border-color: #e3e5e6; }
+[data-executive-shell] .atlas-kicker { color: #6f8796; }
+
 @keyframes atlas-pulse { 0%,100%{opacity:.45} 50%{opacity:.8} }
 .atlas-skeleton { animation: atlas-pulse 1.5s ease-in-out infinite; background: rgba(148,163,184,.1); border-radius: .75rem; }
 

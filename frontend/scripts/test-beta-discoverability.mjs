@@ -5,8 +5,8 @@ const root=resolve(import.meta.dirname,"..");
 const read=(path)=>readFile(resolve(root,path),"utf8");
 const [welcome,dashboard,workflow,progress,actions]=await Promise.all([read("app/welcome/page.tsx"),read("app/page.tsx"),read("app/beta-workflow/page.tsx"),read("components/beta/beta-journey-progress.tsx"),read("app/beta-workflow/actions.ts")]);
 const checks={
-  onboarding_success_continues_to_journey:welcome.includes('href="/beta-workflow#professional-history"')&&welcome.includes(">Continue</Link>"),
-  dashboard_resumes_journey:dashboard.includes('href="/beta-workflow"')&&dashboard.includes('href="/beta-workflow#professional-history"'),
+  onboarding_success_offers_simple_start:welcome.includes('href="/onboarding"')&&welcome.includes("Choose how to begin"),
+  dashboard_starts_with_search_or_cv:dashboard.includes('action="/opportunities"')&&dashboard.includes('href="/import"'),
   all_required_steps_visible:["Workspace","Professional History","Executive Blueprint","Opportunity","Atlas Assessment","Decision","Career Ledger","Feedback"].every(label=>progress.includes(`label:"${label}"`)),
   all_required_states:["Complete","Current","Not Started","Locked"].every(status=>progress.includes(`"${status}"`)),
   current_step_has_one_continue:progress.includes('aria-current="step"')&&progress.includes('>Continue</Link>'),

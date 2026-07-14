@@ -19,13 +19,13 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
 
   return (
     <aside
-      className={`${mobile ? "flex h-full" : "hidden h-screen lg:sticky lg:top-0 lg:flex"} atlas-scrollbar w-72 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0a1016] px-5 py-6`}
+      className={`${mobile ? "flex h-full" : "hidden h-screen lg:sticky lg:top-0 lg:flex"} atlas-scrollbar w-72 shrink-0 flex-col overflow-y-auto border-r border-[#e5e7e8] bg-white px-5 py-6`}
       aria-label="Application sidebar"
     >
       <Link
         href="/"
         onClick={onNavigate}
-        className="group block rounded-lg text-[#efe7d8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8]"
+        className="group block rounded-lg text-[#17191c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8]"
       >
         <OrendalisMark />
         <p className="mt-3 pl-12 text-[11px] leading-5 text-[#777f85]">Your private career office</p>
@@ -44,7 +44,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8] ${
                 isActive
                   ? "bg-[#efe8dc] font-medium text-[#11161b]"
-                  : "text-[#92999e] hover:bg-white/[0.05] hover:text-[#f4f0e8]"
+                  : "text-[#626970] hover:bg-[#f3f4f4] hover:text-[#17191c]"
               }`}
             >
               <span
@@ -60,7 +60,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       </nav>
 
       {liveMode && (
-        <nav className="mt-7 border-t border-white/10 pt-5" aria-label="Workspace navigation">
+        <nav className="mt-7 border-t border-[#e5e7e8] pt-5" aria-label="Workspace navigation">
           <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-[#606970]">Your private record</p>
           <div className="space-y-1">
             {executiveUtilityItems.map((item) => {
@@ -77,7 +77,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       )}
 
       <SectionCard className="mt-6 p-4 sm:p-4">
-        <p className="text-sm font-medium text-[#f4f0e8]">Atlas is ready</p>
+        <p className="text-sm font-medium text-[#17191c]">Atlas is ready</p>
         <p className="mt-1 text-xs leading-5 text-[#777f85]">
           Your confirmed context is in view.
         </p>
@@ -91,7 +91,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       </SectionCard>
       <form action={logoutAction} className="mt-3">
         <input type="hidden" name="next" value={pathname} />
-        <button className="w-full rounded-xl px-4 py-2 text-left text-sm text-slate-500 transition hover:bg-white/5 hover:text-white">
+        <button className="w-full rounded-xl px-4 py-2 text-left text-sm text-[#737980] transition hover:bg-[#f3f4f4] hover:text-[#17191c]">
           Sign out
         </button>
       </form>

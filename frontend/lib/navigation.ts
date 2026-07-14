@@ -26,17 +26,14 @@ export const navigationItems: readonly NavigationItem[] = [
 ];
 
 export const executiveNavigationItems: readonly NavigationItem[] = [
-  { label: "Today", href: "/", marker: "T" },
-  { label: "Atlas", href: "/assistant", marker: "A" },
-  { label: "Opportunities", href: "/opportunities", marker: "O" },
-  { label: "Company Intelligence", href: "/companies", marker: "C" },
-  { label: "Executive Blueprint", href: "/blueprint", marker: "B" },
-  { label: "Career Ledger", href: "/archive", marker: "L" },
-  { label: "Tasks", href: "/tasks", marker: "✓" },
+  { label: "Home", href: "/", marker: "H" },
+  { label: "Jobs", href: "/opportunities", marker: "J" },
+  { label: "Companies", href: "/companies", marker: "C" },
+  { label: "Applications", href: "/applications", marker: "A" },
+  { label: "Profile", href: "/workspace", marker: "P" },
 ];
 
 export const executiveUtilityItems: readonly NavigationItem[] = [
-  { label: "Career Memory", href: "/workspace", marker: "M" },
   { label: "Settings", href: "/settings", marker: "S" },
   { label: "Founder Controls", href: "/company-control", marker: "F" },
 ];

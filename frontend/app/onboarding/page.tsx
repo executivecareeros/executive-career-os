@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { AuthField, AuthFrame, FormMessage, SubmitButton } from "@/components/auth/auth-frame";
+import { AuthField, AuthFrame, FormMessage } from "@/components/auth/auth-frame";
 import { currentSession } from "@/lib/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { onboardingAction } from "../auth-actions";
@@ -7,41 +7,24 @@ import { onboardingAction } from "../auth-actions";
 export default async function Onboarding({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const [q, session] = await Promise.all([searchParams, currentSession()]);
   if (!session) redirect("/login?next=/onboarding");
-
-  const membership = await createServerSupabaseClient(session.accessToken).request<Array<{ id: string }>>(
-    "workspace_memberships?select=id&status=eq.Active&archived_at=is.null&limit=1",
-  );
+  const membership = await createServerSupabaseClient(session.accessToken).request<Array<{ id: string }>>("workspace_memberships?select=id&status=eq.Active&archived_at=is.null&limit=1");
   if (membership.data?.length) redirect("/");
 
-  return (
-    <AuthFrame eyebrow="Progressive memory · Step 1 of 1" title="Create your professional home" description="Only the context needed to begin. Your Executive Blueprint will develop separately, at your pace.">
-      <FormMessage message={q.error} />
-      <form action={onboardingAction} className="space-y-5">
-        <AuthField label="Preferred name" name="preferredName" autoComplete="given-name" />
-        <AuthField label="Current role" name="currentRole" />
-        <AuthField label="Current employer (optional)" name="currentEmployer" required={false} />
-        <AuthField label="Country" name="country" autoComplete="country-name" />
-        <div className="grid gap-5 sm:grid-cols-2">
-          <AuthField label="Preferred language" name="preferredLanguage" placeholder="English" />
-          <AuthField label="Timezone" name="timezone" placeholder="Europe/Istanbul" />
-        </div>
-        <label className="block text-sm font-medium text-slate-200">
-          Long-term career ambition
-          <textarea name="careerAmbition" required rows={4} className="mt-2 w-full resize-none rounded-xl border border-white/10 bg-slate-950 px-4 py-3 outline-none focus:border-blue-400" placeholder="The direction you want your career to take." />
-        </label>
-        <section className="rounded-2xl border border-blue-400/20 bg-blue-400/5 p-5">
-          <p className="text-xs font-semibold uppercase tracking-[.18em] text-blue-300">The Atlas Promise</p>
-          <h2 className="mt-2 text-lg font-semibold">Trust before intelligence</h2>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
-            <li>You own your career.</li><li>Atlas explains every recommendation.</li><li>Atlas never silently changes your history.</li><li>Your data is portable through Career Passport.</li><li>You control who can access your information.</li>
-          </ul>
-          <label className="mt-5 flex items-start gap-3 text-sm text-white">
-            <input required name="atlasPromiseAccepted" type="checkbox" className="mt-1 accent-blue-500" />
-            <span>I understand and accept the Atlas Promise.</span>
-          </label>
-        </section>
-        <SubmitButton>Create my Career Memory</SubmitButton>
-      </form>
-    </AuthFrame>
-  );
+  return <AuthFrame eyebrow="Welcome to Orendalis" title="How would you like to begin?" description="Upload your CV and let Atlas prepare the basics, or go straight to executive job search. You can complete your profile later.">
+    <FormMessage message={q.error} />
+    <form action={onboardingAction} className="space-y-5">
+      <AuthField label="What should we call you?" name="preferredName" autoComplete="given-name" />
+      <input type="hidden" name="currentRole" value="To be confirmed" />
+      <input type="hidden" name="country" value="Not provided" />
+      <input type="hidden" name="preferredLanguage" value="English" />
+      <input type="hidden" name="timezone" value="UTC" />
+      <input type="hidden" name="careerAmbition" value="To be discovered progressively" />
+      <input type="hidden" name="atlasPromiseAccepted" value="on" />
+      <div className="grid gap-3">
+        <button name="intent" value="upload" className="rounded-2xl bg-[#17191c] p-5 text-left text-white hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7894a6]"><strong className="text-base">Upload my CV</strong><span className="mt-1 block text-sm text-white/70">Atlas prepares a private draft for your review.</span></button>
+        <button name="intent" value="skip" className="rounded-2xl border border-[#d9dcde] bg-white p-5 text-left text-[#202327] hover:bg-[#f7f8f8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7894a6]"><strong className="text-base">Skip for now</strong><span className="mt-1 block text-sm text-[#6c7278]">Go directly to executive job search.</span></button>
+      </div>
+      <p className="text-xs leading-5 text-[#7a8086]">Atlas explains its recommendations, never silently changes your history, and leaves every decision with you.</p>
+    </form>
+  </AuthFrame>;
 }

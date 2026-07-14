@@ -119,5 +119,6 @@ export async function onboardingAction(form: FormData) {
   ).provision(payload);
   if (!response.ok)
     redirect(`/onboarding?error=${encodeURIComponent(response.message)}`);
-  redirect("/welcome?ready=1");
+  const intent = value(form, "intent");
+  redirect(intent === "upload" ? "/import" : "/opportunities");
 }
