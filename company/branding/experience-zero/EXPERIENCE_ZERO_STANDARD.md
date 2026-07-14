@@ -18,6 +18,8 @@ Authentication is an entrance, not a sales page. It says “Welcome back,” con
 
 The executive must see: where they are, the latest confirmed change, what needs attention, the opportunity in focus, Atlas's recommendation and confidence, and one next action. Empty state means “begin with confirmed context,” never an empty dashboard or fabricated content.
 
+Authenticated navigation uses the same wordmark, seal, warm materials, and calm language as the arrival. “Systems operational,” “immutable snapshot,” and “focus mode” are replaced by human language: confirmed context, evidence preserved with a decision, and quiet view.
+
 ## Motion
 
 Motion communicates arrival and state. Reveals are brief, cancel no action, and are fully removed under `prefers-reduced-motion`. There is no parallax, looping ambience, or decorative loading choreography. This follows the principle that motion should support the experience without overshadowing it ([Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/motion)).
@@ -37,4 +39,3 @@ Write with calm precision. Name stakes without dramatizing them. Prefer “evide
 ## Governance
 
 Any front-door change must preserve the ten-second distinction, thirty-second understanding, one-minute personal relevance, accessibility, and the authenticated/private boundary. Production publication remains a separate Founder Approval Gate.
-

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { executiveNavigationItems, executiveUtilityItems, isNavigationItemActive, navigationItems } from "@/lib/navigation";
 import { SectionCard } from "./section-card";
 import { logoutAction } from "@/app/auth-actions";
+import { OrendalisMark } from "@/components/brand/orendalis-mark";
 
 type SidebarProps = {
   mobile?: boolean;
@@ -18,20 +19,16 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
 
   return (
     <aside
-      className={`${mobile ? "flex h-full" : "hidden h-screen lg:sticky lg:top-0 lg:flex"} atlas-scrollbar w-72 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-slate-950 px-5 py-6`}
+      className={`${mobile ? "flex h-full" : "hidden h-screen lg:sticky lg:top-0 lg:flex"} atlas-scrollbar w-72 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0a1016] px-5 py-6`}
       aria-label="Application sidebar"
     >
       <Link
         href="/"
         onClick={onNavigate}
-        className="group block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+        className="group block rounded-lg text-[#efe7d8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8]"
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500 group-hover:text-slate-400">
-          Orendalis
-        </p>
-        <p className="mt-2 text-xl font-semibold tracking-tight text-white">
-          Executive Decision Intelligence
-        </p>
+        <OrendalisMark />
+        <p className="mt-3 pl-12 text-[11px] leading-5 text-[#777f85]">Your private career office</p>
       </Link>
 
       <nav className="mt-7 space-y-1" aria-label="Primary navigation">
@@ -44,10 +41,10 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
               href={item.href}
               onClick={onNavigate}
               aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8] ${
                 isActive
-                  ? "bg-white font-medium text-slate-950"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  ? "bg-[#efe8dc] font-medium text-[#11161b]"
+                  : "text-[#92999e] hover:bg-white/[0.05] hover:text-[#f4f0e8]"
               }`}
             >
               <span
@@ -64,12 +61,12 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
 
       {liveMode && (
         <nav className="mt-7 border-t border-white/10 pt-5" aria-label="Workspace navigation">
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-600">Your account</p>
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-[#606970]">Your private record</p>
           <div className="space-y-1">
             {executiveUtilityItems.map((item) => {
               const isActive = isNavigationItemActive(pathname, item.href);
               return (
-                <Link key={item.href} href={item.href} onClick={onNavigate} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${isActive ? "bg-white font-medium text-slate-950" : "text-slate-500 hover:bg-white/5 hover:text-white"}`}>
+                <Link key={item.href} href={item.href} onClick={onNavigate} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8] ${isActive ? "bg-[#efe8dc] font-medium text-[#11161b]" : "text-[#747d84] hover:bg-white/[0.05] hover:text-[#f4f0e8]"}`}>
                   <span aria-hidden="true" className={`flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold ${isActive ? "bg-slate-950/10" : "bg-white/5"}`}>{item.marker}</span>
                   {item.label}
                 </Link>
@@ -80,16 +77,16 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       )}
 
       <SectionCard className="mt-6 p-4 sm:p-4">
-        <p className="text-sm font-medium text-white">Atlas status</p>
-        <p className="mt-1 text-xs leading-5 text-slate-500">
-          Your confirmed career context is available.
+        <p className="text-sm font-medium text-[#f4f0e8]">Atlas is ready</p>
+        <p className="mt-1 text-xs leading-5 text-[#777f85]">
+          Your confirmed context is in view.
         </p>
         <div className="mt-3 flex items-center gap-2 text-xs text-emerald-300">
           <span
             className="h-2 w-2 rounded-full bg-emerald-300"
             aria-hidden="true"
           />
-          Ready to advise
+          Ready when you are
         </div>
       </SectionCard>
       <form action={logoutAction} className="mt-3">

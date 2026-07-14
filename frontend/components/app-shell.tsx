@@ -15,7 +15,7 @@ export function AppShell({ children, publicExperience = false }: Readonly<{ chil
   if ((pathname === "/" && publicExperience) || ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white lg:flex">
+    <div className="min-h-screen bg-[#080d12] text-[#f4f0e8] lg:flex">
       {!focusMode && <Sidebar />}
 
       <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} />

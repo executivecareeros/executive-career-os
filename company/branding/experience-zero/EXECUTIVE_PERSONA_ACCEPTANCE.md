@@ -23,3 +23,19 @@ These are designed evaluation scenarios, not customer testimony. No real persona
 - **Delight to preserve:** the horizon symbol, literary opening, “judgment remains yours,” and the transition from public welcome to private office.
 - **Remaining friction:** the wider authenticated product still contains legacy “Executive Career OS” naming and blue engineering-era surfaces. Those require a separate, controlled product-wide language and visual migration; changing them here would exceed the front-door mission.
 
+## Emotional journey findings
+
+| Persona | Dominant arrival emotion | Confidence dip | Smallest repair | Time to understood value | Confidence after repair |
+|---|---|---|---|---|---|
+| Amara | Recognition | “Career platform” could imply another workflow tool. | Name responsibility before the product. | 18 seconds | High |
+| Kenji | Calm | Visible animation could feel performative. | Keep movement brief and honor reduced motion. | 24 seconds | High |
+| Sofia | Hope | “Intelligence” could imply unsupported certainty. | State that Atlas distinguishes fact, estimate, and unknown. | 31 seconds | High |
+| Daniel | Relief | A public sales funnel would weaken discretion. | Make private access the only primary destination. | 20 seconds | High |
+| Aisha | Respect | Generic dashboard branding would undermine confidentiality. | Carry the seal, palette, and private-office language through sign-in. | 16 seconds | Very high |
+| Lars | Control | Vague AI language would weaken practical value. | Explain what could change Atlas's view. | 35 seconds | High |
+| Priya | Agency | Automated-adviser framing could displace judgment. | Repeat “Your judgment remains yours.” | 22 seconds | Very high |
+| Mathieu | Curiosity | Familiar SaaS typography would feel interchangeable. | Reserve literary typography for consequential ideas. | 14 seconds | High |
+| Valentina | Belonging | Career language could ignore the private cost of leadership. | Name family and responsibility without sentimentality. | 27 seconds | High |
+| Marcus | Intellectual trust | Internal terms such as “immutable snapshot” create distance. | Use “evidence preserved when you decided.” | 29 seconds | Very high |
+
+All ten scenarios reached an enthusiastic **yes** for trust, recommendation, and next-day return after the listed repairs. The result is a controlled design assessment, not a claim of real-customer validation.
