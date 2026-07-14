@@ -2,13 +2,18 @@
 
 Purpose: Evaluate whether the live Orendalis staging experience is valuable, comprehensible, and credible to a senior executive.
 
+- **Status:** Closed
+- **Final decision:** READY FOR DESIGN PARTNERS
+- **Authoritative evidence:** Post-Polish Validation — 14 July 2026
+- **Historical boundary:** The baseline assessment below records the pre-polish experience and is preserved as evidence. It is not the current release state.
+
 ## Evaluation Persona
 
 **Elena Voss** is a fictional Global VP Sales with 20 years of experience. She leads €150 million in annual revenue across multiple markets and is considering a confidential move into a Chief Revenue Officer role. She expects discretion, concise decision support, strong evidence boundaries, and a product that respects limited executive attention.
 
 No real executive data was used. The existing fictional staging journey supplied the product evidence for this review.
 
-## Overall Finding
+## Baseline Finding — Pre-Polish
 
 The core opportunity-decision journey is the strongest part of Orendalis. It makes evidence, unknowns, confidence, alternatives, and executive ownership explicit. That experience can earn trust.
 
@@ -73,7 +78,7 @@ The surrounding product is not yet equally coherent. The return dashboard does n
 - **Would this save me time?** The decision workflow could; the rest currently asks me to reconstruct context across thin module summaries.
 - **Would I feel smarter?** Atlas’s explicit unknowns and alternatives help. Company and market intelligence do not yet add enough insight.
 
-## Decision
+## Baseline Decision — Pre-Polish
 
 **READY AFTER EXECUTIVE POLISH**
 

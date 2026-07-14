@@ -2,7 +2,14 @@
 
 Purpose: Prioritize only the experience improvements that materially affect executive adoption, trust, or willingness to pay.
 
+- **Status:** Closed for Release 0.8
+- **Final decision:** READY FOR DESIGN PARTNERS
+- **Authoritative evidence:** Post-Polish Disposition — 14 July 2026
+- **Historical boundary:** The ranked table and initial payment decision are the pre-polish baseline. Their final disposition is recorded below.
+
 Ratings use High, Medium, or Low. Development effort is a relative product estimate, not a delivery commitment.
+
+## Baseline Backlog — Pre-Polish
 
 | Rank | Recommendation | Business impact | User delight | Trust improvement | Development effort |
 | ---: | --- | --- | --- | --- | --- |
@@ -29,7 +36,7 @@ Ratings use High, Medium, or Low. Development effort is a relative product estim
 - more navigation destinations;
 - additional dashboards without a clear executive decision purpose.
 
-## Payment Decision
+## Baseline Payment Decision — Pre-Polish
 
 **If I were personally a Fortune 500 executive, I would not pay for Orendalis today.**
 
@@ -46,7 +53,7 @@ I would be convinced by:
 5. consistently client-ready language across every executive-facing screen; and
 6. evidence from several confidential executive journeys showing repeated weekly value.
 
-## Release Recommendation
+## Baseline Release Recommendation — Pre-Polish
 
 **READY AFTER EXECUTIVE POLISH**
 

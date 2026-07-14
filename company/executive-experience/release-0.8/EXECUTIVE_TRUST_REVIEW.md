@@ -2,7 +2,12 @@
 
 Purpose: Assess whether Orendalis earns the level of trust required for confidential executive career decisions.
 
-## Trust Assessment
+- **Status:** Closed
+- **Final decision:** READY FOR DESIGN PARTNERS
+- **Authoritative evidence:** Post-Polish Trust Review — 14 July 2026
+- **Historical boundary:** Scores and risks before the post-polish section describe the pre-polish baseline and are preserved as historical evidence.
+
+## Baseline Trust Assessment — Pre-Polish
 
 | Dimension | Score | Evidence |
 | --- | ---: | --- |
