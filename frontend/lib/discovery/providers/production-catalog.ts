@@ -5,8 +5,8 @@ import { LeverOpportunityProvider, parseLeverBoard } from "./lever.ts";
 import { OpportunityProviderCatalog } from "./catalog.ts";
 
 const reviewedAt = "2026-07-14T00:00:00.000Z";
-const approved = (scores: Omit<OpportunityProviderAdapter["evaluation"], "accessModel" | "reviewStatus" | "reviewedAt">): OpportunityProviderAdapter["evaluation"] => ({
-  ...scores, accessModel: "official-api", reviewStatus: "approved", reviewedAt,
+const approved = (scores: Omit<OpportunityProviderAdapter["evaluation"], "accessModel" | "reviewStatus" | "founderGateReasons" | "reviewedAt">): OpportunityProviderAdapter["evaluation"] => ({
+  ...scores, accessModel: "official-api", reviewStatus: "approved", founderGateReasons: [], reviewedAt,
 });
 
 export const productionProviderAdapters: readonly OpportunityProviderAdapter[] = [

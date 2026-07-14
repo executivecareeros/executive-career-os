@@ -1,11 +1,11 @@
-# Orendalis Development System 1.0
+# Orendalis Development System 2.0
 
 > Purpose: Define the permanent operating protocols for building, validating, releasing, securing, documenting, and governing Orendalis.
 
 ## Status
 
 - **Name:** Orendalis Development System
-- **Version:** ODS 1.0
+- **Version:** ODS 2.0
 - **Authority:** Founder-approved company protocol framework
 - **Applies to:** founders, employees, contractors, engineers, designers, product leaders, reviewers, operators, and AI agents
 - **Review cadence:** quarterly and after any material failure, incident, or governance change
@@ -34,9 +34,10 @@ Orendalis work must be intentional, evidence-led, secure, reversible where possi
 | [Evidence and Reporting Standard](EVIDENCE_AND_REPORTING_STANDARD.md) | Claims, proof, status language, and handoff |
 | [Incident and Recovery Protocol](INCIDENT_AND_RECOVERY_PROTOCOL.md) | Containment, recovery, communication, and learning |
 | [Protocol Governance](PROTOCOL_GOVERNANCE.md) | Versioning, exceptions, amendments, and audits |
+| [ODS 2.0 Amendment Record](ODS_2_0_AMENDMENT_RECORD.md) | Founder-approved standing authority for autonomous opportunity-provider expansion |
 | [Definitions](DEFINITIONS.md) | Shared operating vocabulary |
 | [Execution Checklist](ODS_EXECUTION_CHECKLIST.md) | One-page protocol for starting, controlling, and closing work |
-| [Validation Record](ODS_VALIDATION_REPORT.md) | Evidence that the ODS 1.0 framework is internally complete |
+| [Validation Record](ODS_VALIDATION_REPORT.md) | Evidence that the original ODS 1.0 framework was internally complete |
 | [Templates](templates/README.md) | Reusable work, decision, release, and completion records |
 
 ## How to Use ODS

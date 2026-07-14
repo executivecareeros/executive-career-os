@@ -9,6 +9,9 @@ export class OpportunityProviderCatalog {
 
   register(adapter: OpportunityProviderAdapter) {
     if (this.adapters.has(adapter.id)) throw new Error(`Provider adapter already registered: ${adapter.id}`);
+    if (adapter.evaluation.reviewStatus === "approved" && adapter.evaluation.founderGateReasons.length) {
+      throw new Error(`Provider adapter requires founder approval: ${adapter.id}`);
+    }
     this.adapters.set(adapter.id, adapter);
     return this;
   }

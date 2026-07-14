@@ -24,6 +24,7 @@
 18. **Documentation is part of the system.** A material change without an updated authoritative record is incomplete.
 19. **Exceptions are temporary and visible.** Every exception has an owner, rationale, risk, expiry or review date, and compensating control.
 20. **Learning closes the loop.** Defects, incidents, reversals, and customer evidence improve protocols, tests, and decisions.
+21. **Standing delegation is explicit and bounded.** A permanent founder directive may authorize recurring work within a named system without repeated approval; every reserved gate, legal duty, security boundary, and stop condition remains binding.
 
 ## Constitutional Test
 

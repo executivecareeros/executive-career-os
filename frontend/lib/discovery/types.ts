@@ -235,6 +235,7 @@ export interface OpportunityProvider {
 export type ProviderAccessModel = "official-api" | "public-feed" | "authorized-import" | "manual";
 export type ProviderReviewStatus = "approved" | "evaluation" | "disabled";
 export type ProviderEvaluationRating = "low" | "moderate" | "high" | "unknown";
+export type ProviderFounderGateReason = "paid-licensing" | "contract-acceptance" | "provider-terms-acceptance" | "legal-compliance-uncertainty" | "material-personal-data-change" | "material-infrastructure-cost" | "fundamental-architecture-change" | "commercial-commitment-change";
 export interface OpportunityProviderEvaluation {
   executiveCoverage: ProviderEvaluationRating;
   executiveRelevance: ProviderEvaluationRating;
@@ -246,6 +247,7 @@ export interface OpportunityProviderEvaluation {
   engineeringEfficiency: ProviderEvaluationRating;
   accessModel: ProviderAccessModel;
   reviewStatus: ProviderReviewStatus;
+  founderGateReasons: readonly ProviderFounderGateReason[];
   reviewedAt: string;
 }
 

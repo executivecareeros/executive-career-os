@@ -5,7 +5,7 @@
 - **Authority:** Permanent Founder Product Directive
 - **Effective:** 14 July 2026
 - **Applies to:** product, engineering, data, operations, security, legal review, and every opportunity provider
-- **Precedence:** Supersedes provider-specific product assumptions; remains subject to law, contracts, security, privacy, and explicit later founder decisions
+- **Precedence:** Supersedes provider-specific product assumptions and provider-by-provider approval rules; remains subject to law, contracts, security, privacy, and explicit later founder decisions
 
 ## Strategic Objective
 
@@ -36,7 +36,7 @@ Every proposed provider is assessed consistently for:
 7. scalability; and
 8. engineering efficiency.
 
-Provider count is never a success metric by itself. An adapter may operate only after its access method and review status are explicitly approved. Disabled or evaluation-stage adapters must not collect production records.
+Provider count is never a success metric by itself. Within the standing delegation, an adapter may be autonomously approved after its access method, evaluation, and absence of reserved founder gates are recorded. Disabled or evaluation-stage adapters must not collect production records.
 
 ## Architecture Invariants
 
@@ -49,4 +49,6 @@ Provider count is never a success metric by itself. An adapter may operate only 
 
 ## Change Control
 
-Provider-specific exceptions require a documented ODS decision. Any exception involving contracts, paid access, restricted data, personal data, scraping, external credentials, or production activation reaches the appropriate Founder Approval Gate before execution.
+Provider discovery and compliant adapter work proceed autonomously inside the existing Coverage Engine. No provider-by-provider approval is required.
+
+Founder approval is reserved for paid licensing, contractual acceptance, explicit provider-term acceptance, legal or compliance uncertainty, material personal-data change, material infrastructure cost, fundamental architecture change, or a changed user-facing commercial commitment. Provider-specific exceptions require a documented ODS decision. External credentials and production activation remain subject to the applicable security and release gates.
