@@ -6,10 +6,13 @@ import { OpportunityStatusBadge } from "./opportunity-status-badge";
 import { RecommendationBadge } from "./recommendation-badge";
 import { ScoreIndicator } from "./score-indicator";
 import { getCompanyByOpportunityId } from "@/data/companies";
+import { assessOpportunityFreshness } from "@/lib/opportunity-universe";
+import { StatusBadge } from "@/components/status-badge";
 
 export function OpportunityCard({ opportunity, view }: { opportunity: Opportunity; view: "grid" | "list" }) {
   const assessment = assessOpportunity(opportunity);
   const companyId = opportunity.companyId ?? getCompanyByOpportunityId(opportunity.id)?.id;
+  const freshness = assessOpportunityFreshness(opportunity);
   return (
     <article className={`rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-6 ${view === "list" ? "xl:grid xl:grid-cols-[1.2fr_1fr_auto] xl:items-center xl:gap-8" : ""}`}>
       <div>
@@ -22,7 +25,7 @@ export function OpportunityCard({ opportunity, view }: { opportunity: Opportunit
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2"><OpportunityStatusBadge status={opportunity.status} /><OpportunityPriorityBadge priority={opportunity.priority} /></div>
-        <p className="mt-4 text-sm leading-6 text-slate-400">{opportunity.decisionRationale}</p><p className="mt-3 text-xs text-slate-500">Source: {opportunity.source}</p>
+        <p className="mt-4 text-sm leading-6 text-slate-400">{opportunity.decisionRationale}</p><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500"><span>Source: {opportunity.source}</span><StatusBadge tone={freshness.status === "Fresh" ? "success" : freshness.status === "Recent" ? "info" : freshness.status === "Stale" ? "warning" : "neutral"}>{freshness.status === "Unknown" ? "Freshness unknown" : `${freshness.status} · observed ${freshness.ageHours}h ago`}</StatusBadge></div>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:mt-0">
         <ScoreIndicator compact label="Overall Match" score={opportunity.overallScore} />

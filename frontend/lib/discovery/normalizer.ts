@@ -9,6 +9,10 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
 
   normalize(job: DiscoveryJob, context: ConnectorContext, reliability: SourceReliability): DiscoveryResult {
     const companyInitials = job.company.name.split(/\s+/).map((word) => word[0]).join("").slice(0, 3).toUpperCase();
+    const sourceKind = reliability.type === "Job Board" ? "Job Board" : reliability.type === "Executive Search Firm" ? "Recruiter" : reliability.type === "Manual Import" ? "Manual" : "Employer";
+    const staleAfterHours = reliability.type === "Manual Import" ? 336 : reliability.type === "Executive Search Firm" ? 72 : 36;
+    const workArrangement = job.rawMetadata.workArrangement === "Remote" || job.rawMetadata.workArrangement === "Hybrid" || job.rawMetadata.workArrangement === "On-site" ? job.rawMetadata.workArrangement : "On-site";
+    const employmentType = job.employmentType === "Contract" || job.employmentType === "Interim" ? job.employmentType : "Full-time";
     const opportunity: Opportunity = {
       id: `discovered-${job.source}-${job.sourceId}`,
       companyName: job.company.name,
@@ -16,12 +20,17 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       jobTitle: job.title,
       location: job.location ?? "Not specified",
       country: job.country ?? job.company.country ?? "Not specified",
-      workArrangement: "On-site",
-      employmentType: "Full-time",
+      workArrangement,
+      employmentType,
       industry: job.company.industry ?? "Not specified",
       companySize: job.company.size ?? "Not specified",
       source: job.source,
       sourceUrl: job.originalUrl,
+      sources: [{ id: job.source, name: job.source, kind: sourceKind, originalId: job.sourceId, originalUrl: job.originalUrl, collectedAt: job.discoveredAt, confidence: reliability.score >= 75 ? "High" : reliability.score >= 50 ? "Medium" : "Low" }],
+      lastObservedAt: job.discoveredAt,
+      freshness: { status: "Fresh", lastObservedAt: job.discoveredAt, ageHours: 0, staleAfterHours },
+      lifecycle: [{ status: "Discovered", occurredAt: job.discoveredAt, reason: `Collected from ${job.source}`, source: "System" }],
+      companyProfile: { name: job.company.name, website: job.company.website, industry: job.company.industry, size: job.company.size, evidenceStatus: job.company.website || job.company.industry || job.company.size ? "Partial" : "Unknown" },
       publishedAt: job.publishedAt ?? job.discoveredAt,
       discoveredAt: job.discoveredAt,
       salaryMin: job.salary?.minimum,
@@ -47,7 +56,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
         originalId: job.sourceId, normalizationVersion: this.version, importRunId: context.runId, confidence: reliability,
         evidence: [{ kind: "source-record", reference: job.sourceId, observedAt: job.discoveredAt }],
       },
-      warnings: ["Demo normalization only; source record has not been externally verified."],
+      warnings: reliability.score < 75 ? ["Source record requires additional verification before executive action."] : [],
     };
   }
 }

@@ -1,0 +1,51 @@
+import assert from "node:assert/strict";
+import { MemoryOpportunityIngestionSink, OpportunityIngestionPipeline } from "../lib/discovery/pipeline.ts";
+import { OpportunityProviderRegistry } from "../lib/discovery/registry.ts";
+
+const requestedAt = "2026-07-14T08:00:00.000Z";
+const filters = { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] };
+const source = (id, name) => ({ id, name, category: "Corporate Website", description: `${name} approved provider`, capabilities: ["jobs"] });
+const reliability = { type: "Corporate Website", rating: "high", score: 90, rationale: "Direct employer publication", assessedAt: requestedAt };
+const job = (sourceId, providerId, overrides = {}) => ({ sourceId, source: providerId, title: "Chief Revenue Officer", company: { sourceId: `company-${sourceId}`, name: "North Star Holdings", country: "United Kingdom" }, location: "London", country: "United Kingdom", originalUrl: `https://example.test/${sourceId}`, publishedAt: requestedAt, discoveredAt: requestedAt, rawMetadata: { workArrangement: "Hybrid" }, ...overrides });
+const provider = (id, name, jobs, health = "connected") => ({ id, source: source(id, name), reliability, async collect(request) { return { providerId: id, collectedAt: request.requestedAt, jobs }; }, async health() { return { source: id, status: health, checkedAt: requestedAt, message: health }; } });
+
+const registry = new OpportunityProviderRegistry()
+  .register(provider("greenhouse", "Greenhouse", [job("gh-1", "greenhouse")]))
+  .register(provider("lever", "Lever", [job("lever-1", "lever")]))
+  .register(provider("ashby", "Ashby", [job("", "ashby", { title: "" })]))
+  .register(provider("smartrecruiters", "SmartRecruiters", [], "unavailable"));
+const sink = new MemoryOpportunityIngestionSink();
+const events = [];
+const pipeline = new OpportunityIngestionPipeline(registry, sink, { record(event) { events.push(event); } });
+const request = runId => ({ runId, requestedAt, maximumResults: 25, filters });
+
+const first = await pipeline.ingest("greenhouse", request("run-1"));
+assert.equal(first.run.status, "completed");
+assert.equal(first.items[0].disposition, "inserted");
+assert.equal(first.nextRefreshAt, "2026-07-14T20:00:00.000Z");
+
+const reconciled = await pipeline.ingest("lever", request("run-2"));
+assert.equal(reconciled.items[0].disposition, "updated");
+const stored = await sink.list();
+assert.equal(stored.length, 1);
+assert.equal(stored[0].sources.length, 2);
+assert.equal(stored[0].freshness.status, "Fresh");
+assert.equal(stored[0].source, "Greenhouse · Lever");
+
+const repeated = await pipeline.ingest("greenhouse", request("run-2b"));
+assert.equal(repeated.items[0].disposition, "duplicate");
+assert.equal((await sink.list()).length, 1);
+
+const invalid = await pipeline.ingest("ashby", request("run-3"));
+assert.equal(invalid.run.status, "failed");
+assert.equal(invalid.items[0].disposition, "rejected");
+assert.equal(invalid.items[0].error.code, "INVALID_SOURCE_RECORD");
+
+const unavailable = await pipeline.ingest("smartrecruiters", request("run-4"));
+assert.equal(unavailable.run.status, "failed");
+assert.equal(unavailable.run.errors[0].code, "PROVIDER_UNAVAILABLE");
+assert.ok(unavailable.nextRetryAt);
+assert.ok(events.some(event => event.type === "run-completed"));
+assert.ok(events.some(event => event.type === "run-failed"));
+
+console.log("Discovery ingestion pipeline checks passed.");

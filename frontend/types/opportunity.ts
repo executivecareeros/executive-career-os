@@ -23,6 +23,15 @@ export type OpportunitySource = {
   confidence: "High" | "Medium" | "Low" | "Unknown";
 };
 
+export type OpportunityFreshnessStatus = "Fresh" | "Recent" | "Stale" | "Unknown";
+export type OpportunityFreshness = {
+  status: OpportunityFreshnessStatus;
+  lastObservedAt?: string;
+  ageHours?: number;
+  staleAfterHours: number;
+  nextRefreshAt?: string;
+};
+
 export type OpportunityLifecycleEvent = {
   status: OpportunityStatus;
   occurredAt: string;
@@ -56,6 +65,8 @@ export type Opportunity = {
   source: string;
   sourceUrl?: string;
   sources?: OpportunitySource[];
+  lastObservedAt?: string;
+  freshness?: OpportunityFreshness;
   universeStage?: OpportunityUniverseStage;
   lifecycle?: OpportunityLifecycleEvent[];
   companyProfile?: OpportunityCompanyProfile;

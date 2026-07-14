@@ -202,3 +202,66 @@ export interface ExecutiveBlueprintDiscoveryProfile {
 export interface BlueprintDiscoveryFilterFactory {
   fromBlueprint(blueprint: ExecutiveBlueprintDiscoveryProfile): DiscoveryFilter;
 }
+
+export interface ProviderCollectionRequest {
+  runId: string;
+  requestedAt: string;
+  maximumResults: number;
+  cursor?: string;
+  filters: DiscoveryFilter;
+}
+
+export interface ProviderCollectionBatch {
+  providerId: DiscoverySourceKind;
+  collectedAt: string;
+  jobs: readonly DiscoveryJob[];
+  nextCursor?: string;
+  sourceRevision?: string;
+}
+
+/** Collection-only provider boundary. Providers never create domain Opportunities directly. */
+export interface OpportunityProvider {
+  readonly id: DiscoverySourceKind;
+  readonly source: DiscoverySource;
+  readonly reliability: SourceReliability;
+  collect(request: ProviderCollectionRequest): Promise<ProviderCollectionBatch>;
+  health(): Promise<DiscoveryHealth>;
+}
+
+export type IngestionDisposition = "inserted" | "updated" | "duplicate" | "rejected";
+export interface IngestionItemResult {
+  sourceId: string;
+  disposition: IngestionDisposition;
+  opportunityId?: string;
+  warnings: readonly string[];
+  error?: DiscoveryError;
+}
+
+export interface OpportunityIngestionSink {
+  list(): Promise<readonly Opportunity[]>;
+  upsert(opportunity: Opportunity): Promise<void>;
+}
+
+export type IngestionMonitorEvent =
+  | { type: "run-started"; runId: string; providerId: DiscoverySourceKind; occurredAt: string }
+  | { type: "item-processed"; runId: string; providerId: DiscoverySourceKind; occurredAt: string; sourceId: string; disposition: IngestionDisposition }
+  | { type: "run-completed"; runId: string; providerId: DiscoverySourceKind; occurredAt: string; status: DiscoveryRunStatus; imported: number; ignored: number }
+  | { type: "run-failed"; runId: string; providerId: DiscoverySourceKind; occurredAt: string; errorCode: string; retryable: boolean };
+
+export interface IngestionMonitor {
+  record(event: IngestionMonitorEvent): void | Promise<void>;
+}
+
+export interface OpportunityRefreshPolicy {
+  cadenceMinutes?: number;
+  staleAfterHours: number;
+  maximumAttempts: number;
+  retryDelayMinutes: number;
+}
+
+export interface OpportunityIngestionOutcome {
+  run: DiscoveryRun;
+  items: readonly IngestionItemResult[];
+  nextRefreshAt?: string;
+  nextRetryAt?: string;
+}

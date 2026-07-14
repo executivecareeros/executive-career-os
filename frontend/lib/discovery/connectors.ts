@@ -1,5 +1,5 @@
 import { DefaultOpportunityNormalizer } from "./normalizer";
-import type { ConnectorContext, DiscoveryConfiguration, DiscoveryConnector, DiscoveryHealth, DiscoveryJob, DiscoveryResult, DiscoverySource, DiscoverySourceKind, SourceReliabilityType } from "./types";
+import type { ConnectorContext, DiscoveryConfiguration, DiscoveryConnector, DiscoveryHealth, DiscoveryJob, DiscoveryResult, DiscoverySource, DiscoverySourceKind, OpportunityProvider, ProviderCollectionRequest, SourceReliability, SourceReliabilityType } from "./types";
 
 type ConnectorDefinition = { id: DiscoverySourceKind; name: string; category: SourceReliabilityType };
 
@@ -37,6 +37,22 @@ export class DiscoveryConnectorStub implements DiscoveryConnector {
   }
   async health(): Promise<DiscoveryHealth> { return { source: this.id, status: this.status, checkedAt: "2026-07-11T09:00:00.000Z", message: "Architecture stub; no live connection configured." }; }
   async disconnect(): Promise<void> { this.status = "available"; }
+}
+
+/** Adapts any approved connector to the collection-only provider boundary. */
+export class ConnectorOpportunityProvider implements OpportunityProvider {
+  readonly id: DiscoverySourceKind;
+  readonly source: DiscoverySource;
+  constructor(private readonly connector: DiscoveryConnector, readonly reliability: SourceReliability) {
+    this.id = connector.id;
+    this.source = connector.source;
+  }
+  async collect(request: ProviderCollectionRequest) {
+    const configuration: DiscoveryConfiguration = { source: this.id, enabled: true, priority: 1, maximumResults: request.maximumResults, filters: request.filters };
+    const jobs = await this.connector.discover({ configuration, runId: request.runId, requestedAt: request.requestedAt });
+    return { providerId: this.id, collectedAt: new Date().toISOString(), jobs } as const;
+  }
+  health() { return this.connector.health(); }
 }
 
 export const discoveryConnectors: readonly DiscoveryConnector[] = definitions.map((definition) => new DiscoveryConnectorStub(definition));

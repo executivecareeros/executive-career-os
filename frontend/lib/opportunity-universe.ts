@@ -1,4 +1,4 @@
-import type { Opportunity, OpportunityStatus, OpportunityUniverseStage } from "@/types/opportunity";
+import type { Opportunity, OpportunityFreshness, OpportunityStatus, OpportunityUniverseStage } from "@/types/opportunity";
 
 export const opportunityLifecycleTransitions: Record<OpportunityStatus, readonly OpportunityStatus[]> = {
   Discovered: ["Evaluating", "Archived"],
@@ -44,6 +44,39 @@ export function opportunityDuplicateKey(opportunity: Opportunity) {
   return [opportunity.companyName, opportunity.jobTitle, opportunity.country, opportunity.location]
     .map(normalizeIdentityPart)
     .join("|");
+}
+
+export function assessOpportunityFreshness(opportunity: Opportunity, now = new Date().toISOString()): OpportunityFreshness {
+  const lastObservedAt = opportunity.lastObservedAt ?? opportunity.discoveredAt;
+  const observed = Date.parse(lastObservedAt);
+  const current = Date.parse(now);
+  const staleAfterHours = opportunity.freshness?.staleAfterHours ?? 72;
+  if (!Number.isFinite(observed) || !Number.isFinite(current)) return { status: "Unknown", staleAfterHours };
+  const ageHours = Math.max(0, Math.round((current - observed) / 3_600_000));
+  const status = ageHours <= 12 ? "Fresh" : ageHours < staleAfterHours ? "Recent" : "Stale";
+  return { ...opportunity.freshness, status, lastObservedAt, ageHours, staleAfterHours };
+}
+
+export function mergeOpportunityObservations(existing: Opportunity, incoming: Opportunity, observedAt: string): Opportunity {
+  const combined = [...(existing.sources ?? []), ...(incoming.sources ?? [])];
+  const sources = [...new Map(combined.map(source => [`${source.id}|${source.originalId ?? ""}`, source])).values()];
+  const incomingIsStronger = incoming.confidenceScore > existing.confidenceScore;
+  const strongest = incomingIsStronger ? incoming : existing;
+  const freshness = assessOpportunityFreshness({ ...strongest, lastObservedAt: observedAt }, observedAt);
+  return {
+    ...strongest,
+    id: existing.id,
+    sources,
+    source: sources.map(source => source.name).join(" · ") || strongest.source,
+    sourceUrl: strongest.sourceUrl ?? existing.sourceUrl,
+    discoveredAt: existing.discoveredAt < incoming.discoveredAt ? existing.discoveredAt : incoming.discoveredAt,
+    lastObservedAt: observedAt,
+    freshness,
+    lifecycle: [
+      ...(existing.lifecycle ?? []),
+      { status: existing.status, occurredAt: observedAt, reason: sources.length > (existing.sources?.length ?? 0) ? "Additional source observation merged" : "Source observation refreshed", source: "System" },
+    ],
+  };
 }
 
 export type OpportunityDuplicateCluster = {
