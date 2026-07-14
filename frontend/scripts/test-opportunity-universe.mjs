@@ -38,6 +38,9 @@ assert.equal(live?.companyName, "North Star");
 assert.equal(live?.matchScore, undefined);
 assert.equal(live?.status, "Awaiting Atlas review");
 
+const explained = toLiveOpportunity({ state: { id: "state", workspaceId: "workspace", executiveIdentityId: "executive", currentStep: "Decision", completedSteps: ["Reasoning"], activeOpportunityId: "live-one", version: 1 }, historyCount: 1, feedbackCount: 0, lifecycleRequests: [], opportunity: { title: "Chief Revenue Officer", companyName: "North Star" }, reasoning: { output: { recommendation: { action: "Apply", priority: "Soon", reasonCodes: ["STRATEGIC_FIT_HIGH"], evidenceIds: [] }, evidence: [], memoriesUsed: [], blueprintReferences: [], knowledgeReferences: [], ledgerReferences: [], compensationReferences: [], rulesApplied: ["STRATEGIC_FIT_HIGH"], conflicts: [], tradeoffs: [], gaps: [], questions: [], assumptions: [], alternatives: [], confidence: "High", why: ["STRATEGIC_FIT_HIGH"], whyNot: [], whatChanged: [], whatWouldChange: [] } } });
+assert.equal(explained?.why[0], "The role shows strong strategic alignment with your Blueprint");
+
 for (const [selectedDecisionAction, expected] of [["Apply", "Pursue"], ["Monitor", "Watch"], ["Reject", "Skip"]]) {
   const completed = toLiveOpportunity({ state: { id: "state", workspaceId: "workspace", executiveIdentityId: "executive", currentStep: "Feedback", completedSteps: ["Decision Finalized"], activeOpportunityId: "live-one", finalizedDecisionId: "decision-one", version: 2 }, historyCount: 1, feedbackCount: 0, lifecycleRequests: [], selectedDecisionAction, opportunity: { title: "Chief Revenue Officer", companyName: "North Star" } });
   assert.equal(completed?.executiveDecision, expected);

@@ -100,9 +100,9 @@ async function ExecutiveBriefing() {
 
       <div className="mt-8 grid gap-5 lg:grid-cols-3">
         <SectionCard className="lg:col-span-2">
-          <p className="atlas-kicker">What changed</p>
+          <div className="flex flex-wrap items-center justify-between gap-3"><p className="atlas-kicker">Latest confirmed update</p><StatusBadge tone="success">Current</StatusBadge></div>
           <h2 className="mt-3 text-2xl font-semibold">{lastCompleted} is now part of your Career Memory</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">Your latest confirmed work is preserved and available to Atlas across your private workspace.</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">This brief is based on your latest saved workspace state. Atlas does not fill missing updates with assumptions.</p>
         </SectionCard>
         <SectionCard>
           <p className="atlas-kicker">Needs attention</p>
