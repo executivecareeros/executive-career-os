@@ -5,6 +5,11 @@ function EmptyFinding({ children }: { children: React.ReactNode }) {
   return <p className="rounded-xl border border-white/10 bg-white/[.03] p-4 text-sm leading-6 text-slate-400">{children}</p>;
 }
 
+function executiveReason(value: string) {
+  const field = value.replace(/^Confidence in /, "").replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
+  return `Resolving this could materially change Atlas’s confidence about ${field}.`;
+}
+
 export function AtlasAssessment({ output }: { output: ReasoningOutput }) {
   const unresolved = output.questions.length;
   const summary = output.recommendation.action === "Wait"
@@ -47,7 +52,7 @@ export function AtlasAssessment({ output }: { output: ReasoningOutput }) {
         <h3 className="text-base font-semibold text-white">Questions Atlas recommends asking next</h3>
         <p className="mt-2 text-sm leading-6 text-slate-400">Resolve the questions that could change the decision—not every detail that could be known.</p>
         {output.questions.length ? <ol className="mt-3 space-y-2">
-          {output.questions.map((question, index) => <li key={question.id} className="rounded-xl border border-amber-300/15 bg-amber-300/[.04] p-4 text-sm leading-6 text-slate-200"><span className="font-medium text-amber-200">{index + 1}. {question.priority}</span> · {question.question}<p className="mt-1 text-xs text-slate-500">Why it matters: {question.improves}</p></li>)}
+          {output.questions.map((question, index) => <li key={question.id} className="rounded-xl border border-amber-300/15 bg-amber-300/[.04] p-4 text-sm leading-6 text-slate-200"><span className="font-medium text-amber-200">{index + 1}. {question.priority}</span> · {question.question}<p className="mt-1 text-xs text-slate-500">{executiveReason(question.improves)}</p></li>)}
         </ol> : <div className="mt-3"><EmptyFinding>No material information question was identified by the current rules.</EmptyFinding></div>}
       </section>
 

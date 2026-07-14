@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { PageContent } from "@/components/page-content";
 import { PageHeader } from "@/components/page-header";
 import { SectionCard } from "@/components/section-card";
 import { StatusBadge } from "@/components/status-badge";
@@ -109,7 +108,7 @@ export default async function BetaWorkflowPage({
     view = await repo.load();
   } catch (error) {
     return (
-      <PageContent>
+      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
         <PageHeader
           eyebrow="Your private decision workspace"
           title="Workflow unavailable"
@@ -119,12 +118,12 @@ export default async function BetaWorkflowPage({
               : "The workflow could not be loaded."
           }
         />
-      </PageContent>
+      </div>
     );
   }
   const complete = new Set(view.state.completedSteps);
   return (
-    <PageContent>
+    <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
       <PageHeader
         eyebrow="Your private decision workspace"
         title="Executive Opportunity Review"
@@ -510,7 +509,7 @@ export default async function BetaWorkflowPage({
             </form>
           )}
           <p className="mt-4 text-xs text-slate-500">
-            Decision commit: {view.state.finalizedDecisionId ?? "Not finalized"}
+            Decision record: {view.state.finalizedDecisionId ? "Preserved" : "Not finalized"}
           </p>
         </SectionCard>}
         {!complete.has("Decision Finalized")?<LockedStage number={5} title="Private Feedback" after="the executive decision"/>:<SectionCard id="feedback">
@@ -591,11 +590,11 @@ export default async function BetaWorkflowPage({
               Current stage
             </p>
           )}
-          <h2 className="text-xl font-semibold">6. Data Lifecycle Request</h2>
+          <h2 className="text-xl font-semibold">6. Your Data Requests</h2>
           <p className="mt-2 text-sm text-slate-400">
-            Requests are founder-supervised. Append-only decision history and
-            security audit records may require a documented retention exception;
-            this interface does not promise instant hard deletion.
+            Request an export, account closure, deletion review, or consent
+            withdrawal. Orendalis will explain any record that must be retained
+            for security or legal reasons before completing the request.
           </p>
           <form action={submitLifecycleAction} className="mt-5 grid gap-4">
             <label className="text-sm text-slate-300">
@@ -628,6 +627,6 @@ export default async function BetaWorkflowPage({
           </div>
         </SectionCard>}
       </div>
-    </PageContent>
+    </div>
   );
 }
