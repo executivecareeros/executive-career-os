@@ -4,9 +4,9 @@ export type OpportunityStatus = (typeof opportunityStatuses)[number];
 export const opportunityPriorities = ["High", "Medium", "Low"] as const;
 export type OpportunityPriority = (typeof opportunityPriorities)[number];
 
-export const workArrangements = ["Remote", "Hybrid", "On-site"] as const;
+export const workArrangements = ["Remote", "Hybrid", "On-site", "Unknown"] as const;
 export type WorkArrangement = (typeof workArrangements)[number];
-export type EmploymentType = "Full-time" | "Contract" | "Interim";
+export type EmploymentType = "Full-time" | "Contract" | "Interim" | "Unknown";
 
 export const opportunityUniverseStages = ["Universe", "Qualified", "Recommended"] as const;
 export type OpportunityUniverseStage = (typeof opportunityUniverseStages)[number];

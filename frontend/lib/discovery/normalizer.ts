@@ -11,8 +11,8 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
     const companyInitials = job.company.name.split(/\s+/).map((word) => word[0]).join("").slice(0, 3).toUpperCase();
     const sourceKind = reliability.type === "Job Board" ? "Job Board" : reliability.type === "Executive Search Firm" ? "Recruiter" : reliability.type === "Manual Import" ? "Manual" : "Employer";
     const staleAfterHours = reliability.type === "Manual Import" ? 336 : reliability.type === "Executive Search Firm" ? 72 : 36;
-    const workArrangement = job.rawMetadata.workArrangement === "Remote" || job.rawMetadata.workArrangement === "Hybrid" || job.rawMetadata.workArrangement === "On-site" ? job.rawMetadata.workArrangement : "On-site";
-    const employmentType = job.employmentType === "Contract" || job.employmentType === "Interim" ? job.employmentType : "Full-time";
+    const workArrangement = job.rawMetadata.workArrangement === "Remote" || job.rawMetadata.workArrangement === "Hybrid" || job.rawMetadata.workArrangement === "On-site" ? job.rawMetadata.workArrangement : "Unknown";
+    const employmentType = job.employmentType === "Full-time" || job.employmentType === "Contract" || job.employmentType === "Interim" ? job.employmentType : "Unknown";
     const opportunity: Opportunity = {
       id: `discovered-${job.source}-${job.sourceId}`,
       companyName: job.company.name,

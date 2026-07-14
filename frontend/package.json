@@ -25,7 +25,8 @@
     "test:founder-bootstrap": "node scripts/test-founder-bootstrap.mjs",
     "test:release-evidence": "node --experimental-transform-types scripts/test-release-evidence.mjs",
     "test:opportunity-universe": "node --experimental-transform-types scripts/test-opportunity-universe.mjs",
-    "test:discovery-pipeline": "node --experimental-transform-types scripts/test-discovery-pipeline.mjs"
+    "test:discovery-pipeline": "node --experimental-transform-types scripts/test-discovery-pipeline.mjs",
+    "test:greenhouse-connector": "node --experimental-transform-types scripts/test-greenhouse-connector.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",
