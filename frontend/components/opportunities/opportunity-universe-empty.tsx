@@ -5,7 +5,7 @@ import { SectionCard } from "@/components/section-card";
 
 export function OpportunityUniverseEmpty() {
   return <div className="mx-auto max-w-6xl px-5 py-8 sm:px-6 lg:px-10">
-    <PageHeader eyebrow="Executive Opportunity Universe" title="Your opportunity universe starts with one role" description="Bring every public, confidential, and relationship-led opportunity into one private view. Orendalis preserves the source; Atlas helps you decide what deserves attention." />
+    <PageHeader eyebrow="Executive Opportunity Universe" title="Your opportunity universe starts with one role" description="This area will automatically populate as Orendalis expands the Executive Opportunity Universe. You can begin now with a public, confidential, or relationship-led opportunity." />
     <div className="mt-8 grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
       <SectionCard>
         <p className="atlas-kicker">Begin with confirmed evidence</p>
