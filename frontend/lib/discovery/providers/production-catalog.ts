@@ -2,6 +2,9 @@ import type { OpportunityProviderAdapter } from "../types";
 import { AshbyOpportunityProvider, parseAshbyBoard } from "./ashby.ts";
 import { GreenhouseOpportunityProvider, parseGreenhouseBoardToken } from "./greenhouse.ts";
 import { LeverOpportunityProvider, parseLeverBoard } from "./lever.ts";
+import { PersonioOpportunityProvider, parsePersonioAccount } from "./personio.ts";
+import { RecruiteeOpportunityProvider, parseRecruiteeCompany } from "./recruitee.ts";
+import { WorkableOpportunityProvider, parseWorkableAccount } from "./workable.ts";
 import { OpportunityProviderCatalog } from "./catalog.ts";
 
 const reviewedAt = "2026-07-14T00:00:00.000Z";
@@ -24,6 +27,21 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
     id: "ashby", name: "Ashby", supports: (url) => url.hostname.toLowerCase() === "jobs.ashbyhq.com",
     create: (locator) => new AshbyOpportunityProvider(parseAshbyBoard(locator)),
     evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
+  },
+  {
+    id: "recruitee", name: "Recruitee", supports: (url) => /^[a-z0-9-]+\.recruitee\.com$/i.test(url.hostname),
+    create: (locator) => new RecruiteeOpportunityProvider(parseRecruiteeCompany(locator)),
+    evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
+  },
+  {
+    id: "personio", name: "Personio", supports: (url) => /^[a-z0-9-]+\.jobs\.personio\.(com|de)$/i.test(url.hostname),
+    create: (locator) => { const feed = parsePersonioAccount(locator); return new PersonioOpportunityProvider(feed.account, feed.region); },
+    evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
+  },
+  {
+    id: "workable", name: "Workable", supports: (url) => url.hostname.toLowerCase() === "apply.workable.com" || (url.hostname.toLowerCase() === "www.workable.com" && url.pathname.startsWith("/api/accounts/")),
+    create: (locator) => new WorkableOpportunityProvider(parseWorkableAccount(locator)),
+    evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
   },
 ] as const;
 

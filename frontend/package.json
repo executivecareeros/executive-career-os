@@ -28,7 +28,8 @@
     "test:discovery-pipeline": "node --experimental-transform-types scripts/test-discovery-pipeline.mjs",
     "test:greenhouse-connector": "node --experimental-transform-types scripts/test-greenhouse-connector.mjs",
     "test:coverage-engine": "node --experimental-transform-types scripts/test-coverage-engine.mjs",
-    "test:provider-pack-alpha": "node --experimental-transform-types scripts/test-provider-pack-alpha.mjs"
+    "test:provider-pack-alpha": "node --experimental-transform-types scripts/test-provider-pack-alpha.mjs",
+    "test:provider-expansion": "node --experimental-transform-types scripts/test-provider-expansion.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

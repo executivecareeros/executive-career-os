@@ -1,6 +1,6 @@
 import type { Opportunity } from "@/types/opportunity";
 
-export const discoverySourceKinds = ["linkedin", "indeed", "glassdoor", "stepstone", "wellfound", "greenhouse", "lever", "workday", "sap-successfactors", "smartrecruiters", "ashby", "icims", "corporate-career-site", "executive-search-firm", "manual-import", "csv-import", "rss-feed"] as const;
+export const discoverySourceKinds = ["linkedin", "indeed", "glassdoor", "stepstone", "wellfound", "greenhouse", "lever", "workday", "sap-successfactors", "smartrecruiters", "ashby", "icims", "recruitee", "personio", "workable", "corporate-career-site", "executive-search-firm", "manual-import", "csv-import", "rss-feed"] as const;
 export type KnownDiscoverySourceKind = (typeof discoverySourceKinds)[number];
 /** Open provider identifier. The catalog is illustrative; new compliant providers do not require a domain-model change. */
 export type DiscoverySourceKind = KnownDiscoverySourceKind | (string & {});

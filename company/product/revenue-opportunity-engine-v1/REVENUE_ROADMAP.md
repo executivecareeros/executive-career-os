@@ -2,8 +2,8 @@
 
 > Purpose: Sequence only the Opportunity Collection capabilities that materially increase the chance of acquiring the first paying executive.
 
-- **Authority:** ODS 1.0 Product track
-- **Status:** Version 1 roadmap complete
+- **Authority:** ODS 2.0 Product track and permanent Executive Opportunity Universe Directive
+- **Status:** Active roadmap; original provider-specific boundaries are superseded
 - **Date:** 14 July 2026
 - **Scope:** First-paying-executive priorities; no estimates, commitments, or implementation authorization
 
@@ -32,7 +32,7 @@ The engine must validate four things before expanding source count:
 
 ### 2. Employer-Direct Universe
 
-- Greenhouse, Lever, and Ashby collectors;
+- Greenhouse, Lever, Ashby, Recruitee, Personio, and Workable collectors;
 - approved company registry with structured career-source resolution;
 - daily incremental refresh, bounded backoff, and source-local failure;
 - no LinkedIn or arbitrary-site crawling.
@@ -73,7 +73,7 @@ The engine must validate four things before expanding source count:
 
 ## NEXT — Expand Proven Value
 
-- Personio, Recruitee, and SmartRecruiters connectors;
+- SmartRecruiters after its credential and provider-term gate is resolved;
 - authorized Teamtailor sources;
 - constrained Workday company patterns;
 - saved searches and company watchlists;
@@ -103,7 +103,7 @@ The engine must validate four things before expanding source count:
 3. Greenhouse collector and end-to-end run.
 4. Discovery/Search index and freshness.
 5. Blueprint lenses and Atlas explanation.
-6. Lever and Ashby collectors through the same contracts.
+6. Lever, Ashby, Recruitee, Personio, and Workable collectors through the same contracts.
 7. Company registry and bounded enrichment.
 8. Revenue evidence with qualified design partners.
 9. Add only the NEXT source that removes the largest observed coverage gap.
@@ -112,7 +112,7 @@ The engine must validate four things before expanding source count:
 
 Before code work begins:
 
-- founder approves the NOW scope and source eligibility policy;
+- the source satisfies the standing delegation or receives approval at a reserved founder gate;
 - legal/privacy review confirms collection and display boundaries;
 - source terms are revalidated from official records;
 - data retention, deletion, correction, and confidential import handling are approved;
@@ -126,4 +126,4 @@ Stop source implementation if access rights are unclear, the source requires an 
 
 ## Decision
 
-The revenue-ready Version 1 is not “all sources.” It is the smallest trustworthy universe that can prove executives save time and discover better opportunities. Manual and confidential intake plus Greenhouse, Lever, Ashby, and bounded company sources are sufficient to test that proposition. All other sources earn priority through customer evidence.
+The current revenue-ready foundation combines manual and confidential intake with six structured employer ecosystems. Expansion continues autonomously when it increases executive coverage and satisfies the standing delegation; provider count alone remains irrelevant.

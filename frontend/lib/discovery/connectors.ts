@@ -10,6 +10,8 @@ const definitions: readonly ConnectorDefinition[] = [
   { id: "lever", name: "Lever", category: "Corporate Website" }, { id: "workday", name: "Workday", category: "Corporate Website" },
   { id: "sap-successfactors", name: "SAP SuccessFactors", category: "Corporate Website" }, { id: "smartrecruiters", name: "SmartRecruiters", category: "Corporate Website" },
   { id: "ashby", name: "Ashby", category: "Corporate Website" }, { id: "icims", name: "ICIMS", category: "Corporate Website" },
+  { id: "recruitee", name: "Recruitee", category: "Corporate Website" }, { id: "personio", name: "Personio", category: "Verified Feed" },
+  { id: "workable", name: "Workable", category: "Corporate Website" },
   { id: "corporate-career-site", name: "Corporate Career Site", category: "Corporate Website" }, { id: "executive-search-firm", name: "Executive Search Firm", category: "Executive Search Firm" },
   { id: "manual-import", name: "Manual Import", category: "Manual Import" }, { id: "csv-import", name: "CSV Import", category: "Manual Import" },
   { id: "rss-feed", name: "RSS Feed", category: "Verified Feed" },
@@ -58,20 +60,21 @@ export class ConnectorOpportunityProvider implements OpportunityProvider {
 export const discoveryConnectors: readonly DiscoveryConnector[] = definitions.map((definition) => new DiscoveryConnectorStub(definition));
 export const discoverySources: readonly DiscoverySource[] = discoveryConnectors.map((connector) => connector.source);
 
-export const linkedinConnector = discoveryConnectors[0];
-export const indeedConnector = discoveryConnectors[1];
-export const glassdoorConnector = discoveryConnectors[2];
-export const stepStoneConnector = discoveryConnectors[3];
-export const wellfoundConnector = discoveryConnectors[4];
-export const greenhouseConnector = discoveryConnectors[5];
-export const leverConnector = discoveryConnectors[6];
-export const workdayConnector = discoveryConnectors[7];
-export const sapSuccessFactorsConnector = discoveryConnectors[8];
-export const smartRecruitersConnector = discoveryConnectors[9];
-export const ashbyConnector = discoveryConnectors[10];
-export const icimsConnector = discoveryConnectors[11];
-export const corporateCareerSiteConnector = discoveryConnectors[12];
-export const executiveSearchFirmConnector = discoveryConnectors[13];
-export const manualImportConnector = discoveryConnectors[14];
-export const csvImportConnector = discoveryConnectors[15];
-export const rssFeedConnector = discoveryConnectors[16];
+const connector = (id: DiscoverySourceKind) => discoveryConnectors.find((item) => item.id === id)!;
+export const linkedinConnector = connector("linkedin");
+export const indeedConnector = connector("indeed");
+export const glassdoorConnector = connector("glassdoor");
+export const stepStoneConnector = connector("stepstone");
+export const wellfoundConnector = connector("wellfound");
+export const greenhouseConnector = connector("greenhouse");
+export const leverConnector = connector("lever");
+export const workdayConnector = connector("workday");
+export const sapSuccessFactorsConnector = connector("sap-successfactors");
+export const smartRecruitersConnector = connector("smartrecruiters");
+export const ashbyConnector = connector("ashby");
+export const icimsConnector = connector("icims");
+export const corporateCareerSiteConnector = connector("corporate-career-site");
+export const executiveSearchFirmConnector = connector("executive-search-firm");
+export const manualImportConnector = connector("manual-import");
+export const csvImportConnector = connector("csv-import");
+export const rssFeedConnector = connector("rss-feed");
