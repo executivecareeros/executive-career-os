@@ -33,9 +33,9 @@ The engine must validate four things before expanding source count:
 ### 2. Employer-Direct Universe
 
 - Greenhouse, Lever, Ashby, Recruitee, Personio, and Workable collectors;
-- approved company registry with structured career-source resolution;
+- bounded Company Career Site collection from employer-published `JobPosting` structured data;
 - daily incremental refresh, bounded backoff, and source-local failure;
-- no LinkedIn or arbitrary-site crawling.
+- no LinkedIn collection or arbitrary-site crawling.
 
 **Revenue value:** credible automated breadth without waiting for restricted partnerships.
 
@@ -75,7 +75,7 @@ The engine must validate four things before expanding source count:
 
 - SmartRecruiters after its credential and provider-term gate is resolved;
 - authorized Teamtailor sources;
-- constrained Workday company patterns;
+- authorized Workday employer or partner access after its Founder gate;
 - saved searches and company watchlists;
 - company signal enrichment with approved evidence;
 - outcome-based adjustment through transparent rules;
@@ -85,7 +85,7 @@ The engine must validate four things before expanding source count:
 
 ## LATER — Partnership and Scale
 
-- LinkedIn Talent partnership evaluation;
+- LinkedIn Talent partnership execution after contractual Founder approval;
 - licensed Welcome to the Jungle or Wellfound access;
 - independent treatment of Otta only if current source rights and identity justify it;
 - additional ATS ecosystems;
@@ -126,4 +126,4 @@ Stop source implementation if access rights are unclear, the source requires an 
 
 ## Decision
 
-The current revenue-ready foundation combines manual and confidential intake with six structured employer ecosystems. Expansion continues autonomously when it increases executive coverage and satisfies the standing delegation; provider count alone remains irrelevant.
+The current revenue-ready foundation combines manual and confidential intake with seven employer-direct collection routes, including bounded structured Company Career Sites. LinkedIn and Workday remain mandatory Tier 1 priorities behind documented Founder Approval Gates. Expansion continues autonomously when it increases executive coverage and satisfies the standing delegation; provider count alone remains irrelevant.

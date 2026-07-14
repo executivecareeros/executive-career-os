@@ -11,12 +11,13 @@ Expand employer-direct opportunity coverage through the existing Opportunity Cov
 | Recruitee | Careers Site API | Structured employer jobs across Recruitee-hosted career sites | Autonomous: no reserved founder gate |
 | Personio | Employer-enabled XML career feed | European employer jobs, including multilingual feed support | Autonomous: no reserved founder gate |
 | Workable | Public account jobs endpoint | Published employer jobs across Workable-hosted career sites | Autonomous: no reserved founder gate |
+| Company Career Sites | Employer-published Schema.org `JobPosting` data | Target-company roles outside the named ATS adapters | Autonomous only within the bounded single-page structured-data policy |
 
-SmartRecruiters was evaluated but not implemented in this wave because its current official Posting API documentation requires an API key. Credential, access-term, and production-activation review remain unresolved.
+LinkedIn Jobs and Workday were processed as mandatory Tier 1 priorities. Both remain explicit Founder Approval Gates: LinkedIn requires partner approval and contractual acceptance; Workday requires an authorized tenant or provider-confirmed collection path. SmartRecruiters remains a Tier 2 gate because its current official Posting API documentation requires an API key.
 
 ## Engine Compliance
 
-All three providers use the shared adapter catalog, collection boundary, validation, normalization, canonical matching, provenance, freshness, lifecycle, monitoring, retry, and quality controls. No provider creates a domain Opportunity directly.
+All approved providers use the shared adapter catalog, collection boundary, validation, normalization, canonical matching, provenance, freshness, lifecycle, monitoring, retry, and quality controls. No provider creates a domain Opportunity directly.
 
 ## Evidence
 

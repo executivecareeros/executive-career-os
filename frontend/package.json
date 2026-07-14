@@ -29,7 +29,8 @@
     "test:greenhouse-connector": "node --experimental-transform-types scripts/test-greenhouse-connector.mjs",
     "test:coverage-engine": "node --experimental-transform-types scripts/test-coverage-engine.mjs",
     "test:provider-pack-alpha": "node --experimental-transform-types scripts/test-provider-pack-alpha.mjs",
-    "test:provider-expansion": "node --experimental-transform-types scripts/test-provider-expansion.mjs"
+    "test:provider-expansion": "node --experimental-transform-types scripts/test-provider-expansion.mjs",
+    "test:tier-one-coverage": "node --experimental-transform-types scripts/test-tier-one-coverage.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

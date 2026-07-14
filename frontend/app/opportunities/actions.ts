@@ -22,6 +22,6 @@ export async function refreshOpportunityBoard(formData: FormData) {
   if (!outcome) redirect("/opportunities?collection=error&message=No%20collection%20run%20was%20available.");
   try { await recordDiscoveryRun(client, resolved.context, outcome); } catch { /* Collection remains visible if the secondary monitoring record fails. */ }
   revalidatePath("/opportunities");
-  if (outcome.run.status === "failed") redirect(`/opportunities?collection=error&message=${encodeURIComponent(outcome.run.errors[0]?.message ?? "Greenhouse collection failed.")}`);
+  if (outcome.run.status === "failed") redirect(`/opportunities?collection=error&message=${encodeURIComponent(outcome.run.errors[0]?.message ?? "Opportunity collection failed.")}`);
   redirect(`/opportunities?collection=complete&imported=${outcome.run.jobsImported}&found=${outcome.run.jobsFound}`);
 }

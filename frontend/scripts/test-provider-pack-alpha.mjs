@@ -12,7 +12,7 @@ assert.equal(parseAshbyBoard("https://jobs.ashbyhq.com/Acme/job-id"), "Acme");
 assert.equal(providerFromCareersUrl("https://boards.greenhouse.io/acme").id, "greenhouse");
 assert.equal(providerFromCareersUrl("https://jobs.lever.co/acme").id, "lever");
 assert.equal(providerFromCareersUrl("https://jobs.ashbyhq.com/acme").id, "ashby");
-assert.throws(() => providerFromCareersUrl("https://example.com/jobs"), /not available/);
+assert.equal(providerFromCareersUrl("https://example.com/jobs").id, "corporate-career-site");
 assert.equal(productionProviderAdapters.every((adapter) => adapter.evaluation.reviewStatus === "approved" && adapter.evaluation.legalCompliance === "high"), true);
 
 const customProvider = { id: "future-approved-provider", source: { id: "future-approved-provider", name: "Future provider", category: "Verified Feed", description: "Test adapter", capabilities: ["jobs"] }, reliability: { type: "Verified Feed", rating: "high", score: 80, rationale: "Test", assessedAt: "2026-07-14T00:00:00Z" }, async collect() { return { providerId: "future-approved-provider", collectedAt: "2026-07-14T00:00:00Z", jobs: [] }; }, async health() { return { source: "future-approved-provider", status: "available", checkedAt: "2026-07-14T00:00:00Z", message: "Ready" }; } };

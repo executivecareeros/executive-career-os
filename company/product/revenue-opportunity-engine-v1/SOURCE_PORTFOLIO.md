@@ -25,22 +25,22 @@ Classification is a product priority, not permission to connect. Every live sour
 | Recruitee | NOW | Employer Careers Site API collector | Official unauthenticated Careers Site API exposes published jobs with structured location, description, and application links |
 | Personio | NOW | Employer-enabled XML feed collector | Official public XML career feed exposes employer-published jobs when enabled, including multilingual feed support |
 | Workable | NOW | Public employer-jobs collector | Official public account endpoint exposes published jobs and optional detailed descriptions without an API credential |
-| Company career pages | NOW, bounded | Approved company registry using structured ATS/feed routes; direct URL import when unsupported | Essential for target-company discovery, but no arbitrary crawling in Version 1 |
+| Company career pages | NOW, bounded | Single-page collector for explicit Schema.org `JobPosting` evidence, plus structured ATS/feed routes | Essential target-company coverage without arbitrary crawling, redirect following, or link discovery |
 | Recruiter email import | NOW | Executive uploads or forwards one message through an approved, consented intake path | Covers confidential opportunities; restricted evidence and retention required |
 | Manual opportunity creation | NOW | Executive-confirmed structured form | Universal fallback and highest-control intake |
 | Job URL import | NOW | One executive-supplied URL; identify known source or request confirmation | Removes copy/paste burden without promising broad collection |
 | PDF job description import | NOW | Executive-supplied file, review, confirmation, and explicit retention choice | Common recruiter workflow and confidential mandate coverage |
 | SmartRecruiters | NEXT | Employer-specific Posting API connector | Official posting interface exists; access behavior and terms must be confirmed per intended use |
 | Teamtailor | NEXT | Authorized employer/partner feed | Official APIs require keys or partner/feed arrangements; not a universal anonymous source |
-| Workday | NEXT, constrained | Per-company supported career-site pattern or authorized employer integration | Workday has platform APIs, but no verified universal public job-listing interface for all tenants |
-| LinkedIn Jobs | LATER unless partnership approved | Link/reference import only; no automated collection | LinkedIn Talent API access generally requires explicit partner approval and contractual restrictions; reachability is not permission |
+| Workday | TIER 1, Founder gate | Authorized employer tenant or provider-confirmed public collection interface | Official tenant Recruiting APIs exist, but no verified universal anonymous collection interface or collection right has been established |
+| LinkedIn Jobs | TIER 1, Founder gate | Approved LinkedIn Talent Solutions partnership; link/reference import remains available | LinkedIn Talent access requires explicit partner approval and contractual acceptance; reachability is not permission |
 | Welcome to the Jungle | LATER | Link import and outbound source reference | No verified open collection interface or license in current evidence; commercial/terms review required |
 | Otta | LATER / alias review | Treat as a legacy or overlapping source identity until current independent access is verified | Avoid double-counting a branded source relationship without authoritative source evidence |
 | Wellfound | LATER | Link import and outbound source reference | No verified open collection interface or license in current evidence; first-revenue value does not justify unsupported access |
 
 ## Current Coverage Position
 
-Greenhouse, Lever, Ashby, Recruitee, Personio, and Workable now cover a wider mix of technology, growth-company, European, and general employer career ecosystems through structured employer-direct publications. The bounded company registry adds target-company depth. Manual, URL, PDF, and recruiter-message intake cover confidential, unsupported, and relationship-led executive opportunities.
+Greenhouse, Lever, Ashby, Recruitee, Personio, and Workable cover a wider mix of technology, growth-company, European, and general employer career ecosystems through structured employer-direct publications. The bounded Company Career Site adapter adds target-company depth wherever an employer publishes explicit `JobPosting` structured data. Manual, URL, PDF, and recruiter-message intake cover confidential, unsupported, and relationship-led executive opportunities.
 
 This portfolio tests the paid value proposition—one relevant universe, less search time, better explanation—without depending on a restricted job board or broad crawler.
 

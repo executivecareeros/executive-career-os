@@ -1,5 +1,6 @@
 import type { OpportunityProviderAdapter } from "../types";
 import { AshbyOpportunityProvider, parseAshbyBoard } from "./ashby.ts";
+import { CompanyCareerSiteOpportunityProvider, isSafePublicCareerUrl, parseCompanyCareerUrl } from "./company-career-site.ts";
 import { GreenhouseOpportunityProvider, parseGreenhouseBoardToken } from "./greenhouse.ts";
 import { LeverOpportunityProvider, parseLeverBoard } from "./lever.ts";
 import { PersonioOpportunityProvider, parsePersonioAccount } from "./personio.ts";
@@ -8,8 +9,8 @@ import { WorkableOpportunityProvider, parseWorkableAccount } from "./workable.ts
 import { OpportunityProviderCatalog } from "./catalog.ts";
 
 const reviewedAt = "2026-07-14T00:00:00.000Z";
-const approved = (scores: Omit<OpportunityProviderAdapter["evaluation"], "accessModel" | "reviewStatus" | "founderGateReasons" | "reviewedAt">): OpportunityProviderAdapter["evaluation"] => ({
-  ...scores, accessModel: "official-api", reviewStatus: "approved", founderGateReasons: [], reviewedAt,
+const approved = (scores: Omit<OpportunityProviderAdapter["evaluation"], "accessModel" | "reviewStatus" | "founderGateReasons" | "reviewedAt">, accessModel: OpportunityProviderAdapter["evaluation"]["accessModel"] = "official-api"): OpportunityProviderAdapter["evaluation"] => ({
+  ...scores, accessModel, reviewStatus: "approved", founderGateReasons: [], reviewedAt,
 });
 
 export const productionProviderAdapters: readonly OpportunityProviderAdapter[] = [
@@ -42,6 +43,11 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
     id: "workable", name: "Workable", supports: (url) => url.hostname.toLowerCase() === "apply.workable.com" || (url.hostname.toLowerCase() === "www.workable.com" && url.pathname.startsWith("/api/accounts/")),
     create: (locator) => new WorkableOpportunityProvider(parseWorkableAccount(locator)),
     evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
+  },
+  {
+    id: "corporate-career-site", name: "Company Career Site", supports: isSafePublicCareerUrl,
+    create: (locator) => new CompanyCareerSiteOpportunityProvider(parseCompanyCareerUrl(locator)),
+    evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "moderate", legalCompliance: "high", reliability: "moderate", scalability: "high", engineeringEfficiency: "high" }, "public-feed"),
   },
 ] as const;
 
