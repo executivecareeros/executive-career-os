@@ -15,7 +15,7 @@
 | Open setup work | `OPEN_SETUP_ITEMS.md` |
 | Founder orientation | `FOUNDER_QUICK_REFERENCE.md` |
 
-These files are authoritative for current operating state as of **13 July 2026**. Historical asset, launch, email, investment, and staging records remain evidence and must not be rewritten merely to look current.
+These files are authoritative for current operating state as of **15 July 2026**. Historical asset, launch, email, investment, and staging records remain evidence and must not be rewritten merely to look current.
 
 Current staging reconciliation: `https://project-qmvs1.vercel.app` is the active isolated staging application. Supabase staging is Healthy, founder bootstrap completed once, Release 0.8 founder acceptance passed, and the authenticated workflow is isolated to the founder Workspace. Production remains absent. Design-partner activation is still blocked by unassisted authentication-email delivery, restore rehearsal, external monitoring, provider recovery evidence, and legal/privacy approval. See `ENVIRONMENT_REGISTER.md` and `company/releases/release-0.9/OPERATIONAL_READINESS_REPORT.md`.
 
@@ -34,7 +34,7 @@ When an older document conflicts with this register, preserve the older record a
 
 - Asset records describe Vercel as planned; the Orendalis Pro workspace and staging project now exist.
 - Asset and recovery records describe cloud Supabase as absent; the Orendalis Pro organization and staging project now exist.
-- Google Workspace and Proton appear in older provider plans. Microsoft 365 Business Basic is the chosen company mailbox platform, while Proton DNS records remain part of the unfinished routing migration.
+- Google Workspace and Proton appear in older provider plans. Microsoft 365 Business Basic is the company mailbox platform; the five obsolete Proton DNS remnants were removed on 2026-07-15.
 - Older deployment audits say staging does not exist; Vercel and Supabase staging resources now exist, but staging is not deployed or accepted.
 
 ## Security Boundary

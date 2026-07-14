@@ -60,3 +60,16 @@ The pre-change Proton MX and SPF values are preserved in the operational history
 **Mail routing cutover successful with non-blocking issues.**
 
 Microsoft 365 now receives mail for the primary Orendalis mailbox. DKIM completion and the remaining authentication/header checks are separate follow-up work.
+
+## Provider-Remnant Cleanup — 2026-07-15
+
+After a final read-only verification confirmed that Microsoft 365 was the sole root-domain MX provider, the single root SPF policy authorized Microsoft, and the complete Porkbun zone contained no Proton references beyond five obsolete records, the founder approved their removal.
+
+Removed only:
+
+- Two root TXT records beginning `protonmail-verification=`.
+- `protonmail._domainkey` CNAME.
+- `protonmail2._domainkey` CNAME.
+- `protonmail3._domainkey` CNAME.
+
+Porkbun showed 15 records after cleanup and no remaining Proton values. The authoritative Porkbun server, Cloudflare resolver, and Google resolver continued to return the Microsoft MX, Microsoft SPF, Autodiscover, both Microsoft selector CNAMEs, and the existing DMARC policy. Resend, Vercel, website, wildcard, and ACME records were not modified. A controlled Microsoft 365 message was sent from and received by the founder mailbox after the cleanup.

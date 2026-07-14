@@ -19,7 +19,7 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 | Prove staging backup and restore | Founder / Database Owner | Healthy migrated database and first provider backup | Perform isolated restore/reset rehearsal and measure recovery | Staging migration completion | Before design partner | Not Started |
 | Establish staging monitoring | Founder / Operations | No monitoring provider selected or configured | Approve minimal provider/manual signals, ownership, retention, and alert path | First deployment | Before design partner | Not Started |
 | Verify GitHub protection and organization security | Founder / Engineering | Repository remains under `executivecareeros`; settings unverified | Review visibility, branch protection, 2FA, owners, Dependabot, secret scanning, GitHub App scope | Founder account access | Before external beta | Open |
-| Reconcile email routing and legacy Proton state | Founder / Infrastructure | Microsoft DKIM incomplete; DNS cutover not accepted | Inventory current DNS and Proton account/subscription after Microsoft remediation | DKIM resolution | Founder to Set | Blocked |
+| Reconcile email routing and legacy Proton state | Founder / Infrastructure | DNS cleanup complete; Proton account/subscription status remains unknown | Verify whether any Proton subscription or account requires separate closure; do not change DNS | Founder account review | Founder to Set | DNS Complete / Account Review Open |
 
 ## Medium
 

@@ -8,6 +8,8 @@ Purpose: Record the current operational hold on the Orendalis Microsoft 365 emai
 
 Mail routing was cut over to Microsoft 365 on 2026-07-13. Microsoft completed the domain setup, public DNS resolves the Microsoft MX, single SPF, and Autodiscover records, and the founder confirmed receipt of an external test message at the primary mailbox.
 
+On 2026-07-15, the founder approved removal of the five obsolete Proton DNS remnants. Porkbun then contained 15 records with no Proton values. Authoritative DNS and public resolvers continued to return the Microsoft MX and SPF records, and a controlled Microsoft 365 message sent from and arrived at the founder mailbox.
+
 Active DKIM work remains suspended. Both Microsoft DKIM selector CNAME records resolve publicly, but Microsoft Defender continues to report `CnameMissing`. Microsoft support case `2607130050001139` tracks the missing Microsoft-side selector publication.
 
 ## Blocked By
@@ -36,7 +38,7 @@ Only after this condition is met should escalation to Microsoft Support be recom
 
 Until the scheduled verification window, do not:
 
-- Modify DNS.
+- Modify Microsoft mail-authentication or routing DNS without a separate approved change.
 - Regenerate DKIM keys.
 - Recreate or delete the DKIM CNAME records.
 - Enable DKIM signing.

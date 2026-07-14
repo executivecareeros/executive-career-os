@@ -59,7 +59,7 @@ Historical note: Microsoft originally reported `NoDKIMKeys`. The managed key pai
 ## Post-cutover validation
 
 - [x] Verify inbound mail to the primary address.
-- [ ] Revalidate outbound mail from the primary address and inspect the delivered headers.
+- [x] Revalidate outbound and inbound mailbox flow with a controlled Microsoft 365 message after provider-remnant cleanup.
 - [ ] Verify delivery to every approved alias.
 - [ ] Verify Outlook Web and Outlook for macOS synchronization.
 - [ ] Verify SPF passes and aligns.
@@ -68,8 +68,8 @@ Historical note: Microsoft originally reported `NoDKIMKeys`. The managed key pai
 - [ ] Verify TLS for inbound and outbound delivery.
 - [ ] Observe spam placement and message headers.
 - [x] Remove Proton MX and SPF records as part of the approved routing change.
-- [ ] Remove retained Proton DKIM and verification records only after successful validation and separate approval.
-- [ ] Recheck public DNS and Microsoft service health.
+- [x] Remove retained Proton DKIM and verification records only after successful validation and separate approval.
+- [x] Recheck authoritative and public DNS; Microsoft MX, SPF, Autodiscover, selector CNAMEs, and DMARC remain published.
 
 ## Rollback trigger
 

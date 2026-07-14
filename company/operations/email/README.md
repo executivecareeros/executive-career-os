@@ -17,6 +17,7 @@ This folder is the permanent repository location for Microsoft 365 email migrati
 7. Microsoft Defender continued to report `CnameMissing`; Microsoft support case `2607130050001139` was opened for the selector-publication failure.
 8. Mail routing was migrated from Proton to Microsoft 365 using the Microsoft-provided MX, SPF, and Autodiscover values.
 9. Microsoft completed the domain setup, public DNS resolved the new records, and the founder confirmed receipt of an external test message at the primary mailbox.
+10. On 2026-07-15, a separately approved cleanup removed the three obsolete Proton DKIM CNAMEs and two Proton verification TXT records. The authoritative zone retained Microsoft, DMARC, Resend, Vercel, website, wildcard, and ACME records unchanged.
 
 ## Record Status
 
@@ -34,4 +35,4 @@ When records conflict, use the newest factual evidence and the current controlli
 
 Microsoft 365 mail routing is operational. The remaining email-authentication blocker is **Microsoft DKIM selector publication/synchronization**. Public DNS resolves both customer-side selector CNAMEs, but Microsoft Defender still reports `CnameMissing`, and the Microsoft-generated destination names remain unavailable.
 
-Do not regenerate keys, recreate or delete the CNAMEs, enable DKIM signing, or modify MX, SPF, DMARC, or retained Proton records while Microsoft support investigates. Do not begin provider-remnant cleanup without separate founder approval.
+Do not regenerate keys, recreate or delete the Microsoft selector CNAMEs, enable DKIM signing, or modify MX, SPF, or DMARC while Microsoft support investigates. Proton DNS remnants have been removed; any Proton account or subscription closure remains a separate founder action.
