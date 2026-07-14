@@ -30,6 +30,8 @@ Use measured outcomes where possible. Label estimates and unknowns. Never conver
 
 ## Release 0.6 Readiness Snapshot — 2026-07-13
 
+> Historical snapshot. It is preserved as evidence of the pre-staging state and must not be used as current operational status. Current state is recorded in `company/releases/release-0.9/OPERATIONAL_READINESS_REPORT.md`.
+
 | Area | Current | Status | Evidence | Next action |
 | --- | --- | --- | --- | --- |
 | Product | Durable invitation-to-lifecycle beta route implemented locally | Watch | `docs/BETA_WORKFLOW_PERSISTENCE.md` | Complete founder acceptance in staging |

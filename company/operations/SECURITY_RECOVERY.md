@@ -22,8 +22,8 @@
 | GitHub | Account recovery, passkey/authenticator/recovery method, organization owner recovery, then Support | Orendalis organization documented with one owner; 2FA enforcement and backup owner unverified | Owner list, 2FA, recovery, audit log, apps, deploy keys, webhooks, visibility |
 | Microsoft 365 | Microsoft account/admin recovery, MFA/passkey or recovery method, alternate contact, Support | One Business Basic account operational; recovery controls not fully evidenced; DKIM case open | Admin roles, MFA, sessions, mailbox/aliases, licenses, audit, health, cases |
 | Supabase local | Recreate from migrations and fictional seed | Proven by deterministic replay/tests | Schema, RLS, tests, local Auth and seed |
-| Supabase cloud | Provider account, MFA, organization owner, billing and Support | No project exists; recovery is planned only | Owners, MFA, keys, integrations, Auth, backups, RLS, logs, billing |
-| Vercel | Account/team recovery, MFA/passkey/recovery method, verified email, team owner and Support | No project exists; recovery is planned only | Owners, MFA, integrations, domains, variables, deployments, billing, activity |
+| Supabase cloud | Provider account, MFA, organization owner, billing and Support | Staging is active; account recovery and restore evidence remain incomplete | Owners, MFA, keys, integrations, Auth, backups, RLS, logs, billing |
+| Vercel | Account/team recovery, MFA/passkey/recovery method, verified email, team owner and Support | Staging is active; account recovery and rollback evidence remain incomplete | Owners, MFA, integrations, domains, variables, deployments, billing, activity |
 | Domain registrar | Porkbun recovery using verified contact and MFA, then registrar support | Domain ownership documented; detailed recovery readiness unverified | Lock, DNSSEC, nameservers, DNS, renewal, payment, contacts, sessions, API keys |
 
 ## Secret Rotation

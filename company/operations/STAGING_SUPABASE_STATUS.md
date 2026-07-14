@@ -36,4 +36,4 @@ At the time of this record, Supabase showed the project as **Coming up…**. Dat
 
 ## Next Approved Step
 
-Historical next step completed. The current approval gate is Vercel staging environment-variable configuration; no deployment is authorized by this record.
+Historical next step completed. Staging was subsequently configured and deployed. The current approval gates are maintained in `company/releases/release-0.9/DEFINITION_OF_READY.md`; this historical record grants no deployment or invitation authority.

@@ -24,6 +24,10 @@ Scope, participant profile, operating procedures, and evidence gates are documen
 
 Email-verification product correctness passed on 13 July 2026 through Supabase local mail capture: unverified access failed closed, a fictional message and callback worked, onboarding and beta workflow access succeeded, replay failed, and logout/login persistence held. External delivery, production sender authentication, and staging acceptance remain unchecked.
 
+### Release 0.9 operational-readiness note — 2026-07-14
+
+Isolated staging, founder bootstrap, authenticated founder acceptance, Atlas isolation, Workspace isolation, and operational-reporting reconciliation passed. Release 0.9 feedback now records the current release and available deployment revision. Design-partner activation remains blocked by the unchecked gates in `company/releases/release-0.9/DEFINITION_OF_READY.md`.
+
 ## Public Beta
 
 - [ ] Capacity, abuse prevention, rate limits, monitoring, and support can handle public access.
@@ -55,7 +59,7 @@ Email-verification product correctness passed on 13 July 2026 through Supabase l
 Readiness is earned by evidence. An unchecked gate remains a blocker unless an authorized decision explicitly accepts and records the residual risk.
 ## Founder bootstrap gate
 
-- [ ] One-time founder migration applied alone in staging.
-- [ ] Protected founder email configured and locked after success.
-- [ ] Verified founder, Owner membership, immutable audit, replay prevention, and Invitation Management confirmed.
+- [x] One-time founder migration applied alone in staging.
+- [x] Protected founder email configured and locked after success.
+- [x] Verified founder, Owner membership, immutable audit, replay prevention, and Invitation Management confirmed.
 - [ ] No design-partner invitation created before separate approval.

@@ -17,7 +17,7 @@
 
 These files are authoritative for current operating state as of **13 July 2026**. Historical asset, launch, email, investment, and staging records remain evidence and must not be rewritten merely to look current.
 
-Current staging reconciliation: Vercel assigned `https://project-qmvs1.vercel.app` but no deployment exists. Supabase project `ymprcckbrgkijnuwhdne` is Healthy; its staging Auth URL allowlist and all ten committed migrations are configured and validated. No seed, users, Vercel variables, integration, or deployment exists. Founder approval to configure Vercel staging variables is the next gate.
+Current staging reconciliation: `https://project-qmvs1.vercel.app` is the active isolated staging application. Supabase staging is Healthy, founder bootstrap completed once, Release 0.8 founder acceptance passed, and the authenticated workflow is isolated to the founder Workspace. Production remains absent. Design-partner activation is still blocked by unassisted authentication-email delivery, restore rehearsal, external monitoring, provider recovery evidence, and legal/privacy approval. See `ENVIRONMENT_REGISTER.md` and `company/releases/release-0.9/OPERATIONAL_READINESS_REPORT.md`.
 
 ## Evidence Rules
 

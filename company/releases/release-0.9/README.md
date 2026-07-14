@@ -7,8 +7,8 @@
 - **Release type:** Design and operational readiness
 - **Accountable owner:** Founder
 - **Operating framework:** ODS 1.0
-- **Current decision:** RELEASE 0.9 REQUIRES PRODUCT CHANGES
-- **Application changes implemented:** None
+- **Current decision:** OPERATIONAL READINESS PASS — DESIGN-PARTNER ACTIVATION BLOCKED
+- **Application changes implemented:** Two bounded evidence-integrity corrections; no workflow or architecture change
 - **External actions taken:** None
 
 ## Release Outcome
@@ -41,6 +41,9 @@ Each wave requires founder review and an explicit continue, pause, or stop decis
 | [Risk and Data Boundaries](RISK_AND_DATA_BOUNDARIES.md) | Safety, privacy, capacity, and stop controls |
 | [Product Change Assessment](PRODUCT_CHANGE_ASSESSMENT.md) | Required and optional application corrections |
 | [ODS Release Record](ODS_RELEASE_RECORD.md) | Authority, evidence, decision, and completion |
+| [Definition of Ready](DEFINITION_OF_READY.md) | Gates required before the first invitation |
+| [Definition of Done](DEFINITION_OF_DONE.md) | Completion standard for operational reconciliation |
+| [Operational Readiness Report](OPERATIONAL_READINESS_REPORT.md) | Reconciled facts, limitations, evidence, and decision |
 
 ## Relationship to Earlier Records
 
@@ -48,4 +51,4 @@ Each wave requires founder review and an explicit continue, pause, or stop decis
 
 ## Activation Gate
 
-No design partner may be invited until the two required product corrections in the Product Change Assessment are implemented, validated, deployed to staging, and accepted by the founder, and the legal/data materials required for the planned data mode are approved.
+The two evidence-integrity corrections are complete locally. No design partner may be invited until every gate in the Definition of Ready is complete and the founder explicitly approves activation.

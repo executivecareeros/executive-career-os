@@ -6,14 +6,14 @@
 
 The application currently provides founder-only invitation creation, list, status, expiry, acceptance, and revocation; single-use email-bound registration; guided onboarding and decision journey; structured feedback; founder-only feedback and lifecycle triage; workspace isolation; persistence; and logout/return behavior. Release 0.8 acceptance and regression evidence passed for the founder staging journey.
 
-## Required Before Partner 1
+## Required Corrections
 
-| Change | Classification | Why required | Business value | Estimated effort | Confidence |
-| --- | --- | --- | --- | --- | --- |
-| Replace hard-coded feedback product version `0.6` with the deployed release/revision source | Data integrity defect; Low engineering risk | Release 0.9 feedback would otherwise be attributed to the wrong product version, weakening evidence and regression analysis | Trustworthy learning evidence and traceable remediation | 0.5–1 engineering day including tests | High |
-| Replace stale Release 0.6, no-staging, and pre-creation statements in Company Control with factual Release 0.9 operational state | Founder operations defect; Moderate product risk | Company Control is the founder’s invitation and feedback surface; stale readiness claims could produce incorrect invitation decisions | Safer wave gates, lower operating confusion, and reliable founder control | 1–2 engineering days including responsive and regression validation | Medium |
+| Change | Classification | Status | Evidence |
+| --- | --- | --- | --- |
+| Replace hard-coded feedback product version `0.6` with the deployed release/revision source | Data integrity defect; Low engineering risk | Complete | Deterministic release-evidence helper and test |
+| Replace stale Release 0.6, no-staging, and pre-creation statements in Company Control with factual Release 0.9 operational state | Founder operations defect; Moderate product risk | Complete | Company Control and authoritative operational registers reconciled |
 
-These corrections require a separately approved implementation, staging deployment, and acceptance pass. They do not require a new domain, database schema, provider, or architecture.
+These corrections do not change architecture, workflow, schema, providers, or external state. Deployment remains a separate approval gate.
 
 ## Valuable but Not Required for the First Ten
 
@@ -36,4 +36,4 @@ These corrections require a separately approved implementation, staging deployme
 
 ## Decision
 
-The operating design is complete, but Release 0.9 is not ready to activate. Two bounded product corrections are required before the first invitation. Therefore the release decision is **RELEASE 0.9 REQUIRES PRODUCT CHANGES**.
+The required evidence-integrity corrections are complete. Operational readiness is **PASS**; design-partner activation remains blocked by the Definition of Ready gates.

@@ -19,11 +19,11 @@
 | Internet outage | Stop production changes; use approved alternate connection only from a trusted device | Verify local and provider state after connectivity returns | Alternate connectivity and test unverified |
 | Device loss/failure | Secure email/password manager, revoke device sessions, preserve evidence | Follow `SECURITY_RECOVERY.md`; rebuild from clean device and repository | Recovery device and exercise unverified |
 | Credential loss | Avoid repeated lockout attempts; use provider recovery | Restore identity, revoke sessions, rotate affected credentials, verify audits | Several recovery methods unverified |
-| Billing failure | Freeze optional spend and capture provider notice; avoid unverified payment links | Founder corrects billing in provider portal after approving charge | Microsoft billing evidence incomplete; Vercel/Supabase absent |
+| Billing failure | Freeze optional spend and capture provider notice; avoid unverified payment links | Founder corrects billing in provider portal after approving charge | Microsoft, Vercel, and Supabase billing ownership and recovery evidence remain incomplete |
 | Domain expiration/registrar loss | Treat as Severity 1/2; secure registrar/email and freeze DNS | Recover registrar, renew with approval, verify known-good DNS, certificates and mail | Renewal controls and backup authority require verification |
 | Microsoft outage | Use approved alternate founder contact; do not alter mail DNS | Monitor Microsoft health/support; verify mailbox after recovery | Alternate contact workflow unexercised; DKIM case open |
-| Supabase outage | Pause writes/invitations if integrity is uncertain | Follow Supabase and database recovery runbooks | Cloud backup/restore cannot be tested before project exists |
-| Vercel outage | Stop deployments; preserve last known-good build and evidence | Follow Vercel/rollback runbooks | No live project or rollback exercise exists |
+| Supabase outage | Pause writes/invitations if integrity is uncertain | Follow Supabase and database recovery runbooks | Staging exists, but restore has not been rehearsed |
+| Vercel outage | Stop deployments; preserve last known-good build and evidence | Follow Vercel/rollback runbooks | Staging exists, but rollback has not been rehearsed |
 | GitHub outage | Pause merges/deployments; use verified local clone read-only | Reconcile history after recovery | Secondary protected archive unverified |
 
 ## Minimum Operating Mode

@@ -32,7 +32,7 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
 
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
-      <PageHeader eyebrow="Internal — Founder Access" title="Orendalis Company Control Center" description="Decision and exception management across company operations. Live integrations are not connected; every value identifies its source and freshness." />
+      <PageHeader eyebrow="Internal — Founder Access" title="Orendalis Company Control Center" description="Decision and exception management across company operations. Staging is active; unavailable telemetry remains identified by source and freshness." />
 
       <section aria-label="Control center context" className="mt-6 grid gap-3 rounded-2xl border border-blue-400/15 bg-blue-400/[.06] p-4 text-sm sm:grid-cols-2 xl:grid-cols-6">
         <div><p className="text-xs text-slate-500">Date</p><p className="mt-1 text-slate-200">{new Date(snapshot.generatedAt).toLocaleDateString("en-GB", { dateStyle: "long", timeZone: "Europe/Istanbul" })}</p></div>
@@ -52,22 +52,22 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
       <SectionCard className="mt-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Private beta access</p><h2 className="mt-2 text-xl font-semibold">Founder Invitation Management</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">Create, review, and revoke secure executive invitations without database access.</p></div><Link href="/company-control/invitations" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Manage Invitations</Link></div></SectionCard>
 
       <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Final creation review</p><h2 className="mt-2 text-xl font-semibold">Staging Approval Package</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">The provider, cost, domain, GitHub, security, risk, rollback, and ordered execution decisions are documented. No staging resource has been created and no spend is authorized.</p></div><StatusBadge tone="warning">Ready · Founder Approval Required</StatusBadge></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Current environment</p><h2 className="mt-2 text-xl font-semibold">Staging Operational Record</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">The isolated Vercel and Supabase staging environment is deployed, founder acceptance has passed, and production remains absent.</p></div><StatusBadge tone="success">Active · Staging Only</StatusBadge></div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            ["Current Decision", "Ready to Create Staging", "Local evidence supports controlled creation only; deployment and acceptance remain separate gates."],
+            ["Current Decision", "Operational Readiness Passed", "Reporting, release attribution, and readiness evidence are reconciled. Design-partner activation remains a separate gate."],
             ["Recommended Providers", "Vercel Pro · Supabase Pro", "Published base commitment is USD 45/month before tax, exchange rate, add-ons, and usage."],
             ["Supabase Region", "Central EU (Frankfurt)", "Recommended for current European operating context; founder approval is required because region change requires migration."],
-            ["Security Gate", "Pending Live Verification", "MFA, recovery, owner identity, repository-only GitHub scope, and spend controls must be confirmed in provider screens."],
-            ["Execution", "12 Controlled Steps", "Each step has an approval gate, verification, expected duration, and rollback."],
-            ["Residual Risk", "Staging Only", "Runbooks and recovery remain unexercised; fictional data only until staging is separately accepted."],
+            ["Security Gate", "Partially Verified", "Workspace isolation and founder authorization passed; provider recovery evidence and restore rehearsal remain open."],
+            ["Acceptance", "Founder Journey Passed", "Authentication, onboarding, decision workflow, persistence, isolation, and return behavior passed in staging."],
+            ["Residual Risk", "Activation Blocked", "Unassisted email delivery, recovery rehearsal, monitoring, and legal/privacy gates remain open."],
           ].map(([label, value, detail]) => <article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></article>)}
         </div>
-        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: docs/STAGING_FINAL_APPROVAL.md and company/operations/STAGING_EXECUTION_PLAN.md</p><p className="mt-2 text-xs text-slate-600">Creation readiness is not deployment authority. Live checkout totals, provider permissions, ownership, and spend limits remain founder approval gates.</p></div>
+        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: company/operations/access-and-environments/ENVIRONMENT_REGISTER.md and company/founder-acceptance/FOUNDER_ACCEPTANCE_RERUN.md</p><p className="mt-2 text-xs text-slate-600">Operational readiness does not authorize design-partner invitations, production deployment, or public access.</p></div>
       </SectionCard>
 
       <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Operating discipline</p><h2 className="mt-2 text-xl font-semibold">Operations Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">Deployment, incident, recovery, security, release, and continuity procedures are documented before staging exists. Exercises and provider-specific verification remain pending.</p></div><StatusBadge tone="warning">Prepared · Not Exercised</StatusBadge></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Operating discipline</p><h2 className="mt-2 text-xl font-semibold">Operations Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">Reporting consistency, release attribution, operating records, and release gates are reconciled. Recovery and monitoring exercises remain explicit activation prerequisites.</p></div><StatusBadge tone="success">PASS · Activation Gated</StatusBadge></div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             ["Runbooks", "8 Documented", "Staging, production, rollback, database, authentication, Supabase, Vercel, and Microsoft procedures."],
@@ -75,14 +75,14 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
             ["Incident Readiness", "Severity Model Ready", "Severity 1–4, response targets, notifications, closure, and postmortem rules are documented but unexercised."],
             ["Release Readiness", "Calendar Prepared", "Freeze, candidate, staging, production, observation, and hotfix gates are defined; no live release is scheduled."],
             ["Business Continuity", "Plan Documented", "Single-founder, device, Internet, billing, domain, Microsoft, Supabase, Vercel, and GitHub scenarios are covered; exercises remain open."],
-            ["Provider Health", "Partial · Manual", "Microsoft is Watch; Vercel and Supabase are not connected; GitHub controls require verification."],
+            ["Provider Health", "Staging Active · Manual", "Vercel and Supabase staging are active; Microsoft delivery, recovery, and monitoring controls remain under review."],
           ].map(([label, value, detail]) => <article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></article>)}
         </div>
         <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: company/operations/runbooks/ and company/operations/BUSINESS_CONTINUITY_PLAN.md</p><p className="mt-2 text-xs text-slate-600">Documentation is not proof of recovery. Readiness advances only after controlled exercises in an approved staging environment.</p></div>
       </SectionCard>
 
       <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Release 0.6</p><h2 className="mt-2 text-xl font-semibold">Private Beta Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{snapshot.beta.summary}</p></div><StatusBadge tone="warning">No-Go · {snapshot.beta.betaHealth}</StatusBadge></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Release 0.9</p><h2 className="mt-2 text-xl font-semibold">Design Partner Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{snapshot.beta.summary}</p></div><StatusBadge tone="warning">Activation Gated · {snapshot.beta.betaHealth}</StatusBadge></div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
           {[
             ["Staging readiness", snapshot.beta.stagingReadiness], ["Production readiness", snapshot.beta.productionReadiness],

@@ -43,7 +43,8 @@ assert.equal(snapshot.beta.activeDesignPartners, undefined, "Missing beta activi
 assert.equal(snapshot.beta.productionReadiness, "Critical");
 assert.equal(snapshot.beta.workflowGates["Atomic finalization"], "Complete");
 assert.equal(snapshot.beta.workflowGates["Founder acceptance"], "Complete");
-assert.equal(snapshot.beta.workflowGates["Staging readiness"], "In Progress");
+assert.equal(snapshot.beta.workflowGates["Staging readiness"], "Complete");
+assert.equal(snapshot.beta.betaHealth, "Watch", "Activation blockers must remain visible after staging readiness completes.");
 assert.equal(new Set(metricRegistry.map((metric) => metric.canonicalKey)).size, metricRegistry.length, "Canonical metric keys must be unique.");
 assert.ok(metricRegistry.length >= 60, "The registry must cover company, users, sales, marketing, support, finance, and engineering foundations.");
 

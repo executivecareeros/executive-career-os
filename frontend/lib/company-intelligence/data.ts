@@ -2,10 +2,10 @@ import { calculateDepartmentHealth, rankFounderActions, suppressDuplicateAlerts,
 import { departments, metricRegistry, metricSources, sourceReferences } from "./registries.ts";
 import type { CompanyDeadline, CompanyMetric, CompanyRisk, CompanySnapshot, DailyBrief, DepartmentHealth, FounderAction, MetricObservation, OperationalAlert, SupportCase, VendorHealth } from "./types.ts";
 
-const baselineMeasuredAt = "2026-07-13T00:00:00.000Z";
+const baselineMeasuredAt = "2026-07-14T00:00:00.000Z";
 
 const measured = (metricId: string, value: number, notes: string): MetricObservation => ({
-  id: `${metricId}-baseline-95fccb4`, metricId, value, status: "Unknown", direction: "New", period: "Baseline at commit 95fccb4",
+  id: `${metricId}-baseline-f225442`, metricId, value, status: "Healthy", direction: "New", period: "Measured baseline at commit f225442",
   measuredAt: baselineMeasuredAt, source: metricSources.repository, sourceReference: sourceReferences.repository,
   freshness: { state: "Current", measuredAt: baselineMeasuredAt, expectedFrequency: "Manual", maximumAgeInHours: 168 },
   confidence: "Very High", valueKind: "Measured", owner: "Founder / Engineering", notes, demoStatus: "Factual",
@@ -19,10 +19,10 @@ const supportMeasured: MetricObservation = {
 };
 
 const observations: Record<string, MetricObservation> = {
-  "repository-commits": measured("repository-commits", 51, "Measured with git rev-list --count HEAD before this foundation commit."),
-  "application-routes": measured("application-routes", 37, "Measured from frontend/app/**/page.tsx before adding /company-control."),
-  "database-migrations": measured("database-migrations", 7, "Measured from tracked SQL migration files."),
-  "validation-scripts": measured("validation-scripts", 2, "Measured from frontend/scripts/validate-*.mjs before this sprint."),
+  "repository-commits": measured("repository-commits", 100, "Measured with git rev-list --count HEAD at commit f225442."),
+  "application-routes": measured("application-routes", 43, "Measured from frontend/app/**/page.tsx at commit f225442."),
+  "database-migrations": measured("database-migrations", 12, "Measured from committed supabase/migrations SQL files at commit f225442."),
+  "validation-scripts": measured("validation-scripts", 16, "Measured from frontend validation and test scripts at commit f225442."),
   "support-cases": supportMeasured,
 };
 
@@ -48,7 +48,7 @@ export const companyRisks: CompanyRisk[] = [
 export const founderActions: FounderAction[] = [
   { id: "action-microsoft-support", title: "Monitor Microsoft DKIM support case", department: "Infrastructure", urgency: "Today", importance: "High", dueDate: "2026-07-14T09:00:00+03:00", reason: "DKIM completion is a private-beta email readiness dependency.", evidence: ["Case 2607130050001139 is open.", "Microsoft reported that a representative is being assigned."], blocker: "Awaiting Microsoft-side investigation.", recommendedNextStep: "Review the first Microsoft response independently in the Admin Center and update the case log with safe metadata.", owner: "Founder / Infrastructure", sourceLink: sourceReferences.supportCase, status: "Awaiting Response", approvalRequired: false },
   { id: "action-finance-input", title: "Complete verified subscription and cash inputs", department: "Finance", urgency: "This Week", importance: "High", reason: "Monthly cost, annual commitments, burn, and runway cannot be calculated from the current records.", evidence: ["Project Cost Dashboard marks monetary totals as Founder to complete.", "Software subscription amounts remain unverified."], blocker: "Verified invoices, billing cycles, cash, and burn are not recorded.", recommendedNextStep: "Enter invoice-backed amounts by currency without converting or combining currencies.", owner: "Founder / Finance", sourceLink: sourceReferences.finance, status: "Blocked", approvalRequired: true },
-  { id: "action-beta-gates", title: "Review isolated staging plan and provider costs", department: "Executive Office", urgency: "This Week", importance: "Critical", reason: "Founder Acceptance passed, but external staging projects cannot be created until plan, cost, region, ownership, hostname, and rollback are approved.", evidence: ["Staging architecture and release checklist are prepared.", "No Vercel or Supabase staging project exists."], blocker: "Founder approval and live provider checkout confirmation are required.", recommendedNextStep: "Review docs/STAGING_DEPLOYMENT_AUDIT.md and approve or defer each provider commitment without creating resources prematurely.", owner: "Founder", sourceLink: "docs/STAGING_DEPLOYMENT_AUDIT.md", status: "Open", approvalRequired: true },
+  { id: "action-beta-gates", title: "Close design-partner activation gates", department: "Executive Office", urgency: "This Week", importance: "Critical", reason: "Staging and founder acceptance passed, but design-partner activation still requires reliable email delivery, recovery evidence, monitoring, and legal/privacy approval.", evidence: ["Founder acceptance passed in staging.", "The operational register preserves the remaining activation blockers."], blocker: "Unassisted email delivery, restore rehearsal, monitoring, provider recovery evidence, and legal/privacy gates remain open.", recommendedNextStep: "Close each Definition of Ready gate with factual evidence before creating the first design-partner invitation.", owner: "Founder", sourceLink: "company/releases/release-0.9/DEFINITION_OF_READY.md", status: "Blocked", approvalRequired: true },
 ];
 
 export const operationalAlerts: OperationalAlert[] = suppressDuplicateAlerts([
@@ -64,8 +64,8 @@ export const vendorHealth: VendorHealth[] = [
   { id: "domain", provider: "orendalis.com / Porkbun", status: "Watch", lastVerified: "2026-07-12", sourceReference: sourceReferences.domain, owner: "Founder / Infrastructure", recoveryReadiness: "Unknown", openIssue: "DNSSEC, transfer lock, and renewal controls require factual verification in the asset register.", nextAction: "Verify registrar controls without changing DNS." },
   { id: "exchange", provider: "Microsoft 365 / Exchange Online", status: "Watch", lastVerified: "2026-07-13T12:19:41", sourceReference: sourceReferences.supportCase, owner: "Founder / Infrastructure", recoveryReadiness: "Unknown", openIssue: "DKIM signing is blocked by the open support issue; mailbox service was recorded as operational.", nextAction: "Await Microsoft support response." },
   { id: "github", provider: "GitHub", status: "Unknown", sourceReference: "company/assets/DIGITAL_ACCOUNTS.md", owner: "Founder / Engineering", recoveryReadiness: "Unknown", nextAction: "Connect no telemetry until separately approved." },
-  { id: "vercel", provider: "Vercel", status: "Not Connected", sourceReference: sourceReferences.subscriptions, owner: "Founder / Infrastructure", recoveryReadiness: "Unknown", nextAction: "Production status requires provider verification." },
-  { id: "supabase", provider: "Supabase", status: "Not Connected", sourceReference: "docs/SUPABASE_RUNTIME_VERIFICATION.md", owner: "Founder / Engineering", recoveryReadiness: "Unknown", nextAction: "Production status requires provider verification." },
+  { id: "vercel", provider: "Vercel", status: "Healthy", lastVerified: "2026-07-14", sourceReference: "company/operations/access-and-environments/ENVIRONMENT_REGISTER.md", owner: "Founder / Infrastructure", recoveryReadiness: "Unknown", nextAction: "Rehearse rollback and verify account recovery before partner activation." },
+  { id: "supabase", provider: "Supabase", status: "Watch", lastVerified: "2026-07-14", sourceReference: "company/operations/access-and-environments/ENVIRONMENT_REGISTER.md", owner: "Founder / Engineering", recoveryReadiness: "Unknown", openIssue: "Restore rehearsal and migration-history baseline remain open.", nextAction: "Complete the approved recovery rehearsal before partner activation." },
 ];
 
 const departmentOwner: Record<(typeof departments)[number], string> = Object.fromEntries(departments.map((department) => [department, department === "Engineering" ? "Founder / Engineering" : department === "Infrastructure" ? "Founder / Infrastructure" : department === "Finance" ? "Founder / Finance" : "Founder"])) as Record<(typeof departments)[number], string>;
@@ -91,7 +91,7 @@ function buildDailyBrief(now: Date, actions: FounderAction[]): DailyBrief {
   return {
     id: `brief-${now.toISOString().slice(0, 10)}`, title: "Good Morning, Cüneyt", generatedAt: now.toISOString(), status: "Demonstration Briefing",
     sections: [
-      { id: "glance", title: "Company at a Glance", summary: "The control center has partial repository and operational-document coverage. Live customer, financial, deployment, and provider telemetry is not connected.", status: "Unknown", evidence: [{ id: "glance-evidence", statement: "Most provider sources are marked Not Connected.", sourceReference: "docs/COMPANY_DATA_SOURCES.md", confidence: "Very High" }] },
+      { id: "glance", title: "Company at a Glance", summary: "Staging is active and founder acceptance passed. Provider telemetry remains manual, and no design partner has been invited.", status: "Watch", evidence: [{ id: "glance-evidence", statement: "The environment register records active isolated staging and explicit remaining gates.", sourceReference: "company/operations/access-and-environments/ENVIRONMENT_REGISTER.md", confidence: "Very High" }] },
       { id: "attention", title: "What Needs Attention", summary: "Private-beta evidence gaps, Microsoft DKIM publication, and incomplete financial inputs require founder attention.", status: "At Risk", evidence: [{ id: "attention-evidence", statement: "The readiness checklist, Microsoft case log, and cost dashboard contain open items.", sourceReference: sourceReferences.readiness, confidence: "Very High" }] },
       { id: "support", title: "Microsoft Support", summary: "Case 2607130050001139 is open. The documented next step is to await assignment and a technical response.", status: "Watch", evidence: [{ id: "support-evidence", statement: "The support case was accepted by Microsoft.", sourceReference: sourceReferences.supportCase, confidence: "Very High" }] },
       { id: "financial", title: "Financial Snapshot", summary: "Verified monthly spending, annual commitments, cash, burn, revenue, and runway are unavailable.", status: "Unknown", evidence: [{ id: "finance-evidence", statement: "Founder input is required for monetary totals.", sourceReference: sourceReferences.finance, confidence: "Very High" }] },
@@ -104,13 +104,13 @@ function buildDailyBrief(now: Date, actions: FounderAction[]): DailyBrief {
 export function createCompanySnapshot(now = new Date()): CompanySnapshot {
   const departmentHealth = buildDepartmentHealth();
   return {
-    generatedAt: now.toISOString(), environment: process.env.NODE_ENV === "production" ? "Production build" : "Local development", betaStage: "Private beta preparation",
+    generatedAt: now.toISOString(), environment: process.env.NODE_ENV === "production" ? "Staging deployment" : "Local development", betaStage: "Design Partner readiness",
     health: { generatedAt: now.toISOString(), overallHealth: "Unknown", departments: departmentHealth, metrics: companyMetrics },
     beta: {
-      stagingReadiness: "Watch", productionReadiness: "Critical", supportCases: 1, betaHealth: "At Risk", dataState: "Unavailable",
-      summary: "Founder Acceptance passed and the isolated staging plan is documented. Provider projects, live costs, callbacks, secrets, restore rehearsal, security-header verification, and external email acceptance remain incomplete. No staging or participant activity source is connected.",
-      sourceReference: "docs/STAGING_RELEASE_CHECKLIST.md",
-      workflowGates: { "Invitation enforcement":"Complete", "Durable import":"Complete", "Durable Blueprint":"Complete", "Durable opportunity":"Complete", "Atlas persistence":"Complete", "Atomic finalization":"Complete", "Ledger append":"Complete", "Feedback persistence":"Complete", "Lifecycle requests":"In Progress", "Staging readiness":"In Progress", "CI status":"Complete", "Founder acceptance":"Complete" },
+      stagingReadiness: "Healthy", productionReadiness: "Critical", supportCases: 1, betaHealth: "Watch", dataState: "Unavailable",
+      summary: "Operational reporting is reconciled and founder acceptance passed in isolated staging. Design-partner activation remains blocked by unassisted email delivery, recovery rehearsal, monitoring, provider recovery evidence, and legal/privacy approval.",
+      sourceReference: "company/releases/release-0.9/OPERATIONAL_READINESS_REPORT.md",
+      workflowGates: { "Invitation enforcement":"Complete", "Durable import":"Complete", "Durable Blueprint":"Complete", "Durable opportunity":"Complete", "Atlas persistence":"Complete", "Atomic finalization":"Complete", "Ledger append":"Complete", "Feedback persistence":"Complete", "Lifecycle requests":"Complete", "Staging readiness":"Complete", "CI status":"Complete", "Founder acceptance":"Complete" },
     },
     actions: rankFounderActions(founderActions, now), alerts: operationalAlerts, deadlines, risks: companyRisks, vendors: vendorHealth, supportCases, brief: buildDailyBrief(now, founderActions),
   };

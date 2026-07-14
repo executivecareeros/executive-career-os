@@ -32,8 +32,8 @@ Validate package coverage, status consistency, internal links, purpose statement
 
 ## Completion Status
 
-The Release 0.9 design package is complete. Activation remains blocked by the two required product corrections and their separate founder-approved implementation and acceptance gate.
+The Release 0.9 design package and bounded operational-readiness reconciliation are complete. The feedback release attribution and Company Control factual-state defects are corrected without architecture or workflow changes. Activation remains blocked by the explicit Definition of Ready gates.
 
 ## Final Decision
 
-**RELEASE 0.9 REQUIRES PRODUCT CHANGES**
+**OPERATIONAL READINESS PASS — DESIGN-PARTNER ACTIVATION BLOCKED**
