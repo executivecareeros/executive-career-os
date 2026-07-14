@@ -15,10 +15,8 @@ const demoOnlyModules: Array<[prefix: string, module: string]> = [
   ["/assistant", "atlas"],
   ["/archive", "ledger"],
   ["/blueprint", "blueprint"],
-  ["/opportunities", "opportunities"],
   ["/tasks", "tasks"],
   ["/productivity", "today"],
-  ["/companies", "companies"],
   ["/applications", "applications"],
   ["/compensation", "compensation"],
   ["/discovery", "discovery"],
@@ -50,9 +48,9 @@ export function proxy(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  if (path.startsWith("/archive/") || path.startsWith("/opportunities/")) {
+  if (path.startsWith("/archive/")) {
     const url = new URL("/live-module", request.url);
-    url.searchParams.set("module", path.startsWith("/archive/") ? "ledger" : "opportunities");
+    url.searchParams.set("module", "ledger");
     return NextResponse.rewrite(url);
   }
 

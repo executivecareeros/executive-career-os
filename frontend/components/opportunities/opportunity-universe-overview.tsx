@@ -1,17 +1,17 @@
 import Link from "next/link";
-import type { OpportunityUniverseStage } from "@/types/opportunity";
+export type OpportunityExperienceView = "Recommended" | "Discover" | "Search";
 
-const stageCopy: Record<OpportunityUniverseStage, { title: string; description: string }> = {
-  Universe: { title: "Universe", description: "Every attributable opportunity collected or added to your private workspace." },
-  Qualified: { title: "Qualified", description: "Roles that clear your essential Blueprint criteria and evidence threshold." },
+const viewCopy: Record<OpportunityExperienceView, { title: string; description: string }> = {
   Recommended: { title: "Recommended", description: "The small set Atlas believes deserves your attention now." },
+  Discover: { title: "Discover", description: "Explore every attributable opportunity currently in your universe." },
+  Search: { title: "Search", description: "Find roles by company, title, location, source, fit, and executive status." },
 };
 
-export function OpportunityUniverseOverview({ activeStage, counts, sourceCount, onStageChange }: {
-  activeStage: OpportunityUniverseStage;
-  counts: Record<OpportunityUniverseStage, number>;
+export function OpportunityUniverseOverview({ activeView, counts, sourceCount, onViewChange }: {
+  activeView: OpportunityExperienceView;
+  counts: Record<OpportunityExperienceView, number>;
   sourceCount: number;
-  onStageChange: (stage: OpportunityUniverseStage) => void;
+  onViewChange: (view: OpportunityExperienceView) => void;
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,.96),rgba(15,23,42,.72))]" aria-labelledby="universe-heading">
@@ -27,13 +27,13 @@ export function OpportunityUniverseOverview({ activeStage, counts, sourceCount, 
           <Link href="/assistant" className="mt-5 inline-flex rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Open Atlas guidance</Link>
         </div>
       </div>
-      <div className="grid border-t border-white/10 sm:grid-cols-3" role="tablist" aria-label="Opportunity universe stages">
-        {(Object.keys(stageCopy) as OpportunityUniverseStage[]).map((stage) => {
-          const active = activeStage === stage;
-          return <button key={stage} type="button" role="tab" aria-selected={active} onClick={() => onStageChange(stage)} className={`min-h-32 border-b border-white/10 p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400 sm:border-b-0 sm:border-r ${active ? "bg-white/[.08]" : "hover:bg-white/[.04]"}`}>
-            <span className={`text-xs font-semibold uppercase tracking-[.16em] ${active ? "text-blue-300" : "text-slate-500"}`}>{stageCopy[stage].title}</span>
-            <span className="mt-2 block text-2xl font-semibold text-white">{counts[stage]}</span>
-            <span className="mt-2 block text-xs leading-5 text-slate-400">{stageCopy[stage].description}</span>
+      <div className="grid border-t border-white/10 sm:grid-cols-3" role="tablist" aria-label="Opportunity universe views">
+        {(Object.keys(viewCopy) as OpportunityExperienceView[]).map((view) => {
+          const active = activeView === view;
+          return <button key={view} type="button" role="tab" aria-selected={active} onClick={() => onViewChange(view)} className={`min-h-32 border-b border-white/10 p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400 sm:border-b-0 sm:border-r ${active ? "bg-white/[.08]" : "hover:bg-white/[.04]"}`}>
+            <span className={`text-xs font-semibold uppercase tracking-[.16em] ${active ? "text-blue-300" : "text-slate-500"}`}>{viewCopy[view].title}</span>
+            <span className="mt-2 block text-2xl font-semibold text-white">{counts[view]}</span>
+            <span className="mt-2 block text-xs leading-5 text-slate-400">{viewCopy[view].description}</span>
           </button>;
         })}
       </div>

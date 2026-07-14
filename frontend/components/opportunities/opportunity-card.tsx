@@ -14,13 +14,13 @@ export function OpportunityCard({ opportunity, view }: { opportunity: Opportunit
         <div className="flex items-start gap-4">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-slate-900 text-xs font-semibold text-slate-300" aria-hidden="true">{opportunity.companyInitials}</div>
           <div className="min-w-0">
-            <p className="text-sm text-slate-400">{opportunity.companyName}</p>
+            <p className="text-sm text-slate-400"><Link href={opportunity.companyId ? `/companies/${opportunity.companyId}` : "/companies"} className="text-blue-300 hover:text-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">{opportunity.companyName}</Link></p>
             <h2 className="mt-1 text-lg font-semibold text-white">{opportunity.jobTitle}</h2>
             <p className="mt-2 text-sm text-slate-500">{opportunity.location} · {opportunity.workArrangement} · {opportunity.industry}</p>
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2"><OpportunityStatusBadge status={opportunity.status} /><OpportunityPriorityBadge priority={opportunity.priority} /></div>
-        <p className="mt-4 text-sm leading-6 text-slate-400">{opportunity.decisionRationale}</p>
+        <p className="mt-4 text-sm leading-6 text-slate-400">{opportunity.decisionRationale}</p><p className="mt-3 text-xs text-slate-500">Source: {opportunity.source}</p>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:mt-0">
         <ScoreIndicator compact label="Executive Fit" score={opportunity.executiveFitScore} />
@@ -31,7 +31,7 @@ export function OpportunityCard({ opportunity, view }: { opportunity: Opportunit
         </div>
       </div>
       <div className="mt-6 xl:mt-0 xl:text-right">
-        <Link href={`/opportunities/${opportunity.id}`} className="inline-flex rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Open details</Link>
+        <Link href={`/opportunities/${opportunity.id}`} className="inline-flex rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Review opportunity</Link>
       </div>
     </article>
   );

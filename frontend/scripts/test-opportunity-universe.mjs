@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { canTransitionOpportunity, clusterDuplicateOpportunities, isInUniverseStage, opportunityDuplicateKey, resolveUniverseStage, summarizeOpportunityUniverse } from "../lib/opportunity-universe.ts";
+import { toLiveOpportunity } from "../lib/live-opportunity.ts";
 
 const base = {
   id: "one", companyName: "North Star, Inc.", companyInitials: "NS", jobTitle: "Chief Revenue Officer", location: "London", country: "United Kingdom",
@@ -30,5 +31,11 @@ assert.equal(summary.stages.Recommended, 1);
 assert.equal(summary.stages.Universe, 2);
 assert.equal(summary.stages.Qualified, 1);
 assert.equal(summary.sourceCount, 2);
+
+const live = toLiveOpportunity({ state: { id: "state", workspaceId: "workspace", executiveIdentityId: "executive", currentStep: "Reasoning", completedSteps: [], activeOpportunityId: "live-one", version: 1 }, historyCount: 1, feedbackCount: 0, lifecycleRequests: [], opportunity: { title: "Chief Revenue Officer", companyName: "North Star", location: "London", workModel: "Hybrid", source: "Recruiter", knownFacts: ["Reports to CEO"] } });
+assert.equal(live?.id, "live-one");
+assert.equal(live?.companyName, "North Star");
+assert.equal(live?.matchScore, undefined);
+assert.equal(live?.status, "Awaiting Atlas review");
 
 console.log("Opportunity Universe domain checks passed.");
