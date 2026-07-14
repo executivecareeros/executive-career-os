@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+.orendalis-arrival {
+  background:
+    radial-gradient(circle at 76% 22%, rgba(57, 84, 105, .2), transparent 31rem),
+    radial-gradient(circle at 18% 74%, rgba(132, 99, 59, .09), transparent 25rem),
+    #080d12;
+}
+
+.orendalis-display { font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
+.orendalis-eyebrow { font-size: .68rem; font-weight: 650; letter-spacing: .24em; text-transform: uppercase; color: #8ea7b8; }
+.orendalis-horizon { position: absolute; inset: 11% -18% auto 44%; aspect-ratio: 1; border: 1px solid rgba(184, 161, 124, .12); border-radius: 9999px; box-shadow: 0 0 0 5rem rgba(255,255,255,.008), 0 0 0 10rem rgba(255,255,255,.006); }
+.orendalis-horizon::after { content: ""; position: absolute; left: 15%; right: 15%; top: 51%; height: 1px; background: linear-gradient(90deg, transparent, rgba(199,171,126,.45), transparent); }
+.orendalis-primary-action { display: inline-flex; min-height: 3.25rem; align-items: center; justify-content: center; gap: .75rem; border-radius: 9999px; background: #efe8dc; padding: .85rem 1.4rem; color: #11161b; font-size: .84rem; font-weight: 700; transition: transform 180ms ease, background 180ms ease; }
+.orendalis-primary-action:hover { background: #fffaf0; transform: translateY(-1px); }
+.orendalis-primary-action:focus-visible, .orendalis-secondary-action:focus-visible, .orendalis-text-link:focus-visible { outline: 2px solid #a9c1d0; outline-offset: 4px; }
+.orendalis-secondary-action { display: inline-flex; min-height: 3.25rem; align-items: center; justify-content: center; border-radius: 9999px; border: 1px solid rgba(255,255,255,.15); padding: .85rem 1.4rem; color: #c0bbb2; font-size: .84rem; font-weight: 600; transition: border-color 180ms ease, color 180ms ease; }
+.orendalis-secondary-action:hover { border-color: rgba(255,255,255,.32); color: #f4f0e8; }
+.orendalis-text-link { display: inline-flex; align-items: center; gap: .45rem; font-size: .76rem; font-weight: 650; letter-spacing: .08em; color: #aaa59d; transition: color 180ms ease; }
+.orendalis-text-link:hover { color: #f4f0e8; }
+.orendalis-reveal { animation: orendalis-reveal 650ms cubic-bezier(.2,.75,.2,1) both; }
+.orendalis-delay-1 { animation-delay: 80ms; }
+.orendalis-delay-2 { animation-delay: 150ms; }
+.orendalis-delay-3 { animation-delay: 220ms; }
+@keyframes orendalis-reveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .orendalis-reveal { animation: none; }
+  .orendalis-primary-action, .orendalis-secondary-action, .orendalis-text-link { transition: none; }
+}
+
 :root {
   --background: #020617;
   --foreground: #f8fafc;

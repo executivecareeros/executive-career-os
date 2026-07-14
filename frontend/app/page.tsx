@@ -25,9 +25,14 @@ import type { BetaWorkflowView } from "@/lib/beta/types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { executiveDecisionLabel } from "@/lib/live-opportunity";
 import { loadLatestCollectedDecision, type LiveCollectedDecision } from "@/lib/live-collected-decision";
+import { ExperienceZeroArrival } from "@/components/experience-zero/arrival";
 
 export default async function Home() {
-  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <ExecutiveBriefing />;
+  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") {
+    const resolved = await resolveAuthenticatedRepositoryContext();
+    if (!resolved) return <ExperienceZeroArrival />;
+    return <ExecutiveBriefing resolved={resolved} />;
+  }
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
   const ready = opportunities.filter((item) => item.status === "Ready to Apply").length;
   const topOpportunity = [...opportunities].sort((a, b) => b.overallScore - a.overallScore)[0];
@@ -71,17 +76,14 @@ export default async function Home() {
 
 const display = (value: unknown, fallback: string) => typeof value === "string" && value.trim() ? value : fallback;
 
-async function ExecutiveBriefing() {
-  const resolved = await resolveAuthenticatedRepositoryContext();
+async function ExecutiveBriefing({ resolved }: { resolved: NonNullable<Awaited<ReturnType<typeof resolveAuthenticatedRepositoryContext>>> }) {
   let view: BetaWorkflowView | undefined;
   let collectedDecision: LiveCollectedDecision | undefined;
-  if (resolved) {
-    try {
-      const client = createServerSupabaseClient(resolved.accessToken);
-      [view, collectedDecision] = await Promise.all([new SupabaseBetaWorkflowRepository(client, resolved.context).load(), loadLatestCollectedDecision(client, resolved.context.workspace!.workspaceId)]);
-    } catch {
-      view = undefined;
-    }
+  try {
+    const client = createServerSupabaseClient(resolved.accessToken);
+    [view, collectedDecision] = await Promise.all([new SupabaseBetaWorkflowRepository(client, resolved.context).load(), loadLatestCollectedDecision(client, resolved.context.workspace!.workspaceId)]);
+  } catch {
+    view = undefined;
   }
 
   if (!view) return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader eyebrow="Your private career office" title="Build the context Atlas needs" description="Begin with one confirmed role. Your career direction, opportunities, and decisions will remain connected from that point forward." actions={<PrimaryButton href="/beta-workflow">Begin</PrimaryButton>}/><div className="mt-8"><DashboardSection title="Your first step" description="A small amount of confirmed context is enough to begin." emptyTitle="Confirm your professional history" emptyDescription="Add one role manually or review a CV or resume draft. Nothing enters your Career Memory until you confirm it." action={<PrimaryButton href="/beta-workflow#professional-history">Add career context</PrimaryButton>}/></div></div>;

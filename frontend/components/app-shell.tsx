@@ -8,11 +8,11 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ExecutiveCommandBar } from "./executive-command-bar";
 
-export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
+export function AppShell({ children, publicExperience = false }: Readonly<{ children: React.ReactNode; publicExperience?: boolean }>) {
   const menu = useMobileMenu();
   const pathname = usePathname();
   const [focusMode, setFocusMode] = useState(false);
-  if (["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
+  if ((pathname === "/" && publicExperience) || ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white lg:flex">

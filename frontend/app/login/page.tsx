@@ -15,13 +15,13 @@ export default async function Login({
   return (
     <AuthFrame
       eyebrow="Private access"
-      title="Return to your Career Memory"
-      description="Sign in securely to continue where you left off."
+      title="Welcome back."
+      description="Your private career office is ready. Continue with the decisions, evidence, and questions you left in your care."
       footer={
         <>
-          New to Executive Career OS?{" "}
+          Entering Orendalis for the first time?{" "}
           <Link className="text-blue-300 hover:text-blue-200" href="/register">
-            Begin your Career Memory
+            Accept your invitation
           </Link>
         </>
       }

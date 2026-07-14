@@ -30,6 +30,7 @@ export function proxy(request: NextRequest) {
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE !== "supabase") return NextResponse.next();
 
   const path = request.nextUrl.pathname;
+  if (path === "/") return NextResponse.next();
   if (publicPaths.some((item) => path.startsWith(item)) || path.startsWith("/api/auth/")) return NextResponse.next();
 
   if (!request.cookies.has("ecos-access-token") && !request.cookies.has("ecos-refresh-token")) {
