@@ -26,7 +26,8 @@
     "test:release-evidence": "node --experimental-transform-types scripts/test-release-evidence.mjs",
     "test:opportunity-universe": "node --experimental-transform-types scripts/test-opportunity-universe.mjs",
     "test:discovery-pipeline": "node --experimental-transform-types scripts/test-discovery-pipeline.mjs",
-    "test:greenhouse-connector": "node --experimental-transform-types scripts/test-greenhouse-connector.mjs"
+    "test:greenhouse-connector": "node --experimental-transform-types scripts/test-greenhouse-connector.mjs",
+    "test:coverage-engine": "node --experimental-transform-types scripts/test-coverage-engine.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

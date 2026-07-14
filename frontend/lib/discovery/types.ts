@@ -265,3 +265,47 @@ export interface OpportunityIngestionOutcome {
   nextRefreshAt?: string;
   nextRetryAt?: string;
 }
+
+export type CoverageQueueStatus = "queued" | "running" | "completed" | "retrying" | "failed";
+export interface OpportunityProviderRegistration {
+  providerId: DiscoverySourceKind;
+  priority: number;
+  enabled: boolean;
+  maximumResults: number;
+  schedule?: DiscoverySchedule;
+}
+export interface CoverageQueueItem {
+  id: string;
+  providerId: DiscoverySourceKind;
+  status: CoverageQueueStatus;
+  priority: number;
+  attempt: number;
+  maximumAttempts: number;
+  requestedAt: string;
+  availableAt: string;
+  filters: DiscoveryFilter;
+}
+export interface CoverageQueueStore {
+  list(): Promise<readonly CoverageQueueItem[]>;
+  put(item: CoverageQueueItem): Promise<void>;
+  remove(id: string): Promise<void>;
+}
+export interface OpportunityCoverageMetrics {
+  registeredProviders: number;
+  healthyProviders: number;
+  queuedRuns: number;
+  completedRuns: number;
+  failedRuns: number;
+  opportunitiesObserved: number;
+  opportunitiesImported: number;
+  duplicateObservations: number;
+  rejectedObservations: number;
+  qualityRate: number;
+  freshnessRate: number;
+  calculatedAt: string;
+}
+export interface OpportunityCoverageSnapshot {
+  providers: readonly OpportunityProviderRegistration[];
+  queue: readonly CoverageQueueItem[];
+  metrics: OpportunityCoverageMetrics;
+}
