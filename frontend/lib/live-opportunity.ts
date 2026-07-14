@@ -16,6 +16,7 @@ export type LiveOpportunityViewModel = {
   atlasAction?: string;
   atlasConfidence?: string;
   decisionComplete: boolean;
+  executiveDecision?: string;
   roleSummary: string;
   companySummary: string;
   knownFacts: string[];
@@ -25,6 +26,10 @@ export type LiveOpportunityViewModel = {
   questions: string[];
   timeline: Array<{ label: string; detail: string }>;
 };
+
+export function executiveDecisionLabel(action?: string) {
+  return ({ Apply: "Pursue", Monitor: "Watch", Reject: "Skip" } as Record<string, string>)[action ?? ""] ?? action;
+}
 
 export function toLiveOpportunity(view: BetaWorkflowView): LiveOpportunityViewModel | undefined {
   if (!view.opportunity || !view.state.activeOpportunityId) return undefined;
@@ -41,11 +46,12 @@ export function toLiveOpportunity(view: BetaWorkflowView): LiveOpportunityViewMo
     location: text(view.opportunity.location, "Location not confirmed"),
     workModel: text(view.opportunity.workModel, "Work model not confirmed"),
     source: text(view.opportunity.source, "Source not confirmed"),
-    status: decisionComplete ? "Decision preserved" : reasoning ? "Atlas reviewed" : "Awaiting Atlas review",
+    status: decisionComplete ? `${executiveDecisionLabel(view.selectedDecisionAction) ?? "Decision"} preserved` : reasoning ? "Atlas reviewed" : "Awaiting Atlas review",
     matchScore: number(view.opportunity.overallScore),
     atlasAction: reasoning?.recommendation.action,
     atlasConfidence: reasoning?.confidence,
     decisionComplete,
+    executiveDecision: executiveDecisionLabel(view.selectedDecisionAction),
     roleSummary: text(view.opportunity.notes, knownFacts.length ? knownFacts.join(" ") : "Role context is still being confirmed."),
     companySummary: `Company intelligence for ${companyName} will grow only from confirmed opportunity evidence and future approved sources.`,
     knownFacts,

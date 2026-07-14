@@ -9,6 +9,7 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import type { BetaWorkflowView } from "@/lib/beta/types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { executiveDecisionLabel } from "@/lib/live-opportunity";
 
 const modules = {
   workspace: ["Your Workspace", "Your private professional home is active.", "Begin with confirmed career context"],
@@ -45,6 +46,7 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
   const recommendation = view.reasoning?.output.recommendation;
   const confidence = view.reasoning?.output.confidence;
   const decisionComplete = Boolean(view.state.finalizedDecisionId);
+  const executiveDecision = executiveDecisionLabel(view.selectedDecisionAction);
   const questions = view.reasoning?.output.questions ?? [];
 
   const nextAction = (() => {
@@ -73,6 +75,14 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
     heading = opportunityTitle;
     summary = `${companyName} · ${text(view.opportunity.location, "Location not recorded")}`;
     details = [text(view.opportunity.workModel, "Work model not recorded"), "Executive-entered and confirmed", decisionComplete ? "Decision finalized" : "Decision in progress"];
+  } else if (module === "atlas" && decisionComplete) {
+    heading = `You chose to ${executiveDecision ?? "act"}`;
+    summary = `Atlas has connected your decision to its ${confidence ?? "recorded"}-confidence assessment and will keep the unresolved questions visible.`;
+    details = [
+      `Executive decision: ${executiveDecision ?? "Preserved"}`,
+      `Atlas recommendation: ${recommendation?.action ?? "More context was required"}`,
+      `${questions.length} material question${questions.length === 1 ? "" : "s"} remain visible`,
+    ];
   } else if (module === "atlas" && recommendation) {
     heading = `Atlas recommends: ${recommendation.action}`;
     summary = `${confidence} confidence based only on evidence you confirmed. Atlas will change its view when the evidence changes.`;
@@ -84,17 +94,17 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
     details = knownFacts.slice(0,3);
     if (!details.length) details = ["No company facts have been confirmed", "No live company source is connected", "Atlas will not infer missing intelligence"];
   } else if (module === "ledger" && decisionComplete) {
-    heading = "First executive decision preserved";
-    summary = `${opportunityTitle} at ${companyName} is recorded with its evidence and Atlas snapshot.`;
-    details = ["Immutable decision recorded", "Career Ledger entry created", "Replay protection active"];
+    heading = `${executiveDecision ?? "Executive decision"} preserved`;
+    summary = `${opportunityTitle} at ${companyName} is recorded with its evidence, Atlas snapshot, and your chosen action.`;
+    details = [`Decision: ${executiveDecision ?? "Preserved"}`, "Career Ledger entry created", "Replay protection active"];
   } else if (module === "tasks" && decisionComplete) {
     heading = `Follow up on ${opportunityTitle}`;
     summary = "A follow-up was created with the finalized decision so the next conversation does not get lost.";
     details = ["Connected to the opportunity", "Connected to the preserved decision", "Ready for executive review"];
   } else if (module === "today" && decisionComplete) {
-    heading = recommendation ? `${recommendation.action} on ${opportunityTitle}` : `Review ${opportunityTitle}`;
-    summary = "Your current brief reflects only the completed founder journey.";
-    details = ["Decision preserved", "Follow-up created", `${view.reasoning?.output.questions.length ?? 0} outstanding questions`];
+    heading = `${executiveDecision ?? "Decision"}: ${opportunityTitle}`;
+    summary = "Your current brief reflects the decision you made and the evidence Atlas used.";
+    details = [`${executiveDecision ?? "Decision"} preserved`, "Follow-up created", `${view.reasoning?.output.questions.length ?? 0} outstanding questions`];
   }
 
   return (

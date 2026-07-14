@@ -23,6 +23,7 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import type { BetaWorkflowView } from "@/lib/beta/types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { executiveDecisionLabel } from "@/lib/live-opportunity";
 
 export default async function Home() {
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <ExecutiveBriefing />;
@@ -85,6 +86,7 @@ async function ExecutiveBriefing() {
   const recommendation = view.reasoning?.output.recommendation;
   const questions = view.reasoning?.output.questions ?? [];
   const decisionComplete = Boolean(view.state.finalizedDecisionId);
+  const executiveDecision = executiveDecisionLabel(view.selectedDecisionAction);
   const opportunityTitle = display(view.opportunity?.title, "No opportunity selected");
   const companyName = display(view.opportunity?.companyName, "Company not recorded");
   const currentStep = view.state.currentStep === "Complete" ? "Journey complete" : view.state.currentStep;
@@ -94,7 +96,7 @@ async function ExecutiveBriefing() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
-      <PageHeader eyebrow="Today’s Executive Brief" title={decisionComplete ? "Your decision is preserved. Here is what deserves attention." : "One clear next step for your career decision."} description={decisionComplete ? "Atlas has organized the confirmed evidence, unresolved questions, and follow-up from your latest opportunity review." : `You are currently at ${currentStep}. Atlas will not move ahead without confirmed context.`} actions={<><SecondaryButton href="/productivity">Open today’s brief</SecondaryButton><PrimaryButton href={primaryHref}>{primaryLabel}</PrimaryButton></>} />
+      <PageHeader eyebrow="Today’s Executive Brief" title={decisionComplete ? `You chose to ${executiveDecision ?? "act"}. Here is what deserves attention.` : "One clear next step for your career decision."} description={decisionComplete ? "Atlas has connected your decision to the confirmed evidence, unresolved questions, and follow-up from this opportunity." : `You are currently at ${currentStep}. Atlas will not move ahead without confirmed context.`} actions={<><SecondaryButton href="/productivity">Open today’s brief</SecondaryButton><PrimaryButton href={primaryHref}>{primaryLabel}</PrimaryButton></>} />
 
       <div className="mt-8 grid gap-5 lg:grid-cols-3">
         <SectionCard className="lg:col-span-2">
@@ -112,11 +114,11 @@ async function ExecutiveBriefing() {
 
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
         <SectionCard>
-          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Opportunity in focus</p><h2 className="mt-3 text-xl font-semibold">{opportunityTitle}</h2><p className="mt-2 text-sm text-slate-400">{companyName} · {display(view.opportunity?.location, "Location not confirmed")}</p></div><StatusBadge tone={decisionComplete ? "success" : "info"}>{decisionComplete ? "Decision preserved" : currentStep}</StatusBadge></div>
+          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Opportunity in focus</p><h2 className="mt-3 text-xl font-semibold">{opportunityTitle}</h2><p className="mt-2 text-sm text-slate-400">{companyName} · {display(view.opportunity?.location, "Location not confirmed")}</p></div><StatusBadge tone={decisionComplete ? "success" : "info"}>{decisionComplete ? `${executiveDecision ?? "Decision"} preserved` : currentStep}</StatusBadge></div>
           <div className="mt-6"><SecondaryButton href={view.opportunity ? "/opportunities/current" : "/opportunities"}>{view.opportunity ? "Review opportunity" : "Open Opportunity Universe"}</SecondaryButton></div>
         </SectionCard>
         <SectionCard>
-          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Atlas recommends</p><h2 className="mt-3 text-xl font-semibold">{recommendation?.action ?? "More context required"}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{recommendation ? `${view.reasoning?.output.confidence} confidence. The recommendation changes when the evidence changes.` : "Atlas is waiting for enough confirmed evidence to offer a recommendation."}</p></div>{recommendation && <StatusBadge tone="info">{recommendation.priority}</StatusBadge>}</div>
+          <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">{decisionComplete ? "Atlas after your decision" : "Atlas recommends"}</p><h2 className="mt-3 text-xl font-semibold">{decisionComplete ? `${executiveDecision ?? "Decision"} is now the active course` : recommendation?.action ?? "More context required"}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{decisionComplete ? `Atlas retains its ${view.reasoning?.output.confidence ?? "recorded"}-confidence assessment while respecting the decision you made.` : recommendation ? `${view.reasoning?.output.confidence} confidence. The recommendation changes when the evidence changes.` : "Atlas is waiting for enough confirmed evidence to offer a recommendation."}</p></div>{recommendation && <StatusBadge tone="info">{decisionComplete ? "Decision reflected" : recommendation.priority}</StatusBadge>}</div>
           <div className="mt-6"><PrimaryButton href={recommendation ? "/assistant" : "/beta-workflow#assessment"}>{recommendation ? "See what could change" : "Complete Atlas assessment"}</PrimaryButton></div>
         </SectionCard>
       </div>

@@ -6,6 +6,6 @@ export interface BetaOpportunityInput { title:string; companyName:string; locati
 export interface BetaFeedbackInput { route:string; workflowStep:string; category:string; severity:string; description:string; expectedBehavior?:string; consentToFollowUp:boolean }
 export interface BetaLifecycleInput { requestType:"Export"|"Account Closure"|"Deletion"|"Consent Withdrawal"; userNote?:string }
 export interface BetaReasoningPayload extends Record<string,unknown> { output:ReasoningOutput }
-export interface BetaWorkflowView { state:BetaWorkflowState; historyCount:number; blueprint?:Record<string,unknown>; opportunity?:Record<string,unknown>; reasoning?:BetaReasoningPayload; feedbackCount:number; lifecycleRequests:Array<Record<string,unknown>> }
+export interface BetaWorkflowView { state:BetaWorkflowState; historyCount:number; blueprint?:Record<string,unknown>; opportunity?:Record<string,unknown>; reasoning?:BetaReasoningPayload; selectedDecisionAction?:string; feedbackCount:number; lifecycleRequests:Array<Record<string,unknown>> }
 export interface FounderBetaTriage { feedback:Array<{id:string;category:string;severity:string;description:string;status:string;workflowStep:string;createdAt:string;consentToFollowUp:boolean}>; lifecycle:Array<{id:string;requestType:string;status:string;retentionStatus:string;submittedAt:string}> }
 import type { ReasoningOutput } from "@/lib/reasoning";

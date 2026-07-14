@@ -463,7 +463,7 @@ export default async function BetaWorkflowPage({
           {complete.has("Decision Finalized") ? (
             <div className="mt-6 rounded-xl border border-emerald-400/20 bg-emerald-400/[.06] p-4">
               <p className="text-sm font-semibold text-emerald-200">
-                Immutable decision preserved
+                {view.selectedDecisionAction === "Apply" ? "Pursue decision preserved" : view.selectedDecisionAction === "Reject" ? "Skip decision preserved" : view.selectedDecisionAction === "Monitor" ? "Watch decision preserved" : "Immutable decision preserved"}
               </p>
               <p className="mt-2 text-sm text-slate-400">
                 The decision snapshot, Career Ledger entry, and follow-up task
@@ -489,18 +489,19 @@ export default async function BetaWorkflowPage({
                   className={field}
                   name="selectedAction"
                   defaultValue={
-                    view.reasoning?.output.recommendation.action ?? "Monitor"
+                    view.reasoning?.output.recommendation.action === "Apply"
+                      ? "Apply"
+                      : view.reasoning?.output.recommendation.action === "Reject"
+                        ? "Reject"
+                        : "Monitor"
                   }
                 >
                   {[
-                    "Apply",
-                    "Wait",
-                    "Reject",
-                    "Monitor",
-                    "Negotiate",
-                    "Network First",
-                  ].map((value) => (
-                    <option key={value}>{value}</option>
+                    { value: "Apply", label: "Pursue — move this opportunity forward" },
+                    { value: "Monitor", label: "Watch — keep it under active review" },
+                    { value: "Reject", label: "Skip — close it without pursuing" },
+                  ].map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
                   ))}
                 </select>
               </label>

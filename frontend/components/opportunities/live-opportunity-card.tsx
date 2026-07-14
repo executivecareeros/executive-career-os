@@ -18,7 +18,7 @@ export function LiveOpportunityCard({ opportunity }: { opportunity: LiveOpportun
           <p className="mt-2 text-2xl font-semibold text-white">{opportunity.matchScore === undefined ? "Pending" : `${opportunity.matchScore}%`}</p>
           <p className="mt-1 text-xs text-slate-500">{opportunity.matchScore === undefined ? "Not enough evidence" : "Confirmed context"}</p>
         </div>
-        <Link href="/opportunities/current" className="inline-flex rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">{opportunity.decisionComplete ? "Review decision context" : opportunity.atlasAction ? "Review Atlas recommendation" : "Review opportunity"}</Link>
+        <Link href="/opportunities/current" className="inline-flex rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">{opportunity.decisionComplete ? `Review ${opportunity.executiveDecision ?? "decision"}` : opportunity.atlasAction ? "Review Atlas recommendation" : "Review opportunity"}</Link>
       </div>
     </div>
   </article>;

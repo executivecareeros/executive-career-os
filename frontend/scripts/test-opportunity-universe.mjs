@@ -38,4 +38,10 @@ assert.equal(live?.companyName, "North Star");
 assert.equal(live?.matchScore, undefined);
 assert.equal(live?.status, "Awaiting Atlas review");
 
+for (const [selectedDecisionAction, expected] of [["Apply", "Pursue"], ["Monitor", "Watch"], ["Reject", "Skip"]]) {
+  const completed = toLiveOpportunity({ state: { id: "state", workspaceId: "workspace", executiveIdentityId: "executive", currentStep: "Feedback", completedSteps: ["Decision Finalized"], activeOpportunityId: "live-one", finalizedDecisionId: "decision-one", version: 2 }, historyCount: 1, feedbackCount: 0, lifecycleRequests: [], selectedDecisionAction, opportunity: { title: "Chief Revenue Officer", companyName: "North Star" } });
+  assert.equal(completed?.executiveDecision, expected);
+  assert.equal(completed?.status, `${expected} preserved`);
+}
+
 console.log("Opportunity Universe domain checks passed.");
