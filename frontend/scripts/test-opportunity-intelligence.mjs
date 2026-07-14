@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import { buildExecutiveOpportunityIntelligence, opportunityIntelligenceBlueprint } from "../lib/opportunity-intelligence.ts";
+
+const base = {
+  id: "discovered-greenhouse-one", companyName: "North Star", companyInitials: "NS", jobTitle: "Chief Revenue Officer", location: "London", country: "United Kingdom",
+  workArrangement: "Hybrid", employmentType: "Full-time", industry: "Technology", companySize: "Enterprise", source: "Greenhouse", sourceUrl: "https://example.com/jobs/one",
+  sources: [{ id: "greenhouse", name: "Greenhouse", kind: "Employer", originalId: "one", originalUrl: "https://example.com/jobs/one", collectedAt: "2026-07-14T08:00:00Z", confidence: "High" }],
+  lastObservedAt: "2026-07-14T08:00:00Z", publishedAt: "2026-07-13T08:00:00Z", discoveredAt: "2026-07-14T08:00:00Z", salaryMin: 240000, salaryMax: 280000, salaryCurrency: "GBP",
+  executiveFitScore: 0, strategicOpportunityScore: 0, overallScore: 0, confidenceScore: 90, status: "Discovered", priority: "Low", travelRequirement: "Not assessed", summary: "Lead global revenue growth.",
+  keyResponsibilities: [], requiredSkills: [], preferredSkills: [], matchingStrengths: [], missingRequirements: [], riskFlags: [], exclusions: [], decisionRationale: "Awaiting Atlas assessment.", recommendedCVProfile: "Not assessed", coverLetterRecommended: false, notes: "",
+};
+const related = { ...base, id: "discovered-lever-two", companyName: "Blue Star", companyInitials: "BS", jobTitle: "VP Revenue", source: "Lever", sources: [{ ...base.sources[0], id: "lever", name: "Lever", originalId: "two" }] };
+const blueprint = opportunityIntelligenceBlueprint({ preferredIndustries: ["Technology"], preferredCountries: ["United Kingdom"], minimumCompensation: 220000, currency: "GBP", leadershipLevel: "Chief", constraints: [] }, "blueprint-r1");
+const intelligence = buildExecutiveOpportunityIntelligence(base, blueprint, [base, related], "2026-07-14T10:00:00Z");
+
+assert.equal(intelligence.blueprintCompatibilityScore, 100);
+assert.equal(intelligence.recommendation, "Prioritize");
+assert.equal(intelligence.atlasConfidence.level, "Very High");
+assert.equal(intelligence.strengths.length, 3);
+assert.equal(intelligence.missingInformation.includes("Travel requirement"), true);
+assert.equal(intelligence.evidence.some((item) => item.certainty === "Confirmed"), true);
+assert.equal(intelligence.evidence.some((item) => item.certainty === "Estimated"), true);
+assert.equal(intelligence.evidence.some((item) => item.certainty === "Unknown"), true);
+assert.equal(intelligence.provenance[0].originalId, "one");
+assert.equal(intelligence.freshness.status, "Fresh");
+assert.equal(intelligence.history.length, 1);
+assert.equal(intelligence.relatedOpportunities[0].opportunityId, related.id);
+assert.deepEqual(intelligence.similarCompanies, ["Blue Star"]);
+assert.deepEqual(intelligence.similarRoles, ["VP Revenue"]);
+
+const conflict = buildExecutiveOpportunityIntelligence({ ...base, country: "Germany", industry: "Media", salaryMin: 150000 }, blueprint, [base], "2026-07-14T10:00:00Z");
+assert.equal(conflict.recommendation, "Deprioritize");
+assert.equal(conflict.concerns.length, 3);
+
+const unknown = buildExecutiveOpportunityIntelligence({ ...base, location: "Not specified", country: "Not specified", industry: "Not specified", companySize: "Not specified", workArrangement: "Unknown", salaryMin: undefined, salaryMax: undefined, salaryCurrency: undefined, summary: "Awaiting assessment." }, opportunityIntelligenceBlueprint(), [], "2026-07-14T10:00:00Z");
+assert.equal(unknown.blueprintCompatibilityScore, undefined);
+assert.equal(unknown.recommendation, "Research");
+assert.equal(unknown.missingInformation.includes("Active Executive Blueprint for a personal fit comparison"), true);
+
+console.log("Executive Opportunity Intelligence checks passed.");
