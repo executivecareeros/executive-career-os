@@ -32,6 +32,7 @@
     "test:provider-expansion": "node --experimental-transform-types scripts/test-provider-expansion.mjs",
     "test:tier-one-coverage": "node --experimental-transform-types scripts/test-tier-one-coverage.mjs",
     "test:opportunity-intelligence": "node --experimental-transform-types scripts/test-opportunity-intelligence.mjs"
+    ,"test:collected-opportunity-decision": "node scripts/test-collected-opportunity-decision.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

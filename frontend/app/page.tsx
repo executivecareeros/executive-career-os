@@ -24,6 +24,7 @@ import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import type { BetaWorkflowView } from "@/lib/beta/types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { executiveDecisionLabel } from "@/lib/live-opportunity";
+import { loadLatestCollectedDecision, type LiveCollectedDecision } from "@/lib/live-collected-decision";
 
 export default async function Home() {
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <ExecutiveBriefing />;
@@ -73,15 +74,19 @@ const display = (value: unknown, fallback: string) => typeof value === "string" 
 async function ExecutiveBriefing() {
   const resolved = await resolveAuthenticatedRepositoryContext();
   let view: BetaWorkflowView | undefined;
+  let collectedDecision: LiveCollectedDecision | undefined;
   if (resolved) {
     try {
-      view = await new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken), resolved.context).load();
+      const client = createServerSupabaseClient(resolved.accessToken);
+      [view, collectedDecision] = await Promise.all([new SupabaseBetaWorkflowRepository(client, resolved.context).load(), loadLatestCollectedDecision(client, resolved.context.workspace!.workspaceId)]);
     } catch {
       view = undefined;
     }
   }
 
   if (!view) return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader eyebrow="Your private career office" title="Build the context Atlas needs" description="Begin with one confirmed role. Your career direction, opportunities, and decisions will remain connected from that point forward." actions={<PrimaryButton href="/beta-workflow">Begin</PrimaryButton>}/><div className="mt-8"><DashboardSection title="Your first step" description="A small amount of confirmed context is enough to begin." emptyTitle="Confirm your professional history" emptyDescription="Add one role manually or review a CV or resume draft. Nothing enters your Career Memory until you confirm it." action={<PrimaryButton href="/beta-workflow#professional-history">Add career context</PrimaryButton>}/></div></div>;
+
+  if (collectedDecision) return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10"><PageHeader eyebrow="Today’s Executive Brief" title={`You chose to ${collectedDecision.action}. Your next step is ready.`} description="Atlas has connected the opportunity, immutable evidence snapshot, decision, Career Ledger entry, and follow-up." actions={<><SecondaryButton href="/archive">Open Career Ledger</SecondaryButton><PrimaryButton href={`/opportunities/${encodeURIComponent(collectedDecision.opportunityId)}`}>Review decision</PrimaryButton></>}/><div className="mt-8 grid gap-5 lg:grid-cols-3"><SectionCard className="lg:col-span-2"><p className="atlas-kicker">Decision in focus</p><h2 className="mt-3 text-2xl font-semibold">{collectedDecision.title}</h2><p className="mt-2 text-slate-400">{collectedDecision.companyName} · {collectedDecision.action} finalized</p><p className="mt-4 text-sm text-slate-300">Atlas continues from the evidence preserved at the moment of your decision; later source changes cannot rewrite that record.</p></SectionCard><SectionCard><p className="atlas-kicker">Next action</p><h2 className="mt-3 text-xl font-semibold">{collectedDecision.task.title}</h2><p className="mt-2 text-sm text-slate-400">{collectedDecision.task.status} · {collectedDecision.task.priority}</p><div className="mt-5"><SecondaryButton href="/tasks">Open follow-up</SecondaryButton></div></SectionCard></div><SectionCard className="mt-5"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Decision continuity</p><h2 className="mt-3 text-xl font-semibold">One opportunity. One Atlas snapshot. One permanent decision.</h2><p className="mt-2 text-sm text-slate-400">Return after refresh or sign-in and this same executive context remains active.</p></div><PrimaryButton href="/opportunities">Continue Opportunity Universe</PrimaryButton></div></SectionCard></div>;
 
   const recommendation = view.reasoning?.output.recommendation;
   const questions = view.reasoning?.output.questions ?? [];
