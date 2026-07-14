@@ -10,6 +10,7 @@ import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import type { BetaWorkflowView } from "@/lib/beta/types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { executiveDecisionLabel } from "@/lib/live-opportunity";
+import { loadLatestCollectedDecision, type LiveCollectedDecision } from "@/lib/live-collected-decision";
 
 const modules = {
   workspace: ["Your Workspace", "Your private professional home is active.", "Begin with confirmed career context"],
@@ -33,6 +34,18 @@ const modules = {
 } as const;
 
 type ModuleKey = keyof typeof modules;
+
+function CollectedAtlasDecision({ decision }: { decision: LiveCollectedDecision }) {
+  return <div className="mx-auto max-w-5xl px-5 py-8 sm:px-6 lg:px-10">
+    <PageHeader eyebrow="Atlas decision intelligence" title={`Your ${decision.action} decision is preserved`} description="Atlas continues from the evidence captured when you finalized this opportunity. Later source changes cannot rewrite that reasoning." />
+    <SectionCard className="mt-8">
+      <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-emerald-300">Current decision</p><h2 className="mt-3 text-xl font-semibold">{decision.title}</h2><p className="mt-2 text-sm text-slate-400">{decision.companyName} · {decision.action} finalized</p></div><StatusBadge tone="success">Evidence preserved</StatusBadge></div>
+      <div className="mt-6 grid gap-3 text-sm text-slate-300 sm:grid-cols-3"><div className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3">Immutable Atlas snapshot</div><div className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3">Career Ledger connected</div><div className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3">Follow-up ready</div></div>
+      <p className="mt-5 text-xs leading-5 text-slate-500">Atlas distinguishes confirmed evidence, estimates, and unknowns on the opportunity record.</p>
+      <div className="mt-6 flex flex-wrap gap-3"><SecondaryButton href="/">Return to Today</SecondaryButton><PrimaryButton href={`/opportunities/${encodeURIComponent(decision.opportunityId)}`}>Review Atlas evidence</PrimaryButton></div>
+    </SectionCard>
+  </div>;
+}
 
 const text = (value: unknown, fallback: string) =>
   typeof value === "string" && value.trim() ? value : fallback;
@@ -135,7 +148,10 @@ export default async function LiveModulePage({ searchParams }: { searchParams: P
   const [title, description, emptyTitle] = modules[key];
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect(`/login?next=/${key}`);
-  const repository = new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken), resolved.context);
+  const client = createServerSupabaseClient(resolved.accessToken);
+  const repository = new SupabaseBetaWorkflowRepository(client, resolved.context);
+  const collectedDecision = key === "atlas" ? await loadLatestCollectedDecision(client, resolved.context.workspace!.workspaceId) : undefined;
+  if (collectedDecision) return <CollectedAtlasDecision decision={collectedDecision} />;
   let view: BetaWorkflowView | undefined;
   try {
     view = await repository.load();
