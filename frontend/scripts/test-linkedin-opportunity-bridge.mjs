@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { importLinkedInOpportunity, extractLinkedInJobUrlsFromAlert } from "../lib/discovery/linkedin-bridge.ts";
+import { importLinkedInOpportunity, extractLinkedInJobUrlsFromAlert, SingleEmployerRecordProvider } from "../lib/discovery/linkedin-bridge.ts";
 import { MemoryOpportunityIngestionSink } from "../lib/discovery/pipeline.ts";
 import { parseLinkedInJobUrl, extractVisibleLinkedInDetails, resolveEmployerApplicationUrl } from "../lib/discovery/providers/linkedin-user-import.ts";
 import { providerFromCareersUrl } from "../lib/discovery/providers/factory.ts";
@@ -52,6 +52,15 @@ assert.equal(canonical.sourceUrl, employer.sourceUrl, "the authoritative employe
 
 const alertUrls = extractLinkedInJobUrlsFromAlert(`See https://www.linkedin.com/jobs/view/1234567890 and https://linkedin.com/jobs/view/another-role-9876543210?trk=email and again ${realShape}`);
 assert.deepEqual(alertUrls, ["https://www.linkedin.com/jobs/view/1234567890", "https://www.linkedin.com/jobs/view/9876543210"]);
+
+let requestedEmployerLimit = 0;
+const employerTarget = "https://job-boards.greenhouse.io/example/jobs/42";
+const employerProvider = { id: "greenhouse", source: { id: "greenhouse", name: "Greenhouse", category: "Corporate Website", description: "test", capabilities: ["jobs"] }, reliability: { type: "Corporate Website", rating: "high", score: 90, rationale: "test", assessedAt: new Date().toISOString() }, async health() { return { source: "greenhouse", status: "connected", checkedAt: new Date().toISOString(), message: "test" }; }, async collect(request) { requestedEmployerLimit = request.maximumResults; const discoveredAt = new Date().toISOString(); const job = (id) => ({ sourceId: `example-${id}`, source: "greenhouse", title: id === 42 ? "Chief Revenue Officer" : "Other role", company: { sourceId: "example", name: "Example Holdings" }, location: "London", originalUrl: `https://job-boards.greenhouse.io/example/jobs/${id}`, discoveredAt, rawMetadata: {} }); return { providerId: "greenhouse", collectedAt: discoveredAt, jobs: [job(1), job(42)] }; } };
+const singleEmployer = new SingleEmployerRecordProvider(employerProvider, employerTarget);
+const employerBatch = await singleEmployer.collect({ runId: "test", requestedAt: new Date().toISOString(), maximumResults: 1, filters: { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] } });
+assert.equal(requestedEmployerLimit, 100, "exact employer matching must inspect the bounded board rather than only its first role");
+assert.equal(employerBatch.jobs.length, 1);
+assert.equal(employerBatch.jobs[0].sourceId, "example-42");
 
 const persistence = await readFile(new URL("../lib/discovery/supabase-ingestion.ts", import.meta.url), "utf8");
 assert.match(persistence, /workspace_id=eq\.\$\{this\.workspace\.workspaceId\}/, "LinkedIn imports must use the existing workspace-scoped sink");

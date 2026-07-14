@@ -9,13 +9,13 @@ const normalizeUrl = (value?: string) => {
   try { const url = new URL(value); url.hash = ""; url.searchParams.sort(); return url.toString().replace(/\/$/, ""); } catch { return undefined; }
 };
 
-class SingleEmployerRecordProvider implements OpportunityProvider {
+export class SingleEmployerRecordProvider implements OpportunityProvider {
   readonly id; readonly source; readonly reliability;
   constructor(private readonly provider: OpportunityProvider, private readonly targetUrl: string) {
     this.id = provider.id; this.source = provider.source; this.reliability = provider.reliability;
   }
   async collect(request: ProviderCollectionRequest): Promise<ProviderCollectionBatch> {
-    const batch = await this.provider.collect(request);
+    const batch = await this.provider.collect({ ...request, maximumResults: Math.max(request.maximumResults, 100) });
     const target = normalizeUrl(this.targetUrl);
     const targetPath = new URL(this.targetUrl).pathname.split("/").filter(Boolean).at(-1)?.toLowerCase();
     const exact = batch.jobs.filter((job) => normalizeUrl(job.originalUrl) === target);
