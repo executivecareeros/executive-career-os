@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
+import { PrimaryButton } from "@/components/primary-button";
+import { SecondaryButton } from "@/components/secondary-button";
 import { SectionCard } from "@/components/section-card";
 import { StatusBadge } from "@/components/status-badge";
 import { AtlasAssessment } from "@/components/beta/atlas-assessment";
@@ -468,6 +470,10 @@ export default async function BetaWorkflowPage({
                 were created together. This completed decision cannot be
                 submitted again from the workflow.
               </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <SecondaryButton href="/opportunities/current">Review decision context</SecondaryButton>
+                <PrimaryButton href="/archive">Open Career Ledger</PrimaryButton>
+              </div>
             </div>
           ) : (
             <form
@@ -528,6 +534,10 @@ export default async function BetaWorkflowPage({
                 {view.feedbackCount} private founder submission recorded for
                 review.
               </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <SecondaryButton href="/archive">Review Career Ledger</SecondaryButton>
+                <PrimaryButton href="/">Return to Today</PrimaryButton>
+              </div>
             </div>
           ) : (
             <form action={submitFeedbackAction} className="mt-5 grid gap-4">

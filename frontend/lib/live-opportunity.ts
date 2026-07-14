@@ -15,6 +15,7 @@ export type LiveOpportunityViewModel = {
   matchScore?: number;
   atlasAction?: string;
   atlasConfidence?: string;
+  decisionComplete: boolean;
   roleSummary: string;
   companySummary: string;
   knownFacts: string[];
@@ -44,6 +45,7 @@ export function toLiveOpportunity(view: BetaWorkflowView): LiveOpportunityViewMo
     matchScore: number(view.opportunity.overallScore),
     atlasAction: reasoning?.recommendation.action,
     atlasConfidence: reasoning?.confidence,
+    decisionComplete,
     roleSummary: text(view.opportunity.notes, knownFacts.length ? knownFacts.join(" ") : "Role context is still being confirmed."),
     companySummary: `Company intelligence for ${companyName} will grow only from confirmed opportunity evidence and future approved sources.`,
     knownFacts,

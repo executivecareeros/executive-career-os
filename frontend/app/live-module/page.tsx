@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { LiveWorkspaceEmptyState } from "@/components/live-workspace-empty-state";
 import { PageHeader } from "@/components/page-header";
 import { PrimaryButton } from "@/components/primary-button";
+import { SecondaryButton } from "@/components/secondary-button";
 import { SectionCard } from "@/components/section-card";
 import { StatusBadge } from "@/components/status-badge";
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
@@ -45,6 +46,16 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
   const confidence = view.reasoning?.output.confidence;
   const decisionComplete = Boolean(view.state.finalizedDecisionId);
   const questions = view.reasoning?.output.questions ?? [];
+
+  const nextAction = (() => {
+    if (module === "ledger") return { href: "/", label: "Return to Today" };
+    if (module === "atlas" && decisionComplete) return { href: "/archive", label: "Open Career Ledger" };
+    if (module === "atlas" && recommendation) return { href: "/opportunities/current", label: "Review opportunity" };
+    if (module === "atlas" && view.opportunity) return { href: "/beta-workflow#assessment", label: "Ask Atlas to assess" };
+    if (module === "blueprint" && view.opportunity) return { href: "/opportunities/current", label: "Review matched opportunity" };
+    if ((module === "today" || module === "tasks") && view.opportunity) return { href: "/opportunities/current", label: "Continue with opportunity" };
+    return { href: "/beta-workflow", label: "Continue your decision" };
+  })();
 
   let heading = "Confirmed Workspace context";
   let summary = `${view.historyCount} professional-history record${view.historyCount === 1 ? "" : "s"} confirmed.`;
@@ -102,7 +113,7 @@ function ConfirmedWorkspaceModule({ module, view }: { module: ModuleKey; view: B
           {details.map((detail) => <li className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3" key={detail}>{detail}</li>)}
         </ul>
         <p className="mt-5 text-xs leading-5 text-slate-500">Only information you confirm appears in this private career space.</p>
-        <div className="mt-6"><PrimaryButton href="/beta-workflow">Review your decision</PrimaryButton></div>
+        <div className="mt-6 flex flex-wrap gap-3"><SecondaryButton href="/">Return to Today</SecondaryButton><PrimaryButton href={nextAction.href}>{nextAction.label}</PrimaryButton></div>
       </SectionCard>
     </div>
   );

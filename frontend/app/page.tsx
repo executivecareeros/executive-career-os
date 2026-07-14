@@ -89,8 +89,8 @@ async function ExecutiveBriefing() {
   const companyName = display(view.opportunity?.companyName, "Company not recorded");
   const currentStep = view.state.currentStep === "Complete" ? "Journey complete" : view.state.currentStep;
   const lastCompleted = view.state.completedSteps.at(-1) ?? "Workspace created";
-  const primaryHref = decisionComplete ? "/assistant" : "/beta-workflow";
-  const primaryLabel = decisionComplete ? "Review Atlas guidance" : "Continue your decision";
+  const primaryHref = decisionComplete ? "/archive" : view.opportunity ? "/opportunities/current" : "/beta-workflow";
+  const primaryLabel = decisionComplete ? "Open Career Ledger" : view.opportunity ? "Review opportunity" : "Continue your decision";
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
@@ -113,11 +113,11 @@ async function ExecutiveBriefing() {
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
         <SectionCard>
           <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Opportunity in focus</p><h2 className="mt-3 text-xl font-semibold">{opportunityTitle}</h2><p className="mt-2 text-sm text-slate-400">{companyName} · {display(view.opportunity?.location, "Location not confirmed")}</p></div><StatusBadge tone={decisionComplete ? "success" : "info"}>{decisionComplete ? "Decision preserved" : currentStep}</StatusBadge></div>
-          <div className="mt-6"><SecondaryButton href="/opportunities">Open opportunity</SecondaryButton></div>
+          <div className="mt-6"><SecondaryButton href={view.opportunity ? "/opportunities/current" : "/opportunities"}>{view.opportunity ? "Review opportunity" : "Open Opportunity Universe"}</SecondaryButton></div>
         </SectionCard>
         <SectionCard>
           <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Atlas recommends</p><h2 className="mt-3 text-xl font-semibold">{recommendation?.action ?? "More context required"}</h2><p className="mt-2 text-sm leading-6 text-slate-400">{recommendation ? `${view.reasoning?.output.confidence} confidence. The recommendation changes when the evidence changes.` : "Atlas is waiting for enough confirmed evidence to offer a recommendation."}</p></div>{recommendation && <StatusBadge tone="info">{recommendation.priority}</StatusBadge>}</div>
-          <div className="mt-6"><PrimaryButton href="/assistant">Ask what could change</PrimaryButton></div>
+          <div className="mt-6"><PrimaryButton href={recommendation ? "/assistant" : "/beta-workflow#assessment"}>{recommendation ? "See what could change" : "Complete Atlas assessment"}</PrimaryButton></div>
         </SectionCard>
       </div>
 
@@ -125,6 +125,7 @@ async function ExecutiveBriefing() {
         <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Your next conversation</p><h2 className="mt-3 text-xl font-semibold">Questions worth resolving before you act</h2><p className="mt-2 text-sm text-slate-400">Atlas prioritizes uncertainty so you can spend time on the conversations that matter.</p></div><SecondaryButton href="/tasks">Open follow-up</SecondaryButton></div>
         {questions.length ? <ol className="mt-6 grid gap-3 md:grid-cols-3">{questions.slice(0,3).map((question, index) => <li key={question.id} className="rounded-xl border border-white/10 bg-slate-950/45 p-4"><p className="text-xs font-semibold uppercase tracking-[.16em] text-blue-300">{index + 1} · {question.priority}</p><p className="mt-2 text-sm leading-6 text-slate-200">{question.question}</p></li>)}</ol> : <p className="mt-6 text-sm text-slate-400">No unresolved question is available yet. Continue the guided decision to give Atlas more context.</p>}
       </SectionCard>
+      {decisionComplete && <SectionCard className="mt-5"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Decision continuity</p><h2 className="mt-3 text-xl font-semibold">Your evidence, decision, and next action remain connected</h2><p className="mt-2 text-sm leading-6 text-slate-400">Review the permanent record, then return here whenever you need the current priority.</p></div><div className="flex shrink-0 flex-wrap gap-3"><SecondaryButton href="/opportunities/current">Review opportunity</SecondaryButton><PrimaryButton href="/archive">Open Career Ledger</PrimaryButton></div></div></SectionCard>}
     </div>
   );
 }

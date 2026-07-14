@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
+import { SecondaryButton } from "@/components/secondary-button";
 import { SearchInput } from "@/components/search-input";
 import type { LiveOpportunityViewModel } from "@/lib/live-opportunity";
 import { LiveOpportunityCard } from "./live-opportunity-card";
@@ -20,7 +21,7 @@ export function LiveOpportunityUniverse({ opportunity }: { opportunity: LiveOppo
   const matches = useMemo(() => `${opportunity.companyName} ${opportunity.title} ${opportunity.location} ${opportunity.source}`.toLowerCase().includes(query.trim().toLowerCase()), [opportunity, query]);
   const visible = view === "Recommended" ? Boolean(opportunity.atlasAction) : view === "Search" ? matches : true;
   return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
-    <PageHeader eyebrow="Executive Opportunity Universe" title="The opportunities that deserve your attention" description="Discover across sources, search your full universe, and let Atlas explain—not conceal—why an opportunity is recommended." />
+    <PageHeader eyebrow="Executive Opportunity Universe" title="The opportunities that deserve your attention" description="Discover across sources, search your full universe, and let Atlas explain—not conceal—why an opportunity is recommended." actions={<SecondaryButton href="/">Return to Today</SecondaryButton>} />
     <nav className="mt-8 grid overflow-hidden rounded-2xl border border-white/10 bg-white/[.03] md:grid-cols-3" aria-label="Opportunity views">
       {views.map((item) => <button key={item.name} type="button" onClick={() => setView(item.name)} aria-current={view === item.name ? "page" : undefined} className={`min-h-28 border-b border-white/10 p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400 md:border-b-0 md:border-r ${view === item.name ? "bg-white/[.08]" : "hover:bg-white/[.04]"}`}><span className={`font-semibold ${view === item.name ? "text-white" : "text-slate-300"}`}>{item.name}</span><span className="mt-2 block text-xs leading-5 text-slate-500">{item.description}</span></button>)}
     </nav>
