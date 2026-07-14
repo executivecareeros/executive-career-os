@@ -27,6 +27,10 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
       const rows = await createServerSupabaseClient(resolved.accessToken).request<OpportunityRow[]>(`opportunities?select=domain_id,payload&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&order=updated_at.desc`);
       if (rows.error) throw new Error(rows.error.message);
       collected = (rows.data ?? []).filter((row) => row.domain_id.startsWith("discovered-")).map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
+      // Once the live universe contains attributable collected opportunities,
+      // keep the earlier acceptance-workflow record in its historical context
+      // instead of presenting it as a current market opportunity.
+      if (collected.length > 0) opportunity = undefined;
     } catch {
       unavailable = true;
     }
