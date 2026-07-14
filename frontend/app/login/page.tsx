@@ -6,22 +6,26 @@ import {
   SubmitButton,
 } from "@/components/auth/auth-frame";
 import { loginAction } from "../auth-actions";
+import { copy, getLocale } from "@/lib/locale";
 export default async function Login({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const q = await searchParams;
+  const locale = await getLocale();
+  const t = copy[locale];
   return (
     <AuthFrame
-      eyebrow="Private access"
-      title="Welcome back."
-      description="Your private career office is ready. Continue with the decisions, evidence, and questions you left in your care."
+      locale={locale}
+      eyebrow={locale === "tr" ? "Güvenli giriş" : "Private access"}
+      title={t.welcome}
+      description={t.loginBody}
       footer={
         <>
-          Entering Orendalis for the first time?{" "}
+          {locale === "tr" ? "Orendalis’e ilk kez mi geliyorsun? " : "Entering Orendalis for the first time? "}
           <Link className="text-blue-300 hover:text-blue-200" href="/register">
-            Accept your invitation
+            {locale === "tr" ? "Davetini kabul et" : "Accept your invitation"}
           </Link>
         </>
       }
@@ -42,13 +46,13 @@ export default async function Login({
       <form action={loginAction} className="space-y-5">
         <input type="hidden" name="next" value={q.next ?? ""} />
         <AuthField
-          label="Email address"
+          label={locale === "tr" ? "E-posta adresi" : "Email address"}
           name="email"
           type="email"
           autoComplete="email"
         />
         <AuthField
-          label="Password"
+          label={locale === "tr" ? "Parola" : "Password"}
           name="password"
           type="password"
           autoComplete="current-password"
@@ -60,13 +64,13 @@ export default async function Login({
               type="checkbox"
               className="accent-blue-500"
             />
-            Remember me
+            {locale === "tr" ? "Beni hatırla" : "Remember me"}
           </label>
           <Link href="/forgot-password" className="text-blue-300">
-            Forgot password?
+            {locale === "tr" ? "Parolanı mı unuttun?" : "Forgot password?"}
           </Link>
         </div>
-        <SubmitButton>Sign in</SubmitButton>
+        <SubmitButton>{locale === "tr" ? "Giriş yap" : "Sign in"}</SubmitButton>
       </form>
     </AuthFrame>
   );

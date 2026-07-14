@@ -29,8 +29,11 @@ import { ExperienceZeroArrival } from "@/components/experience-zero/arrival";
 import { currentSession } from "@/lib/auth/session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getLocale } from "@/lib/locale";
+import { AtlasIntroduction } from "@/components/atlas/atlas-introduction";
 
 export default async function Home() {
+  const locale = await getLocale();
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") {
     const resolved = await resolveAuthenticatedRepositoryContext();
     if (!resolved) {
@@ -40,9 +43,9 @@ export default async function Home() {
       if (cookieStore.has("ecos-access-token") || cookieStore.has("ecos-refresh-token")) {
         redirect("/login?error=Your+secure+session+has+ended.+Please+sign+in+again.");
       }
-      return <ExperienceZeroArrival />;
+      return <ExperienceZeroArrival locale={locale} />;
     }
-    return <ExecutiveBriefing resolved={resolved} />;
+    return <><AtlasIntroduction locale={locale}/><ExecutiveBriefing resolved={resolved} /></>;
   }
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
   const ready = opportunities.filter((item) => item.status === "Ready to Apply").length;

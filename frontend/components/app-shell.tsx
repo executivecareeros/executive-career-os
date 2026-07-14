@@ -7,8 +7,9 @@ import { PageContent } from "./page-content";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ExecutiveCommandBar } from "./executive-command-bar";
+import type { Locale } from "@/lib/locale";
 
-export function AppShell({ children, publicExperience = false }: Readonly<{ children: React.ReactNode; publicExperience?: boolean }>) {
+export function AppShell({ children, publicExperience = false, locale = "en" }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale }>) {
   const menu = useMobileMenu();
   const pathname = usePathname();
   const [focusMode, setFocusMode] = useState(false);
@@ -16,7 +17,7 @@ export function AppShell({ children, publicExperience = false }: Readonly<{ chil
 
   return (
     <div data-executive-shell className="min-h-screen bg-[#f7f8f8] text-[#17191c] lg:flex">
-      {!focusMode && <Sidebar />}
+      {!focusMode && <Sidebar locale={locale} />}
 
       <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} />
 
@@ -29,7 +30,7 @@ export function AppShell({ children, publicExperience = false }: Readonly<{ chil
             aria-label="Close navigation menu"
           />
           <div className="relative h-full w-72 max-w-[85vw] shadow-2xl">
-            <Sidebar mobile onNavigate={menu.close} />
+            <Sidebar mobile onNavigate={menu.close} locale={locale} />
             <button
               type="button"
               onClick={menu.close}
@@ -43,7 +44,7 @@ export function AppShell({ children, publicExperience = false }: Readonly<{ chil
       )}
 
       <main className="min-w-0 flex-1">
-        <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} />
+        <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} locale={locale} />
         <PageContent>{children}</PageContent>
       </main>
     </div>

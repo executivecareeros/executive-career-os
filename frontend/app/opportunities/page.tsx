@@ -11,10 +11,12 @@ import { redirect } from "next/navigation";
 import { LiveWorkspaceEmptyState } from "@/components/live-workspace-empty-state";
 import type { Opportunity } from "@/types/opportunity";
 import { refreshOpportunityBoard } from "./actions";
+import { getLocale } from "@/lib/locale";
 
 type OpportunityRow = { domain_id: string; payload: Record<string, unknown> };
 
 export default async function OpportunitiesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const locale = await getLocale();
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") {
     const resolved = await resolveAuthenticatedRepositoryContext();
     if (!resolved) redirect("/login?next=/opportunities");
@@ -36,7 +38,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     }
     if (unavailable) return <LiveWorkspaceEmptyState eyebrow="Executive Opportunity Universe" title="Your opportunities are temporarily unavailable" description="Orendalis could not safely load your private opportunity context." emptyTitle="Your records remain unchanged" emptyDescription="No empty state or recommendation is being inferred from this interruption. Return to Today and try again when the connection is available." actionHref="/" actionLabel="Return to Today" />;
     const query = await searchParams;
-    if (opportunity || collected.length) return <LiveOpportunityUniverse opportunity={opportunity} collected={collected} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} collectionAction={refreshOpportunityBoard} />;
+    if (opportunity || collected.length) return <LiveOpportunityUniverse locale={locale} opportunity={opportunity} collected={collected} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} collectionAction={refreshOpportunityBoard} />;
     return <OpportunityUniverseEmpty collectionAction={refreshOpportunityBoard} />;
   }
   return <OpportunitiesWorkspace opportunities={opportunities} />;

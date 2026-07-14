@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell } from "@/components/app-shell";
 import { cookies } from "next/headers";
 import "./globals.css";
+import { getLocale } from "@/lib/locale";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,15 +29,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
+  const locale = await getLocale();
   const hasSession = cookieStore.has("ecos-access-token") || cookieStore.has("ecos-refresh-token");
   const publicExperience = process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase" && !hasSession;
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-slate-950">
-        <AppShell publicExperience={publicExperience}>{children}</AppShell>
+      <body className="min-h-full bg-[#f7f8f8]">
+        <AppShell publicExperience={publicExperience} locale={locale}>{children}</AppShell>
       </body>
     </html>
   );

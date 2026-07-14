@@ -1,40 +1,18 @@
 import Link from "next/link";
 import { OrendalisMark } from "@/components/brand/orendalis-mark";
+import { AtlasMark } from "@/components/atlas/atlas-mark";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { copy, type Locale } from "@/lib/locale";
 
-export function ExperienceZeroArrival() {
-  return (
-    <main className="min-h-screen bg-white text-[#17191c]">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10" aria-label="Primary navigation">
-        <Link href="/" className="text-[#17191c]"><OrendalisMark /></Link>
-        <Link href="/login" className="rounded-full px-4 py-2 text-sm font-medium text-[#4b5056] hover:bg-[#f3f4f4] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7894a6]">Sign in</Link>
-      </nav>
-
-      <section className="mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl items-center gap-16 px-6 py-16 sm:px-10 lg:grid-cols-[1.08fr_.92fr] lg:py-24">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[.2em] text-[#6f8796]">Executive opportunities, made clearer</p>
-          <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-.05em] text-[#15171a] sm:text-7xl">Find the next role worth your attention.</h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-[#62676d]">Search executive opportunities in one place. Atlas quietly learns what matters to you and explains which roles deserve a closer look.</p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Link href="/login?next=/import" className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#17191c] px-6 text-sm font-semibold text-white hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7894a6]">Upload your CV</Link>
-            <Link href="/login?next=/opportunities" className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#d9dcde] px-6 text-sm font-semibold text-[#272a2e] hover:bg-[#f6f7f7] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7894a6]">Search executive jobs</Link>
-          </div>
-          <p className="mt-5 text-sm text-[#858a90]">Private by design. Your judgment always remains yours.</p>
-        </div>
-
-        <aside className="rounded-[2rem] border border-[#e3e5e6] bg-[#f7f8f8] p-6 shadow-[0_30px_80px_rgba(28,35,42,.08)] sm:p-8" aria-label="How Orendalis works">
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/[.04]">
-            <p className="text-xs font-semibold uppercase tracking-[.16em] text-[#7692a3]">Atlas noticed</p>
-            <p className="mt-4 text-xl font-semibold leading-7">Seven roles match the leadership scope you described.</p>
-            <p className="mt-3 text-sm leading-6 text-[#6a7076]">Two deserve attention today. One may conflict with your location preference.</p>
-            <Link href="/login?next=/opportunities" className="mt-6 inline-flex text-sm font-semibold text-[#426b84]">Review recommendations →</Link>
-          </div>
-          <ol className="mt-7 grid gap-3 text-sm text-[#555b61] sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-            <li><strong className="block text-[#1e2125]">1. Upload</strong><span className="mt-1 block">Bring your CV.</span></li>
-            <li><strong className="block text-[#1e2125]">2. Search</strong><span className="mt-1 block">Use familiar filters.</span></li>
-            <li><strong className="block text-[#1e2125]">3. Decide</strong><span className="mt-1 block">Atlas explains the fit.</span></li>
-          </ol>
-        </aside>
-      </section>
-    </main>
-  );
+export function ExperienceZeroArrival({ locale }: { locale: Locale }) {
+  const t = copy[locale];
+  return <main className="min-h-screen bg-white text-[#17191c]">
+    <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10" aria-label="Primary navigation"><Link href="/" className="text-[#17191c]"><OrendalisMark /></Link><div className="flex items-center gap-3"><LanguageSwitcher locale={locale}/><Link href="/login" className="rounded-full px-4 py-2 text-sm font-medium text-[#4b5056] hover:bg-[#f3f4f4]">{t.signIn}</Link></div></nav>
+    <section className="mx-auto grid min-h-[calc(100vh-88px)] max-w-7xl items-center gap-16 px-6 py-16 sm:px-10 lg:grid-cols-[1.08fr_.92fr] lg:py-24"><div><p className="text-xs font-semibold uppercase tracking-[.2em] text-[#6f8796]">{locale === "tr" ? "Yönetici fırsatları, daha net" : "Executive opportunities, made clearer"}</p><h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-.05em] text-[#15171a] sm:text-7xl">{t.hero}</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-[#62676d]">{t.heroBody}</p><div className="mt-10 flex flex-col gap-3 sm:flex-row"><Link href="/login?next=/opportunities" className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#17191c] px-6 text-sm font-semibold text-white hover:bg-black">{t.searchJobs}</Link><Link href="/login?next=/import" className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#d9dcde] px-6 text-sm font-semibold text-[#272a2e] hover:bg-[#f6f7f7]">{t.uploadCv}</Link></div><p className="mt-5 text-sm text-[#858a90]">{locale === "tr" ? "Gizlilik odaklı. Karar her zaman senin." : "Private by design. Your judgment always remains yours."}</p></div>
+      <aside className="rounded-[2rem] border border-[#e3e5e6] bg-[#f7f8f8] p-6 shadow-[0_30px_80px_rgba(28,35,42,.08)] sm:p-8" aria-label="Atlas"><div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/[.04]"><div className="flex items-center gap-3"><AtlasMark/><p className="text-xs font-semibold uppercase tracking-[.16em] text-[#7692a3]">{t.atlasTitle}</p></div><p className="mt-4 text-xl font-semibold leading-7">{t.atlasBody}</p><Link href="/login?next=/opportunities" className="mt-6 inline-flex text-sm font-semibold text-[#426b84]">{locale === "tr" ? "Önerileri gör →" : "See recommendations →"}</Link></div></aside>
+    </section>
+    <section className="border-y border-[#eceeef] bg-[#fafafa] px-6 py-24"><div className="mx-auto max-w-6xl"><h2 className="text-3xl font-semibold tracking-[-.03em]">{t.how}</h2><div className="mt-10 grid gap-8 md:grid-cols-3">{t.steps.map((step, index) => <article key={step}><span className="text-sm font-semibold text-[#6f8796]">0{index + 1}</span><p className="mt-3 text-lg leading-7">{step}</p></article>)}</div></div></section>
+    <section className="mx-auto grid max-w-6xl gap-10 px-6 py-24 md:grid-cols-2"><div><AtlasMark size={48}/><h2 className="mt-5 text-3xl font-semibold tracking-[-.03em]">{t.control}</h2><p className="mt-4 leading-7 text-[#626970]">{t.controlBody}</p></div><div className="rounded-3xl bg-[#f1f4f5] p-8"><p className="text-lg leading-8 text-[#34434c]">{locale === "tr" ? "Atlas kesinlik iddiasında bulunmaz. Bildiklerini, tahmin ettiklerini ve henüz bilmediklerini açıkça ayırır." : "Atlas never pretends to be certain. It separates what is known, what is estimated, and what still needs checking."}</p></div></section>
+    <section className="bg-[#17191c] px-6 py-20 text-center text-white"><h2 className="text-3xl font-semibold tracking-[-.03em]">{t.final}</h2><div className="mt-7 flex justify-center gap-3"><Link href="/login?next=/opportunities" className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#17191c]">{t.searchJobs}</Link><Link href="/login?next=/import" className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold">{t.uploadCv}</Link></div></section>
+  </main>;
 }

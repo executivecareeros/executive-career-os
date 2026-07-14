@@ -6,16 +6,20 @@ import { executiveNavigationItems, executiveUtilityItems, isNavigationItemActive
 import { SectionCard } from "./section-card";
 import { logoutAction } from "@/app/auth-actions";
 import { OrendalisMark } from "@/components/brand/orendalis-mark";
+import { AtlasMark } from "@/components/atlas/atlas-mark";
+import type { Locale } from "@/lib/locale";
 
 type SidebarProps = {
   mobile?: boolean;
   onNavigate?: () => void;
+  locale?: Locale;
 };
 
-export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
+export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarProps) {
   const pathname = usePathname();
   const liveMode = process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase";
   const primaryItems = liveMode ? executiveNavigationItems : navigationItems;
+  const labels: Record<string, string> = locale === "tr" ? { Home: "Ana Sayfa", Jobs: "İşler", Companies: "Şirketler", Applications: "Başvurular", Profile: "Profil", Settings: "Ayarlar", "Founder Controls": "Kurucu Kontrolleri" } : {};
 
   return (
     <aside
@@ -53,7 +57,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
               >
                 {item.marker}
               </span>
-              {item.label}
+              {labels[item.label] ?? item.label}
             </Link>
           );
         })}
@@ -68,7 +72,7 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
               return (
                 <Link key={item.href} href={item.href} onClick={onNavigate} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8] ${isActive ? "bg-[#efe8dc] font-medium text-[#11161b]" : "text-[#747d84] hover:bg-white/[0.05] hover:text-[#f4f0e8]"}`}>
                   <span aria-hidden="true" className={`flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold ${isActive ? "bg-slate-950/10" : "bg-white/5"}`}>{item.marker}</span>
-                  {item.label}
+                  {labels[item.label] ?? item.label}
                 </Link>
               );
             })}
@@ -77,22 +81,22 @@ export function Sidebar({ mobile = false, onNavigate }: SidebarProps) {
       )}
 
       <SectionCard className="mt-6 p-4 sm:p-4">
-        <p className="text-sm font-medium text-[#17191c]">Atlas is ready</p>
+        <div className="flex items-center gap-3"><AtlasMark/><p className="text-sm font-medium text-[#17191c]">{locale === "tr" ? "Atlas hazır" : "Atlas is ready"}</p></div>
         <p className="mt-1 text-xs leading-5 text-[#777f85]">
-          Your confirmed context is in view.
+          {locale === "tr" ? "İkinci bir bakış istediğinde yanında." : "Available when you want a second perspective."}
         </p>
         <div className="mt-3 flex items-center gap-2 text-xs text-emerald-300">
           <span
             className="h-2 w-2 rounded-full bg-emerald-300"
             aria-hidden="true"
           />
-          Ready when you are
+          {locale === "tr" ? "Sen hazır olduğunda" : "Ready when you are"}
         </div>
       </SectionCard>
       <form action={logoutAction} className="mt-3">
         <input type="hidden" name="next" value={pathname} />
         <button className="w-full rounded-xl px-4 py-2 text-left text-sm text-[#737980] transition hover:bg-[#f3f4f4] hover:text-[#17191c]">
-          Sign out
+          {locale === "tr" ? "Çıkış yap" : "Sign out"}
         </button>
       </form>
     </aside>
