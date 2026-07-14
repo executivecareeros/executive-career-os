@@ -20,7 +20,7 @@ The executive owns and controls their professional information, subject to clear
 
 ## Does the product automate applications or LinkedIn?
 
-No. Direct application automation and LinkedIn scraping are not part of the foundation.
+No. Orendalis does not scrape LinkedIn, automate LinkedIn accounts, store LinkedIn credentials or cookies, or submit applications automatically. An executive may explicitly import a LinkedIn job URL and visible job details into a private workspace; Orendalis then seeks an employer-controlled record and preserves LinkedIn only as discovery provenance.
 
 ## Who is it for first?
 

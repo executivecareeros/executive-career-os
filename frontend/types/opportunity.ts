@@ -65,6 +65,8 @@ export type Opportunity = {
   companySize: string;
   source: string;
   sourceUrl?: string;
+  visibility?: "Private";
+  verificationStatus?: "Employer source matched" | "Unverified LinkedIn observation";
   sources?: OpportunitySource[];
   lastObservedAt?: string;
   freshness?: OpportunityFreshness;

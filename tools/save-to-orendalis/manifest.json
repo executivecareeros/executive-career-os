@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Save to Orendalis",
+  "version": "0.1.0",
+  "description": "User-triggered transfer of visible job details to the private Orendalis import form.",
+  "permissions": ["activeTab", "scripting", "clipboardWrite"],
+  "action": {
+    "default_title": "Save to Orendalis",
+    "default_popup": "popup.html"
+  }
+}

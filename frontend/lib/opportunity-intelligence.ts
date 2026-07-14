@@ -82,10 +82,12 @@ export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, 
   const scores: number[] = [];
   const provenance = sourceEvidence(opportunity);
   const confirmedSource = provenance.length === 1 ? provenance[0].name : `${provenance.length} source observations`;
+  const observationCertainty: IntelligenceCertainty = opportunity.verificationStatus === "Unverified LinkedIn observation" ? "Estimated" : "Confirmed";
 
-  evidence.push({ label: "Role", value: opportunity.jobTitle, certainty: "Confirmed", source: confirmedSource });
-  evidence.push({ label: "Company", value: opportunity.companyName, certainty: "Confirmed", source: confirmedSource });
-  if (known(opportunity.location)) evidence.push({ label: "Location", value: opportunity.location, certainty: "Confirmed", source: confirmedSource }); else missingInformation.push("Role location");
+  evidence.push({ label: "Role", value: opportunity.jobTitle, certainty: observationCertainty, source: confirmedSource });
+  evidence.push({ label: "Company", value: opportunity.companyName, certainty: observationCertainty, source: confirmedSource });
+  if (known(opportunity.location)) evidence.push({ label: "Location", value: opportunity.location, certainty: observationCertainty, source: confirmedSource }); else missingInformation.push("Role location");
+  if (opportunity.verificationStatus === "Unverified LinkedIn observation") missingInformation.push("Employer-controlled source confirming this LinkedIn observation");
   if (opportunity.workArrangement !== "Unknown") evidence.push({ label: "Work model", value: opportunity.workArrangement, certainty: "Confirmed", source: confirmedSource }); else missingInformation.push("Remote, hybrid, or on-site expectation");
   if (opportunity.salaryMin !== undefined || opportunity.salaryMax !== undefined) evidence.push({ label: "Published compensation", value: `${opportunity.salaryCurrency ?? "Currency unknown"} ${opportunity.salaryMin ?? "?"}–${opportunity.salaryMax ?? "?"}`, certainty: "Confirmed", source: confirmedSource }); else missingInformation.push("Comparable compensation");
   if (!known(opportunity.travelRequirement)) missingInformation.push("Travel requirement");

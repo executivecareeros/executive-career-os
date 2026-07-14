@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { providerFromCareersUrl } from "@/lib/discovery/providers/factory";
+import { extractLinkedInJobUrlsFromAlert, importLinkedInOpportunity as runLinkedInBridge } from "@/lib/discovery/linkedin-bridge";
 import { OpportunityCoverageEngine } from "@/lib/discovery/coverage-engine";
 import { recordDiscoveryRun, SupabaseOpportunityIngestionSink } from "@/lib/discovery/supabase-ingestion";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -81,4 +82,43 @@ export async function refreshOpportunityBoard(formData: FormData) {
   revalidatePath("/opportunities");
   if (outcome.run.status === "failed") redirect(`/opportunities?collection=error&message=${encodeURIComponent(outcome.run.errors[0]?.message ?? "Opportunity collection failed.")}`);
   redirect(`/opportunities?collection=complete&imported=${outcome.run.jobsImported}&found=${outcome.run.jobsFound}`);
+}
+
+export async function importLinkedInOpportunity(formData: FormData) {
+  const resolved = await resolveAuthenticatedRepositoryContext();
+  if (!resolved) redirect("/login?next=/opportunities");
+  if (formData.get("consent") !== "yes") redirect("/opportunities?linkedin=error&message=Confirm%20that%20you%20chose%20to%20import%20these%20visible%20job%20details.");
+  const client = createServerSupabaseClient(resolved.accessToken);
+  try {
+    const result = await runLinkedInBridge({ linkedInUrl: String(formData.get("linkedinUrl") ?? ""), visibleDetails: String(formData.get("visibleDetails") ?? ""), employerApplicationUrl: String(formData.get("employerUrl") ?? "") }, new SupabaseOpportunityIngestionSink(client, resolved.context));
+    try { if (result.employerOutcome) await recordDiscoveryRun(client, resolved.context, result.employerOutcome); await recordDiscoveryRun(client, resolved.context, result.linkedInOutcome); } catch { /* The opportunity remains available if secondary monitoring persistence is interrupted. */ }
+    revalidatePath("/opportunities");
+    if (result.opportunityId) revalidatePath(`/opportunities/${result.opportunityId}`);
+    redirect(`/opportunities?linkedin=complete&verification=${encodeURIComponent(result.verificationStatus)}&opportunity=${encodeURIComponent(result.opportunityId ?? "")}`);
+  } catch (error) {
+    redirect(`/opportunities?linkedin=error&message=${encodeURIComponent(error instanceof Error ? error.message : "The LinkedIn job could not be imported safely.")}`);
+  }
+}
+
+export async function importLinkedInJobAlert(formData: FormData) {
+  const resolved = await resolveAuthenticatedRepositoryContext();
+  if (!resolved) redirect("/login?next=/opportunities");
+  if (formData.get("consent") !== "yes") redirect("/opportunities?linkedin=error&message=Confirm%20that%20you%20chose%20to%20import%20this%20job%20alert.");
+  const alertText = String(formData.get("alertText") ?? "");
+  const urls = extractLinkedInJobUrlsFromAlert(alertText);
+  if (!urls.length) redirect("/opportunities?linkedin=error&message=No%20valid%20LinkedIn%20job%20URLs%20were%20found%20in%20that%20alert.");
+  const client = createServerSupabaseClient(resolved.accessToken);
+  const sink = new SupabaseOpportunityIngestionSink(client, resolved.context);
+  let imported = 0;
+  try {
+    for (const linkedInUrl of urls) {
+      const result = await runLinkedInBridge({ linkedInUrl }, sink);
+      if (result.linkedInOutcome.run.status !== "failed") imported += 1;
+      try { await recordDiscoveryRun(client, resolved.context, result.linkedInOutcome); } catch { /* Monitoring is secondary to the private opportunity record. */ }
+    }
+    revalidatePath("/opportunities");
+    redirect(`/opportunities?linkedin=complete&verification=Unverified%20LinkedIn%20observation&imported=${imported}`);
+  } catch (error) {
+    redirect(`/opportunities?linkedin=error&message=${encodeURIComponent(error instanceof Error ? error.message : "The job alert could not be imported safely.")}`);
+  }
 }

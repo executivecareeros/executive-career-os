@@ -26,6 +26,8 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       companySize: job.company.size ?? "Not specified",
       source: job.source,
       sourceUrl: job.originalUrl,
+      visibility: "Private",
+      verificationStatus: job.rawMetadata.verificationStatus === "Employer source matched" ? "Employer source matched" : job.rawMetadata.verificationStatus === "Unverified LinkedIn observation" ? "Unverified LinkedIn observation" : undefined,
       sources: [{ id: job.source, name: job.source, kind: sourceKind, originalId: job.sourceId, originalUrl: job.originalUrl, collectedAt: job.discoveredAt, confidence: reliability.score >= 75 ? "High" : reliability.score >= 50 ? "Medium" : "Low" }],
       lastObservedAt: job.discoveredAt,
       freshness: { status: "Fresh", lastObservedAt: job.discoveredAt, ageHours: 0, staleAfterHours },

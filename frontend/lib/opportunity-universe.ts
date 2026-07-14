@@ -87,6 +87,8 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
   return {
     ...strongest,
     id: existing.id,
+    visibility: "Private",
+    verificationStatus: existing.verificationStatus === "Employer source matched" || incoming.verificationStatus === "Employer source matched" ? "Employer source matched" : existing.verificationStatus ?? incoming.verificationStatus,
     sources,
     source: sources.map(source => source.name).join(" · ") || strongest.source,
     sourceUrl: strongest.sourceUrl ?? existing.sourceUrl,
