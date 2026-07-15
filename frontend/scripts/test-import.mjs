@@ -3,6 +3,7 @@ import { extractHistory } from "../lib/import/extraction.ts";
 import { detectHistoryConflicts } from "../lib/import/conflicts.ts";
 import { createFirstExecutiveBrief } from "../lib/import/brief.ts";
 import { detectHistoryDrafts } from "../lib/import/history-drafts.ts";
+import { readFileSync } from "node:fs";
 
 const provenance={source:"CSV",filename:"fictional.csv",importedAt:"2026-01-01T00:00:00Z",importVersion:"1.0",evidence:[]};
 const result=extractHistory("CSV","company,title,start,end\nExample Group,Chief Test Officer,2020-01,2023-01\nExample Group,Chief Test Officer,2020-01,2023-01",provenance);
@@ -18,4 +19,9 @@ const brief=createFirstExecutiveBrief(result.experiences,[]);
 if(!brief.facts[0].startsWith("1 confirmed"))throw Error("Review rejection ignored");
 const resumeDrafts=detectHistoryDrafts("Chief Strategy Officer\nAurora Meridian Group\nMarch 2022 - Present");
 if(resumeDrafts.length!==1||resumeDrafts[0].roleTitle!=="Chief Strategy Officer"||resumeDrafts[0].organizationName!=="Aurora Meridian Group"||resumeDrafts[0].startDate!=="2022-03"||!resumeDrafts[0].isCurrent)throw Error("Resume history extraction failed");
+const workspace=readFileSync(new URL("../components/import/import-workspace.tsx",import.meta.url),"utf8");
+for(const required of ['accept=".pdf,.docx,.txt,.md,.csv,.json"','/api/import/extract','raw file is not retained','Ham dosya saklanmaz','Save my experience and see jobs'])if(!workspace.includes(required))throw Error(`Secure CV flow is missing: ${required}`);
+for(const forbidden of ['demoRecords','Career Passport','preview-only','Architecture placeholder'])if(workspace.includes(forbidden))throw Error(`Legacy import language remains: ${forbidden}`);
+const actions=readFileSync(new URL("../app/import/actions.ts",import.meta.url),"utf8");
+if(!actions.includes('sourceType: "Document Import"')||!actions.includes("keys.has(key)"))throw Error("Confirmed CV history is not provenance-aware and replay-safe");
 console.log("PASS Import validation — deterministic CV draft extraction, CSV extraction, safe rejection, conflicts, review decisions, sanitization, and deterministic brief");

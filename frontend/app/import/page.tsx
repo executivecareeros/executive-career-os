@@ -1,1 +1,3 @@
-import{ImportWorkspace}from"@/components/import/import-workspace";export default function Page(){return <ImportWorkspace view="source"/>}
+import { ImportWorkspace } from "@/components/import/import-workspace";
+import { getLocale } from "@/lib/locale";
+export default async function Page() { return <ImportWorkspace locale={await getLocale()}/>; }

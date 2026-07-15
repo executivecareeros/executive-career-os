@@ -1,1 +1,1 @@
-import{ImportWorkspace}from"@/components/import/import-workspace";export default function Page(){return <ImportWorkspace view="history"/>}
+import { redirect } from "next/navigation"; export default function Page(){redirect("/import")}
