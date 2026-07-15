@@ -16,11 +16,36 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.orendalis.com"),
   title: {
-    default: "Orendalis — A private place for consequential careers",
+    default: "Orendalis — Find your next executive opportunity",
     template: "%s | Orendalis",
   },
-  description: "A private career intelligence institution for executives making consequential decisions.",
+  description: "Upload your CV, search executive opportunities, and let Atlas show you the roles that appear strongest for your experience.",
+  applicationName: "Orendalis",
+  keywords: ["executive jobs", "executive opportunities", "career search", "leadership roles", "Atlas"],
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en": "/?lang=en",
+      "tr": "/?lang=tr",
+      "x-default": "/",
+    },
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Orendalis",
+    title: "Find your next executive opportunity",
+    description: "Upload your CV, search executive opportunities, and let Atlas help you identify the roles worth reviewing.",
+    locale: "en_US",
+    alternateLocale: ["tr_TR"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Orendalis — Find your next executive opportunity",
+    description: "Search executive opportunities and let Atlas help you identify the roles worth reviewing.",
+  },
 };
 
 export default async function RootLayout({

@@ -35,7 +35,8 @@
     ,"test:collected-opportunity-decision": "node scripts/test-collected-opportunity-decision.mjs",
     "test:project-simplicity": "node scripts/test-project-simplicity.mjs",
     "test:linkedin-bridge": "node --experimental-transform-types scripts/test-linkedin-opportunity-bridge.mjs",
-    "test:bilingual-experience": "node scripts/test-bilingual-experience.mjs"
+    "test:bilingual-experience": "node scripts/test-bilingual-experience.mjs",
+    "test:public-acquisition": "node scripts/test-public-acquisition.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",
