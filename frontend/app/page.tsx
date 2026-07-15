@@ -31,6 +31,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getLocale } from "@/lib/locale";
 import { AtlasIntroduction } from "@/components/atlas/atlas-introduction";
+import { SimpleExecutiveHome } from "@/components/home/simple-executive-home";
 
 export default async function Home() {
   const locale = await getLocale();
@@ -45,7 +46,7 @@ export default async function Home() {
       }
       return <ExperienceZeroArrival locale={locale} />;
     }
-    return <><AtlasIntroduction locale={locale}/><ExecutiveBriefing resolved={resolved} /></>;
+    return <><AtlasIntroduction locale={locale}/><SimpleExecutiveHome resolved={resolved} locale={locale}/></>;
   }
   const qualified = opportunities.filter((item) => item.status === "Qualified").length;
   const ready = opportunities.filter((item) => item.status === "Ready to Apply").length;
@@ -90,7 +91,7 @@ export default async function Home() {
 
 const display = (value: unknown, fallback: string) => typeof value === "string" && value.trim() ? value : fallback;
 
-async function ExecutiveBriefing({ resolved }: { resolved: NonNullable<Awaited<ReturnType<typeof resolveAuthenticatedRepositoryContext>>> }) {
+export async function ExecutiveBriefing({ resolved }: { resolved: NonNullable<Awaited<ReturnType<typeof resolveAuthenticatedRepositoryContext>>> }) {
   let view: BetaWorkflowView | undefined;
   let collectedDecision: LiveCollectedDecision | undefined;
   try {

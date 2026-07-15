@@ -10,6 +10,8 @@ const files = {
   sidebar: await readFile(new URL("../components/sidebar.tsx", import.meta.url), "utf8"),
   breadcrumbs: await readFile(new URL("../components/breadcrumbs.tsx", import.meta.url), "utf8"),
   shell: await readFile(new URL("../components/app-shell.tsx", import.meta.url), "utf8"),
+  home: await readFile(new URL("../components/home/simple-executive-home.tsx", import.meta.url), "utf8"),
+  cv: await readFile(new URL("../components/import/import-workspace.tsx", import.meta.url), "utf8"),
 };
 
 for (const [name, source] of Object.entries(files)) {
@@ -24,5 +26,7 @@ for (const phrase of ["İçerik yolu", "Bugün", "Ayrıntılar"]) assert.ok(file
 assert.match(files.shell, /PageContent locale=\{locale\}/, "Application shell must pass the active locale to page chrome");
 assert.match(files.route, /getLocale\(\)/, "Opportunity detail must resolve the active locale on the server");
 assert.match(files.route, /locale=\{locale\}/, "Opportunity detail must pass the active locale to the live view");
+for (const phrase of ["Bir sonraki fırsatını bul", "Rol, şirket veya konum ara", "Aktif başvurular"]) assert.ok(files.home.includes(phrase), `Missing Turkish Home copy: ${phrase}`);
+for (const phrase of ["CV veya özgeçmiş seç", "Ham dosya saklanmaz", "Deneyimimi kaydet ve işleri gör"]) assert.ok(files.cv.includes(phrase), `Missing Turkish CV copy: ${phrase}`);
 
 console.log("Bilingual live-experience checks passed.");
