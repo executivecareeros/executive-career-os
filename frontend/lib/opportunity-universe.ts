@@ -81,7 +81,11 @@ export function assessOpportunityFreshness(opportunity: Opportunity, now = new D
 export function mergeOpportunityObservations(existing: Opportunity, incoming: Opportunity, observedAt: string): Opportunity {
   const combined = [...(existing.sources ?? []), ...(incoming.sources ?? [])];
   const sources = [...new Map(combined.map(source => [`${source.id}|${source.originalId ?? ""}`, source])).values()];
-  const incomingIsStronger = incoming.confidenceScore > existing.confidenceScore;
+  const evidenceRichness = (item: Opportunity) => {
+    const generic = /^(employer not confirmed|not specified|linkedin opportunity \d+)$/i;
+    return [item.companyName, item.jobTitle, item.location].filter((value) => value && !generic.test(value)).length * 1_000 + (item.summary?.length ?? 0);
+  };
+  const incomingIsStronger = incoming.confidenceScore > existing.confidenceScore || (incoming.confidenceScore === existing.confidenceScore && evidenceRichness(incoming) > evidenceRichness(existing));
   const strongest = incomingIsStronger ? incoming : existing;
   const freshness = assessOpportunityFreshness({ ...strongest, lastObservedAt: observedAt }, observedAt);
   return {

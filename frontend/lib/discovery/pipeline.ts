@@ -70,7 +70,9 @@ export class OpportunityIngestionPipeline {
         try {
           const normalized = this.normalizer.normalize(job, { configuration: { source: provider.id, enabled: true, priority: 1, maximumResults: request.maximumResults, filters: request.filters }, runId: request.runId, requestedAt: request.requestedAt }, provider.reliability);
           const candidate = { ...normalized.normalizedOpportunity, source: provider.source.name, sources: normalized.normalizedOpportunity.sources?.map(source => ({ ...source, name: provider.source.name })) };
-          const duplicateIndex = findCanonicalOpportunityIndex(existing, candidate);
+          const sourceIdentity = new Set((candidate.sources ?? []).map((source) => `${source.id}|${source.originalId ?? ""}`));
+          const sourceMatchIndex = existing.findIndex((opportunity) => opportunity.sources?.some((source) => sourceIdentity.has(`${source.id}|${source.originalId ?? ""}`)));
+          const duplicateIndex = sourceMatchIndex >= 0 ? sourceMatchIndex : findCanonicalOpportunityIndex(existing, candidate);
           const duplicate = duplicateIndex >= 0 ? existing[duplicateIndex] : undefined;
           const repeatedObservation = Boolean(duplicate?.sources?.some(source => candidate.sources?.some(incoming => incoming.id === source.id && incoming.originalId === source.originalId)));
           const opportunity = duplicate ? mergeOpportunityObservations(duplicate, candidate, batch.collectedAt) : candidate;
