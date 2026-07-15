@@ -9,6 +9,7 @@ import { buildExecutiveOpportunityIntelligence, opportunityIntelligenceBlueprint
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Opportunity } from "@/types/opportunity";
 import { randomUUID } from "node:crypto";
+import { getLocale } from "@/lib/locale";
 
 type OpportunityRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
 type BlueprintRow = { id: string; payload: Record<string, unknown> };
@@ -18,6 +19,7 @@ export function generateStaticParams() {
 }
 
 export default async function OpportunityDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ decision?: string }> }) {
+  const locale = await getLocale();
   const { id } = await params;
   const query = await searchParams;
   const opportunity = getOpportunityById(id);
@@ -39,5 +41,5 @@ export default async function OpportunityDetailPage({ params, searchParams }: { 
   const all = (universe.data ?? []).filter((item) => item.domain_id.startsWith("discovered-")).map((item) => ({ ...item.payload, id: item.domain_id }) as Opportunity);
   const blueprintRow = blueprint.data?.[0];
   const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(blueprintRow?.payload, blueprintRow?.id), all);
-  return <CollectedOpportunityIntelligence opportunity={canonical} intelligence={intelligence} decisionNotice={query.decision} idempotencyKey={randomUUID()} />;
+  return <CollectedOpportunityIntelligence locale={locale} opportunity={canonical} intelligence={intelligence} decisionNotice={query.decision} idempotencyKey={randomUUID()} />;
 }

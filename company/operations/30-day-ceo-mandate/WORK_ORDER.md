@@ -1,0 +1,21 @@
+# 30-Day Autonomous CEO Execution Mandate — Work Order
+
+- Objective: Operate Orendalis for 30 days as a live bilingual executive job-search product, improve measurable customer value, validate with consented real executives, and establish a credible path to collected revenue.
+- Requester: Founder.
+- Accountable owner: Founder.
+- Responsible executor: Autonomous Orendalis operating team under ODS 1.0.
+- Reviewers: Founder at mandatory approval gates and at the final 30-day review.
+- Classification and risk: Company-wide operational program; ordinary work is reversible, while financial, legal, credential, irreversible, material-risk, and external-dependency gates remain founder-controlled.
+- Verified current state: `www.orendalis.com` is the live target; the repository began Day 1 clean at commit `e323a26`; the customer product supports authentication, CV import, Jobs, opportunity import, Atlas intelligence, and decisions. Live deployment alignment and customer metrics require fresh verification.
+- In scope: Product and copy corrections, testing, reversible releases, privacy-respecting measurement, consent-based research operations, controlled acquisition preparation, and factual daily operating records.
+- Out of scope: Unapproved spending, contracts, new legal liability, prohibited LinkedIn automation, unrelated modules, fabricated opportunities or outcomes, and material architecture expansion without evidence.
+- Assumptions and unknowns: Registered-user, activation, retention, and revenue baselines are not yet evidenced in this work order. They remain unknown until measured.
+- Affected systems and people: Public website, authenticated executive experience, Vercel deployment, Supabase-backed customer data, prospective consented executive testers, and the Founder.
+- Security and privacy implications: Preserve workspace isolation, RLS, provenance, consent, credentials, private career data, and truthful uncertainty. No secrets belong in repository records.
+- Success criteria: A first-time executive understands the product within 30 seconds; English and Turkish experiences are internally consistent; the core CV-to-job-to-Atlas-to-decision journey works live; real consented usage and commercial evidence are recorded without fabrication.
+- Validation plan: Lint, TypeScript, production build, relevant route/auth/CV/search/Atlas/LinkedIn/decision/RLS tests, bilingual checks, accessibility review, desktop and 390px live checks, console/runtime review, and secret scan.
+- Rollback or reversibility: Use ordinary version-control and Vercel rollback for defective application releases. Stop before any material destructive or irreversible action.
+- Approval gates: Spend or recurring cost; contracts, legal terms, licences, or liability; founder-only credentials or MFA; material irreversible action; material legal/privacy/security risk; truthful external dependency.
+- Stop conditions: Only the mandatory approval gates above or completion of the 30-day mandate.
+- Documentation to update: Concise daily operating record and final factual CEO report.
+- Target status and handoff: Continuous execution through Day 30, then a factual CEO report and next-30-day recommendation.

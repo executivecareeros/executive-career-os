@@ -1,6 +1,19 @@
 import { psql, pass } from "./database-runtime.mjs";
+import { randomUUID } from "node:crypto";
 
-const output = psql(`begin;
+const identifiers = new Map([
+  ["81000000-0000-4000-8000-000000000001", randomUUID()],
+  ["82000000-0000-4000-8000-000000000001", randomUUID()],
+  ["83000000-0000-4000-8000-000000000001", randomUUID()],
+  ["84000000-0000-4000-8000-000000000001", randomUUID()],
+  ["85000000-0000-4000-8000-000000000001", randomUUID()],
+  ["85000000-0000-4000-8000-000000000002", randomUUID()],
+  ["86000000-0000-4000-8000-000000000001", randomUUID()],
+  ["88000000-0000-4000-8000-000000000001", randomUUID()],
+  ["88000000-0000-4000-8000-000000000002", randomUUID()],
+]);
+
+let scenario = `begin;
 insert into auth.users(id,email,email_confirmed_at) values('82000000-0000-4000-8000-000000000001','fictional.collected@example.invalid',now());
 insert into public.executive_identities(id,auth_user_id,profile) values('81000000-0000-4000-8000-000000000001','82000000-0000-4000-8000-000000000001','{"isDemo":true}');
 insert into public.workspaces(id,owner_identity_id,name,workspace_type,created_by) values('83000000-0000-4000-8000-000000000001','81000000-0000-4000-8000-000000000001','Fictional Collected Decision','Personal','81000000-0000-4000-8000-000000000001');
@@ -20,7 +33,9 @@ select 'decisions',count(*) from public.atlas_decision_snapshots where workspace
 select 'ledger',count(*) from public.career_ledger_entries where workspace_id='83000000-0000-4000-8000-000000000001';
 select 'tasks',count(*) from public.executive_tasks where workspace_id='83000000-0000-4000-8000-000000000001';
 select 'finalized',count(*) from public.opportunities where id='86000000-0000-4000-8000-000000000001' and payload->'executiveDecision'->>'status'='Finalized' and payload->'executiveDecision'->>'action'='Watch';
-rollback;`).trim().split("\n");
+rollback;`;
+for (const [fixed, fresh] of identifiers) scenario = scenario.replaceAll(fixed, fresh);
+const output = psql(scenario).trim().split("\n");
 
 const counts = new Map(output.filter(line => line.includes("|")).map(line => { const [label,value] = line.split("|"); return [label,Number(value)]; }));
 for (const label of ["commits","reasoning","decisions","ledger","tasks","finalized"]) if (counts.get(label)!==1) throw new Error(`${label}: expected 1, got ${counts.get(label)}`);

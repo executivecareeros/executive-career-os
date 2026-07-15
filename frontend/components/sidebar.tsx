@@ -24,7 +24,7 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
   return (
     <aside
       className={`${mobile ? "flex h-full" : "hidden h-screen lg:sticky lg:top-0 lg:flex"} atlas-scrollbar w-72 shrink-0 flex-col overflow-y-auto border-r border-[#e5e7e8] bg-white px-5 py-6`}
-      aria-label="Application sidebar"
+      aria-label={locale === "tr" ? "Uygulama kenar çubuğu" : "Application sidebar"}
     >
       <Link
         href="/"
@@ -32,10 +32,10 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
         className="group block rounded-lg text-[#17191c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8]"
       >
         <OrendalisMark />
-        <p className="mt-3 pl-12 text-[11px] leading-5 text-[#777f85]">Your private career office</p>
+        <p className="mt-3 pl-12 text-[11px] leading-5 text-[#777f85]">{locale === "tr" ? "Özel kariyer ofisin" : "Your private career office"}</p>
       </Link>
 
-      <nav className="mt-7 space-y-1" aria-label="Primary navigation">
+      <nav className="mt-7 space-y-1" aria-label={locale === "tr" ? "Ana gezinme" : "Primary navigation"}>
         {primaryItems.map((item) => {
           const isActive = isNavigationItemActive(pathname, item.href);
 
@@ -64,8 +64,8 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
       </nav>
 
       {liveMode && (
-        <nav className="mt-7 border-t border-[#e5e7e8] pt-5" aria-label="Workspace navigation">
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-[#606970]">Your private record</p>
+        <nav className="mt-7 border-t border-[#e5e7e8] pt-5" aria-label={locale === "tr" ? "Çalışma alanı gezinmesi" : "Workspace navigation"}>
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-[#606970]">{locale === "tr" ? "Özel kaydın" : "Your private record"}</p>
           <div className="space-y-1">
             {executiveUtilityItems.map((item) => {
               const isActive = isNavigationItemActive(pathname, item.href);
