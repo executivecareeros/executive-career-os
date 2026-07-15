@@ -28,6 +28,8 @@ This folder is the permanent repository location for Microsoft 365 email migrati
 | `DKIM_DNS_VALIDATION_REPORT.md` | **Current validation evidence** | Confirms both selector CNAME records resolve publicly and records Microsoft's pending detection state. |
 | `DKIM_KEY_GENERATION_REPORT.md` | **Historical** | Preserves the Microsoft key-generation event and exact selector values before DNS publication. |
 | `EMAIL_CUTOVER_CHECKLIST.md` | **Current checklist** | Preserves completed migration controls and identifies remaining DKIM, alias, client, and message-authentication validation. |
+| `EMAIL_OPERATING_AUTHORITY.md` | **Current operating authority** | Records the approved mailbox identity, permitted communication classes, safety boundaries, authentication rules, and mandate-limited send authority. |
+| `EMAIL_ASSISTANT_PERMISSION_MODEL.md` | **Historical baseline with current cross-reference** | Preserves the original draft-only least-privilege design and points to the mandate-specific authority that temporarily supersedes it. |
 
 When records conflict, use the newest factual evidence and the current controlling status. Do not rewrite historical reports merely to make them appear current.
 

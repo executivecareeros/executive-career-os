@@ -1,5 +1,7 @@
 # Email Assistant Permission Model
 
+> Historical baseline: the active, time-bounded Founder authorization for the 30-day autonomous CEO mandate is recorded in `EMAIL_OPERATING_AUTHORITY.md`. That authorization supersedes this document's draft-only send restriction only for the approved mailbox, communication classes, and mandate period. All credential, privacy, legal, financial, and anti-spam controls remain in force.
+
 Purpose: Define the least-privilege authority, approval boundaries, and audit expectations for a future Orendalis email assistant serving the founder mailbox.
 
 ## Governing Principle
