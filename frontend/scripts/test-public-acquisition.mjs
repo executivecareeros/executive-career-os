@@ -6,6 +6,7 @@ const landing = await readFile(new URL("../components/experience-zero/arrival.ts
 const locale = await readFile(new URL("../lib/locale.ts", import.meta.url), "utf8");
 const robots = await readFile(new URL("../app/robots.ts", import.meta.url), "utf8");
 const sitemap = await readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8");
+const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
 
 assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/);
 assert.match(layout, /Find your next executive opportunity/);
@@ -26,5 +27,7 @@ for (const privateRoute of ["/applications", "/company-control", "/import", "/op
 }
 assert.match(sitemap, /https:\/\/www\.orendalis\.com\/\?lang=en/);
 assert.match(sitemap, /https:\/\/www\.orendalis\.com\/\?lang=tr/);
+assert.ok(proxy.includes('"/robots.txt"'), "robots.txt must be reachable without authentication");
+assert.ok(proxy.includes('"/sitemap.xml"'), "sitemap.xml must be reachable without authentication");
 
 console.log("Public acquisition checks passed.");

@@ -8,6 +8,8 @@ const publicPaths = [
   "/reset-password",
   "/verify-email",
   "/auth/confirm",
+  "/robots.txt",
+  "/sitemap.xml",
 ];
 
 const demoOnlyModules: Array<[prefix: string, module: string]> = [
