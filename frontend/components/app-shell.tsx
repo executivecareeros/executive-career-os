@@ -19,7 +19,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
     <div data-executive-shell className="min-h-screen bg-[#f7f8f8] text-[#17191c] lg:flex">
       {!focusMode && <Sidebar locale={locale} />}
 
-      <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} />
+      <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} locale={locale} />
 
       {menu.isOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -27,7 +27,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
             type="button"
             className="absolute inset-0 bg-black/70"
             onClick={menu.close}
-            aria-label="Close navigation menu"
+            aria-label={locale === "tr" ? "Gezinme menüsünü kapat" : "Close navigation menu"}
           />
           <div className="relative h-full w-72 max-w-[85vw] shadow-2xl">
             <Sidebar mobile onNavigate={menu.close} locale={locale} />
@@ -35,7 +35,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
               type="button"
               onClick={menu.close}
               className="absolute right-4 top-4 rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
-              aria-label="Close navigation menu"
+              aria-label={locale === "tr" ? "Gezinme menüsünü kapat" : "Close navigation menu"}
             >
               <span aria-hidden="true">✕</span>
             </button>
@@ -45,7 +45,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
 
       <main className="min-w-0 flex-1">
         <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} locale={locale} />
-        <PageContent>{children}</PageContent>
+        <PageContent locale={locale}>{children}</PageContent>
       </main>
     </div>
   );

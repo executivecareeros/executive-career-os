@@ -8,6 +8,8 @@ const files = {
   detail: await readFile(new URL("../components/opportunities/collected-opportunity-intelligence.tsx", import.meta.url), "utf8"),
   route: await readFile(new URL("../app/opportunities/[id]/page.tsx", import.meta.url), "utf8"),
   sidebar: await readFile(new URL("../components/sidebar.tsx", import.meta.url), "utf8"),
+  breadcrumbs: await readFile(new URL("../components/breadcrumbs.tsx", import.meta.url), "utf8"),
+  shell: await readFile(new URL("../components/app-shell.tsx", import.meta.url), "utf8"),
 };
 
 for (const [name, source] of Object.entries(files)) {
@@ -18,6 +20,8 @@ for (const phrase of ["Yönetici rollerinde ara", "Filtreleri temizle", "İşi g
 for (const phrase of ["LinkedIn'den içe aktar", "Her içe aktarma senin kontrolünde", "Uyarıyı içe aktar"]) assert.ok(files.linkedIn.includes(phrase), `Missing Turkish LinkedIn copy: ${phrase}`);
 for (const phrase of ["İşlere dön", "Bu rol neden dikkatimi çekti", "Ne yapmak istersin?", "Karar kaydedildi"]) assert.ok(files.detail.includes(phrase), `Missing Turkish opportunity copy: ${phrase}`);
 for (const phrase of ["Uygulama kenar çubuğu", "Ana gezinme", "Özel kariyer ofisin"]) assert.ok(files.sidebar.includes(phrase), `Missing Turkish navigation copy: ${phrase}`);
+for (const phrase of ["İçerik yolu", "Bugün", "Ayrıntılar"]) assert.ok(files.breadcrumbs.includes(phrase), `Missing Turkish breadcrumb copy: ${phrase}`);
+assert.match(files.shell, /PageContent locale=\{locale\}/, "Application shell must pass the active locale to page chrome");
 assert.match(files.route, /getLocale\(\)/, "Opportunity detail must resolve the active locale on the server");
 assert.match(files.route, /locale=\{locale\}/, "Opportunity detail must pass the active locale to the live view");
 
