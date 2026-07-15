@@ -20,6 +20,19 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
   async upsert(opportunity: Opportunity) {
     const existing = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&domain_id=eq.${encodeURIComponent(opportunity.id)}&limit=1`);
     if (existing.error) throw new Error(existing.error.message);
+    const incomingSources = new Set((opportunity.sources ?? []).map((source) => `${source.id}|${source.originalId ?? ""}`));
+    if (incomingSources.size) {
+      const all = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&archived_at=is.null`);
+      if (all.error) throw new Error(all.error.message);
+      for (const row of all.data ?? []) {
+        if (row.domain_id === opportunity.id) continue;
+        const other = { ...row.payload, id: row.domain_id } as Opportunity;
+        const sources = (other.sources ?? []).filter((source) => !incomingSources.has(`${source.id}|${source.originalId ?? ""}`));
+        if (sources.length === (other.sources ?? []).length) continue;
+        const patched = await this.client.request<Row[]>(`opportunities?id=eq.${row.id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ payload: { ...row.payload, sources, source: sources.map((source) => source.name).join(" · ") || other.source }, updated_at: new Date().toISOString() }) });
+        if (patched.error) throw new Error(patched.error.message);
+      }
+    }
     const { id: domainId, ...payload } = opportunity;
     if (existing.data?.[0]) {
       const updated = await this.client.request<Row[]>(`opportunities?id=eq.${existing.data[0].id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, updated_at: new Date().toISOString() }) });

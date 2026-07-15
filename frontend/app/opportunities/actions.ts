@@ -98,7 +98,7 @@ export async function importLinkedInOpportunity(formData: FormData) {
   try { if (result.employerOutcome) await recordDiscoveryRun(client, resolved.context, result.employerOutcome); await recordDiscoveryRun(client, resolved.context, result.linkedInOutcome); } catch { /* The opportunity remains available if secondary monitoring persistence is interrupted. */ }
   revalidatePath("/opportunities");
   if (result.opportunityId) revalidatePath(`/opportunities/${result.opportunityId}`);
-  redirect(`/opportunities?linkedin=complete&verification=${encodeURIComponent(result.verificationStatus)}&opportunity=${encodeURIComponent(result.opportunityId ?? "")}`);
+  redirect(`/opportunities?linkedin=complete&verification=${encodeURIComponent(result.verificationStatus)}&opportunity=${encodeURIComponent(result.opportunityId ?? "")}&completedAt=${Date.now()}`);
 }
 
 export async function importLinkedInJobAlert(formData: FormData) {
@@ -121,5 +121,5 @@ export async function importLinkedInJobAlert(formData: FormData) {
     redirect(`/opportunities?linkedin=error&message=${encodeURIComponent(error instanceof Error ? error.message : "The job alert could not be imported safely.")}`);
   }
   revalidatePath("/opportunities");
-  redirect(`/opportunities?linkedin=complete&verification=Unverified%20LinkedIn%20observation&imported=${imported}`);
+  redirect(`/opportunities?linkedin=complete&verification=Unverified%20LinkedIn%20observation&imported=${imported}&completedAt=${Date.now()}`);
 }
