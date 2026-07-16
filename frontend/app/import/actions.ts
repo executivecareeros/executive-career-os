@@ -33,5 +33,5 @@ export async function confirmCvHistory(formData: FormData) {
     await repository.saveHistory({ organizationName: draft.organizationName, roleTitle: draft.roleTitle, startDate: draft.startDate, endDate: draft.isCurrent ? undefined : draft.endDate, isCurrent: draft.isCurrent, notes: JSON.stringify({ companyDescription: draft.companyDescription, roleDescription: draft.roleDescription, responsibilities: draft.responsibilities, achievements: draft.achievements, documentContext, sourceEvidence: "Confirmed from CV review" }), sourceType: "Document Import", sourceFilename: filename });
     keys.add(key); saved++;
   }
-  redirect(`/opportunities?cv=complete&roles=${saved}`);
+  redirect(`/opportunities?cv=complete&roles=${drafts.length}&newRoles=${saved}`);
 }
