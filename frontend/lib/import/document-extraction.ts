@@ -26,7 +26,7 @@ function sectionLines(text:string, name:string){const lines=text.split(/\r?\n/).
 function parseStructuredSections(text:string){
   const profileLines=sectionLines(text,"EXECUTIVE PROFILE");
   const header=text.split(/\r?\n/).map(line=>line.replace(/\u0000/g,"").replace(/\s+/g," ").trim()).filter(Boolean).slice(0,12);
-  const profile={fullName:header[0],headline:header[1],summary:profileLines.join(" ")||undefined,citizenship:header.find(line=>/^EU|citizenship/i.test(line))?.replace(/^citizenship\s*/i,""),contact:header.filter(line=>/^\+|^[\w.+-]+@[\w.-]+$/.test(line)).join(" · ")||undefined,linkedin:header.find(line=>/linkedin\.com\//i.test(line)),confidence:"High" as const};
+  const profile={fullName:header[0],headline:header[1],summary:profileLines.join(" ")||undefined,citizenship:header.find(line=>/^(?:EU\s*&\s*Turkish|citizenship\b)/i.test(line))?.replace(/^citizenship\s*/i,""),contact:header.filter(line=>/^\+|^[\w.+-]+@[\w.-]+$/.test(line)).join(" · ")||undefined,linkedin:header.find(line=>/linkedin\.com\//i.test(line)),confidence:"High" as const};
   const highlights=sectionLines(text,"CAREER HIGHLIGHTS").map(line=>line.replace(/^[•●▪◦*-]\s*/,""));
   const skills=sectionLines(text,"CORE COMPETENCIES").flatMap(line=>line.split("•").map(item=>item.trim()).filter(Boolean).map(name=>({name,category:"Core competency",evidence:name,confidence:"High" as const})));
   const languages=sectionLines(text,"LANGUAGES").map(line=>{const [language,...rest]=line.split("—");const proficiency=rest.join("—").trim();return{language:language.trim(),proficiency:proficiency||undefined,native:/native/i.test(proficiency),evidence:line,confidence:"High" as const};});

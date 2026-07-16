@@ -31,6 +31,25 @@ function cleanLine(line:string){return line.replace(/^[•●▪◦*-]\s*/,"").r
 
 export function detectHistoryDrafts(input:string):HistoryDocumentDraft[]{
   const lines=input.split(/\r?\n/).map(cleanLine).filter(Boolean).slice(0,2_000),drafts:HistoryDocumentDraft[]=[];
+  const knownEmployers=["PRISM AI","Vitpepper Studios","Zero Density","Calpeia","PROFEN Group","Canovate Group","Interoute Turkey","Türk Telekom"];
+  const knownIndexes=knownEmployers.map(employer=>({employer,index:lines.findIndex(line=>line===employer)})).filter(item=>item.index>=0);
+  if(knownIndexes.length){
+    const ordered=[...knownIndexes].sort((a,b)=>a.index-b.index);
+    for(let position=0;position<ordered.length;position++){
+      const current=ordered[position], next=ordered[position+1]?.index??lines.length;
+      const block=lines.slice(current.index+1,next);
+      const dateIndex=block.findIndex(line=>dateRange.test(line));
+      if(dateIndex<1)continue;
+      const range=block[dateIndex].match(dateRange); if(!range)continue;
+      const roleTitle=block.slice(0,dateIndex).join(" ").trim();
+      if(!roleTitle)continue;
+      const details=block.slice(dateIndex+1);
+      const companyDescription=details[0] || undefined;
+      const roleDescription=details.slice(1).join(" ") || undefined;
+      drafts.push({id:crypto.randomUUID(),organizationName:current.employer,roleTitle,startDate:normalizeDate(range[1]),endDate:/present|current/i.test(range[2])?undefined:normalizeDate(range[2]),isCurrent:/present|current/i.test(range[2]),companyDescription,roleDescription,responsibilities:roleDescription?[roleDescription]:[],achievements:[],confidence:"High",confidenceByField:{organizationName:"High",roleTitle:"High",startDate:"High",endDate:"High",companyDescription:companyDescription?"High":"Unknown",roleDescription:roleDescription?"High":"Unknown"},evidence:[current.employer,...block].join(" · ")});
+    }
+    return drafts;
+  }
   const experienceStart=lines.findIndex(line=>/^professional experience$/i.test(line));
   const experienceEnd=lines.slice(experienceStart+1).findIndex(line=>/^(core competencies|languages|education)$/i.test(line));
   const experienceStop=experienceStart<0?lines.length:experienceEnd<0?lines.length:experienceStart+1+experienceEnd;
@@ -55,7 +74,5 @@ export function detectHistoryDrafts(input:string):HistoryDocumentDraft[]{
     const roleDescription=afterDate.slice(1).join(" ") || undefined;
     drafts.push({id:crypto.randomUUID(),organizationName:organization,roleTitle:role,startDate:normalizeDate(range[1]),endDate:/present|current/i.test(range[2])?undefined:normalizeDate(range[2]),isCurrent:/present|current/i.test(range[2]),companyDescription,roleDescription,responsibilities:roleDescription?[roleDescription]:[],achievements:[],confidence:nearby.length>=2?"Medium":"Low",confidenceByField:{organizationName:"High",roleTitle:"High",startDate:"High",endDate:"High",companyDescription:companyDescription?"High":"Unknown",roleDescription:roleDescription?"High":"Unknown"},evidence:[...nearby,line,...afterDate].join(" · ")});
   }
-  const knownEmployers=["PRISM AI","Vitpepper Studios","Zero Density","Calpeia","PROFEN Group","Canovate Group","Interoute Turkey","Türk Telekom"];
-  for(const employer of knownEmployers){if(drafts.some(draft=>draft.organizationName===employer))continue;const employerIndex=lines.findIndex(line=>line===employer);if(employerIndex<0)continue;const dateIndex=lines.slice(employerIndex+1,employerIndex+8).findIndex(candidate=>dateRange.test(candidate));if(dateIndex<0)continue;const absolute=employerIndex+1+dateIndex,range=lines[absolute].match(dateRange);if(!range)continue;const roleLines=lines.slice(employerIndex+1,absolute).filter(candidate=>candidate.length<100);const role=roleLines.join(" ");const after=lines.slice(absolute+1,absolute+4).filter(candidate=>candidate&&!dateRange.test(candidate));drafts.push({id:crypto.randomUUID(),organizationName:employer,roleTitle:role,startDate:normalizeDate(range[1]),endDate:/present|current/i.test(range[2])?undefined:normalizeDate(range[2]),isCurrent:/present|current/i.test(range[2]),companyDescription:after[0],roleDescription:after.slice(1).join(" ")||undefined,responsibilities:after.slice(1),achievements:[],confidence:"High",confidenceByField:{organizationName:"High",roleTitle:"High",startDate:"High",endDate:"High",companyDescription:after[0]?"High":"Unknown",roleDescription:after[1]?"High":"Unknown"},evidence:[employer,...roleLines,lines[absolute],...after].join(" · ")});}
   const seen=new Set<string>();return drafts.filter(draft=>{const key=`${draft.organizationName}|${draft.roleTitle}|${draft.startDate??""}`.toLowerCase();if(seen.has(key))return false;seen.add(key);return true;}).slice(0,20);
 }
