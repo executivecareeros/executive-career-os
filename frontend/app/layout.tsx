@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { cookies } from "next/headers";
 import "./globals.css";
 import { getLocale } from "@/lib/locale";
+import { currentSession } from "@/lib/auth/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,13 +53,14 @@ export default async function RootLayout({
   const locale = await getLocale();
   const hasSession = cookieStore.has("ecos-access-token") || cookieStore.has("ecos-refresh-token");
   const publicExperience = process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase" && !hasSession;
+  const session = hasSession ? await currentSession().catch(() => undefined) : undefined;
   return (
     <html
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#f7f3ec]">
-        <AppShell publicExperience={publicExperience} locale={locale}>{children}</AppShell>
+        <AppShell publicExperience={publicExperience} locale={locale} signedInEmail={session?.user.email}>{children}</AppShell>
       </body>
     </html>
   );
