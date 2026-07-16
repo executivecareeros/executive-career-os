@@ -1,2 +1,10 @@
-import { CompaniesWorkspace } from "@/components/companies/companies-workspace"; import { companies } from "@/data/companies";
-export default function CompaniesPage(){return <CompaniesWorkspace companies={companies}/>;}
+import { CompaniesWorkspace } from "@/components/companies/companies-workspace"; import { companies } from "@/data/companies"; import { LiveCompanies, type LiveCompanyRecord } from "@/components/companies/live-companies"; import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context"; import { createServerSupabaseClient } from "@/lib/supabase/server"; import { redirect } from "next/navigation";
+type OpportunityRow = { domain_id: string; payload: Record<string, unknown> };
+export default async function CompaniesPage(){
+  if(process.env.NEXT_PUBLIC_DATA_ACCESS_MODE !== "supabase") return <CompaniesWorkspace companies={companies}/>;
+  const resolved=await resolveAuthenticatedRepositoryContext(); if(!resolved) redirect("/login?next=/companies");
+  const response=await createServerSupabaseClient(resolved.accessToken).request<OpportunityRow[]>(`opportunities?select=domain_id,payload&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&order=updated_at.desc`);
+  const grouped=new Map<string,LiveCompanyRecord>();
+  for(const row of response.data??[]){const payload=row.payload;const name=typeof payload.companyName==="string"&&payload.companyName.trim()?payload.companyName.trim():undefined;if(!name)continue;const current=grouped.get(name)??{name,website:typeof payload.companyWebsite==="string"?payload.companyWebsite:undefined,country:typeof payload.country==="string"?payload.country:undefined,opportunityCount:0,opportunityIds:[],sourceNames:[]};current.opportunityCount+=1;current.opportunityIds.push(row.domain_id);if(typeof payload.source==="string"&&!current.sourceNames.includes(payload.source))current.sourceNames.push(payload.source);grouped.set(name,current);}
+  return <LiveCompanies companies={[...grouped.values()]}/>;
+}

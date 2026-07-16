@@ -1,0 +1,15 @@
+import Link from "next/link";
+
+export type LiveCompanyRecord = {
+  name: string;
+  website?: string;
+  country?: string;
+  opportunityCount: number;
+  opportunityIds: string[];
+  sourceNames: string[];
+};
+
+export function LiveCompanies({ companies }: { companies: LiveCompanyRecord[] }) {
+  if (!companies.length) return <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 lg:px-10"><p className="text-sm font-semibold uppercase tracking-[.18em] text-[#936b3f]">Companies</p><h1 className="mt-3 text-4xl font-semibold tracking-[-.04em] text-[#17191c]">Company intelligence will follow the market.</h1><p className="mt-4 max-w-2xl text-[#626970]">As verified opportunities arrive, ORENDALIS will group them into company profiles using only facts supplied by their sources.</p><div className="mt-8 rounded-2xl border border-[#e3e5e6] bg-white p-6 text-sm text-[#626970]">No company records are available yet. Search Jobs to add a verified opportunity source.</div></div>;
+  return <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-10"><p className="text-sm font-semibold uppercase tracking-[.18em] text-[#936b3f]">Companies</p><h1 className="mt-3 text-4xl font-semibold tracking-[-.04em] text-[#17191c]">Companies hiring in your opportunity universe.</h1><p className="mt-4 max-w-2xl text-[#626970]">These profiles are built from current opportunity evidence. Unknown company facts remain unknown until an authoritative source confirms them.</p><p className="mt-5 text-sm text-[#747b82]">{companies.length} companies · grouped from verified opportunity records</p><div className="mt-8 grid gap-5 md:grid-cols-2">{companies.map(company=><article key={company.name} className="rounded-2xl border border-[#e3e5e6] bg-white p-6 shadow-sm"><div className="flex items-start justify-between gap-4"><div><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f1eee8] text-sm font-semibold text-[#695238]">{company.name.slice(0,2).toUpperCase()}</div><h2 className="mt-4 text-xl font-semibold text-[#17191c]">{company.name}</h2><p className="mt-1 text-sm text-[#747b82]">{company.country || "Location not confirmed"}</p></div><span className="rounded-full bg-[#f3eee7] px-3 py-1 text-xs font-medium text-[#695238]">{company.opportunityCount} {company.opportunityCount === 1 ? "opportunity" : "opportunities"}</span></div><p className="mt-5 text-sm leading-6 text-[#626970]">Company overview is not inferred. Review the linked roles and their source evidence before drawing conclusions.</p><div className="mt-5 flex flex-wrap gap-2">{company.opportunityIds.slice(0,3).map(id=><Link key={id} href={`/opportunities/${encodeURIComponent(id)}`} className="inline-flex rounded-xl bg-[#17191c] px-4 py-2.5 text-sm font-medium text-white">View opportunity</Link>)}{company.website&&<a href={company.website} target="_blank" rel="noreferrer" className="inline-flex rounded-xl border border-[#d9dcde] px-4 py-2.5 text-sm font-medium text-[#30343a]">Source website ↗</a>}</div><p className="mt-4 text-xs text-[#8a8f93]">Sources: {company.sourceNames.join(", ") || "Not confirmed"}</p></article>)}</div></main>;
+}
