@@ -86,8 +86,8 @@ select {
 .atlas-surface { background: var(--atlas-surface); border: 1px solid var(--atlas-border); box-shadow: var(--atlas-shadow); }
 .atlas-kicker { font-size: .6875rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--orendalis-accent); }
 
-[data-executive-shell] [class~="text-white"],
-[data-executive-shell] [class*="text-[#f4f0e8]"] { color: #17191c; }
+[data-executive-shell] [class~="text-white"]:not(button),
+[data-executive-shell] [class*="text-[#f4f0e8]"]:not(button) { color: #17191c; }
 [data-executive-shell] [class*="text-slate-2"],
 [data-executive-shell] [class*="text-slate-3"],
 [data-executive-shell] [class*="text-slate-4"],

@@ -50,7 +50,8 @@ export function ImportWorkspace({ locale = "en" }: { locale?: Locale }) {
       <label className="block cursor-pointer rounded-2xl border border-dashed border-[#d8d0c5] bg-[#faf6ef] p-8 text-center focus-within:ring-2 focus-within:ring-[#936b3f]">
         <span className="block text-lg font-semibold">{busy ? (tr ? "CV okunuyor…" : "Reading your CV…") : (tr ? "CV veya özgeçmiş seç" : "Choose your CV or resume")}</span>
         <span className="mt-2 block text-sm text-[#747b82]">{tr ? "PDF, DOCX, TXT, Markdown, CSV veya JSON · en fazla 5 MB" : "PDF, DOCX, TXT, Markdown, CSV or JSON · up to 5 MB"}</span>
-        <input disabled={busy} type="file" accept=".pdf,.docx,.txt,.md,.csv,.json" onChange={event => extract(event.target.files?.[0])} className="mt-5 max-w-full text-sm" />
+        <span className="mt-5 inline-flex items-center rounded-xl bg-[#17191c] px-4 py-2.5 text-sm font-semibold text-white shadow-sm">{busy ? "Reading…" : "Choose a file"}</span>
+        <input aria-label="Choose a CV or resume file" disabled={busy} type="file" accept=".pdf,.docx,.txt,.md,.csv,.json" onChange={event => extract(event.target.files?.[0])} className="sr-only" />
       </label>
       <div className="mt-5 rounded-xl bg-[#f3f5f5] p-4 text-sm leading-6 text-[#626970]"><strong className="text-[#30343a]">{tr ? "Gizlilik:" : "Privacy:"}</strong> {tr ? "Dosyan yalnızca inceleme taslağı oluşturmak için okunur. Ham dosya saklanmaz; yalnızca onayladığın yapılandırılmış bilgiler kaydedilir." : "Your file is read only to create a review draft. The raw file is not retained; only the structured facts you confirm are saved."}</div>
       {error && <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{error}</p>}
