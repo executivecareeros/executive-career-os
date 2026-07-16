@@ -3,7 +3,7 @@ import { extractHistory } from "../lib/import/extraction.ts";
 import { detectHistoryConflicts } from "../lib/import/conflicts.ts";
 import { createFirstExecutiveBrief } from "../lib/import/brief.ts";
 import { detectHistoryDrafts } from "../lib/import/history-drafts.ts";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const provenance={source:"CSV",filename:"fictional.csv",importedAt:"2026-01-01T00:00:00Z",importVersion:"1.0",evidence:[]};
 const result=extractHistory("CSV","company,title,start,end\nExample Group,Chief Test Officer,2020-01,2023-01\nExample Group,Chief Test Officer,2020-01,2023-01",provenance);
@@ -26,4 +26,11 @@ const actions=readFileSync(new URL("../app/import/actions.ts",import.meta.url),"
 if(!actions.includes('sourceType: "Document Import"')||!actions.includes("keys.has(key)"))throw Error("Confirmed CV history is not provenance-aware and replay-safe");
 const documentExtraction=readFileSync(new URL("../lib/import/document-extraction.ts",import.meta.url),"utf8");
 if(!documentExtraction.includes('mergePages:false')||!documentExtraction.includes('extracted.join("\\n")'))throw Error("PDF page structure is not preserved for role extraction");
+if(existsSync(new URL("../../../CuneytSenCV.pdf",import.meta.url))){
+  const { extractText }=await import("unpdf");
+  const cvText=await extractText(new Uint8Array(readFileSync(new URL("../../../CuneytSenCV.pdf",import.meta.url))),{mergePages:false});
+  const cv=detectHistoryDrafts(Array.isArray(cvText.text)?cvText.text.join("\n"):cvText.text);
+  if(cv.length<8)throw Error(`Founder CV extraction found only ${cv.length} roles`);
+  for(const employer of ["PRISM AI","Vitpepper Studios","Zero Density","Calpeia","PROFEN Group","Canovate Group","Interoute Turkey","Türk Telekom"])if(!cv.some(draft=>draft.organizationName===employer))throw Error(`Founder CV employer missing: ${employer}`);
+}
 console.log("PASS Import validation — deterministic CV draft extraction, CSV extraction, safe rejection, conflicts, review decisions, sanitization, and deterministic brief");
