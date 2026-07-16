@@ -19,7 +19,7 @@ export function OpportunityUniverseOverview({ activeView, counts, sourceCount, o
         <div>
           <p className="atlas-kicker">Executive Opportunity Universe</p>
           <h2 id="universe-heading" className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">One universe. A sharper executive shortlist.</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">Stop checking separate job sites. Orendalis brings attributable opportunities into one view, your Blueprint qualifies them, and Atlas explains which deserve attention.</p>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">Stop checking separate job sites. ORENDALIS brings attributable opportunities into one view, your Blueprint qualifies them, and Atlas explains which deserve attention.</p>
         </div>
       </div>
       <div className="grid border-t border-white/10 sm:grid-cols-3" role="tablist" aria-label="Opportunity universe views">

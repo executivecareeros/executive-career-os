@@ -32,11 +32,11 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
 
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
-      <PageHeader eyebrow="Internal — Founder Access" title="Orendalis Company Control Center" description="Decision and exception management across company operations. Staging is active; unavailable telemetry remains identified by source and freshness." />
+      <PageHeader eyebrow="Internal — Founder Access" title="ORENDALIS Company Control Center" description="Decision and exception management across company operations. Staging is active; unavailable telemetry remains identified by source and freshness." />
 
       <section aria-label="Control center context" className="mt-6 grid gap-3 rounded-2xl border border-blue-400/15 bg-blue-400/[.06] p-4 text-sm sm:grid-cols-2 xl:grid-cols-6">
         <div><p className="text-xs text-slate-500">Date</p><p className="mt-1 text-slate-200">{new Date(snapshot.generatedAt).toLocaleDateString("en-GB", { dateStyle: "long", timeZone: "Europe/Istanbul" })}</p></div>
-        <div><p className="text-xs text-slate-500">Company</p><p className="mt-1 text-slate-200">Orendalis</p></div>
+        <div><p className="text-xs text-slate-500">Company</p><p className="mt-1 text-slate-200">ORENDALIS</p></div>
         <div><p className="text-xs text-slate-500">Environment</p><p className="mt-1 text-slate-200">{snapshot.environment}</p></div>
         <div><p className="text-xs text-slate-500">Stage</p><p className="mt-1 text-slate-200">{snapshot.betaStage}</p></div>
         <div><p className="text-xs text-slate-500">Data freshness</p><p className="mt-1 text-slate-200">Partial · Manual</p></div>

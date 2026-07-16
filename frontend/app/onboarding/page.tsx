@@ -11,7 +11,7 @@ export default async function Onboarding({ searchParams }: { searchParams: Promi
   const membership = await createServerSupabaseClient(session.accessToken).request<Array<{ id: string }>>("workspace_memberships?select=id&status=eq.Active&archived_at=is.null&limit=1");
   if (membership.data?.length) redirect("/");
   const tr = locale === "tr";
-  return <AuthFrame locale={locale} eyebrow={tr ? "Orendalis’e hoş geldin" : "Welcome to Orendalis"} title={tr ? "Nasıl başlamak istersin?" : "How would you like to begin?"} description={tr ? "CV’ni yükle ve temel bilgileri Atlas hazırlasın veya doğrudan yönetici pozisyonlarını ara. Profilini daha sonra tamamlayabilirsin." : "Upload your CV and let Atlas prepare the basics, or go straight to executive job search. You can complete your profile later."}>
+  return <AuthFrame locale={locale} eyebrow={tr ? "ORENDALIS’e hoş geldin" : "Welcome to ORENDALIS"} title={tr ? "Nasıl başlamak istersin?" : "How would you like to begin?"} description={tr ? "CV’ni yükle ve temel bilgileri Atlas hazırlasın veya doğrudan yönetici pozisyonlarını ara. Profilini daha sonra tamamlayabilirsin." : "Upload your CV and let Atlas prepare the basics, or go straight to executive job search. You can complete your profile later."}>
     <FormMessage message={q.error} />
     <form action={onboardingAction} className="space-y-5">
       <AuthField label={tr ? "Sana nasıl hitap edelim?" : "What should we call you?"} name="preferredName" autoComplete="given-name" />

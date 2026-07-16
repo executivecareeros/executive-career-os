@@ -604,7 +604,7 @@ export default async function BetaWorkflowPage({
           <h2 className="text-xl font-semibold">6. Your Data Requests</h2>
           <p className="mt-2 text-sm text-slate-400">
             Request an export, account closure, deletion review, or consent
-            withdrawal. Orendalis will explain any record that must be retained
+            withdrawal. ORENDALIS will explain any record that must be retained
             for security or legal reasons before completing the request.
           </p>
           <form action={submitLifecycleAction} className="mt-5 grid gap-4">

@@ -8,7 +8,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { resolveFounderAccess } from "@/lib/auth/founder-access";
 import { founderBootstrapStatus } from "@/lib/auth/founder-bootstrap";
 
-export const metadata: Metadata = { title: "Company Control Center", description: "Founder-only internal Orendalis operating dashboard." };
+export const metadata: Metadata = { title: "Company Control Center", description: "Founder-only internal ORENDALIS operating dashboard." };
 
 export default async function CompanyControlPage() {
   let betaTriage;

@@ -25,7 +25,7 @@ export class OpportunityProviderCatalog {
     try { url = new URL(locator.trim()); } catch { throw new Error("Enter a valid company careers URL."); }
     if (url.protocol !== "https:") throw new Error("Only secure company careers URLs are supported.");
     const adapter = this.list().find((candidate) => candidate.evaluation.reviewStatus === "approved" && candidate.supports(url));
-    if (!adapter) throw new Error("This source is not available yet. Orendalis continuously reviews additional opportunity ecosystems.");
+    if (!adapter) throw new Error("This source is not available yet. ORENDALIS continuously reviews additional opportunity ecosystems.");
     return adapter.create(locator);
   }
 }
