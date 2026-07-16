@@ -6,12 +6,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://www.orendalis.com",
       changeFrequency: "weekly",
       priority: 1,
-      alternates: {
-        languages: {
-          en: "https://www.orendalis.com/?lang=en",
-          tr: "https://www.orendalis.com/?lang=tr",
-        },
-      },
     },
   ];
 }

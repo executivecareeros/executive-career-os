@@ -1,13 +1,7 @@
-import { cookies, headers } from "next/headers";
-
 export type Locale = "en" | "tr";
 
-export async function getLocale(): Promise<Locale> {
-  const cookieLocale = (await cookies()).get("orendalis-language")?.value;
-  if (cookieLocale === "tr" || cookieLocale === "en") return cookieLocale;
-  const browserLanguage = (await headers()).get("accept-language")?.toLowerCase() ?? "";
-  return browserLanguage.startsWith("tr") ? "tr" : "en";
-}
+/** English is the only enabled production locale. The registry remains intact for future activation. */
+export async function getLocale(): Promise<Locale> { return "en"; }
 
 export const copy = {
   en: {

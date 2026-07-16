@@ -24,14 +24,7 @@ export const metadata: Metadata = {
   description: "Upload your CV, search executive opportunities, and let Atlas show you the roles that appear strongest for your experience.",
   applicationName: "Orendalis",
   keywords: ["executive jobs", "executive opportunities", "career search", "leadership roles", "Atlas"],
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en": "/?lang=en",
-      "tr": "/?lang=tr",
-      "x-default": "/",
-    },
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
@@ -39,7 +32,6 @@ export const metadata: Metadata = {
     title: "Find your next executive opportunity",
     description: "Upload your CV, search executive opportunities, and let Atlas help you identify the roles worth reviewing.",
     locale: "en_US",
-    alternateLocale: ["tr_TR"],
     images: [{ url: "/brand/orendalis-social-preview.png", width: 1200, height: 630, alt: "Orendalis — a clearer perspective on executive opportunities" }],
   },
   twitter: {
