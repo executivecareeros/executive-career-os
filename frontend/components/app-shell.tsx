@@ -16,7 +16,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
   if ((pathname === "/" && publicExperience) || ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/welcome", "/onboarding"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
-    <div data-executive-shell className="min-h-screen bg-[#f7f8f8] text-[#17191c] lg:flex">
+    <div data-executive-shell className="min-h-screen bg-[#f7f3ec] text-[#22211f] lg:flex">
       {!focusMode && <Sidebar locale={locale} />}
 
       <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} locale={locale} />
@@ -25,7 +25,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            className="absolute inset-0 bg-black/70"
+            className="absolute inset-0 bg-[#22211f]/35 backdrop-blur-sm"
             onClick={menu.close}
             aria-label={locale === "tr" ? "Gezinme menüsünü kapat" : "Close navigation menu"}
           />
@@ -34,7 +34,7 @@ export function AppShell({ children, publicExperience = false, locale = "en" }: 
             <button
               type="button"
               onClick={menu.close}
-              className="absolute right-4 top-4 rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+              className="absolute right-4 top-4 rounded-lg p-2 text-[#706c66] hover:bg-[#eee8df] hover:text-[#22211f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#936b3f]"
               aria-label={locale === "tr" ? "Gezinme menüsünü kapat" : "Close navigation menu"}
             >
               <span aria-hidden="true">✕</span>

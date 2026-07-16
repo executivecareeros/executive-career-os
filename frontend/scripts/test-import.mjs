@@ -24,4 +24,6 @@ for(const required of ['accept=".pdf,.docx,.txt,.md,.csv,.json"','/api/import/ex
 for(const forbidden of ['demoRecords','Career Passport','preview-only','Architecture placeholder'])if(workspace.includes(forbidden))throw Error(`Legacy import language remains: ${forbidden}`);
 const actions=readFileSync(new URL("../app/import/actions.ts",import.meta.url),"utf8");
 if(!actions.includes('sourceType: "Document Import"')||!actions.includes("keys.has(key)"))throw Error("Confirmed CV history is not provenance-aware and replay-safe");
+const documentExtraction=readFileSync(new URL("../lib/import/document-extraction.ts",import.meta.url),"utf8");
+if(!documentExtraction.includes('mergePages:false')||!documentExtraction.includes('extracted.join("\\n")'))throw Error("PDF page structure is not preserved for role extraction");
 console.log("PASS Import validation — deterministic CV draft extraction, CSV extraction, safe rejection, conflicts, review decisions, sanitization, and deterministic brief");

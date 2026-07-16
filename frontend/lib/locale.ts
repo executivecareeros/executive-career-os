@@ -13,8 +13,8 @@ export const copy = {
   en: {
     signIn: "Sign in", searchJobs: "Search jobs", uploadCv: "Upload your CV",
     hero: "Find your next executive opportunity.",
-    heroBody: "Upload your CV, search executive jobs from across the market, and let Atlas help you discover the ones you should not miss.",
-    atlasTitle: "Atlas noticed", atlasBody: "Atlas compares available roles with the experience and preferences you choose to share—then explains what deserves attention.",
+    heroBody: "Bring your CV, review executive roles in one place, and let Atlas explain which opportunities deserve your attention.",
+    atlasTitle: "Atlas perspective", atlasBody: "I compare each role with the experience and preferences you choose to share, then show you where to look first.",
     control: "You remain in control", controlBody: "Save, pursue, watch, or skip. Atlas offers a second perspective; every decision stays yours.",
     how: "A simpler way to search", steps: ["Bring your CV—or skip it for now.", "Search jobs with familiar filters.", "Review what Atlas found and decide."],
     final: "Ready to see what deserves your attention?", welcome: "Welcome back.",
@@ -23,8 +23,8 @@ export const copy = {
   tr: {
     signIn: "Giriş yap", searchJobs: "İş ara", uploadCv: "CV’ni yükle",
     hero: "Bir sonraki yönetici fırsatını bul.",
-    heroBody: "CV’ni yükle, piyasadaki yönetici pozisyonlarını tek yerde ara ve kaçırmaman gereken fırsatları Atlas ile keşfet.",
-    atlasTitle: "Atlas’ın dikkatini çekti", atlasBody: "Atlas, mevcut rolleri paylaşmayı seçtiğin deneyim ve tercihlerle karşılaştırır; sonra hangilerinin neden önemli olduğunu açıklar.",
+    heroBody: "CV’ni getir, yönetici rollerini tek yerde incele; Atlas da hangi fırsatların önceliğini hak ettiğini açıklasın.",
+    atlasTitle: "Atlas’ın bakışı", atlasBody: "Her rolü paylaşmayı seçtiğin deneyim ve tercihlerle karşılaştırır, önce nereye bakman gerektiğini gösteririm.",
     control: "Kontrol sende", controlBody: "Kaydet, ilerle, izle veya geç. Atlas ikinci bir bakış sunar; kararı her zaman sen verirsin.",
     how: "İş aramanın daha sade yolu", steps: ["CV’ni yükle veya şimdilik geç.", "Tanıdık filtrelerle iş ara.", "Atlas’ın bulduklarını incele ve karar ver."],
     final: "Dikkatini hak eden fırsatları görmeye hazır mısın?", welcome: "Tekrar hoş geldin.",

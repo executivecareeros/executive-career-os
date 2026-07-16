@@ -24,7 +24,7 @@ export default async function Login({
       footer={
         <>
           {locale === "tr" ? "Orendalis’e ilk kez mi geliyorsun? " : "Entering Orendalis for the first time? "}
-          <Link className="text-blue-300 hover:text-blue-200" href="/register">
+          <Link className="font-medium text-[#936b3f] hover:text-[#6f4d2d]" href="/register">
             {locale === "tr" ? "Davetini kabul et" : "Accept your invitation"}
           </Link>
         </>
@@ -35,11 +35,11 @@ export default async function Login({
         tone="success"
         message={
           q.verification
-            ? "Check your email to verify your address."
+            ? (locale === "tr" ? "Adresini doğrulamak için e-postanı kontrol et." : "Check your email to verify your address.")
             : q.reset
-              ? "Your password was updated."
+              ? (locale === "tr" ? "Parolan güncellendi." : "Your password was updated.")
               : q.verified
-                ? "Email verified. You may now sign in."
+                ? (locale === "tr" ? "E-posta adresin doğrulandı. Şimdi giriş yapabilirsin." : "Email verified. You may now sign in.")
                 : undefined
         }
       />
@@ -58,15 +58,15 @@ export default async function Login({
           autoComplete="current-password"
         />
         <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 text-slate-300">
+          <label className="flex items-center gap-2 text-[#625d57]">
             <input
               name="remember"
               type="checkbox"
-              className="accent-blue-500"
+              className="accent-[#936b3f]"
             />
             {locale === "tr" ? "Beni hatırla" : "Remember me"}
           </label>
-          <Link href="/forgot-password" className="text-blue-300">
+          <Link href="/forgot-password" className="font-medium text-[#936b3f]">
             {locale === "tr" ? "Parolanı mı unuttun?" : "Forgot password?"}
           </Link>
         </div>

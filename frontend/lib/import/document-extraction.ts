@@ -23,7 +23,8 @@ export async function extractHistoryDocument(file:File):Promise<HistoryDocumentE
   const bytes=new Uint8Array(await file.arrayBuffer());let text="";
   if(ext===".pdf"){
     if(new TextDecoder().decode(bytes.slice(0,5))!=="%PDF-")throw new Error("The file does not have a valid PDF signature.");
-    text=(await extractPdfText(bytes,{mergePages:true})).text;
+    const extracted=(await extractPdfText(bytes,{mergePages:false})).text;
+    text=Array.isArray(extracted)?extracted.join("\n"):extracted;
   }else if(ext===".docx"){
     if(bytes[0]!==0x50||bytes[1]!==0x4b)throw new Error("The file does not have a valid DOCX container signature.");
     text=(await mammoth.extractRawText({buffer:Buffer.from(bytes)})).value;

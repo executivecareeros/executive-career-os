@@ -43,8 +43,8 @@ export async function SimpleExecutiveHome({ resolved, locale }: { resolved: Reso
       <button className="rounded-xl bg-[#17191c] px-6 py-3 text-sm font-semibold text-white hover:bg-black">{tr ? "İş ara" : "Search jobs"}</button>
     </form>
 
-    <section className="mt-7 rounded-2xl border border-[#dce4e7] bg-[#f4f8f8] p-5 sm:p-6" aria-labelledby="atlas-update-title">
-      <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#587585]">Atlas</p>
+    <section className="mt-7 rounded-2xl border border-[#dfd2c1] bg-[#eee2d2] p-5 sm:p-6" aria-labelledby="atlas-update-title">
+      <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#835c34]">Atlas</p>
       <h2 id="atlas-update-title" className="mt-2 text-xl font-semibold">{atlas.title}</h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-[#5f686e]">{atlas.detail}</p>
       <div className="mt-4"><PrimaryButton href={atlas.href}>{atlas.action}</PrimaryButton></div>

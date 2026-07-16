@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 
 const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
 const landing = await readFile(new URL("../components/experience-zero/arrival.tsx", import.meta.url), "utf8");
@@ -12,7 +12,11 @@ assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/)
 assert.match(layout, /Find your next executive opportunity/);
 assert.match(layout, /canonical: "\/"/);
 assert.match(layout, /"tr": "\/\?lang=tr"/);
-assert.match(layout, /card: "summary"/);
+assert.match(layout, /card: "summary_large_image"/);
+assert.match(layout, /orendalis-social-preview\.png/);
+assert.match(layout, /icon: "\/icon\.svg"/);
+await access(new URL("../public/brand/orendalis-social-preview.png", import.meta.url));
+await access(new URL("../app/icon.svg", import.meta.url));
 
 for (const phrase of ["Find your next executive opportunity.", "Upload your CV", "Search jobs", "Sign in"]) {
   assert.ok(`${landing}\n${locale}`.includes(phrase), `Missing English public acquisition copy: ${phrase}`);

@@ -29,7 +29,7 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
       <Link
         href="/"
         onClick={onNavigate}
-        className="group block rounded-lg text-[#17191c] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8]"
+        className="group block rounded-lg text-[#22211f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#936b3f]"
       >
         <OrendalisMark />
         <p className="mt-3 pl-12 text-[11px] leading-5 text-[#777f85]">{locale === "tr" ? "Özel kariyer ofisin" : "Your private career office"}</p>
@@ -45,7 +45,7 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
               href={item.href}
               onClick={onNavigate}
               aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8] ${
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#936b3f] ${
                 isActive
                   ? "bg-[#efe8dc] font-medium text-[#11161b]"
                   : "text-[#626970] hover:bg-[#f3f4f4] hover:text-[#17191c]"
@@ -70,7 +70,7 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
             {executiveUtilityItems.map((item) => {
               const isActive = isNavigationItemActive(pathname, item.href);
               return (
-                <Link key={item.href} href={item.href} onClick={onNavigate} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8ea7b8] ${isActive ? "bg-[#efe8dc] font-medium text-[#11161b]" : "text-[#747d84] hover:bg-white/[0.05] hover:text-[#f4f0e8]"}`}>
+                <Link key={item.href} href={item.href} onClick={onNavigate} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#936b3f] ${isActive ? "bg-[#eee2d2] font-medium text-[#22211f]" : "text-[#74706a] hover:bg-[#f3eee7] hover:text-[#22211f]"}`}>
                   <span aria-hidden="true" className={`flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold ${isActive ? "bg-slate-950/10" : "bg-white/5"}`}>{item.marker}</span>
                   {labels[item.label] ?? item.label}
                 </Link>
@@ -85,9 +85,9 @@ export function Sidebar({ mobile = false, onNavigate, locale = "en" }: SidebarPr
         <p className="mt-1 text-xs leading-5 text-[#777f85]">
           {locale === "tr" ? "İkinci bir bakış istediğinde yanında." : "Available when you want a second perspective."}
         </p>
-        <div className="mt-3 flex items-center gap-2 text-xs text-emerald-300">
+        <div className="mt-3 flex items-center gap-2 text-xs text-[#6d775a]">
           <span
-            className="h-2 w-2 rounded-full bg-emerald-300"
+            className="h-2 w-2 rounded-full bg-[#7c8767]"
             aria-hidden="true"
           />
           {locale === "tr" ? "Sen hazır olduğunda" : "Ready when you are"}

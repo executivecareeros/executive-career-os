@@ -40,12 +40,15 @@ export const metadata: Metadata = {
     description: "Upload your CV, search executive opportunities, and let Atlas help you identify the roles worth reviewing.",
     locale: "en_US",
     alternateLocale: ["tr_TR"],
+    images: [{ url: "/brand/orendalis-social-preview.png", width: 1200, height: 630, alt: "Orendalis — a clearer perspective on executive opportunities" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Orendalis — Find your next executive opportunity",
     description: "Search executive opportunities and let Atlas help you identify the roles worth reviewing.",
+    images: ["/brand/orendalis-social-preview.png"],
   },
+  icons: { icon: "/icon.svg", apple: "/icon.svg" },
 };
 
 export default async function RootLayout({
@@ -62,7 +65,7 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#f7f8f8]">
+      <body className="min-h-full bg-[#f7f3ec]">
         <AppShell publicExperience={publicExperience} locale={locale}>{children}</AppShell>
       </body>
     </html>
