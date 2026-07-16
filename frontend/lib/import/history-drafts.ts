@@ -37,7 +37,9 @@ export function detectHistoryDrafts(input:string):HistoryDocumentDraft[]{
     const ordered=[...knownIndexes].sort((a,b)=>a.index-b.index);
     for(let position=0;position<ordered.length;position++){
       const current=ordered[position], next=ordered[position+1]?.index??lines.length;
-      const block=lines.slice(current.index+1,next);
+      const rawBlock=lines.slice(current.index+1,next);
+      const sectionBoundary=rawBlock.findIndex(line=>/^(CORE COMPETENCIES|LANGUAGES|EDUCATION|CERTIFICATIONS|SKILLS)$/i.test(line));
+      const block=rawBlock.slice(0,sectionBoundary<0?rawBlock.length:sectionBoundary);
       const dateIndex=block.findIndex(line=>dateRange.test(line));
       if(dateIndex<1)continue;
       const range=block[dateIndex].match(dateRange); if(!range)continue;

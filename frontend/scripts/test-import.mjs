@@ -32,5 +32,8 @@ if(existsSync(new URL("../../../CuneytSenCV.pdf",import.meta.url))){
   const cv=detectHistoryDrafts(Array.isArray(cvText.text)?cvText.text.join("\n"):cvText.text);
   if(cv.length<8)throw Error(`Founder CV extraction found only ${cv.length} roles`);
   for(const employer of ["PRISM AI","Vitpepper Studios","Zero Density","Calpeia","PROFEN Group","Canovate Group","Interoute Turkey","Türk Telekom"])if(!cv.some(draft=>draft.organizationName===employer))throw Error(`Founder CV employer missing: ${employer}`);
+  const finalRole=cv.find(draft=>draft.organizationName==="Türk Telekom");
+  if(!finalRole)throw Error("Final CV role missing");
+  if(/CORE COMPETENCIES|LANGUAGES|EDUCATION/i.test(`${finalRole.roleDescription??""} ${finalRole.companyDescription??""}`))throw Error("Section content leaked into final role");
 }
 console.log("PASS Import validation — deterministic CV draft extraction, CSV extraction, safe rejection, conflicts, review decisions, sanitization, and deterministic brief");
