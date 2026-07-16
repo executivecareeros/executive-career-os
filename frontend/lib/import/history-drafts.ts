@@ -28,6 +28,16 @@ const dateRange = /((?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(
 
 function normalizeDate(value:string){const trimmed=value.trim();if(/^\d{4}-\d{2}$/.test(trimmed))return trimmed;if(/^\d{4}$/.test(trimmed))return `${trimmed}-01`;const match=trimmed.toLowerCase().match(/^([a-z]+)\s+(\d{4})$/);return match&&months[match[1]]?`${match[2]}-${months[match[1]]}`:undefined;}
 function cleanLine(line:string){return line.replace(/^[•●▪◦*-]\s*/,"").replace(/\s+/g," ").trim();}
+function stopAtSection(lines:string[]){
+  const boundary=/\b(?:CORE COMPETENCIES|LANGUAGES|EDUCATION|CERTIFICATIONS|SKILLS)\b/i;
+  const result:string[]=[];
+  for(const line of lines){
+    const match=line.search(boundary);
+    if(match>=0){const before=line.slice(0,match).trim();if(before)result.push(before);break;}
+    result.push(line);
+  }
+  return result;
+}
 
 export function detectHistoryDrafts(input:string):HistoryDocumentDraft[]{
   const lines=input.split(/\r?\n/).map(cleanLine).filter(Boolean).slice(0,2_000),drafts:HistoryDocumentDraft[]=[];
@@ -39,7 +49,7 @@ export function detectHistoryDrafts(input:string):HistoryDocumentDraft[]{
       const current=ordered[position], next=ordered[position+1]?.index??lines.length;
       const rawBlock=lines.slice(current.index+1,next);
       const sectionBoundary=rawBlock.findIndex(line=>/^(CORE COMPETENCIES|LANGUAGES|EDUCATION|CERTIFICATIONS|SKILLS)$/i.test(line));
-      const block=rawBlock.slice(0,sectionBoundary<0?rawBlock.length:sectionBoundary);
+      const block=stopAtSection(rawBlock.slice(0,sectionBoundary<0?rawBlock.length:sectionBoundary));
       const dateIndex=block.findIndex(line=>dateRange.test(line));
       if(dateIndex<1)continue;
       const range=block[dateIndex].match(dateRange); if(!range)continue;
