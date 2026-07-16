@@ -88,6 +88,12 @@ select {
 
 [data-executive-shell] :not(button):not(button *)[class~="text-white"],
 [data-executive-shell] :not(button):not(button *)[class*="text-[#f4f0e8]"] { color: #17191c; }
+[data-executive-shell] :is(button, a)[class*="bg-[#17191c]"],
+[data-executive-shell] :is(button, a)[class*="bg-[#22211f]"],
+[data-executive-shell] :is(button, a)[class*="bg-black"] { color: #fff !important; }
+[data-executive-shell] :is(button, a)[class*="bg-[#17191c]"] *,
+[data-executive-shell] :is(button, a)[class*="bg-[#22211f]"] *,
+[data-executive-shell] :is(button, a)[class*="bg-black"] * { color: inherit !important; }
 [data-executive-shell] [class*="text-slate-2"],
 [data-executive-shell] [class*="text-slate-3"],
 [data-executive-shell] [class*="text-slate-4"],
