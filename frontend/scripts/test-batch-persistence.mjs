@@ -34,6 +34,7 @@ const root = resolve(import.meta.dirname, "../..");
 const migration = await readFile(resolve(root, "supabase/migrations/202607180001_transaction_safe_opportunity_batches.sql"), "utf8");
 const countries = await readFile(resolve(root, "supabase/migrations/202607180002_world_country_registry.sql"), "utf8");
 const intelligence = await readFile(resolve(root, "supabase/migrations/202607180003_global_coverage_intelligence.sql"), "utf8");
+const schedulerRoute = await readFile(resolve(root, "frontend/app/api/operations/opportunity-refresh/route.ts"), "utf8");
 assert.match(migration, /^begin;/);
 assert.match(migration, /record_count between 1 and 250/, "Database batch size must be bounded");
 assert.match(migration, /unique\(workspace_id,batch_id\)/, "Retry identity must be durable and workspace scoped");
@@ -50,5 +51,6 @@ assert.match(intelligence, /countryStandard','ISO 3166-1 alpha-2'/);
 assert.match(intelligence, /normalized_industry/);
 assert.match(intelligence, /opportunity_persistence_batches/);
 assert.match(intelligence, /provider_runs/);
+assert.match(schedulerRoute, /ODS3_OPERATIONAL_TELEMETRY/);
 
 console.log("Transaction-safe batch persistence and global coverage intelligence checks passed.");

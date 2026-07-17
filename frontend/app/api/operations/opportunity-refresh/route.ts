@@ -14,7 +14,22 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const summary = await runOpportunityScheduler(createSchedulerSupabaseClient());
+    const client = createSchedulerSupabaseClient();
+    const summary = await runOpportunityScheduler(client);
+    const schedules = await client.request<Array<{ workspace_id: string }>>("opportunity_provider_schedules?select=workspace_id&enabled=eq.true&limit=1");
+    const workspaceId = schedules.data?.[0]?.workspace_id;
+    const coverage = workspaceId
+      ? await client.request<Record<string, unknown>>("rpc/get_global_coverage_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
+      : undefined;
+    const evidence = coverage?.data;
+    console.info("ODS3_OPERATIONAL_TELEMETRY", JSON.stringify({
+      scheduler: { ...summary, correlationId: undefined },
+      countriesRepresented: evidence?.countriesRepresented,
+      countriesWithOpportunities: evidence?.countriesWithOpportunities,
+      industries: Array.isArray(evidence?.industries) ? evidence.industries.slice(0, 10) : [],
+      providers: evidence?.providers ?? [],
+      persistence: evidence?.persistence ?? {},
+    }));
     return NextResponse.json(summary, { status: summary.failed ? 207 : 200 });
   } catch {
     return NextResponse.json({ error: "Scheduler execution failed" }, { status: 500 });

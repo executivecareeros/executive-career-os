@@ -20,6 +20,7 @@ type JobScheduleRow = { schedule_id: string | null };
 export type SchedulerSummary = {
   correlationId: string; dueSchedules: number; jobsEnqueued: number; jobsExecuted: number;
   completed: number; failed: number; recordsDiscovered: number; recordsChanged: number;
+  persistenceBatches: number; persistenceRecords: number; persistenceDatabaseCalls: number; persistenceDurationMs: number;
 };
 
 const later = (iso: string, minutes: number) => new Date(Date.parse(iso) + minutes * 60_000).toISOString();
@@ -74,6 +75,7 @@ export async function runOpportunityScheduler(client: SupabaseDataClient, now = 
   for (const schedule of dueSchedules) if (await enqueue(client, schedule, now)) jobsEnqueued += 1;
 
   let jobsExecuted = 0, completed = 0, failed = 0, recordsDiscovered = 0, recordsChanged = 0;
+  let persistenceBatches = 0, persistenceRecords = 0, persistenceDatabaseCalls = 0, persistenceDurationMs = 0;
   for (const workspaceId of [...new Set(schedules.map(schedule => schedule.workspace_id))]) {
     for (let count = 0; count < maximumJobs; count += 1) {
       const claim = await client.request<ClaimedRow[]>("rpc/claim_next_opportunity_provider_job", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId, worker_id: correlationId, available_before: now, lease_seconds: 300 }) });
@@ -89,6 +91,12 @@ export async function runOpportunityScheduler(client: SupabaseDataClient, now = 
       try {
         const outcome = await executeClaim(client, schedule, claimed, now);
         jobsExecuted += 1; recordsDiscovered += outcome.run.jobsFound; recordsChanged += outcome.run.jobsImported;
+        for (const batch of outcome.persistence ?? []) {
+          persistenceBatches += 1;
+          persistenceRecords += batch.records;
+          persistenceDatabaseCalls += batch.databaseCalls;
+          persistenceDurationMs += batch.durationMs;
+        }
         if (outcome.run.status === "failed") failed += 1; else completed += 1;
       } catch (error) {
         failed += 1; jobsExecuted += 1;
@@ -96,5 +104,5 @@ export async function runOpportunityScheduler(client: SupabaseDataClient, now = 
       }
     }
   }
-  return { correlationId, dueSchedules: dueSchedules.length, jobsEnqueued, jobsExecuted, completed, failed, recordsDiscovered, recordsChanged };
+  return { correlationId, dueSchedules: dueSchedules.length, jobsEnqueued, jobsExecuted, completed, failed, recordsDiscovered, recordsChanged, persistenceBatches, persistenceRecords, persistenceDatabaseCalls, persistenceDurationMs };
 }
