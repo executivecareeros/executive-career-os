@@ -156,6 +156,22 @@ Version `atlas-opportunity-review-v1` is measured by deterministic eligible and 
 
 Fixture results validate review composition and safety. They do not measure live comprehension, decision quality, or executive trust.
 
+## Atlas 2.0 Decision Workspace measures
+
+Version `atlas-decision-workspace-v1` is measured by a deterministic complete-workspace fixture.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Decision Journey Coverage | registered stages with transition contracts ÷ fifteen stages | 100% | Unknown |
+| Workspace Completion | represented workspace object kinds ÷ ten registered kinds | 100% | Unknown |
+| Task Traceability | tasks whose evidence references resolve inside a workspace ÷ tasks | 100% | Unknown |
+| Evidence Progression | reviewed workspace evidence ÷ workspace evidence | 100% | Unknown |
+| Reassessment Readiness | completed reassessments with reviewed trigger evidence ÷ reassessments | 100% | Unknown |
+| Decision Continuity | workspaces with chronological timeline and valid immutable review history ÷ workspaces | 100% | Unknown |
+| Executive Workflow Readiness | Ready only when every workspace gate passes and all object kinds are represented | Ready | Unknown |
+
+The fixture records two preserved review versions and zero automatic actions. Live executive workflow value remains Unknown.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.

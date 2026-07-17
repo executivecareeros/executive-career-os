@@ -56,8 +56,9 @@
     "test:institutional-learning": "node --experimental-transform-types scripts/test-institutional-learning.mjs",
     "test:executive-experience-contract": "node --experimental-transform-types scripts/test-executive-experience-contract.mjs",
     "test:atlas-opportunity-review": "node --experimental-transform-types scripts/test-atlas-opportunity-review.mjs",
+    "test:atlas-decision-workspace": "node --experimental-transform-types scripts/test-atlas-decision-workspace.mjs",
     "measure:provider-reuse": "node scripts/measure-provider-reuse.mjs",
-    "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:employment-knowledge-graph && npm run test:executive-decision-intelligence && npm run test:executive-validation-platform && npm run test:institutional-learning && npm run test:executive-experience-contract && npm run test:atlas-opportunity-review && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
+    "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:employment-knowledge-graph && npm run test:executive-decision-intelligence && npm run test:executive-validation-platform && npm run test:institutional-learning && npm run test:executive-experience-contract && npm run test:atlas-opportunity-review && npm run test:atlas-decision-workspace && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

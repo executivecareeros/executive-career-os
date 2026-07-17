@@ -1,5 +1,17 @@
 # Orion Decision Log
 
+## 2026-07-17 — Preserve the executive opportunity journey as an append-only workspace
+
+- **Context:** Atlas 1.0 answers the initial review question, but executives need evidence, tasks, questions, stages, and reassessment to remain connected through a final decision.
+- **Options considered:** mutable opportunity state; automated Atlas workflow; an executive-controlled append-only workspace over existing Orion and Atlas objects.
+- **Chosen option:** fifteen registered stages, ten reusable workspace objects, explicit executive actions, and evidence-gated reassessment with immutable review history.
+- **Reasoning:** Atlas can answer “what should I do next?” without performing actions or rewriting why an earlier recommendation was made.
+- **Trade-offs:** the canonical workflow is not yet rendered or validated with live executives.
+- **Reversibility:** the workspace is derived and append-only; Orion evidence and prior Atlas reviews remain untouched.
+- **Owner:** Sol / Atlas Product.
+- **Affected:** Atlas decision timeline, tasks, questions, evidence progression, notes, reassessment, and decision continuity.
+- **Follow-up:** render the bounded workspace through existing product surfaces and validate it through M7.
+
 ## 2026-07-17 — Build Atlas Opportunity Review as orchestration over Orion
 
 - **Context:** Orion M1A–M9 provide trusted knowledge, decisions, validation, governance, and communication semantics; Atlas needs an executive-facing opportunity review without a parallel reasoning system.

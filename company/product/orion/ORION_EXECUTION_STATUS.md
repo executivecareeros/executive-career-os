@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: Orion M9 complete; Atlas 1.0 review validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: Orion stable; Atlas 2.0 workspace validated locally
 
 | Field | Current truth |
 |---|---|
 | Milestone | Orion M9 complete — powering Atlas Product Program |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Orion M1A–M9 stable; Atlas Opportunity Review v1 consumes M6 decisions through M9 experience objects |
+| Current version | Orion M1A–M9 stable; Atlas Decision Workspace v1 preserves the journey and evidence-backed reassessment over Atlas Opportunity Review v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Orion M9 complete; Atlas 1.0
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** render one bounded Atlas Opportunity Review on the existing opportunity surface and measure it through a consented M7 cohort.
-- **Last completed task:** Atlas 1.0 composes one M6 Opportunity Intelligence assessment into twelve independently explainable review sections, including an explicit withheld path.
+- **Next highest-value task:** render the bounded Atlas Decision Workspace through existing product surfaces and measure the journey through a consented M7 cohort.
+- **Last completed task:** Atlas 2.0 adds an executive-controlled fifteen-stage timeline, ten reusable workspace objects, evidence progression, tasks, questions, notes, and immutable reassessment.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

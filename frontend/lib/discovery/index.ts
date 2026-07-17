@@ -16,5 +16,6 @@ export * from "./executive-validation-platform";
 export * from "./institutional-learning";
 export * from "./executive-experience-contract";
 export * from "./atlas-opportunity-review";
+export * from "./atlas-decision-workspace";
 export * from "./registry";
 export * from "./types";
