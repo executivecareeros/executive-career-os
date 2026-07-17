@@ -71,9 +71,16 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
 
   private async loadRows() {
     if (this.rows) return this.rows;
-    const response = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&archived_at=is.null`);
-    if (response.error) throw new Error(response.error.message);
-    this.rows = response.data ?? [];
+    const pageSize = 1000;
+    const rows: Row[] = [];
+    for (let offset = 0; ; offset += pageSize) {
+      const response = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&archived_at=is.null&order=id.asc&limit=${pageSize}&offset=${offset}`);
+      if (response.error) throw new Error(response.error.message);
+      const page = response.data ?? [];
+      rows.push(...page);
+      if (page.length < pageSize) break;
+    }
+    this.rows = rows;
     return this.rows;
   }
 

@@ -51,6 +51,8 @@ assert.match(store, /rpc\/upsert_employer_observation/, "Every durable opportuni
 assert.match(store, /company_id: companyId/, "Canonical opportunities must link to the canonical employer");
 assert.match(store, /private rows: Row\[\] \| null = null/, "A provider run must cache its workspace inventory instead of reloading it for every opportunity");
 assert.match(store, /const rows = await this\.loadRows\(\)/, "Opportunity upserts must reuse the run-scoped inventory cache");
+assert.match(store, /limit=\$\{pageSize\}&offset=\$\{offset\}/, "Durable opportunity inventory must page beyond the PostgREST 1,000-row response limit");
+assert.match(store, /if \(page\.length < pageSize\) break/, "Durable opportunity pagination must stop after the final page");
 assert.match(employerCompatibilityMigration, /create or replace function public\.upsert_employer_observation/, "The compatibility migration must replace the original function");
 assert.doesNotMatch(employerCompatibilityMigration, /\bdigest\s*\(/, "The active employer identity function must not depend on an extension schema");
 assert.match(employerCoverageMigration, /orion-employer-intelligence-v1/, "Employer intelligence coverage must be explicitly versioned");
