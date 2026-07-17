@@ -51,6 +51,7 @@ export type OpportunityCompanyProfile = {
   canonicalKey?: string;
   name: string;
   website?: string;
+  careersUrl?: string;
   industry?: string;
   headquarters?: string;
   size?: string;

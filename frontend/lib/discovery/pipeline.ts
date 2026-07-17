@@ -105,7 +105,7 @@ export class OpportunityIngestionPipeline {
       const ignored = items.length - imported;
       const errors = items.flatMap(item => item.error ? [item.error] : []);
       const status: DiscoveryRunStatus = errors.length ? imported ? "completed-with-warnings" : "failed" : "completed";
-      const finishedAt = batch.collectedAt;
+      const finishedAt = new Date().toISOString();
       const run = { id: request.runId, source: provider.id, status, startedAt, finishedAt, durationMs: Math.max(0, Date.parse(finishedAt) - Date.parse(startedAt)), jobsFound: batch.jobs.length, jobsImported: imported, jobsIgnored: ignored, errors, warnings: items.flatMap(item => item.warnings), isDemo: false } as const;
       await this.monitor.record({ type: "run-completed", runId: request.runId, providerId, occurredAt: finishedAt, status, imported, ignored });
       return { run, items, nextRefreshAt: later(finishedAt, policy.cadenceMinutes) };

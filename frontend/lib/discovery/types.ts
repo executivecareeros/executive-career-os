@@ -26,6 +26,8 @@ export interface DiscoveryCompany {
   canonicalKey?: string;
   name: string;
   website?: string;
+  /** Provider-published careers board. This is not evidence of an official employer domain. */
+  careersUrl?: string;
   industry?: string;
   size?: string;
   country?: string;

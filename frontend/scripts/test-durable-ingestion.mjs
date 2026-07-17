@@ -31,6 +31,9 @@ const migration = await readFile(resolve(root, "supabase/migrations/202607170002
 const schedulerClaimMigration = await readFile(resolve(root, "supabase/migrations/202607170004_scheduler_service_role_claim.sql"), "utf8");
 const employerMigration = await readFile(resolve(root, "supabase/migrations/202607170005_employer_intelligence_registry.sql"), "utf8");
 const employerCompatibilityMigration = await readFile(resolve(root, "supabase/migrations/202607170006_remove_employer_digest_dependency.sql"), "utf8");
+const employerCoverageMigration = await readFile(resolve(root, "supabase/migrations/202607170008_employer_intelligence_coverage.sql"), "utf8");
+const greenhouseBackfillMigration = await readFile(resolve(root, "supabase/migrations/202607170009_backfill_greenhouse_employers.sql"), "utf8");
+const greenhouseSourceBackfillMigration = await readFile(resolve(root, "supabase/migrations/202607170010_backfill_greenhouse_source_ids.sql"), "utf8");
 const store = await readFile(resolve(root, "frontend/lib/discovery/supabase-ingestion.ts"), "utf8");
 for (const table of ["opportunity_provider_schedules", "opportunity_provider_jobs", "opportunity_provider_runs"]) assert.match(migration, new RegExp(`create table public\\.${table}`));
 assert.match(migration, /for update skip locked/i, "Database claim must be concurrency-safe");
@@ -49,5 +52,16 @@ assert.match(store, /private rows: Row\[\] \| null = null/, "A provider run must
 assert.match(store, /const rows = await this\.loadRows\(\)/, "Opportunity upserts must reuse the run-scoped inventory cache");
 assert.match(employerCompatibilityMigration, /create or replace function public\.upsert_employer_observation/, "The compatibility migration must replace the original function");
 assert.doesNotMatch(employerCompatibilityMigration, /\bdigest\s*\(/, "The active employer identity function must not depend on an extension schema");
+assert.match(employerCoverageMigration, /orion-employer-intelligence-v1/, "Employer intelligence coverage must be explicitly versioned");
+assert.match(employerCoverageMigration, /is_active_workspace_member/, "Employer coverage must remain workspace isolated");
+assert.match(employerCoverageMigration, /registryCoverage/, "Operational registry coverage must remain distinct from optional enrichment");
+assert.match(employerCoverageMigration, /extendedIntelligenceCoverage/, "Optional employer enrichment must be measured truthfully");
+assert.match(greenhouseBackfillMigration, /backfill_greenhouse_employers/, "Existing Greenhouse observations require a controlled backfill path");
+assert.match(greenhouseBackfillMigration, /is_active_workspace_member/, "Employer backfill must remain workspace isolated");
+assert.match(greenhouseBackfillMigration, /on function public\.backfill_greenhouse_employers.*from public,anon/s, "Employer backfill must not be publicly executable");
+assert.match(greenhouseBackfillMigration, /greenhouse-employer-backfill-v1/, "Employer backfill must be versioned and measurable");
+assert.match(greenhouseSourceBackfillMigration, /greenhouse-employer-backfill-v2/, "Legacy source-identity backfill must be versioned and measurable");
+assert.match(greenhouseSourceBackfillMigration, /originalId.*\^\[a-zA-Z0-9_-\]\+\-\[0-9\]\+\$/s, "Legacy fallback must accept only an explicit Greenhouse source identity");
+assert.doesNotMatch(greenhouseSourceBackfillMigration, /similarity\s*\(/i, "Employer backfill must not use ambiguous fuzzy matching");
 
 console.log("Durable opportunity ingestion checks passed.");

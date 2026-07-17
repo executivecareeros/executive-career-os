@@ -61,7 +61,7 @@ export class GreenhouseOpportunityProvider implements OpportunityProvider {
       sourceId: `${this.boardToken}-${job.id}`,
       source: this.id,
       title: job.title,
-      company: { sourceId: this.boardToken, canonicalKey: `greenhouse:${this.boardToken}`, name: board.name, country: countryFrom(job) },
+      company: { sourceId: this.boardToken, canonicalKey: `greenhouse:${this.boardToken}`, name: board.name, careersUrl: `https://boards.greenhouse.io/${this.boardToken}`, country: countryFrom(job) },
       location: job.location?.name,
       country: countryFrom(job),
       description: plainText(job.content),

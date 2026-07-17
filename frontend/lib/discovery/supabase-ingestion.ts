@@ -127,7 +127,7 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
         target_canonical_key: canonicalKey,
         target_name: opportunity.companyName,
         target_domain: opportunity.employerDomain ?? null,
-        target_website: opportunity.companyProfile?.website ?? null,
+        target_website: opportunity.companyProfile?.careersUrl ?? null,
         target_industry: opportunity.industry === "Not specified" ? null : opportunity.industry,
         target_country: opportunity.country === "Not specified" ? null : opportunity.country,
         target_ats_provider: source?.kind === "Employer" ? source.id : null,

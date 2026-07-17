@@ -41,7 +41,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       lastObservedAt: job.discoveredAt,
       freshness: { status: "Fresh", lastObservedAt: job.discoveredAt, ageHours: 0, staleAfterHours },
       lifecycle: [{ status: "Discovered", occurredAt: job.discoveredAt, reason: `Collected from ${job.source}`, source: "System" }],
-      companyProfile: { canonicalKey: job.company.canonicalKey, name: job.company.name, website: job.company.website, industry: job.company.industry, size: job.company.size, evidenceStatus: job.company.website || job.company.industry || job.company.size ? "Partial" : "Unknown" },
+      companyProfile: { canonicalKey: job.company.canonicalKey, name: job.company.name, website: job.company.website, careersUrl: job.company.careersUrl, industry: job.company.industry, size: job.company.size, evidenceStatus: job.company.website || job.company.careersUrl || job.company.industry || job.company.size ? "Partial" : "Unknown" },
       publishedAt: job.publishedAt ?? job.discoveredAt,
       discoveredAt: job.discoveredAt,
       salaryMin: job.salary?.minimum,
