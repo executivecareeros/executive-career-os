@@ -14,7 +14,7 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Orion stable; Atlas 2.2A fou
 | Canonical employers | 7 measured employers; 1,038 of 1,042 active opportunities linked to a canonical employer |
 | Verified employers | 0 under strict domain + verified time + confidence ≥80 rule |
 | Production providers | Greenhouse, Lever, and Ashby: scheduled in isolated network staging; Ashby certified across two employer cohorts and 238 source observations |
-| Other providers | Workable is production-certifiable but not live; other adapters exist and none may be counted as live without schedule/run evidence |
+| Other providers | SmartRecruiters and Workable are production-certifiable but not live; other adapters exist and none may be counted as live without schedule/run evidence |
 | Freshness | 89.1% observed within the v1 48-hour window; stale rate 10.9% |
 | Duplicate rate | 0.1% source-observation consolidation rate; zero duplicate source identities |
 | GOCI | 63 overall: North America 83, Asia 80, Europe 78, UK 75, Oceania 62, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0 |
@@ -31,7 +31,7 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Orion stable; Atlas 2.2A fou
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Atlas Product Integration; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, Workable, and SmartRecruiters connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Atlas Product Integration; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

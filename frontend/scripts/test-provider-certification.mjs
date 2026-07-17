@@ -5,7 +5,8 @@ import { GreenhouseOpportunityProvider } from "../lib/discovery/providers/greenh
 import { LeverOpportunityProvider } from "../lib/discovery/providers/lever.ts";
 import { AshbyOpportunityProvider } from "../lib/discovery/providers/ashby.ts";
 import { WorkableOpportunityProvider } from "../lib/discovery/providers/workable.ts";
-import { greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest } from "../lib/discovery/providers/manifests.ts";
+import { SmartRecruitersOpportunityProvider } from "../lib/discovery/providers/smartrecruiters.ts";
+import { greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest, smartRecruitersProviderManifest } from "../lib/discovery/providers/manifests.ts";
 
 const greenhouseFetch = async (input) => String(input).endsWith("/v1/boards/certified")
   ? new Response(JSON.stringify({ name: "Certified Greenhouse Employer" }))
@@ -22,14 +23,20 @@ const leverFetch = async (input) => {
 
 const ashbyFetch = async () => new Response(JSON.stringify({ apiVersion: "1", jobs: [{ title: "Vice President, Commercial", location: "Berlin, Germany", isListed: true, workplaceType: "Hybrid", descriptionPlain: "Lead commercial growth.", publishedAt: "2026-07-17T08:00:00Z", employmentType: "FullTime", address: { postalAddress: { addressCountry: "DE" } }, jobUrl: "https://jobs.ashbyhq.com/certified/role-1" }] }));
 const workableFetch = async () => new Response(JSON.stringify({ name: "Certified Workable Employer", jobs: [{ title: "Chief Revenue Officer", shortcode: "CRO-1", country: "United Kingdom", city: "London", department: "Executive", telecommuting: true, published_on: "2026-07-17", full_description: "<p>Lead global revenue.</p>", url: "https://apply.workable.com/certified/j/CRO-1", employment_type: "Full-time", salary: { salary_from: 200000, salary_to: 260000, salary_currency: "GBP" } }] }));
+const smartRecruitersFetch = async (input) => {
+  const url = new URL(String(input));
+  if (!url.searchParams.has("offset")) return new Response(JSON.stringify({ id: "CRO-1", name: "Chief Revenue Officer", active: true, company: { identifier: "certified", name: "Certified SmartRecruiters Employer" }, location: { fullLocation: "Berlin, Germany", country: "Germany" }, releasedDate: "2026-07-17T08:00:00Z", postingUrl: "https://jobs.smartrecruiters.com/certified/CRO-1", jobAd: { sections: { jobDescription: { text: "Lead global revenue." } } } }));
+  return new Response(JSON.stringify({ offset: 0, limit: 100, totalFound: 1, content: [{ id: "CRO-1", name: "Chief Revenue Officer" }] }));
+};
 
 const reports = [];
 reports.push(await runProviderCertification(new GreenhouseOpportunityProvider("certified", greenhouseFetch), greenhouseProviderManifest, 500));
 reports.push(await runProviderCertification(new LeverOpportunityProvider("certified", "global", "Certified Lever Employer", leverFetch), leverProviderManifest, 500));
 reports.push(await runProviderCertification(new AshbyOpportunityProvider("certified", "Certified Ashby Employer", ashbyFetch), ashbyProviderManifest, 500));
 reports.push(await runProviderCertification(new WorkableOpportunityProvider("certified", workableFetch), workableProviderManifest, 500));
+reports.push(await runProviderCertification(new SmartRecruitersOpportunityProvider("certified", smartRecruitersFetch), smartRecruitersProviderManifest, 500));
 
-assert.deepEqual(reports.map((report) => report.providerId), ["greenhouse", "lever", "ashby", "workable"]);
+assert.deepEqual(reports.map((report) => report.providerId), ["greenhouse", "lever", "ashby", "workable", "smartrecruiters"]);
 assert.equal(reports.every((report) => report.checks.replay === "passed" && report.checks.canonicalization === "passed" && report.checks.scheduler === "passed" && report.checks.metrics === "passed"), true);
 assert.equal(reports.find((report) => report.providerId === "lever")?.checks.pagination, "passed");
 assert.equal(reports.find((report) => report.providerId === "ashby")?.checks.lifecycle, "passed");

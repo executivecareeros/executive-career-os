@@ -5,6 +5,7 @@ import { GreenhouseOpportunityProvider, parseGreenhouseBoardToken } from "./gree
 import { LeverOpportunityProvider, parseLeverBoard } from "./lever.ts";
 import { PersonioOpportunityProvider, parsePersonioAccount } from "./personio.ts";
 import { RecruiteeOpportunityProvider, parseRecruiteeCompany } from "./recruitee.ts";
+import { SmartRecruitersOpportunityProvider, parseSmartRecruitersCompany } from "./smartrecruiters.ts";
 import { WorkableOpportunityProvider, parseWorkableAccount } from "./workable.ts";
 import { OpportunityProviderCatalog } from "./catalog.ts";
 
@@ -28,6 +29,11 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
     id: "ashby", name: "Ashby", supports: (url) => url.hostname.toLowerCase() === "jobs.ashbyhq.com",
     create: (locator, context) => new AshbyOpportunityProvider(parseAshbyBoard(locator), context?.companyName),
     evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
+  },
+  {
+    id: "smartrecruiters", name: "SmartRecruiters", supports: (url) => ["careers.smartrecruiters.com", "jobs.smartrecruiters.com"].includes(url.hostname.toLowerCase()),
+    create: (locator) => new SmartRecruitersOpportunityProvider(parseSmartRecruitersCompany(locator)),
+    evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
   },
   {
     id: "recruitee", name: "Recruitee", supports: (url) => /^[a-z0-9-]+\.recruitee\.com$/i.test(url.hostname),

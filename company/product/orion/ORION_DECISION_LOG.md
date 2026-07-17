@@ -306,3 +306,14 @@
 - **Owner:** Sol / Opportunity Coverage Engine.
 - **Affected:** provider batch contract, Greenhouse/Lever/Ashby-compatible lifecycle, paginated durable ingestion, canonical reactivation.
 - **Follow-up:** require scoped snapshot contract in Workable certification tests.
+
+## 2026-07-17 — Admit SmartRecruiters through the public Posting API
+
+- **Context:** an older record treated SmartRecruiters as API-key gated, while current official documentation identifies public-posting endpoints as usable without authentication.
+- **Evidence:** a credential-free request to the official public employer endpoint returned structured postings, and the corresponding posting-detail endpoint returned role, company, location, classification, description, application, and publication evidence.
+- **Chosen option:** add an employer-scoped SmartRecruiters adapter through the existing Provider SDK and production catalog, with offset pagination, six-request detail concurrency, scoped complete snapshots, provenance, health, and common certification.
+- **Reasoning:** this adds a high-coverage global ATS without credentials, provider-specific persistence, crawling, personal data, infrastructure, or Coverage Engine changes.
+- **Trade-offs:** the listing interface requires one detail request per posting; bounded concurrency limits provider load but increases collection duration for large employers.
+- **Reversibility:** remove the catalog registration and adapter; no schema, canonical record, or scheduler migration is required.
+- **Owner:** Sol / Opportunity Factory.
+- **Follow-up:** qualify a verified employer cohort and record isolated-staging first-run, replay, freshness, and provider-health evidence before classifying it as live.

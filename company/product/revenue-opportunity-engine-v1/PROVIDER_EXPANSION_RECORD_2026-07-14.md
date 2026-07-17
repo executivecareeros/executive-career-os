@@ -13,7 +13,9 @@ Expand employer-direct opportunity coverage through the existing Opportunity Cov
 | Workable | Public account jobs endpoint | Published employer jobs across Workable-hosted career sites | Autonomous: no reserved founder gate |
 | Company Career Sites | Employer-published Schema.org `JobPosting` data | Target-company roles outside the named ATS adapters | Autonomous only within the bounded single-page structured-data policy |
 
-LinkedIn Jobs and Workday were processed as mandatory Tier 1 priorities. Both remain explicit Founder Approval Gates: LinkedIn requires partner approval and contractual acceptance; Workday requires an authorized tenant or provider-confirmed collection path. SmartRecruiters remains a Tier 2 gate because its current official Posting API documentation requires an API key.
+LinkedIn Jobs and Workday were processed as mandatory Tier 1 priorities. Both remain explicit Founder Approval Gates: LinkedIn requires partner approval and contractual acceptance; Workday requires an authorized tenant or provider-confirmed collection path.
+
+**Superseded 17 July 2026:** the earlier SmartRecruiters API-key statement was incorrect. Current official documentation identifies the Posting API as available for public postings without authentication, and a read-only live request to the official endpoint returned public employer postings without credentials. SmartRecruiters now has an employer-scoped adapter inside the shared engine; it is not counted as live until an isolated-staging cohort completes a first run and idempotent replay.
 
 ## Engine Compliance
 

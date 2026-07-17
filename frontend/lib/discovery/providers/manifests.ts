@@ -54,4 +54,15 @@ export const workableProviderManifest = {
   reliability: { ...common.reliability, rationale: "Published directly through the employer's public Workable account feed." },
 } as const satisfies ProviderManifest;
 
-export const certifiedProviderManifests = [greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest] as const;
+export const smartRecruitersProviderManifest = {
+  ...common,
+  identity: { id: "smartrecruiters", name: "SmartRecruiters", category: "Corporate Website", description: "Published employer opportunities from the official SmartRecruiters Posting API." },
+  access: { ...common.access, endpointOrigins: ["https://api.smartrecruiters.com"] },
+  pagination: { strategy: "offset", maximumPageSize: 100, offsetParameter: "offset", limitParameter: "limit" },
+  fields: { sourceId: "content[].id", title: "content[].name", employerId: "company identifier", employerName: "company.name", location: "location.fullLocation", compensation: "unavailable", publishedAt: "releasedDate" },
+  lifecycle: { snapshot: "complete-when-untruncated", scope: "employer-feed" },
+  retry: { ...common.retry, unavailableCode: "SMARTRECRUITERS_UNAVAILABLE" },
+  reliability: { ...common.reliability, rationale: "Published directly through the employer's official public SmartRecruiters Posting API." },
+} as const satisfies ProviderManifest;
+
+export const certifiedProviderManifests = [greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest, smartRecruitersProviderManifest] as const;
