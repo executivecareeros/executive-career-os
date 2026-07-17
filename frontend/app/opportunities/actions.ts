@@ -12,6 +12,10 @@ import type { Opportunity } from "@/types/opportunity";
 import type { OpportunityProvider } from "@/lib/discovery/types";
 import { confirmFounderGeographicProfile, loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
 import { currentSession } from "@/lib/auth/session";
+import { appendAtlasDecisionWorkspace, loadAtlasDecisionWorkspace } from "@/lib/atlas-decision-workspace-repository";
+import { buildProductOpportunityAssessment } from "@/lib/discovery/atlas-product-integration";
+import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-review";
+import { addDecisionNote, addWorkspaceEvidence, addWorkspaceQuestion, addWorkspaceTask, changeDecisionStage, changeWorkspaceTask, completeWorkspaceQuestion, createAtlasDecisionWorkspace, decisionJourneyStages, reassessAtlasOpportunity, recordWorkspaceDecision, reviewWorkspaceEvidence, type AtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
 
 type DecisionAction = "Pursue" | "Watch" | "Skip";
 type OpportunityDecisionRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
@@ -41,6 +45,28 @@ async function decisionContext(canonicalId: string) {
   return { resolved, client, workspaceId, row, blueprintRow, universe: (universe.data ?? []).filter(item => item.domain_id.startsWith("discovered-")).map(item => ({ ...item.payload, id: item.domain_id }) as Opportunity) };
 }
 
+async function atlasWorkspaceContext(canonicalId: string) {
+  const context = await decisionContext(canonicalId);
+  const canonical = { ...context.row.payload, id: context.row.domain_id } as Opportunity;
+  const profile = await loadExecutiveGeographicProfile(context.client, context.resolved.context);
+  const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(context.blueprintRow.payload, context.blueprintRow.id), context.universe, undefined, profile);
+  const persisted = await loadAtlasDecisionWorkspace(context.client, context.workspaceId, context.row.id);
+  const stableCreatedAt = canonical.discoveredAt || canonical.lastObservedAt || "2026-01-01T00:00:00.000Z";
+  const initial = persisted?.workspace ?? createAtlasDecisionWorkspace(buildAtlasOpportunityReview(buildProductOpportunityAssessment(intelligence, stableCreatedAt), stableCreatedAt), stableCreatedAt);
+  return { ...context, intelligence, atlasWorkspace: initial, atlasSequence: persisted?.sequence ?? 0 };
+}
+
+async function saveAtlasWorkspace(context: Awaited<ReturnType<typeof atlasWorkspaceContext>>, workspace: AtlasDecisionWorkspace, eventType: string, occurredAt: string) {
+  await appendAtlasDecisionWorkspace(context.client, { workspaceId: context.workspaceId, opportunityRowId: context.row.id, canonicalOpportunityId: context.row.domain_id, expectedSequence: context.atlasSequence, eventType, workspace, occurredAt });
+  revalidatePath(`/opportunities/${context.row.domain_id}`);
+}
+
+function requiredText(formData: FormData, name: string, label: string) {
+  const value = String(formData.get(name) ?? "").trim();
+  if (!value || value.length > 1000) throw new Error(`${label} is required and must be concise.`);
+  return value;
+}
+
 export async function selectCollectedOpportunityDecision(formData: FormData) {
   const canonicalId = String(formData.get("opportunityId") ?? ""), decision = requestedDecision(formData);
   const { client, workspaceId, row } = await decisionContext(canonicalId);
@@ -65,8 +91,69 @@ export async function finalizeCollectedOpportunityDecision(formData: FormData) {
   const snapshot = { ...intelligence, blueprintRevisionId: blueprintRow.id, opportunityRevision: row.version, opportunityRevisionId: row.domain_id, intelligenceVersion: "deterministic-opportunity-intelligence-1", rulesVersion: "opportunity-intelligence-1", capturedAt: new Date().toISOString(), contributingFactors: { blueprintComparisons: intelligence.blueprintComparisons, sourceCount: intelligence.provenance.length }, classifiedEvidence: intelligence.evidence, executiveQuestions: intelligence.missingInformation.map(item => `What evidence would resolve: ${item}?`) };
   const result = await client.request<Record<string, string>>("rpc/finalize_collected_opportunity_decision", { method: "POST", body: JSON.stringify({ request: { workspaceId, opportunityId: row.id, opportunityVersion: row.version, blueprintRevisionId: blueprintRow.id, idempotencyKey, selectedAction: decision, intelligence: snapshot } }) });
   if (result.error) throw new Error(result.error.message);
+  const workspaceContext = await atlasWorkspaceContext(canonicalId);
+  const decisionAt = new Date().toISOString();
+  await saveAtlasWorkspace(workspaceContext, recordWorkspaceDecision(workspaceContext.atlasWorkspace, { action: decision, at: decisionAt, actor: "Executive" }), "Decision Recorded", decisionAt);
   ["/", "/opportunities", `/opportunities/${canonicalId}`, "/archive", "/tasks", "/productivity"].forEach(path => revalidatePath(path));
   redirect(`/opportunities/${encodeURIComponent(canonicalId)}?decision=complete`);
+}
+
+export async function addAtlasWorkspaceEvidenceAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity");
+  const context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  const next = addWorkspaceEvidence(context.atlasWorkspace, { statement: requiredText(formData, "statement", "Evidence summary"), reference: requiredText(formData, "reference", "Evidence reference"), at });
+  await saveAtlasWorkspace(context, next, "Evidence Added", at);
+}
+
+export async function reviewAtlasWorkspaceEvidenceAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), evidenceId = requiredText(formData, "evidenceId", "Evidence");
+  const context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, reviewWorkspaceEvidence(context.atlasWorkspace, { evidenceId, reviewedBy: "Executive", at }), "Evidence Reviewed", at);
+}
+
+export async function addAtlasWorkspaceTaskAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, addWorkspaceTask(context.atlasWorkspace, { title: requiredText(formData, "title", "Task"), source: "Executive", at }), "Task Added", at);
+}
+
+export async function changeAtlasWorkspaceTaskAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), taskId = requiredText(formData, "taskId", "Task"), status = String(formData.get("status") ?? "");
+  if (!(["Open", "Completed", "Cancelled"] as const).includes(status as "Open" | "Completed" | "Cancelled")) throw new Error("Unsupported task status.");
+  const context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, changeWorkspaceTask(context.atlasWorkspace, { taskId, status: status as "Open" | "Completed" | "Cancelled", at, actor: "Executive" }), "Task Changed", at);
+}
+
+export async function addAtlasWorkspaceQuestionAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, addWorkspaceQuestion(context.atlasWorkspace, { question: requiredText(formData, "question", "Question"), at }), "Question Added", at);
+}
+
+export async function completeAtlasWorkspaceQuestionAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), questionId = requiredText(formData, "questionId", "Question"), evidenceId = requiredText(formData, "evidenceId", "Reviewed evidence"), answer = requiredText(formData, "answer", "Answer");
+  const context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, completeWorkspaceQuestion(context.atlasWorkspace, { questionId, answer, evidenceIds: [evidenceId], at, actor: "Executive" }), "Question Completed", at);
+}
+
+export async function addAtlasDecisionNoteAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, addDecisionNote(context.atlasWorkspace, { text: requiredText(formData, "text", "Note"), at, actor: "Executive" }), "Note Added", at);
+}
+
+export async function changeAtlasDecisionStageAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), toStage = String(formData.get("toStage") ?? "");
+  if (!decisionJourneyStages.includes(toStage as (typeof decisionJourneyStages)[number])) throw new Error("Unsupported decision stage.");
+  const context = await atlasWorkspaceContext(canonicalId), at = new Date().toISOString();
+  await saveAtlasWorkspace(context, changeDecisionStage(context.atlasWorkspace, { toStage: toStage as (typeof decisionJourneyStages)[number], reason: requiredText(formData, "reason", "Stage reason"), at, actor: "Executive" }), "Stage Changed", at);
+}
+
+export async function requestAtlasReassessmentAction(formData: FormData) {
+  const canonicalId = requiredText(formData, "opportunityId", "Opportunity"), context = await atlasWorkspaceContext(canonicalId);
+  const reviewed = context.atlasWorkspace.evidence.filter((item) => item.reviewStatus === "Reviewed" && !context.atlasWorkspace.reviews.at(-1)?.sourceEvidenceIds.includes(item.id));
+  if (!reviewed.length) throw new Error("Review new evidence before requesting reassessment.");
+  const requestedAt = new Date().toISOString(), completedAt = new Date(Date.now() + 1).toISOString();
+  const assessment = buildProductOpportunityAssessment(context.intelligence, completedAt, reviewed);
+  const next = reassessAtlasOpportunity(context.atlasWorkspace, { assessment, reason: requiredText(formData, "reason", "Reassessment reason"), triggerEvidenceIds: reviewed.map((item) => item.id), requestedAt, completedAt, requestedBy: "Executive" });
+  await saveAtlasWorkspace(context, next, "Reassessment Completed", completedAt);
 }
 
 export async function confirmGeographicProfileAction() {

@@ -42,8 +42,9 @@ export type WorkspaceEvidence = { id: string; statement: string; reference: stri
 export type WorkspaceTask = { id: string; title: string; source: "Atlas" | "Executive"; status: "Suggested" | "Open" | "Completed" | "Cancelled"; evidenceIds: readonly string[]; createdAt: string; completedAt: string | null };
 export type WorkspaceQuestion = { id: string; question: string; status: "Open" | "Completed"; evidenceIds: readonly string[]; answer: string | null; createdAt: string; completedAt: string | null };
 export type WorkspaceNote = { id: string; text: string; author: "Executive"; evidenceIds: readonly string[]; createdAt: string };
-export type WorkspaceTimelineEvent = { id: string; type: "Workspace Created" | "Stage Changed" | "Evidence Added" | "Evidence Reviewed" | "Task Changed" | "Question Changed" | "Note Added" | "Reassessment Completed"; at: string; actor: "Executive" | "Atlas"; description: string; evidenceIds: readonly string[]; fromStage: DecisionJourneyStage | null; toStage: DecisionJourneyStage | null };
+export type WorkspaceTimelineEvent = { id: string; type: "Workspace Created" | "Stage Changed" | "Evidence Added" | "Evidence Reviewed" | "Task Changed" | "Question Changed" | "Note Added" | "Reassessment Completed" | "Decision Recorded"; at: string; actor: "Executive" | "Atlas"; description: string; evidenceIds: readonly string[]; fromStage: DecisionJourneyStage | null; toStage: DecisionJourneyStage | null };
 export type ReassessmentRecord = { id: string; requestedAt: string; requestedBy: "Executive"; reason: string; triggerEvidenceIds: readonly string[]; previousReviewId: string; previousState: AtlasOpportunityReview["state"]; previousConfidence: string; previousUnknowns: number; completedAt: string; newReviewId: string; newState: AtlasOpportunityReview["state"]; newConfidence: string; newUnknowns: number };
+export type WorkspaceDecision = { id: string; action: "Pursue" | "Watch" | "Skip"; recordedAt: string; recordedBy: "Executive"; reviewId: string; confidence: string; unknowns: number };
 
 export type AtlasDecisionWorkspace = {
   version: typeof atlasDecisionWorkspaceVersion;
@@ -57,6 +58,7 @@ export type AtlasDecisionWorkspace = {
   questions: readonly WorkspaceQuestion[];
   notes: readonly WorkspaceNote[];
   reassessments: readonly ReassessmentRecord[];
+  decisions: readonly WorkspaceDecision[];
   timeline: readonly WorkspaceTimelineEvent[];
 };
 
@@ -74,6 +76,7 @@ const transitions: Readonly<Record<DecisionJourneyStage, readonly DecisionJourne
   "Decision Pending": ["Negotiation", "Accepted", "Declined", "Withdrawn"],
   "Accepted": ["Archived"], "Declined": ["Archived"], "Withdrawn": ["Archived"], "Archived": [],
 };
+export const nextDecisionStages = (stage: DecisionJourneyStage) => transitions[stage];
 const hash = (value: string) => { let result = 2166136261; for (const character of value) result = Math.imul(result ^ character.charCodeAt(0), 16777619); return (result >>> 0).toString(36); };
 const assertDate = (value: string, field: string) => { if (Number.isNaN(Date.parse(value))) throw new Error(`${field} must be a valid timestamp`); };
 const assertText = (value: string, field: string) => { if (!value.trim()) throw new Error(`${field} is required`); };
@@ -86,7 +89,7 @@ export function createAtlasDecisionWorkspace(review: AtlasOpportunityReview, cre
   assertDate(createdAt, "createdAt");
   if (!validateAtlasOpportunityReview(review).valid) throw new Error("A valid Atlas Opportunity Review is required");
   const id = `workspace:${hash(`${review.opportunityId}|${createdAt}`)}`;
-  return { version: atlasDecisionWorkspaceVersion, id, opportunityId: review.opportunityId, createdAt, currentStage: "Opportunity Identified", reviews: [review], evidence: [], tasks: [], questions: [], notes: [], reassessments: [], timeline: [event(id, "Workspace Created", createdAt, "Executive", "Executive opened the opportunity decision workspace.")] };
+  return { version: atlasDecisionWorkspaceVersion, id, opportunityId: review.opportunityId, createdAt, currentStage: "Opportunity Identified", reviews: [review], evidence: [], tasks: [], questions: [], notes: [], reassessments: [], decisions: [], timeline: [event(id, "Workspace Created", createdAt, "Executive", "Executive opened the opportunity decision workspace.")] };
 }
 
 export function changeDecisionStage(workspace: AtlasDecisionWorkspace, input: { toStage: DecisionJourneyStage; reason: string; evidenceIds?: readonly string[]; at: string; actor: "Executive" }): AtlasDecisionWorkspace {
@@ -157,6 +160,15 @@ export function addDecisionNote(workspace: AtlasDecisionWorkspace, input: { text
   return { ...workspace, notes: [...workspace.notes, note], timeline: [...workspace.timeline, event(workspace.id, "Note Added", input.at, "Executive", "Executive added a decision note.", evidenceIds)] };
 }
 
+export function recordWorkspaceDecision(workspace: AtlasDecisionWorkspace, input: { action: "Pursue" | "Watch" | "Skip"; at: string; actor: "Executive" }): AtlasDecisionWorkspace {
+  assertDate(input.at, "at");
+  if (input.actor !== "Executive") throw new Error("Only the executive may record a decision");
+  if (workspace.decisions.some((item) => item.action === input.action && item.reviewId === `${currentReview(workspace).version}:${currentReview(workspace).generatedAt}`)) return workspace;
+  const review = currentReview(workspace);
+  const decision: WorkspaceDecision = { id: `decision:${hash(`${workspace.id}|${input.action}|${input.at}`)}`, action: input.action, recordedAt: input.at, recordedBy: "Executive", reviewId: `${review.version}:${review.generatedAt}`, confidence: confidenceLabel(review), unknowns: review.actualUnknownCount };
+  return { ...workspace, decisions: [...workspace.decisions, decision], timeline: [...workspace.timeline, event(workspace.id, "Decision Recorded", input.at, "Executive", `Executive recorded ${input.action}.`, review.sourceEvidenceIds)] };
+}
+
 export function reassessAtlasOpportunity(workspace: AtlasDecisionWorkspace, input: { assessment: DecisionAssessment; reason: string; triggerEvidenceIds: readonly string[]; requestedAt: string; completedAt: string; requestedBy: "Executive" }): AtlasDecisionWorkspace {
   assertDate(input.requestedAt, "requestedAt"); assertDate(input.completedAt, "completedAt"); assertText(input.reason, "reassessment reason");
   if (input.requestedBy !== "Executive") throw new Error("Only the executive may request reassessment");
@@ -176,8 +188,9 @@ export function validateAtlasDecisionWorkspace(workspace: AtlasDecisionWorkspace
   const taskTraceability = workspace.tasks.every((task) => evidenceByIds(workspace, task.evidenceIds));
   const completedQuestionsValid = workspace.questions.filter((question) => question.status === "Completed").every((question) => question.answer && question.evidenceIds.length && evidenceByIds(workspace, question.evidenceIds, true));
   const reassessmentsValid = workspace.reassessments.every((record) => record.triggerEvidenceIds.length && evidenceByIds(workspace, record.triggerEvidenceIds, true));
+  const decisionsValid = workspace.decisions.every((decision) => workspace.reviews.some((review) => decision.reviewId === `${review.version}:${review.generatedAt}`));
   const noAutomaticActions = workspace.tasks.filter((task) => task.source === "Atlas").every((task) => task.status === "Suggested" || workspace.timeline.some((item) => item.type === "Task Changed" && item.actor === "Executive" && item.at >= task.createdAt));
-  return { valid: chronological && reviewHistoryValid && taskTraceability && completedQuestionsValid && reassessmentsValid && noAutomaticActions, chronological, reviewHistoryValid, taskTraceability, completedQuestionsValid, reassessmentsValid, noAutomaticActions };
+  return { valid: chronological && reviewHistoryValid && taskTraceability && completedQuestionsValid && reassessmentsValid && decisionsValid && noAutomaticActions, chronological, reviewHistoryValid, taskTraceability, completedQuestionsValid, reassessmentsValid, decisionsValid, noAutomaticActions };
 }
 
 export function measureAtlasDecisionWorkspaces(workspaces: readonly AtlasDecisionWorkspace[]) {

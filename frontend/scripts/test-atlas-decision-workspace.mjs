@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { addDecisionNote, addWorkspaceEvidence, addWorkspaceQuestion, addWorkspaceTask, atlasDecisionWorkspaceVersion, changeDecisionStage, changeWorkspaceTask, completeWorkspaceQuestion, createAtlasDecisionWorkspace, decisionJourneyStages, measureAtlasDecisionWorkspaces, reassessAtlasOpportunity, reviewWorkspaceEvidence, validateAtlasDecisionWorkspace, workspaceObjectKinds, workspaceObjectRegistry } from "../lib/discovery/atlas-decision-workspace.ts";
+import { addDecisionNote, addWorkspaceEvidence, addWorkspaceQuestion, addWorkspaceTask, atlasDecisionWorkspaceVersion, changeDecisionStage, changeWorkspaceTask, completeWorkspaceQuestion, createAtlasDecisionWorkspace, decisionJourneyStages, measureAtlasDecisionWorkspaces, reassessAtlasOpportunity, recordWorkspaceDecision, reviewWorkspaceEvidence, validateAtlasDecisionWorkspace, workspaceObjectKinds, workspaceObjectRegistry } from "../lib/discovery/atlas-decision-workspace.ts";
 import { buildAtlasOpportunityReview } from "../lib/discovery/atlas-opportunity-review.ts";
 
 const at = (minute) => `2026-07-17T20:${String(minute).padStart(2, "0")}:00.000Z`;
@@ -32,12 +32,15 @@ workspace = addDecisionNote(workspace, { text: "Reporting scope materially impro
 const newEvidence = { evidenceId: scopeEvidence.id, source: "reviewed-employer-confirmation", observedAt: at(4), confidence: { score: 90, rating: "Very High", basis: "Reviewed employer confirmation" } };
 const reassessed = assessment({ state: "Decision Support Available", summary: "Reviewed evidence now supports structured opportunity review.", supportingEvidence: [baseEvidence, newEvidence], confidence: { level: "High", score: 90, method: "All required evidence is reviewed." }, unknowns: [], reasonsFor: [{ id: "scope", direction: "For", statement: "The employer confirmed global reporting responsibility.", evidenceIds: [scopeEvidence.id] }], suggestedNextActions: ["Review the evidence before deciding."], gates: gates(true), recommendationEligible: true });
 workspace = reassessAtlasOpportunity(workspace, { assessment: reassessed, reason: "New reviewed role-scope evidence resolves the primary gap.", triggerEvidenceIds: [scopeEvidence.id], requestedAt: at(11), completedAt: at(12), requestedBy: "Executive" });
+workspace = recordWorkspaceDecision(workspace, { action: "Pursue", at: at(12), actor: "Executive" });
 assert.equal(emptyWorkspace.reviews.length, 1, "workspace operations do not mutate earlier workspace snapshots");
 assert.equal(workspace.reviews.length, 2);
 assert.equal(workspace.reviews[0].state, "Recommendation Withheld");
 assert.equal(workspace.reviews[1].state, "Recommendation Available");
 assert.equal(workspace.reassessments[0].previousUnknowns, 1);
 assert.equal(workspace.reassessments[0].newUnknowns, 0);
+assert.equal(workspace.decisions.length, 1);
+assert.equal(workspace.decisions[0].reviewId, `${workspace.reviews[1].version}:${workspace.reviews[1].generatedAt}`);
 
 const journey = ["Initial Review", "Evidence Collection", "Employer Research", "Recruiter Contact", "Interview Preparation", "Interview Completed", "Compensation Review", "Negotiation", "Offer Evaluation", "Decision Pending", "Accepted", "Archived"];
 journey.forEach((toStage, index) => { workspace = changeDecisionStage(workspace, { toStage, reason: `Executive moved to ${toStage}.`, evidenceIds: [scopeEvidence.id], at: at(13 + index), actor: "Executive" }); });

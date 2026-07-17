@@ -11,6 +11,11 @@ import type { Opportunity } from "@/types/opportunity";
 import { randomUUID } from "node:crypto";
 import { getLocale } from "@/lib/locale";
 import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
+import { AtlasDecisionWorkspacePanel } from "@/components/opportunities/atlas-decision-workspace-panel";
+import { loadAtlasDecisionWorkspace } from "@/lib/atlas-decision-workspace-repository";
+import { buildProductOpportunityAssessment } from "@/lib/discovery/atlas-product-integration";
+import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-review";
+import { createAtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
 
 type OpportunityRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
 type BlueprintRow = { id: string; payload: Record<string, unknown> };
@@ -45,5 +50,8 @@ export default async function OpportunityDetailPage({ params, searchParams }: { 
   const all = (universe.data ?? []).filter((item) => item.domain_id.startsWith("discovered-")).map((item) => ({ ...item.payload, id: item.domain_id }) as Opportunity);
   const blueprintRow = blueprint.data?.[0];
   const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(blueprintRow?.payload, blueprintRow?.id), all, undefined, geographicProfile);
-  return <CollectedOpportunityIntelligence locale={locale} opportunity={canonical} intelligence={intelligence} decisionNotice={query.decision} idempotencyKey={randomUUID()} />;
+  const persistedWorkspace = await loadAtlasDecisionWorkspace(client, workspaceId, row.id);
+  const stableCreatedAt = canonical.discoveredAt || canonical.lastObservedAt || "2026-01-01T00:00:00.000Z";
+  const atlasWorkspace = persistedWorkspace?.workspace ?? createAtlasDecisionWorkspace(buildAtlasOpportunityReview(buildProductOpportunityAssessment(intelligence, stableCreatedAt), stableCreatedAt), stableCreatedAt);
+  return <><CollectedOpportunityIntelligence locale={locale} opportunity={canonical} intelligence={intelligence} decisionNotice={query.decision} idempotencyKey={randomUUID()} /><AtlasDecisionWorkspacePanel opportunityId={canonical.id} workspace={atlasWorkspace} persisted={Boolean(persistedWorkspace)}/></>;
 }
