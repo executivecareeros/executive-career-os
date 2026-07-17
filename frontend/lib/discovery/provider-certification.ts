@@ -63,6 +63,18 @@ export async function runProviderCertification(provider: OpportunityProvider, ma
     await restoring.ingest(provider.id, { ...request, runId: `${provider.id}-certification-restore`, requestedAt: "2026-07-17T12:03:00.000Z" });
     ensure((await sink.list()).every((item) => item.status !== "Archived"), "reobserved opportunities did not reactivate");
     lifecycle = "passed";
+  } else if (manifest.lifecycle.snapshot === "incremental") {
+    const incrementalProvider: OpportunityProvider = {
+      id: provider.id,
+      source: provider.source,
+      reliability: provider.reliability,
+      health: () => provider.health(),
+      collect: async () => ({ providerId: provider.id, collectedAt: "2026-07-17T12:02:00.000Z", jobs: [] }),
+    };
+    const incremental = new OpportunityIngestionPipeline(new OpportunityProviderRegistry().register(incrementalProvider), sink);
+    await incremental.ingest(provider.id, { ...request, runId: `${provider.id}-certification-incremental`, requestedAt: "2026-07-17T12:02:00.000Z" });
+    ensure((await sink.list()).every((item) => item.status !== "Archived"), "incremental empty collection deactivated canonical inventory");
+    lifecycle = "passed";
   }
 
   const snapshot = await engine.snapshot();

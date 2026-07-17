@@ -37,26 +37,43 @@ The provider manifest, adapter evaluation, test output, staging run records, and
 
 ## Current validation
 
-On 2026-07-17, Greenhouse, Lever, and Ashby passed the common deterministic contract. The recorded certification run processed 1 Greenhouse fixture in 11.04 ms, 101 paginated Lever fixtures in 9.73 ms, and 1 Ashby fixture in 0.57 ms. Replay preserved canonical counts. Lever and Ashby passed scoped lifecycle restoration; Greenhouse remains incremental by its existing contract. These durations measure deterministic fixture certification, not live provider latency.
+On 2026-07-17, Greenhouse, Lever, Ashby, and Workable passed the same deterministic contract. The final M3 run processed 1 Greenhouse fixture in 10.40 ms, 101 paginated Lever fixtures in 8.99 ms, 1 Ashby fixture in 0.45 ms, and 1 Workable fixture in 0.45 ms. Replay preserved canonical counts. Lever and Ashby passed scoped closure/reactivation. Greenhouse and Workable passed incremental empty-run safety without deactivation. These durations measure deterministic fixture certification, not live provider latency.
 
 ## Measured acceleration
 
 - Engineering Reuse Index: 100% of 11 mandatory certification concerns execute through the shared harness and repository certification command.
-- Shared framework surface: 279 meaningful lines across manifest, SDK, scaffold, and certification modules.
-- Certified adapter surface after extraction: 153 meaningful lines: Greenhouse 73, Lever 45, Ashby 35.
+- Shared framework surface after M3: 291 meaningful lines across manifest, SDK, scaffold, and certification modules.
+- Certified adapter surface after Workable certification: 209 meaningful lines: Greenhouse 73, Lever 45, Ashby 35, Workable 56.
 - Certified adapter surface before extraction: 160 meaningful lines: Greenhouse 79, Lever 50, Ashby 31.
 - Direct adapter reduction: 7 meaningful lines, or 4.4%, while adding explicit manifests and stronger common gates.
 - Future simple-provider integration surface: 6 declared provider hooks versus 11 certification concerns, a measured 45.5% reduction in provider-owned responsibility count.
 - Common Coverage Engine, scheduler runtime, normalizer, canonical model, persistence, and database schema modifications: 0.
-- Files changed by M2X: 18, including the three required documents and three authoritative Orion updates.
-- Regression failures after correction of the new harness lifecycle test double: 0.
+- M3 public framework API changes: 0. The 12-line shared certification addition verifies incremental lifecycle safety for Greenhouse, Workable, and future incremental providers.
+- M3 certification and regression failures: 0.
 - Time estimate: not produced. Measured code surface and certification duration are used instead.
+
+## M3 engineering economics
+
+- Connector-specific responsibility count: 6 scaffold hooks.
+- Shared framework responsibility count: 11 certification concerns plus request, batch, health, canonicalization, scheduling, metrics, and persistence services.
+- Framework Stability Index: 100% of the M2X public framework signatures remained unchanged.
+- Connector SDK reuse: 4 of 5 SDK capabilities used; offset pagination is correctly not applicable.
+- Certification reuse: 11 of 11 mandatory certification concerns use the common harness/command.
+- Manifest reuse: all 10 required Manifest v1.0 sections.
+- Scaffold reuse: all 6 scaffold hooks; no alternate Workable execution path.
+- Connector-specific production surface: 56 meaningful adapter lines plus 12 declarative manifest lines.
+- Cost Per Certified Connector index: 54.5, using six connector-owned responsibilities against the pre-framework eleven-concern baseline of 100.
+- Time To Certification index: 54.5 on the same responsibility basis; direct engineering hours were unavailable and were not fabricated.
+- Workable deterministic certification duration: 0.45 ms for one fixture; this is a harness measurement, not engineering time or live latency.
+- Breaking changes: 0.
+- Shared architecture modifications: 0. One internal certification behavior was added for all incremental providers.
+- Financial ROI: Unknown. Engineering leverage is evidenced by eleven shared gates and zero public framework API changes, not a fabricated currency value.
 
 ## Adding the next provider
 
 1. Record the provider evaluation and reserved gates.
 2. Declare a valid manifest.
-3. Implement only locator validation and source-to-DiscoveryJob mapping; use the shared SDK or scaffold.
+3. Implement only locator validation and source-to-DiscoveryJob mapping; use the shared SDK or scaffold. Workable is the first certified proof of the six-hook scaffold.
 4. Run `runProviderCertification` with deterministic public-contract fixtures.
 5. Run `npm run certify:providers`.
 6. Deploy only to isolated staging.

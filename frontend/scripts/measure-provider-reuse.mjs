@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const shared = ["lib/discovery/provider-manifest.ts", "lib/discovery/provider-sdk.ts", "lib/discovery/provider-scaffold.ts", "lib/discovery/provider-certification.ts"];
-const adapters = ["lib/discovery/providers/greenhouse.ts", "lib/discovery/providers/lever.ts", "lib/discovery/providers/ashby.ts"];
+const adapters = ["lib/discovery/providers/greenhouse.ts", "lib/discovery/providers/lever.ts", "lib/discovery/providers/ashby.ts", "lib/discovery/providers/workable.ts"];
 const meaningfulLines = async (file) => (await readFile(resolve(root, file), "utf8")).split("\n").filter((line) => line.trim() && !line.trim().startsWith("//") && !line.trim().startsWith("*")).length;
 const sharedLines = (await Promise.all(shared.map(meaningfulLines))).reduce((total, count) => total + count, 0);
 const providerSpecificLines = Object.fromEntries(await Promise.all(adapters.map(async (file) => [file.split("/").at(-1).replace(".ts", ""), await meaningfulLines(file)])));

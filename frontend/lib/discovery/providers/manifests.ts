@@ -43,4 +43,15 @@ export const ashbyProviderManifest = {
   reliability: { ...common.reliability, rationale: "Published directly through the employer's public Ashby job board." },
 } as const satisfies ProviderManifest;
 
-export const certifiedProviderManifests = [greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest] as const;
+export const workableProviderManifest = {
+  ...common,
+  identity: { id: "workable", name: "Workable", category: "Corporate Website", description: "Published employer opportunities from Workable's public account feed." },
+  access: { ...common.access, endpointOrigins: ["https://www.workable.com"] },
+  pagination: { strategy: "none" },
+  fields: { sourceId: "jobs[].shortcode|code|url", title: "jobs[].title", employerId: "account", employerName: "response.name", location: "jobs[].city|state|country", compensation: "jobs[].salary", publishedAt: "jobs[].published_on|created_at" },
+  lifecycle: { snapshot: "incremental", scope: "employer-feed" },
+  retry: { ...common.retry, unavailableCode: "WORKABLE_UNAVAILABLE" },
+  reliability: { ...common.reliability, rationale: "Published directly through the employer's public Workable account feed." },
+} as const satisfies ProviderManifest;
+
+export const certifiedProviderManifests = [greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest] as const;

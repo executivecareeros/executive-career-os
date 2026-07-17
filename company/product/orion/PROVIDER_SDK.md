@@ -33,6 +33,8 @@ A provider adapter still owns:
 
 Complex APIs may use `ProviderSdk` directly. A simple single-endpoint JSON provider may use `createProviderScaffold`. The scaffold requires six provider hooks: endpoint, records, map, revision, scope key, and the manifest. It must not be stretched to conceal materially different provider behavior.
 
+Workable is the first production-certifiable adapter implemented through the complete scaffold. It reuses manifest validation, source and reliability construction, HTTPS request controls, error classification, batch construction, health, scheduler integration, canonicalization, replay, metrics, and lifecycle certification. Workable-specific code remains locator validation and deterministic response mapping.
+
 ## Boundaries
 
 - Providers return `DiscoveryJob`; they never create domain Opportunities.

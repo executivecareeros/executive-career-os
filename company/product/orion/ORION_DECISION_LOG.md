@@ -80,6 +80,18 @@
 - Employer claims begin after M2; publishing begins after claim governance and M3 readiness.
 - Historical opportunity truth is retained; source closure does not mean deletion.
 
+## 2026-07-17 — Certify Workable through the scaffold without claiming complete snapshots
+
+- **Context:** Workable already had a public-feed adapter, but had not passed the M2X manifest, scaffold, and permanent certification gates.
+- **Options considered:** keep its direct adapter; generalize Workable mapping into the framework; implement it through the existing six-hook scaffold.
+- **Chosen option:** retain Workable-specific locator and mapping behavior, use the existing scaffold unchanged, and declare incremental lifecycle until the public feed proves complete-inventory semantics.
+- **Reasoning:** this validates the factory without speculative abstraction or false closure authority.
+- **Trade-offs:** Workable cannot deactivate missing source observations until complete-feed behavior is evidenced in isolated staging.
+- **Reversibility:** the adapter still implements `OpportunityProvider`; no data, schema, scheduler, or canonical-model migration is required.
+- **Owner:** Sol / Opportunity Coverage Engine.
+- **Affected:** Workable adapter, Manifest v1.0, common incremental lifecycle certification, and provider roadmap.
+- **Follow-up:** select a lawful employer cohort and execute isolated-staging first run/replay before classifying Workable as live.
+
 ## 2026-07-17 — Extract proven provider behavior into a versioned acceleration framework
 
 - **Context:** Greenhouse, Lever, and Ashby repeated request, retry, health, provenance, snapshot, and certification work; Workable is the next candidate.

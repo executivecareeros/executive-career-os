@@ -8,6 +8,8 @@ const request = { runId: "expansion-test", requestedAt: "2026-07-14T12:00:00Z", 
 
 assert.equal(parseRecruiteeCompany("https://acme.recruitee.com/o/chief-revenue-officer"), "acme");
 assert.equal(parseWorkableAccount("https://apply.workable.com/acme/j/ABC"), "acme");
+assert.equal(parseWorkableAccount("https://www.workable.com/api/accounts/acme?details=true"), "acme");
+assert.throws(() => parseWorkableAccount("http://apply.workable.com/acme"), /Only public Workable/);
 assert.deepEqual(parsePersonioAccount("https://acme.jobs.personio.com/job/123"), { account: "acme", region: "com" });
 assert.equal(providerFromCareersUrl("https://acme.recruitee.com").id, "recruitee");
 assert.equal(providerFromCareersUrl("https://apply.workable.com/acme").id, "workable");
@@ -24,6 +26,8 @@ const workable = await new WorkableOpportunityProvider("acme", workableFetch).co
 assert.equal(workable.jobs[0].location, "London, United Kingdom");
 assert.equal(workable.jobs[0].rawMetadata.workArrangement, "Remote");
 assert.equal(workable.jobs[0].salary?.currency, "GBP");
+assert.equal(workable.jobs[0].company.careersUrl, "https://apply.workable.com/acme");
+assert.equal(workable.completeSnapshot, false, "Workable remains incremental until the public feed proves complete-inventory semantics");
 
 const personioXml = `<?xml version="1.0"?><workzag-jobs><position><id>42</id><subcompany>Acme &amp; Co.</subcompany><office>Berlin</office><additionalOffices><office>London</office></additionalOffices><department>Executive</department><name>Chief Revenue Officer</name><jobDescriptions><jobDescription><value><![CDATA[<p>Lead international growth.</p>]]></value></jobDescription></jobDescriptions><employmentType>permanent</employmentType><schedule>full-time</schedule><createdAt>2026-07-12T08:00:00+00:00</createdAt></position></workzag-jobs>`;
 const personioFetch = async () => new Response(personioXml, { status: 200, headers: { "Content-Type": "application/xml" } });

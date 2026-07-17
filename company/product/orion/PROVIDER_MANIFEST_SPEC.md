@@ -35,7 +35,7 @@ The manifest declares provider behavior that was previously repeated in adapters
 
 ## Current manifests
 
-Greenhouse, Lever, and Ashby have version 1.0 manifests. Greenhouse declares incremental lifecycle behavior. Lever declares offset pagination at a maximum of 100 records per page and employer-feed lifecycle scope. Ashby declares a single public listing response and employer-feed lifecycle scope.
+Greenhouse, Lever, Ashby, and Workable have version 1.0 manifests. Greenhouse and Workable declare incremental lifecycle behavior because their current contracts do not prove complete-inventory semantics. Lever declares offset pagination at a maximum of 100 records per page and employer-feed lifecycle scope. Ashby declares a single public listing response and employer-feed lifecycle scope.
 
 ## Change control
 
