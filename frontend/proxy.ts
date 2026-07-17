@@ -15,11 +15,6 @@ const publicPaths = [
 const serverAuthenticatedPaths = ["/api/operations/opportunity-refresh"];
 
 const demoOnlyModules: Array<[prefix: string, module: string]> = [
-  ["/workspace", "workspace"],
-  ["/assistant", "atlas"],
-  ["/blueprint", "blueprint"],
-  ["/applications", "applications"],
-  ["/compensation", "compensation"],
   ["/discovery", "discovery"],
   ["/knowledge", "knowledge"],
   ["/memory", "memory"],
@@ -50,6 +45,24 @@ export function proxy(request: NextRequest) {
     const url = new URL("/login", request.url);
     url.searchParams.set("next", path);
     return NextResponse.redirect(url);
+  }
+
+  // These routes have production implementations backed by the authenticated
+  // Workspace. Exact roots must never be shadowed by demonstration modules.
+  if (["/workspace", "/assistant", "/blueprint", "/applications"].includes(path)) {
+    return NextResponse.next();
+  }
+
+  if (path === "/compensation") {
+    return NextResponse.rewrite(new URL("/live-compensation", request.url));
+  }
+
+  // Application detail fixtures are not production records yet. Keep them
+  // isolated while allowing the truthful live Applications index above.
+  if (path.startsWith("/applications/")) {
+    const url = new URL("/live-module", request.url);
+    url.searchParams.set("module", "applications");
+    return NextResponse.rewrite(url);
   }
 
   const isolatedModule = demoOnlyModules.find(([prefix]) => path === prefix || path.startsWith(`${prefix}/`));

@@ -23,9 +23,11 @@ export default async function OpportunityDetailPage({ params, searchParams }: { 
   const locale = await getLocale();
   const { id } = await params;
   const query = await searchParams;
-  const opportunity = getOpportunityById(id);
-  if (opportunity) return <><OpportunityDetail opportunity={opportunity} company={getCompanyByOpportunityId(id)} /><div className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-10"><KnowledgePanel entityId={opportunity.id} title="Opportunity Knowledge Context"/></div></>;
-  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE !== "supabase") notFound();
+  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE !== "supabase") {
+    const opportunity = getOpportunityById(id);
+    if (!opportunity) notFound();
+    return <><OpportunityDetail opportunity={opportunity} company={getCompanyByOpportunityId(id)} /><div className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-10"><KnowledgePanel entityId={opportunity.id} title="Opportunity Knowledge Context"/></div></>;
+  }
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect(`/login?next=${encodeURIComponent(`/opportunities/${id}`)}`);
   const client = createServerSupabaseClient(resolved.accessToken);
