@@ -1,4 +1,7 @@
-import type { DiscoveryHealth, DiscoveryJob, OpportunityProvider, ProviderCollectionRequest } from "../types";
+import type { DiscoveryJob, OpportunityProvider, ProviderCollectionRequest } from "../types";
+import { ProviderSdk } from "../provider-sdk.ts";
+import { greenhouseProviderManifest } from "./manifests.ts";
+import { plainText } from "./provider-utils.ts";
 
 type GreenhouseJob = {
   id: number;
@@ -28,29 +31,25 @@ export function parseGreenhouseBoardToken(locator: string) {
   return token;
 }
 
-function plainText(value?: string) {
-  return value?.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&quot;/gi, "\"").replace(/&#39;/gi, "'").replace(/\s+/g, " ").trim();
-}
-
 function countryFrom(job: GreenhouseJob) {
   const location = job.location?.name ?? job.offices?.map((office) => office.location).find(Boolean);
   return location?.split(",").at(-1)?.trim();
 }
 
 export class GreenhouseOpportunityProvider implements OpportunityProvider {
-  readonly id = "greenhouse" as const;
-  readonly source = { id: this.id, name: "Greenhouse", category: "Corporate Website" as const, description: "Published employer opportunities from the Greenhouse Job Board API.", capabilities: ["jobs", "companies"] as const };
-  readonly reliability = { type: "Corporate Website" as const, rating: "high" as const, score: 90, rationale: "Published directly through the employer's public Greenhouse job board.", assessedAt: new Date().toISOString() };
+  readonly id = greenhouseProviderManifest.identity.id;
+  readonly sdk: ProviderSdk;
+  readonly source;
+  readonly reliability;
 
-  constructor(readonly boardToken: string, private readonly fetcher: typeof fetch = fetch) {}
+  constructor(readonly boardToken: string, fetcher: typeof fetch = fetch) {
+    this.sdk = new ProviderSdk(greenhouseProviderManifest, fetcher);
+    this.source = this.sdk.source;
+    this.reliability = this.sdk.reliability;
+  }
 
   private async get<T>(path: string): Promise<T> {
-    const response = await this.fetcher(`${API_ORIGIN}${path}`, { headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(12_000) });
-    if (!response.ok) {
-      const error = Object.assign(new Error(response.status === 404 ? "This Greenhouse careers board was not found." : `Greenhouse returned ${response.status}.`), { code: response.status === 404 ? "BOARD_NOT_FOUND" : "GREENHOUSE_UNAVAILABLE", retryable: response.status >= 500 || response.status === 429 });
-      throw error;
-    }
-    return response.json() as Promise<T>;
+    return this.sdk.json<T>(`${API_ORIGIN}${path}`, "This Greenhouse careers board was not found.");
   }
 
   async collect(request: ProviderCollectionRequest) {
@@ -75,16 +74,10 @@ export class GreenhouseOpportunityProvider implements OpportunityProvider {
         workArrangement: /\bremote\b/i.test(job.location?.name ?? "") ? "Remote" : undefined,
       },
     }));
-    return { providerId: this.id, collectedAt: discoveredAt, jobs: jobs.slice(0, request.maximumResults), sourceRevision: `${this.boardToken}:${listing.meta?.total ?? jobs.length}` } as const;
+    return this.sdk.batch({ collectedAt: discoveredAt, jobs: jobs.slice(0, request.maximumResults), sourceRevision: `${this.boardToken}:${listing.meta?.total ?? jobs.length}` });
   }
 
-  async health(): Promise<DiscoveryHealth> {
-    const started = Date.now();
-    try {
-      await this.get<GreenhouseBoard>(`/v1/boards/${encodeURIComponent(this.boardToken)}`);
-      return { source: this.id, status: "connected", checkedAt: new Date().toISOString(), latencyMs: Date.now() - started, message: "Public Greenhouse job board is available." };
-    } catch (error) {
-      return { source: this.id, status: "unavailable", checkedAt: new Date().toISOString(), latencyMs: Date.now() - started, message: error instanceof Error ? error.message : "Greenhouse is unavailable." };
-    }
+  health() {
+    return this.sdk.health(() => this.get<GreenhouseBoard>(`/v1/boards/${encodeURIComponent(this.boardToken)}`), "Public Greenhouse job board is available.", "Greenhouse is unavailable.");
   }
 }

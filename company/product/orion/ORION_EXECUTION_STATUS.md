@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
+Last updated: 2026-07-17 · Owner: Sol · Handover: Provider acceleration framework validated; Workable certification ready
 
 | Field | Current truth |
 |---|---|
-| Milestone | M2B — Ashby provider certification and network quality |
+| Milestone | M2X — Provider Acceleration Initiative |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Greenhouse, Lever, and Ashby certified through the common Coverage Engine |
+| Current version | Greenhouse, Lever, and Ashby use Provider Manifest v1.0 and the shared SDK; common certification framework active |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** certify Workable through the same provider locator, scheduler, scoped lifecycle, canonicalization, provenance, and replay contracts.
-- **Last completed task:** Ashby production adapter certification, two employer cohorts, permanent PRI/ERA/OCI/RCI metrics, paginated replay, scoped snapshot reconciliation, and canonical reactivation.
+- **Next highest-value task:** certify Workable through the manifest, SDK, common certification harness, and isolated-staging first run/replay.
+- **Last completed task:** shared provider manifest, request/retry/pagination SDK, minimal scaffold, and deterministic certification harness implemented and repository-certified without changing the Coverage Engine or adding a provider.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, and Ashby connector checks; durable ingestion/replay/security; scoped provider lifecycle; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the 126-page production build.
+Passed: Greenhouse, Lever, and Ashby connector checks; common provider certification; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; scoped provider lifecycle; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the 126-page production build. The first sandboxed build attempt could not reach the existing Google Fonts dependency; the authorized network-enabled rerun passed.
 
 ## Ownership
 

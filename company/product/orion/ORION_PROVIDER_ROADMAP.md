@@ -11,7 +11,7 @@ Status is evidence-based. “Production” requires successful scheduled runs an
 | SmartRecruiters | Research | P1 | High; global | Official/public tenant postings where permitted | Confirm per-interface terms and limits | Luna | Contract test required | Not registered live | Medium |
 | Teamtailor | Research | P1 | Strong Europe | Public career-site data where permitted | Confirm terms/rate limits | Luna | Contract test required | Not registered live | Medium |
 | Recruitee | Adapter ready | P1 | Europe / global SMB-midmarket | Public careers API | Per-employer validation | Luna | Provider expansion tests | No live schedule | Low |
-| Workable | Next certification candidate | P0 | Global | Public account feed | Per-employer validation | Luna | Provider expansion tests; connector contract required | No live schedule | Low |
+| Workable | Next certification candidate | P0 | Global | Public account feed | Per-employer validation | Luna | Must pass Manifest v1.0, `runProviderCertification`, repository certification, and isolated-staging first run/replay | No live schedule | Low |
 | Personio | Adapter ready | P1 | Europe | Public XML feed | Per-employer validation | Luna | Provider expansion tests | No live schedule | Low |
 | Workday | Blocked | P1 | Very high; global enterprise | Authorized tenant or provider-approved interface | Legal/terms uncertainty; tenant variability | Founder gate + Sol | None until approved | No collection | High |
 | iCIMS | Research | P1 | Enterprise North America | Authorized/public employer interface | Terms and tenant variability | Sol review | Contract test required | Not active | High |
@@ -20,7 +20,7 @@ Status is evidence-based. “Production” requires successful scheduled runs an
 
 ## Provider contract
 
-All adapters implement `OpportunityProvider` in `frontend/lib/discovery/types.ts`, register through `registry.ts` / `providers/factory.ts`, normalize through `normalizer.ts`, and persist through `OpportunityIngestionPipeline` and `SupabaseOpportunityIngestionSink`. Required outcomes are provenance, canonicalization, deduplication, lifecycle, freshness, durable run health, retry behavior, and workspace isolation. Provider-specific persistence is prohibited.
+All adapters implement `OpportunityProvider` in `frontend/lib/discovery/types.ts`, declare Provider Manifest v1.0, register through `registry.ts` / `providers/factory.ts`, normalize through `normalizer.ts`, and persist through `OpportunityIngestionPipeline` and `SupabaseOpportunityIngestionSink`. Shared request, retry, pagination, batch, health, scaffold, and certification behavior lives in the Provider SDK. Required outcomes are provenance, canonicalization, deduplication, lifecycle, freshness, durable run health, retry behavior, and workspace isolation. Provider-specific persistence is prohibited.
 
 ## Rollout rule
 

@@ -80,6 +80,18 @@
 - Employer claims begin after M2; publishing begins after claim governance and M3 readiness.
 - Historical opportunity truth is retained; source closure does not mean deletion.
 
+## 2026-07-17 — Extract proven provider behavior into a versioned acceleration framework
+
+- **Context:** Greenhouse, Lever, and Ashby repeated request, retry, health, provenance, snapshot, and certification work; Workable is the next candidate.
+- **Options considered:** keep provider-local implementations; build a fully generic provider engine; extract only behavior proven across certified providers.
+- **Chosen option:** Provider Manifest v1.0, a bounded Provider SDK, a six-hook JSON scaffold, and one deterministic certification harness over the existing Coverage Engine.
+- **Reasoning:** provider-specific mapping remains explicit while eleven certification concerns are reused consistently and future adapters require no engine redesign.
+- **Trade-offs:** the framework adds an initial shared code surface; APIs with materially different behavior may use the SDK directly rather than the minimal scaffold.
+- **Reversibility:** `OpportunityProvider` remains unchanged, so adapters can revert to direct implementation without data or scheduler migration.
+- **Owner:** Sol / Opportunity Coverage Engine.
+- **Affected:** Greenhouse, Lever, Ashby, provider certification, and the Workable entry gate.
+- **Follow-up:** complete repository certification and certify Workable without modifying the framework unless measured evidence requires it.
+
 ## 2026-07-17 — Reconcile exact employer identity across provider locators
 
 - **Context:** Greenhouse and Lever use different provider-specific employer keys even when they publish the same employer and role.
