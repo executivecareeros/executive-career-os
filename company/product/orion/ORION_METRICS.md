@@ -109,6 +109,21 @@ Version `orion-executive-validation-v1` is measured by a deterministic two-case 
 
 The fixture proves that a positive outcome does not override a Not Supported judgment. No confidence adjustment or model tuning is automated.
 
+## M8 Institutional Learning measures
+
+Version `orion-institutional-learning-v1` is measured by a deterministic governed-ledger fixture.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Institutional Learning Coverage | approved current domains ÷ ten registered domains | 10% | Unknown |
+| Approved Learning Records | current records in Approved state | 1 | Unknown |
+| Evidence Gap Reduction Opportunities | approved recurring-gap + requested-evidence records | 1 | Unknown |
+| Governance Coverage | current records with reviewed traceable evidence, reasoning, scope, and review/expiry control ÷ current records | 100% | Unknown |
+| Review Completeness | submitted records with complete review identity, time, and reasoning ÷ submitted records | 100% | Unknown |
+| Knowledge Reuse Potential | approved records with at least one bounded reuse target ÷ approved records | 100% | Unknown |
+
+The fixture validates lifecycle and governance behavior, not live organizational knowledge. It records zero automatic learning, zero model updates, and zero historical recommendation changes.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.

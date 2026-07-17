@@ -13,5 +13,6 @@ export * from "./engineering-intelligence";
 export * from "./employment-knowledge-graph";
 export * from "./executive-decision-intelligence";
 export * from "./executive-validation-platform";
+export * from "./institutional-learning";
 export * from "./registry";
 export * from "./types";

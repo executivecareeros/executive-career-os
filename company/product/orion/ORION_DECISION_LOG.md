@@ -1,5 +1,17 @@
 # Orion Decision Log
 
+## 2026-07-17 — Govern institutional learning as immutable reviewed revisions
+
+- **Context:** M7 can produce validation evidence, but evidence must not silently become organizational truth or alter historical recommendations.
+- **Options considered:** automatically tune from outcomes; maintain mutable playbook notes; use one append-only learning ledger with explicit review, approval, scope, confidence, and expiry.
+- **Chosen option:** ten canonical institutional domains share one versioned lifecycle; only current Approved records may produce bounded reuse projections.
+- **Reasoning:** Orion can preserve what it has learned about its own processes while keeping evidence, uncertainty, authority, and history visible.
+- **Trade-offs:** live learning cannot be claimed until a reviewed cohort exists; governance adds deliberate review work.
+- **Reversibility:** reuse projections are non-mutating; records can be superseded or retired while every prior revision remains available.
+- **Owner:** Sol / Governance Owner.
+- **Affected:** validation-to-learning boundary, documentation, playbooks, evidence requirements, decision guidance, and engineering practices.
+- **Follow-up:** collect the consented M7 cohort before proposing the first live institutional record.
+
 ## 2026-07-17 — Separate recommendation, feedback, outcome, and validity
 
 - **Context:** acceptance, career outcome, and recommendation quality can disagree; collapsing them would create false learning evidence.

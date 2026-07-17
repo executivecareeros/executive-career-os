@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: M7 Executive Validation Platform validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: M8 Institutional Learning validated locally
 
 | Field | Current truth |
 |---|---|
-| Milestone | M7 — Executive Validation & Learning Platform |
+| Milestone | M8 — Institutional Learning & Governance |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, Continuous Engineering Intelligence v1, Employment Knowledge Graph v1, Executive Decision Intelligence v1, and Executive Validation Platform v1 |
+| Current version | Four certified connectors pass common certification plus Engineering Operations, Engineering Intelligence, Employment Knowledge Graph, Executive Decision Intelligence, Executive Validation, and Institutional Learning v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: M7 Executive Validation Plat
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** run a consented executive validation cohort for Opportunity, Employer, and Compensation explanations; collect at least 20 structured feedback records and reviewed judgments before declaring Learning Readiness.
-- **Last completed task:** ten reusable validation dimensions, immutable recommendation snapshots, structured feedback, independent outcomes, reviewed validity, conservative confidence calibration, and evidence-only learning rules now measure decision value without causal invention.
+- **Next highest-value task:** run a consented executive validation cohort for Opportunity, Employer, and Compensation explanations; collect at least 20 structured feedback records and reviewed judgments before proposing any live institutional learning.
+- **Last completed task:** a ten-domain, append-only institutional ledger now governs review, approval, lifecycle, expiry, and bounded reuse without automatic learning or historical recommendation mutation.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 
