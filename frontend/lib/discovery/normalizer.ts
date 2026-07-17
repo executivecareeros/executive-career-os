@@ -3,6 +3,13 @@ import type { ConnectorContext, DiscoveryJob, DiscoveryResult, OpportunityNormal
 
 export const NORMALIZATION_VERSION = "1.0.0";
 
+export function opportunityContentFingerprint(job: DiscoveryJob) {
+  const value = [job.title, job.company.canonicalKey ?? job.company.name, job.location, job.country, job.description, job.employmentType, job.publishedAt]
+    .map((part) => String(part ?? "").normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase()).join("\u001f");
+  const fnv = (seed: number) => { let hash = seed >>> 0; for (let index = 0; index < value.length; index += 1) { hash ^= value.charCodeAt(index); hash = Math.imul(hash, 0x01000193) >>> 0; } return hash.toString(16).padStart(8, "0"); };
+  return `fnv1a32x2:${fnv(0x811c9dc5)}${fnv(0x9e3779b9)}`;
+}
+
 /** Pure normalization boundary. Atlas receives only the resulting Opportunity. */
 export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
   readonly version = NORMALIZATION_VERSION;
@@ -26,6 +33,8 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       employerDomain,
       companyName: job.company.name,
       companyInitials,
+      contentFingerprint: opportunityContentFingerprint(job),
+      atlasAnalysisStatus: "Pending",
       jobTitle: job.title,
       location: job.location ?? "Not specified",
       country: job.country ?? job.company.country ?? "Not specified",

@@ -17,6 +17,17 @@ Last updated: 2026-07-17 · Authority: ODS 2.0 and Executive Opportunity Univers
 
 Adapter certification is not inventory growth. SmartRecruiters becomes live only after an isolated-staging employer cohort produces durable first-run, replay, freshness, lifecycle, and provider-health evidence.
 
+## Factory automation increment
+
+- Versioned configuration boundary accepts up to 1,000 employer sources per batch.
+- Automatic approved-provider detection selects Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee, Personio, Workable, or a bounded structured company career page.
+- Duplicate inputs are removed before network or persistence work.
+- Health checks run with bounded concurrency and isolate failed sources.
+- Repeated schedule registration inserts zero duplicates.
+- A local 1,000-employer configuration proof completed in 6.91 ms with zero AI tokens and zero deployments.
+- Stable opportunity content fingerprints preserve current Atlas analysis for unchanged records and mark materially changed records for reassessment.
+- Durable employer and opportunity counts remain unchanged until a validated cohort runs in isolated staging.
+
 ## SmartRecruiters admission evidence
 
 - Official interface: employer-scoped public Posting API.

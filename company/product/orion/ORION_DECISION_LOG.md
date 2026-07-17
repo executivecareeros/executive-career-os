@@ -317,3 +317,15 @@
 - **Reversibility:** remove the catalog registration and adapter; no schema, canonical record, or scheduler migration is required.
 - **Owner:** Sol / Opportunity Factory.
 - **Follow-up:** qualify a verified employer cohort and record isolated-staging first-run, replay, freshness, and provider-health evidence before classifying it as live.
+
+## 2026-07-17 — Multiply employers through configuration and content fingerprints
+
+- **Context:** the network had reusable provider adapters but no validated bulk admission boundary; one schedule at a time could not economically reach 1,000 employers, and unchanged source records had no explicit analysis-reuse identity.
+- **Options considered:** custom employer connectors, a licensed aggregator, broad crawling, or configuration-driven cohorts on existing provider contracts.
+- **Chosen option:** introduce a 1,000-source configuration batch with automatic adapter detection, bounded health validation, failure isolation, idempotent schedule insertion, and deterministic opportunity content fingerprints.
+- **Reasoning:** this is the fastest zero-license, zero-token method that reuses validated ingestion, canonicalization, lifecycle, and monitoring rather than duplicating Orion.
+- **Trade-offs:** it reduces onboarding cost but does not discover or legally qualify employer identifiers by itself; live counts remain unchanged until cohorts run.
+- **Cost:** no new infrastructure or paid data; marginal infrastructure cost at 10,000 opportunities remains Unknown until measured in staging.
+- **Reversibility:** remove the additive factory and fingerprint fields or disable admitted schedules; no schema, history, or provider data must be deleted.
+- **Owner:** Sol / Opportunity Factory.
+- **Follow-up:** build the first demand-led employer-source cohort and measure first-run/replay yield, executive relevance, geography, freshness, failures, and marginal cost.

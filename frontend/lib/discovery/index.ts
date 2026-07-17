@@ -10,6 +10,7 @@ export * from "./provider-scaffold";
 export * from "./provider-certification";
 export * from "./connector-operations";
 export * from "./engineering-intelligence";
+export * from "./employer-source-factory";
 export * from "./employment-knowledge-graph";
 export * from "./executive-decision-intelligence";
 export * from "./executive-validation-platform";

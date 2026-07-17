@@ -30,6 +30,8 @@
     "test:lever-connector": "node --experimental-transform-types scripts/test-lever-connector.mjs",
     "test:ashby-connector": "node --experimental-transform-types scripts/test-ashby-connector.mjs",
     "test:smartrecruiters-connector": "node --experimental-transform-types scripts/test-smartrecruiters-connector.mjs",
+    "test:employer-source-factory": "node --experimental-transform-types scripts/test-employer-source-factory.mjs",
+    "test:opportunity-fingerprint": "node --experimental-transform-types scripts/test-opportunity-fingerprint.mjs",
     "test:coverage-engine": "node --experimental-transform-types scripts/test-coverage-engine.mjs",
     "test:provider-pack-alpha": "node --experimental-transform-types scripts/test-provider-pack-alpha.mjs",
     "test:provider-expansion": "node --experimental-transform-types scripts/test-provider-expansion.mjs",
@@ -61,7 +63,7 @@
     "test:atlas-decision-workspace": "node --experimental-transform-types scripts/test-atlas-decision-workspace.mjs",
     "test:atlas-product-integration": "node --experimental-transform-types scripts/test-atlas-product-integration.mjs",
     "measure:provider-reuse": "node scripts/measure-provider-reuse.mjs",
-    "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:smartrecruiters-connector && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:employment-knowledge-graph && npm run test:executive-decision-intelligence && npm run test:executive-validation-platform && npm run test:institutional-learning && npm run test:executive-experience-contract && npm run test:atlas-opportunity-review && npm run test:atlas-decision-workspace && npm run test:atlas-product-integration && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
+    "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:smartrecruiters-connector && npm run test:employer-source-factory && npm run test:opportunity-fingerprint && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:employment-knowledge-graph && npm run test:executive-decision-intelligence && npm run test:executive-validation-platform && npm run test:institutional-learning && npm run test:executive-experience-contract && npm run test:atlas-opportunity-review && npm run test:atlas-decision-workspace && npm run test:atlas-product-integration && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

@@ -126,6 +126,8 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
         website: incoming.companyProfile.website ?? (isAtsPublishingUrl(existing.companyProfile?.website) ? undefined : existing.companyProfile?.website),
       }
     : strongest.companyProfile;
+  const nextContentFingerprint = strongest.contentFingerprint ?? existing.contentFingerprint ?? incoming.contentFingerprint;
+  const contentChanged = Boolean(existing.contentFingerprint && nextContentFingerprint && existing.contentFingerprint !== nextContentFingerprint);
   return {
     ...strongest,
     id: existing.id,
@@ -138,6 +140,9 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
     sources,
     source: sources.map(source => source.name).join(" · ") || strongest.source,
     sourceUrl: strongest.sourceUrl ?? existing.sourceUrl,
+    contentFingerprint: nextContentFingerprint,
+    atlasAnalyzedFingerprint: contentChanged ? existing.atlasAnalyzedFingerprint : existing.atlasAnalyzedFingerprint ?? strongest.atlasAnalyzedFingerprint,
+    atlasAnalysisStatus: contentChanged ? "Pending" : existing.atlasAnalysisStatus ?? strongest.atlasAnalysisStatus,
     status: mergedStatus,
     closedAt: reactivated ? undefined : strongest.closedAt,
     closureReason: reactivated ? undefined : strongest.closureReason,

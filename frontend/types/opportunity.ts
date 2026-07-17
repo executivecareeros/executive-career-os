@@ -68,6 +68,10 @@ export type Opportunity = {
   companyName: string;
   companyInitials: string;
   companyLogo?: string;
+  /** Stable normalized-content identity used to avoid reassessing unchanged source material. */
+  contentFingerprint?: string;
+  atlasAnalyzedFingerprint?: string;
+  atlasAnalysisStatus?: "Pending" | "Current" | "Stale" | "Not required";
   jobTitle: string;
   location: string;
   country: string;
