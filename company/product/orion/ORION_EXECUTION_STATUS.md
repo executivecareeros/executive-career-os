@@ -7,7 +7,7 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 | Milestone | M1 — measured canonical network |
 | Phase | Phase 1 — Network Measurement Foundation |
 | Release | M1A Greenhouse Reference Model is deployed to isolated network staging |
-| Current version | `c058453` deployed; final confidence/company-surface evidence correction pending deployment |
+| Current version | M1A Greenhouse Reference Model and final evidence correction deployed |
 | Canonical opportunities | 531 |
 | Active opportunities | 531 |
 | Executive opportunities | 118 |
@@ -19,7 +19,7 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 | Duplicate rate | 0.2% source-observation consolidation rate; zero duplicate source identities |
 | GOCI | 53 overall: North America 75, Europe 67, Asia 66, Latin America 47, Oceania 44, Middle East 43, Africa 41, UK 41, Worldwide Remote 0 |
 | Employer Intelligence Coverage | Registry 100%; Extended 90%; provenance 100%; confidence 100%; careers URL 100%; official domain 0% (Unknown) |
-| Latest deployment | Network staging Ready for `c058453`; migrations through `202607170011` applied |
+| Latest deployment | Network staging Ready; migrations through `202607170011` applied |
 
 ## Blockers and priority
 
