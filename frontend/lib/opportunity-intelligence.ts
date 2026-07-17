@@ -1,5 +1,6 @@
 import { assessOpportunityFreshness } from "./opportunity-universe.ts";
 import type { Opportunity, OpportunityLifecycleEvent, OpportunitySource } from "@/types/opportunity";
+import { assessOpportunityConfidence, unknownGeographicProfile, type ExecutiveGeographicProfile, type OpportunityConfidenceResult } from "./opportunity-geography.ts";
 
 export type IntelligenceCertainty = "Confirmed" | "Estimated" | "Unknown";
 export type OpportunityIntelligenceEvidence = { label: string; value: string; certainty: IntelligenceCertainty; source: string };
@@ -31,6 +32,7 @@ export type ExecutiveOpportunityIntelligence = {
   relatedOpportunities: OpportunityRelation[];
   similarCompanies: string[];
   similarRoles: string[];
+  opportunityConfidence: OpportunityConfidenceResult;
 };
 
 const known = (value?: string) => Boolean(value && !["unknown", "not specified", "not assessed", "awaiting assessment."].includes(value.trim().toLowerCase()));
@@ -74,13 +76,14 @@ function relation(candidate: Opportunity, current: Opportunity): OpportunityRela
   return score ? { opportunityId: candidate.id, companyName: candidate.companyName, jobTitle: candidate.jobTitle, score: Math.min(100, score), basis } : undefined;
 }
 
-export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, blueprint: OpportunityIntelligenceBlueprint, universe: readonly Opportunity[], now = new Date().toISOString()): ExecutiveOpportunityIntelligence {
+export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, blueprint: OpportunityIntelligenceBlueprint, universe: readonly Opportunity[], now = new Date().toISOString(), geographicProfile: ExecutiveGeographicProfile = unknownGeographicProfile()): ExecutiveOpportunityIntelligence {
   const strengths: string[] = [];
   const concerns: string[] = [];
   const missingInformation: string[] = [];
   const evidence: OpportunityIntelligenceEvidence[] = [];
   const scores: number[] = [];
   const provenance = sourceEvidence(opportunity);
+  const opportunityConfidence = assessOpportunityConfidence(opportunity, geographicProfile);
   const confirmedSource = provenance.length === 1 ? provenance[0].name : `${provenance.length} source observations`;
   const observationCertainty: IntelligenceCertainty = opportunity.verificationStatus === "Unverified LinkedIn observation" ? "Estimated" : "Confirmed";
 
@@ -118,6 +121,9 @@ export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, 
     evidence.push({ label: "Leadership-level comparison", value: match ? `Role title contains “${blueprint.leadershipLevel}”` : `Role title does not confirm “${blueprint.leadershipLevel}”`, certainty: "Estimated", source: blueprint.revisionId ? "Active Blueprint and published role title" : "Published role title" });
   }
   if (!blueprint.revisionId) missingInformation.push("Active Executive Blueprint for a personal fit comparison");
+  if (opportunityConfidence.eligibility === "Eligible" || opportunityConfidence.eligibility === "Probably Eligible") strengths.push(opportunityConfidence.explanation);
+  else if (opportunityConfidence.eligibility === "Not Currently Eligible" || opportunityConfidence.eligibility === "Sponsorship Required" || opportunityConfidence.eligibility === "Relocation Required") concerns.push(opportunityConfidence.explanation);
+  missingInformation.push(...opportunityConfidence.missingInformation);
 
   const blueprintCompatibilityScore = scores.length ? Math.round(scores.reduce((total, score) => total + score, 0) / scores.length) : undefined;
   if (blueprintCompatibilityScore !== undefined) evidence.push({ label: "Blueprint compatibility", value: `${blueprintCompatibilityScore}% across ${scores.length} comparable dimension${scores.length === 1 ? "" : "s"}`, certainty: "Estimated", source: "Deterministic comparison with active Blueprint" });
@@ -126,8 +132,11 @@ export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, 
   const comparisonCoverage = Math.min(100, scores.length * 25);
   const confidenceScore = Math.round(sourceConfidence * .5 + completenessFields / 7 * 100 * .3 + comparisonCoverage * .2);
   const confidenceLevel = confidenceScore >= 80 ? "Very High" : confidenceScore >= 65 ? "High" : confidenceScore >= 45 ? "Moderate" : "Low";
-  const recommendation = concerns.some((item) => item.includes("below") || item.includes("outside")) ? "Deprioritize" : blueprintCompatibilityScore !== undefined && blueprintCompatibilityScore >= 80 && confidenceScore >= 65 ? "Prioritize" : missingInformation.length > 2 ? "Research" : "Monitor";
-  const guidance = recommendation === "Prioritize" ? "Review the open questions, then decide whether to pursue this opportunity." : recommendation === "Deprioritize" ? "Resolve the identified Blueprint conflicts before investing further time." : recommendation === "Research" ? "Confirm the missing decision-critical information before choosing Pursue, Watch, or Skip." : "Keep this opportunity under review while gathering the remaining evidence.";
+  const blockedByEligibility = opportunityConfidence.eligibility === "Not Currently Eligible";
+  const recommendation = blockedByEligibility || concerns.some((item) => item.includes("below") || item.includes("outside")) ? "Deprioritize" : opportunityConfidence.opportunityConfidence >= 75 && confidenceScore >= 65 ? "Prioritize" : missingInformation.length > 2 ? "Research" : "Monitor";
+  const guidance = blockedByEligibility ? "Do not prioritize this role unless your work authorization or the employer's eligibility terms change." : recommendation === "Prioritize" ? "Review the open questions, then decide whether to pursue this opportunity." : recommendation === "Deprioritize" ? "Resolve the identified Blueprint or eligibility conflicts before investing further time." : recommendation === "Research" ? "Confirm the missing decision-critical information before choosing Pursue, Watch, or Skip." : "Keep this opportunity under review while gathering the remaining evidence.";
+  evidence.push({ label: "Geographic eligibility", value: `${opportunityConfidence.eligibility}: ${opportunityConfidence.explanation}`, certainty: opportunityConfidence.eligibility === "Eligibility Unknown" ? "Unknown" : "Estimated", source: "Shared Opportunity Confidence Engine" });
+  evidence.push({ label: "Opportunity confidence", value: `${opportunityConfidence.opportunityConfidence}% · ${opportunityConfidence.label}`, certainty: "Estimated", source: "Shared Opportunity Confidence Engine" });
   evidence.push({ label: "Atlas confidence", value: `${confidenceLevel} · ${confidenceScore}%`, certainty: "Estimated", source: "Source confidence, record completeness, and comparable Blueprint dimensions" });
   for (const item of missingInformation) evidence.push({ label: item, value: "Not established by current evidence", certainty: "Unknown", source: "No supporting canonical evidence" });
 
@@ -136,5 +145,5 @@ export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, 
   const similarRoles = [...new Set(relatedOpportunities.filter((item) => item.jobTitle !== opportunity.jobTitle).map((item) => item.jobTitle))].slice(0, 3);
   const history: OpportunityLifecycleEvent[] = opportunity.lifecycle?.length ? [...opportunity.lifecycle] : [{ status: opportunity.status, occurredAt: opportunity.discoveredAt, reason: "Opportunity entered the Executive Opportunity Universe", source: "System" }];
 
-  return { opportunityId: opportunity.id, blueprintCompatibilityScore, blueprintComparisons: scores.length, atlasConfidence: { score: confidenceScore, level: confidenceLevel, explanation: "Confidence reflects source quality, evidence completeness, and the number of Blueprint dimensions that can be compared. It is not certainty." }, recommendation, guidance, evidence, strengths, concerns, missingInformation: [...new Set(missingInformation)], provenance, freshness: assessOpportunityFreshness(opportunity, now), history, relatedOpportunities, similarCompanies, similarRoles };
+  return { opportunityId: opportunity.id, blueprintCompatibilityScore, blueprintComparisons: scores.length, atlasConfidence: { score: confidenceScore, level: confidenceLevel, explanation: "Confidence reflects source quality, evidence completeness, and the number of Blueprint dimensions that can be compared. It is not certainty." }, recommendation, guidance, evidence, strengths, concerns, missingInformation: [...new Set(missingInformation)], provenance, freshness: assessOpportunityFreshness(opportunity, now), history, relatedOpportunities, similarCompanies, similarRoles, opportunityConfidence };
 }

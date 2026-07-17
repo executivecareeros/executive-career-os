@@ -10,6 +10,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { buildExecutiveOpportunityIntelligence, opportunityIntelligenceBlueprint } from "@/lib/opportunity-intelligence";
 import type { Opportunity } from "@/types/opportunity";
 import type { OpportunityProvider } from "@/lib/discovery/types";
+import { confirmFounderGeographicProfile, loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
+import { currentSession } from "@/lib/auth/session";
 
 type DecisionAction = "Pursue" | "Watch" | "Skip";
 type OpportunityDecisionRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
@@ -54,16 +56,30 @@ export async function finalizeCollectedOpportunityDecision(formData: FormData) {
   const canonicalId = String(formData.get("opportunityId") ?? ""), decision = requestedDecision(formData);
   const idempotencyKey = String(formData.get("idempotencyKey") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(idempotencyKey)) throw new Error("Decision confirmation expired. Refresh and try again.");
-  const { client, workspaceId, row, blueprintRow, universe } = await decisionContext(canonicalId);
+  const { resolved, client, workspaceId, row, blueprintRow, universe } = await decisionContext(canonicalId);
   const draft = row.payload.executiveDecisionDraft as { action?: string } | undefined;
   if (draft?.action !== decision) throw new Error("The confirmed action does not match the current selection.");
   const canonical = { ...row.payload, id: row.domain_id } as Opportunity;
-  const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(blueprintRow.payload, blueprintRow.id), universe);
+  const profile = await loadExecutiveGeographicProfile(client, resolved.context);
+  const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(blueprintRow.payload, blueprintRow.id), universe, undefined, profile);
   const snapshot = { ...intelligence, blueprintRevisionId: blueprintRow.id, opportunityRevision: row.version, opportunityRevisionId: row.domain_id, intelligenceVersion: "deterministic-opportunity-intelligence-1", rulesVersion: "opportunity-intelligence-1", capturedAt: new Date().toISOString(), contributingFactors: { blueprintComparisons: intelligence.blueprintComparisons, sourceCount: intelligence.provenance.length }, classifiedEvidence: intelligence.evidence, executiveQuestions: intelligence.missingInformation.map(item => `What evidence would resolve: ${item}?`) };
   const result = await client.request<Record<string, string>>("rpc/finalize_collected_opportunity_decision", { method: "POST", body: JSON.stringify({ request: { workspaceId, opportunityId: row.id, opportunityVersion: row.version, blueprintRevisionId: blueprintRow.id, idempotencyKey, selectedAction: decision, intelligence: snapshot } }) });
   if (result.error) throw new Error(result.error.message);
   ["/", "/opportunities", `/opportunities/${canonicalId}`, "/archive", "/tasks", "/productivity"].forEach(path => revalidatePath(path));
   redirect(`/opportunities/${encodeURIComponent(canonicalId)}?decision=complete`);
+}
+
+export async function confirmGeographicProfileAction() {
+  const session = await currentSession();
+  const founderEmail = process.env.COMPANY_CONTROL_FOUNDER_EMAIL?.trim().toLowerCase();
+  if (!founderEmail || session?.user.email?.trim().toLowerCase() !== founderEmail) {
+    throw new Error("This confirmation is available only to the authorized founder fixture.");
+  }
+  const resolved = await resolveAuthenticatedRepositoryContext();
+  if (!resolved) redirect("/login?next=/opportunities");
+  await confirmFounderGeographicProfile(createServerSupabaseClient(resolved.accessToken), resolved.context);
+  revalidatePath("/opportunities");
+  redirect("/opportunities?profile=confirmed");
 }
 
 export async function refreshOpportunityBoard(formData: FormData) {
