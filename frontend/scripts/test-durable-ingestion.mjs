@@ -28,11 +28,14 @@ assert.equal((await queue.list())[0].status, "cancelled", "Cancellation must rem
 
 const root = resolve(import.meta.dirname, "../..");
 const migration = await readFile(resolve(root, "supabase/migrations/202607170002_durable_opportunity_ingestion.sql"), "utf8");
+const schedulerClaimMigration = await readFile(resolve(root, "supabase/migrations/202607170004_scheduler_service_role_claim.sql"), "utf8");
 const store = await readFile(resolve(root, "frontend/lib/discovery/supabase-ingestion.ts"), "utf8");
 for (const table of ["opportunity_provider_schedules", "opportunity_provider_jobs", "opportunity_provider_runs"]) assert.match(migration, new RegExp(`create table public\\.${table}`));
 assert.match(migration, /for update skip locked/i, "Database claim must be concurrency-safe");
 assert.match(migration, /lease_expires_at/, "Claims must expire safely after interrupted workers");
 assert.match(migration, /is_active_workspace_member/, "Durable ingestion data must remain workspace isolated");
+assert.match(schedulerClaimMigration, /auth\.role\(\) <> 'service_role'/, "The isolated scheduler service role must be able to claim queued provider work");
+assert.match(schedulerClaimMigration, /to authenticated,service_role/, "Claim execution remains limited to authenticated users and the scheduler service role");
 assert.match(store, /rpc\/claim_next_opportunity_provider_job/, "Runtime queue must use the atomic claim RPC");
 
 console.log("Durable opportunity ingestion checks passed.");
