@@ -91,3 +91,15 @@
 - **Owner:** Sol / Opportunity Coverage Engine.
 - **Affected:** cross-provider canonical reconciliation and M2A provider certification.
 - **Follow-up:** reuse the contract for Ashby and add verified employer aliases only through governed evidence.
+
+## 2026-07-17 — Scope complete-snapshot reconciliation by employer feed
+
+- **Context:** Ashby certification used two employer schedules under one provider. Provider-wide reconciliation let one complete employer snapshot close the other employer's source observations; inventory above 1,000 also exposed PostgREST default-page truncation during replay.
+- **Options considered:** one schedule per provider; provider-specific persistence; retain shared architecture and declare stable feed scopes on complete snapshots.
+- **Chosen option:** keep the common Coverage Engine, page the complete workspace inventory, scope complete-snapshot closure to declared employer/feed keys, and reactivate canonical opportunities when an active source is observed again.
+- **Reasoning:** independent cohorts cannot close each other, replays remain idempotent at scale, and every provider keeps the same lifecycle contract.
+- **Trade-offs:** adapters that claim complete snapshots must declare stable scope keys; absent scope retains legacy provider-wide behavior for compatibility.
+- **Reversibility:** the optional scope field is backward compatible; a later migration may persist normalized feed scope separately.
+- **Owner:** Sol / Opportunity Coverage Engine.
+- **Affected:** provider batch contract, Greenhouse/Lever/Ashby-compatible lifecycle, paginated durable ingestion, canonical reactivation.
+- **Follow-up:** require scoped snapshot contract in Workable certification tests.

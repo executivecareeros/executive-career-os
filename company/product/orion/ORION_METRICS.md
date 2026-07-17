@@ -4,6 +4,8 @@ Version: `orion-m1-metrics-v1` · Network owner: Sol · Product interpretation: 
 
 The secured database contract is `public.get_orion_network_evidence(workspace, observed_at)` in migration `202607170007_orion_network_metrics.sql`. GOCI calculation is `frontend/lib/discovery/orion-metrics.ts`. Values are workspace-isolated. Missing evidence returns zero/Unknown, never an estimate.
 
+M2 quality uses version `orion-m2-quality-v1` in the same implementation. Provider Reliability Index (PRI) weights scheduler health 20%, ingestion success 30%, replay safety 20%, refresh consistency 15%, and error control 15%. Employer Resolution Accuracy (ERA) weights canonical-employer linkage 70%, duplicate-key control 20%, and replay consistency 10%. Opportunity Completeness Index (OCI) is present supported fields divided by all supported fields across title, location, application URL, compensation, work arrangement, employment type, and confidence. Regional Coverage Index (RCI) weights eight-region breadth 60% and volume balance 40%. Unsupported or unavailable evidence is never counted as present.
+
 ## Canonical metric dictionary
 
 Unless stated otherwise, the update frequency is each successful provider run plus a daily operational snapshot; dashboard location is Company Control → Network Operations (planned M1 surface; RPC is the current authoritative interface).
@@ -64,6 +66,14 @@ Known limitation: v1 regional classification uses explicit source geography stri
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.
 
 GOCI is 58: North America 75, Europe 74, Asia 72, United Kingdom 60, Oceania 51, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0. This is network evidence only and is unaffected by Founder profile data.
+
+## M2B measured snapshot — 2026-07-17
+
+Greenhouse, Lever, and Ashby produced 1,043 raw source observations, 1,042 canonical and active opportunities, 157 executive-classified opportunities, 7 measured employers, and 3 enabled providers. Opportunity freshness was 89.1%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 77.1%. Retained seven-day provider success was 86.4%; failed certification attempts remain in audit history.
+
+Ashby contributed 238 active observations from two employer cohorts. Its supported-field evidence contained 1,484 present values across 1,666 supported values: OCI 89.1%. All 238 Ashby opportunities linked to canonical employers. Network-wide employer linkage was 1,038 of 1,042 with zero duplicate canonical-employer keys and two consistent replay checks: ERA 99.7%. Ashby retained 8 certification attempts, 6 completed, 2 failed, 6 replay attempts, and 4 replay-safe attempts: PRI 82.1. RCI was 62.9 (breadth 87.5, balance 25.9), with Worldwide Remote still zero.
+
+GOCI is 63: North America 83, Asia 80, Europe 78, United Kingdom 75, Oceania 62, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0. This is network evidence only and is unaffected by Founder profile data.
 
 ## Employer Intelligence Coverage
 

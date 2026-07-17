@@ -4,33 +4,34 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 
 | Field | Current truth |
 |---|---|
-| Milestone | M2A — provider expansion engine |
+| Milestone | M2B — Ashby provider certification and network quality |
 | Phase | Phase 2 — multi-provider expansion |
-| Release | M2A Lever Provider Expansion is deployed to isolated network staging |
-| Current version | Greenhouse and Lever certified through the common Coverage Engine |
-| Canonical opportunities | 804 |
-| Active opportunities | 804 |
-| Executive opportunities | 118 |
-| Canonical employers | 3 Greenhouse employers, 1 Lever employer; 5 employers across the measured workspace |
+| Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
+| Current version | Greenhouse, Lever, and Ashby certified through the common Coverage Engine |
+| Canonical opportunities | 1,042 |
+| Active opportunities | 1,042 |
+| Executive opportunities | 157 |
+| Canonical employers | 7 measured employers; 1,038 of 1,042 active opportunities linked to a canonical employer |
 | Verified employers | 0 under strict domain + verified time + confidence ≥80 rule |
-| Production providers | Greenhouse and Lever: scheduled in isolated network staging; Lever completed 273-record first and replay runs with zero errors |
+| Production providers | Greenhouse, Lever, and Ashby: scheduled in isolated network staging; Ashby certified across two employer cohorts and 238 source observations |
 | Other providers | Adapters exist; none may be counted as live without schedule/run evidence |
-| Freshness | 85.8% observed within the v1 48-hour window; stale rate 14.2% |
+| Freshness | 89.1% observed within the v1 48-hour window; stale rate 10.9% |
 | Duplicate rate | 0.1% source-observation consolidation rate; zero duplicate source identities |
-| GOCI | 58 overall: North America 75, Europe 74, Asia 72, UK 60, Oceania 51, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0 |
+| GOCI | 63 overall: North America 83, Asia 80, Europe 78, UK 75, Oceania 62, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0 |
+| M2 quality | PRI 82.1; ERA 99.7; OCI 89.1; RCI 62.9 |
 | Employer Intelligence Coverage | Provider-scoped employer and opportunity provenance 100%; official domains remain Unknown unless verified |
-| Latest deployment | Network staging Ready at commit `490d56f`; migrations through `202607170011` applied |
+| Latest deployment | Network staging Ready at commit `0b173c6`; migrations through `202607170011` applied |
 
 ## Blockers and priority
 
-- **P0:** none. Lever first-run and replay certification completed with zero errors, zero duplicate source identities, and 100% provider-scoped provenance.
-- **P1:** freshness is 85.8%, below the 90% warning threshold; Worldwide Remote coverage remains zero; provider seven-day success is 92.9% because historical failed-run evidence is retained.
-- **Next highest-value task:** certify Ashby through the same provider locator, scheduler, canonicalization, provenance, and replay contracts, prioritizing worldwide-remote coverage.
-- **Last completed task:** Lever production adapter, provider locator propagation, exact-employer cross-provider reconciliation, two live runs, and measured M2A evidence.
+- **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
+- **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
+- **Next highest-value task:** certify Workable through the same provider locator, scheduler, scoped lifecycle, canonicalization, provenance, and replay contracts.
+- **Last completed task:** Ashby production adapter certification, two employer cohorts, permanent PRI/ERA/OCI/RCI metrics, paginated replay, scoped snapshot reconciliation, and canonical reactivation.
 
 ## Quality state
 
-Passed: Greenhouse connector, durable ingestion/replay/security checks, Orion metrics, scheduler recovery, TypeScript, ESLint, database architecture, PostgreSQL migration replay, and the 126-page production build. Isolated HTTPS company and login routes return HTTP 200.
+Passed: Greenhouse, Lever, and Ashby connector checks; durable ingestion/replay/security; scoped provider lifecycle; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the 126-page production build.
 
 ## Ownership
 
