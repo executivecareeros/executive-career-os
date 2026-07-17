@@ -8,6 +8,7 @@ import type { CoverageQueueItem, CoverageQueueStore, CoverageRunStore, Discovery
 type Row = { id: string; domain_id: string; payload: Record<string, unknown> };
 type QueueRow = { id: string; provider_id: DiscoverySourceKind; status: CoverageQueueItem["status"]; priority: number; attempt: number; maximum_attempts: number; requested_at: string; available_at: string; filters: DiscoveryFilter };
 type RunRow = { payload: OpportunityIngestionOutcome };
+type EmployerRpcRow = string | { upsert_employer_observation?: string };
 
 const queueItem = (row: QueueRow): CoverageQueueItem => ({ id: row.id, providerId: row.provider_id, status: row.status, priority: row.priority, attempt: row.attempt, maximumAttempts: row.maximum_attempts, requestedAt: row.requested_at, availableAt: row.available_at, filters: row.filters });
 
@@ -89,16 +90,49 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
         if (patched.error) throw new Error(patched.error.message);
       }
     }
-    const { id: domainId, ...payload } = opportunity;
+    const companyId = await this.upsertEmployer(opportunity);
+    const { id: domainId, ...payload } = { ...opportunity, companyId };
     if (existing.data?.[0]) {
-      const updated = await this.client.request<Row[]>(`opportunities?id=eq.${existing.data[0].id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, updated_at: new Date().toISOString() }) });
+      const updated = await this.client.request<Row[]>(`opportunities?id=eq.${existing.data[0].id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ company_id: companyId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, updated_at: new Date().toISOString() }) });
       if (updated.error) throw new Error(updated.error.message);
       return;
     }
-    const created = await this.client.request<Row[]>("opportunities", { method: "POST", body: JSON.stringify({ id: randomUUID(), domain_id: domainId, workspace_id: this.workspace.workspaceId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, created_by: this.workspace.executiveId }) });
+    const created = await this.client.request<Row[]>("opportunities", { method: "POST", body: JSON.stringify({ id: randomUUID(), domain_id: domainId, workspace_id: this.workspace.workspaceId, company_id: companyId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, created_by: this.workspace.executiveId }) });
     if (created.error) throw new Error(created.error.message);
     // The canonical payload contains source attribution atomically with the opportunity.
     // Append-only provenance expansion is intentionally deferred until a transaction RPC exists.
+  }
+
+  private async upsertEmployer(opportunity: Opportunity) {
+    const source = opportunity.sources?.[0];
+    const canonicalKey = opportunity.employerDomain
+      ?? opportunity.companyProfile?.canonicalKey
+      ?? opportunity.companyName.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const observedAt = opportunity.lastObservedAt ?? opportunity.discoveredAt;
+    const response = await this.client.request<EmployerRpcRow>("rpc/upsert_employer_observation", {
+      method: "POST",
+      body: JSON.stringify({
+        target_workspace: this.workspace.workspaceId,
+        actor_id: this.workspace.executiveId,
+        target_canonical_key: canonicalKey,
+        target_name: opportunity.companyName,
+        target_domain: opportunity.employerDomain ?? null,
+        target_website: opportunity.companyProfile?.website ?? null,
+        target_industry: opportunity.industry === "Not specified" ? null : opportunity.industry,
+        target_country: opportunity.country === "Not specified" ? null : opportunity.country,
+        target_ats_provider: source?.kind === "Employer" ? source.id : null,
+        target_confidence: opportunity.canonicalizationConfidence ?? opportunity.confidenceScore,
+        target_provider_id: source?.id ?? opportunity.source,
+        target_source_employer_id: opportunity.companyProfile?.canonicalKey ?? opportunity.employerDomain ?? canonicalKey,
+        target_source_url: source?.originalUrl ?? opportunity.sourceUrl ?? null,
+        observed_at: observedAt,
+        observation_payload: { evidenceStatus: opportunity.companyProfile?.evidenceStatus ?? "Unknown", sourceKind: source?.kind ?? "Unknown" },
+      }),
+    });
+    if (response.error) throw new Error(response.error.message);
+    const value = typeof response.data === "string" ? response.data : response.data?.upsert_employer_observation;
+    if (!value) throw new Error("Employer registry did not return a canonical company identifier");
+    return value;
   }
 }
 
