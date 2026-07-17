@@ -9,7 +9,7 @@
 | Issue ID | Created | Status | Priority | Category | Affected feature | Environment | Luna attempts | Recommended model | Founder action | Next review |
 |---|---|---|---|---|---|---|---:|---|---|---|
 | ESC-2026-0717-001 | 2026-07-17 | Sol implementation complete; staging acceptance pending | P0 | Geographic eligibility and confidence ranking | Authenticated opportunities, search, Atlas | Staging pending | 2 | Sol | Apply migration and validate authenticated staging | Before production deployment |
-| ESC-2026-0717-002 | 2026-07-17 | Implementation complete; migration and scheduler authorization pending | P0 | Durable opportunity ingestion | Provider schedules, jobs, runs, and daily ingestion | Staging pending | 0 | Sol | Approve staging migrations and server-only scheduler credential | Before scheduler activation |
+| ESC-2026-0717-002 | 2026-07-17 | Scheduler deployed inert; isolated staging boundary required | P0 | Durable opportunity ingestion | Provider schedules, jobs, runs, and daily ingestion | Production-bound Vercel project | 0 | Sol | Approve a Vercel environment that has no production domains | Before scheduler activation |
 
 ### ESC-2026-0717-001
 
@@ -38,13 +38,13 @@
 
 - **User impact:** Opportunity collection cannot yet refresh autonomously; executives may receive stale or incomplete inventory.
 - **Business impact:** Live coverage, freshness, and provider reliability cannot be measured continuously.
-- **Security/privacy impact:** Durable records are workspace-scoped with RLS. Autonomous execution requires a new server-only machine credential that has not been created.
+- **Security/privacy impact:** Durable records are workspace-scoped with RLS. The scheduler has constant-time bearer authentication, but activation is stopped because the Vercel project named `orendalis-staging` currently owns the live production domains. A scheduler credential created during configuration was rotated; its superseded key must be revoked before activation. No scheduler secret remains configured in Vercel.
 - **Observed evidence:** Existing collection runs only inside an authenticated web request; queue and outcome state were process-local.
 - **Sol implementation:** Migration `202607170002` adds durable schedules, jobs, immutable attempt outcomes, expiring concurrency leases, cancellation, indexes, and RLS. The Coverage Engine now supports durable queue and run stores and atomic database claims.
 - **Validation evidence:** Durable-ingestion regression, concurrency claim, cancellation, idempotent run persistence, Coverage Engine regression, database architecture, TypeScript, lint, and production build.
-- **Resolving commit:** `ea218ae`.
-- **Deployment state:** Not deployed. No scheduler or credential configured.
-- **Acceptance required:** Apply `202607170001` and `202607170002` in staging; run PostgreSQL/RLS validation; configure the approved server-only scheduler trigger; validate one compliant provider through manual, scheduled, retry, lease-recovery, cancellation, and replay paths.
+- **Resolving commits:** `ea218ae` (durable ingestion), `7ad9ad6` (authenticated scheduler and cron), and `18d1223` (server-authenticated route bypasses user-session middleware).
+- **Deployment state:** Scheduler code is deployed but inert. Migrations `202607170001`, `202607170002`, and `202607170003` are applied. The unauthenticated live endpoint returns `401`. Vercel scheduler variables were removed before redeployment, so no autonomous trigger can execute.
+- **Acceptance required:** Establish a Vercel staging environment with no production domains; revoke the superseded Supabase scheduler key; configure replacement server-only credentials there; activate one compliant provider; persist two live runs; verify idempotency, inventory metrics, Search/Atlas consumption, and desktop/mobile status evidence.
 - **Rollback:** Disable schedules and trigger, allow leases to expire, revert application code, preserve audit history, then remove unused scheduler tables only after verification.
 
 ## Closed issues
