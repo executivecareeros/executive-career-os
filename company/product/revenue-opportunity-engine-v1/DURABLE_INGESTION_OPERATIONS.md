@@ -2,7 +2,7 @@
 
 > Purpose: Operate provider collection durably on the existing Vercel and Supabase stack before adding broader infrastructure.
 
-- **Status:** Code and migration prepared; staging application and scheduler activation pending
+- **Status:** Staging migrations applied and validated; scheduler credential and trigger activation pending
 - **Migration:** `202607170002_durable_opportunity_ingestion.sql`
 - **Rollback boundary:** Staging first; no production activation until replay, isolation, failure, and recovery acceptance pass
 
@@ -35,14 +35,16 @@ Persistent schedules and jobs do not execute themselves. Autonomous daily operat
 
 Before activation:
 
-1. apply migrations `202607170001` and `202607170002` to staging;
-2. validate RLS and atomic claims against PostgreSQL;
+1. ~~apply migrations `202607170001` and `202607170002` to staging;~~ Completed 2026-07-17
+2. ~~validate RLS and atomic claims against PostgreSQL;~~ Completed 2026-07-17
 3. configure the server-only scheduler credential;
 4. enable one approved employer source;
 5. run manual, scheduled, retry, interrupted-lease, cancellation, and replay acceptance;
 6. verify source limits and compliance basis;
 7. record live canonical inventory metrics;
 8. promote only after rollback is rehearsed.
+
+Staging validation found the geographic profile table, all three ingestion tables, RLS enabled on each table, 11 expected workspace-isolation policies, and the four-argument atomic claim function. No provider schedules or inventory records were created during migration validation.
 
 ## Scale-Evolution Trigger
 
