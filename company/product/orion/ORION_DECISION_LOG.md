@@ -79,3 +79,15 @@
 - Unknown remains Unknown; no completion-by-fabrication.
 - Employer claims begin after M2; publishing begins after claim governance and M3 readiness.
 - Historical opportunity truth is retained; source closure does not mean deletion.
+
+## 2026-07-17 — Reconcile exact employer identity across provider locators
+
+- **Context:** Greenhouse and Lever use different provider-specific employer keys even when they publish the same employer and role.
+- **Options considered:** require identical provider keys; add provider-specific persistence; reconcile only when normalized employer names match exactly while retaining all source identities.
+- **Chosen option:** preserve provider locators for collection and provenance, while allowing exact normalized employer-name reconciliation across providers. Conflicting identities within the same provider remain separate.
+- **Reasoning:** one real opportunity must remain one canonical opportunity without weakening provenance or introducing provider-specific architecture.
+- **Trade-offs:** legal-entity aliases that are not exact remain separate until verified alias evidence exists.
+- **Reversibility:** the matching rule is deterministic and can be versioned when verified alias governance is introduced.
+- **Owner:** Sol / Opportunity Coverage Engine.
+- **Affected:** cross-provider canonical reconciliation and M2A provider certification.
+- **Follow-up:** reuse the contract for Ashby and add verified employer aliases only through governed evidence.

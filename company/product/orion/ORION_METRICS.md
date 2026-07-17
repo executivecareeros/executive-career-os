@@ -59,6 +59,12 @@ Overall GOCI uses fixed market weights: North America 20%, Europe 18%, Asia 14%,
 
 Known limitation: v1 regional classification uses explicit source geography strings and conservative patterns. “Remote” without explicit scope is not Worldwide Remote. ISO country/region normalization is a P1 task.
 
+## M2A measured snapshot — 2026-07-17
+
+Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.
+
+GOCI is 58: North America 75, Europe 74, Asia 72, United Kingdom 60, Oceania 51, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0. This is network evidence only and is unaffected by Founder profile data.
+
 ## Employer Intelligence Coverage
 
 Version `orion-employer-intelligence-v1` is produced by `public.get_orion_employer_intelligence_coverage`. The denominator is every active canonical employer in the workspace; Unknown contributes zero.

@@ -4,29 +4,29 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 
 | Field | Current truth |
 |---|---|
-| Milestone | M1 — measured canonical network |
-| Phase | Phase 1 — Network Measurement Foundation |
-| Release | M1A Greenhouse Reference Model is deployed to isolated network staging |
-| Current version | M1A Greenhouse Reference Model and final evidence correction deployed |
-| Canonical opportunities | 531 |
-| Active opportunities | 531 |
+| Milestone | M2A — provider expansion engine |
+| Phase | Phase 2 — multi-provider expansion |
+| Release | M2A Lever Provider Expansion is deployed to isolated network staging |
+| Current version | Greenhouse and Lever certified through the common Coverage Engine |
+| Canonical opportunities | 804 |
+| Active opportunities | 804 |
 | Executive opportunities | 118 |
-| Canonical employers | 3 Greenhouse employers; 4 employers across the measured workspace |
+| Canonical employers | 3 Greenhouse employers, 1 Lever employer; 5 employers across the measured workspace |
 | Verified employers | 0 under strict domain + verified time + confidence ≥80 rule |
-| Production providers | Greenhouse: scheduled in isolated network staging; two 416-record validation runs completed with zero errors |
+| Production providers | Greenhouse and Lever: scheduled in isolated network staging; Lever completed 273-record first and replay runs with zero errors |
 | Other providers | Adapters exist; none may be counted as live without schedule/run evidence |
-| Freshness | 78.5% observed within the v1 48-hour window; stale rate 21.5% |
-| Duplicate rate | 0.2% source-observation consolidation rate; zero duplicate source identities |
-| GOCI | 53 overall: North America 75, Europe 67, Asia 66, Latin America 47, Oceania 44, Middle East 43, Africa 41, UK 41, Worldwide Remote 0 |
-| Employer Intelligence Coverage | Registry 100%; Extended 90%; provenance 100%; confidence 100%; careers URL 100%; official domain 0% (Unknown) |
-| Latest deployment | Network staging Ready; migrations through `202607170011` applied |
+| Freshness | 85.8% observed within the v1 48-hour window; stale rate 14.2% |
+| Duplicate rate | 0.1% source-observation consolidation rate; zero duplicate source identities |
+| GOCI | 58 overall: North America 75, Europe 74, Asia 72, UK 60, Oceania 51, Middle East 50, Latin America 47, Africa 41, Worldwide Remote 0 |
+| Employer Intelligence Coverage | Provider-scoped employer and opportunity provenance 100%; official domains remain Unknown unless verified |
+| Latest deployment | Network staging Ready at commit `490d56f`; migrations through `202607170011` applied |
 
 ## Blockers and priority
 
-- **P0:** none for the Greenhouse reference model. Both full validation runs completed with zero errors and 100% Greenhouse employer linkage.
-- **P1:** freshness remains 78.5% because earlier Canonical/Appinio observations were not re-fetched by the Datadog schedule; provider seven-day success remains 91.7% due to retained failed-run history. Add compliant schedules rather than relabeling old evidence as fresh.
-- **Next highest-value task:** activate the next approved employer cohort through the same scheduler and canonical employer contract, then raise freshness above 90% without fabricating observation times.
-- **Last completed task:** Greenhouse reference model, replay-safe employer backfill, versioned Employer Intelligence Coverage, and canonical company surfaces.
+- **P0:** none. Lever first-run and replay certification completed with zero errors, zero duplicate source identities, and 100% provider-scoped provenance.
+- **P1:** freshness is 85.8%, below the 90% warning threshold; Worldwide Remote coverage remains zero; provider seven-day success is 92.9% because historical failed-run evidence is retained.
+- **Next highest-value task:** certify Ashby through the same provider locator, scheduler, canonicalization, provenance, and replay contracts, prioritizing worldwide-remote coverage.
+- **Last completed task:** Lever production adapter, provider locator propagation, exact-employer cross-provider reconciliation, two live runs, and measured M2A evidence.
 
 ## Quality state
 
