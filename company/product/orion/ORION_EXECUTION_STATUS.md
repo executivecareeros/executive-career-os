@@ -6,7 +6,7 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 |---|---|
 | Milestone | Orion M9 complete — powering Atlas Product Program |
 | Phase | Phase 2 — Opportunity Factory X100 live expansion |
-| Release | Configuration-driven employer discovery and minute-scheduled ingestion are deployed to isolated network staging; employer-scoped persistence reads are validated for the next capacity tier |
+| Release | Configuration-driven discovery is operating in isolated network staging; transaction-safe bounded persistence, world-country registry, and global coverage telemetry are installed for live scale validation |
 | Current version | Orion M1A–M9 stable; Atlas 2.2A adds an immediate executive briefing, role-first review, confirmed-history matching, and useful confidence separation without changing Orion or Atlas reasoning architecture |
 | Canonical opportunities | 10,260 at the latest recorded checkpoint; ingestion continues |
 | Active opportunities | 10,260 at the latest recorded checkpoint |
@@ -31,13 +31,13 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 
 - **P0:** close the Russia market gap through a compliant source authorization; do not count language-only or city-name false positives as Russia coverage.
 - **P1:** improve strict corporate-domain verification separately from ATS-source verification; do not infer domains from names or ATS slugs.
-- **P1 engineering economics:** replace per-record employer and opportunity writes with a transaction-safe batch persistence path before the 1,000,000-opportunity tier.
+- **P1 engineering economics:** validate the installed transaction-safe batch persistence path under live scheduler load before the 1,000,000-opportunity tier.
 - **Next highest-value task:** expose the 10,000-opportunity inventory in the executive experience, while separately pursuing a compliant Russia-relevant provider and batch persistence.
-- **Last completed task:** removed the O(global inventory) read from employer-scoped provider refreshes, producing an estimated 41× read reduction at the current checkpoint and approximately 400× at 100,000 opportunities for a 250-role board.
+- **Last completed task:** added bounded transactional persistence, durable retry telemetry, a 249-entry world registry, and deterministic country/industry/provider coverage reporting without changing canonical identity or lifecycle rules.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, Workable, and SmartRecruiters connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Atlas Product Integration; Provider Pack Alpha; provider expansion; Coverage Engine; employer-scoped canonical reads; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, Workable, and SmartRecruiters connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Atlas Product Integration; Provider Pack Alpha; provider expansion; Coverage Engine; employer-scoped canonical reads; bounded batch persistence and replay checks; world-country registry validation; global coverage telemetry contracts; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

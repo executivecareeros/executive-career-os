@@ -62,6 +62,8 @@
     "test:atlas-opportunity-review": "node --experimental-transform-types scripts/test-atlas-opportunity-review.mjs",
     "test:atlas-decision-workspace": "node --experimental-transform-types scripts/test-atlas-decision-workspace.mjs",
     "test:atlas-product-integration": "node --experimental-transform-types scripts/test-atlas-product-integration.mjs",
+    "test:batch-persistence": "node --experimental-transform-types scripts/test-batch-persistence.mjs",
+    "measure:batch-capacity": "node scripts/measure-batch-capacity.mjs",
     "measure:provider-reuse": "node scripts/measure-provider-reuse.mjs",
     "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:smartrecruiters-connector && npm run test:employer-source-factory && npm run test:opportunity-fingerprint && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:employment-knowledge-graph && npm run test:executive-decision-intelligence && npm run test:executive-validation-platform && npm run test:institutional-learning && npm run test:executive-experience-contract && npm run test:atlas-opportunity-review && npm run test:atlas-decision-workspace && npm run test:atlas-product-integration && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
   },

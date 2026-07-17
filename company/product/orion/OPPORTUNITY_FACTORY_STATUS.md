@@ -37,6 +37,17 @@ Verified ATS source identity and strict corporate-domain verification are delibe
 - Empty complete snapshots retain the safe global fallback so a provider can still close previously active observations. No lifecycle or canonical identity rule was weakened for the scaling gain.
 - Durable employer and opportunity counts remain unchanged until a validated cohort runs in isolated staging.
 
+## ODS 3.0 persistence boundary
+
+- Provider runs now submit canonical changes through a bounded, transaction-safe persistence RPC instead of issuing employer and opportunity writes for every record.
+- The runtime batch size defaults to 100 and is constrained to 1–250 records.
+- A workspace-scoped batch identifier makes retries idempotent; successful replays return the original telemetry without creating duplicate records.
+- Company identity, employer observations, source reassignment, canonical opportunity changes, and durable batch telemetry commit or roll back together.
+- The pipeline collapses multiple changes to the same canonical opportunity within one provider run before persistence.
+- The canonical world registry contains 249 ISO 3166 countries and territories. Missing region, language, currency, industry, and country evidence remains unknown rather than inferred.
+- Deterministic country, industry, provider-health, queue, and batch-persistence metrics are available through the staging intelligence RPC.
+- Application payload tests remained bounded at 10,000, 100,000, and 1,000,000 records with zero AI tokens. These are application-side capacity measurements, not substitutes for live database evidence.
+
 ## SmartRecruiters admission evidence
 
 - Official interface: employer-scoped public Posting API.
@@ -53,4 +64,4 @@ Sources: [SmartRecruiters Posting API](https://developers.smartrecruiters.com/do
 
 ## Current constraint
 
-The first operational milestone is complete for employer-source and opportunity volume. The next engineering-economics constraint is write amplification: one employer observation and one opportunity write are still performed per collected record. The new scoped-read boundary makes 100,000-opportunity reads sustainable, but 1,000,000-opportunity throughput requires a transaction-safe batch persistence path before materially increasing worker concurrency. The measured G20 country-market check has evidence in 18 of 19 countries; Russia is the remaining zero-evidence market. The current approved Greenhouse/Ashby cohort contains no posting with strict Russia location evidence. A Russia-relevant source such as HeadHunter requires separate terms and authorization review before activation. Ashby public metadata proves the active ATS board but does not expose a supported corporate domain, so domain verification remains unknown unless independent evidence exists. No domain is inferred from an employer name.
+The per-record write-amplification constraint has been removed in code and the required database functions are installed in isolated staging. The next constraint is live database throughput evidence under the scheduler: the 1,000,000-opportunity tier is not production-approved until database duration, failure, lock, queue-latency, replay, and rollback measurements pass. The measured G20 country-market check has evidence in 18 of 19 countries; Russia is the remaining zero-evidence market. HeadHunter activation is prohibited until the Founder accepts the provider process and Orendalis receives written permission compatible with building the canonical Opportunity Universe. Ashby public metadata proves the active ATS board but does not expose a supported corporate domain, so domain verification remains unknown unless independent evidence exists. No domain is inferred from an employer name.

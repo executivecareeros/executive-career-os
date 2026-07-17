@@ -290,6 +290,17 @@ export interface OpportunityIngestionSink {
    */
   listForBatch?(batch: ProviderCollectionBatch): Promise<readonly Opportunity[]>;
   upsert(opportunity: Opportunity): Promise<void>;
+  upsertBatch?(opportunities: readonly Opportunity[], context: { runId: string; providerId: DiscoverySourceKind; collectedAt: string }): Promise<readonly IngestionBatchTelemetry[]>;
+}
+
+export interface IngestionBatchTelemetry {
+  batchId: string;
+  records: number;
+  inserted: number;
+  updated: number;
+  databaseCalls: number;
+  durationMs: number;
+  retrySafe: boolean;
 }
 
 export type IngestionMonitorEvent =
@@ -312,6 +323,7 @@ export interface OpportunityRefreshPolicy {
 export interface OpportunityIngestionOutcome {
   run: DiscoveryRun;
   items: readonly IngestionItemResult[];
+  persistence?: readonly IngestionBatchTelemetry[];
   nextRefreshAt?: string;
   nextRetryAt?: string;
 }

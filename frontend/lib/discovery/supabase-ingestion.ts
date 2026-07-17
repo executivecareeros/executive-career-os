@@ -3,13 +3,14 @@ import { randomUUID } from "node:crypto";
 import type { RepositoryContext } from "@/lib/repositories/types";
 import type { SupabaseDataClient } from "@/lib/supabase/client";
 import type { Opportunity } from "@/types/opportunity";
-import type { CoverageQueueItem, CoverageQueueStore, CoverageRunStore, DiscoveryFilter, DiscoverySourceKind, OpportunityIngestionOutcome, OpportunityIngestionSink, ProviderCollectionBatch } from "./types";
+import type { CoverageQueueItem, CoverageQueueStore, CoverageRunStore, DiscoveryFilter, DiscoverySourceKind, IngestionBatchTelemetry, OpportunityIngestionOutcome, OpportunityIngestionSink, ProviderCollectionBatch } from "./types";
 
 type Row = { id: string; domain_id: string; payload: Record<string, unknown> };
 type QueueRow = { id: string; provider_id: DiscoverySourceKind; status: CoverageQueueItem["status"]; priority: number; attempt: number; maximum_attempts: number; requested_at: string; available_at: string; filters: DiscoveryFilter };
 type RunRow = { payload: OpportunityIngestionOutcome };
 type EmployerRpcRow = string | { upsert_employer_observation?: string };
 type CompanyIdentityRow = { id: string };
+type BatchRpcRow = IngestionBatchTelemetry | { persist_opportunity_batch?: IngestionBatchTelemetry };
 
 const queryChunkSize = 40;
 const chunks = <T>(values: readonly T[], size = queryChunkSize) => Array.from({ length: Math.ceil(values.length / size) }, (_, index) => values.slice(index * size, (index + 1) * size));
@@ -160,6 +161,57 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
     rows.push({ id, domain_id: domainId, payload });
     // The canonical payload contains source attribution atomically with the opportunity.
     // Append-only provenance expansion is intentionally deferred until a transaction RPC exists.
+  }
+
+  async upsertBatch(opportunities: readonly Opportunity[], context: { runId: string; providerId: DiscoverySourceKind; collectedAt: string }) {
+    const configured = Number(process.env.OPPORTUNITY_PERSISTENCE_BATCH_SIZE ?? 100);
+    const batchSize = Number.isFinite(configured) ? Math.max(1, Math.min(250, Math.trunc(configured))) : 100;
+    const telemetry: IngestionBatchTelemetry[] = [];
+    for (const [index, group] of chunks(opportunities, batchSize).entries()) {
+      const batchId = `${context.runId}:${index + 1}`;
+      const items = group.map((opportunity) => {
+        const source = opportunity.sources?.[0];
+        const canonicalKey = opportunity.employerDomain
+          ?? opportunity.companyProfile?.canonicalKey
+          ?? opportunity.companyName.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const { id: domainId, ...payload } = opportunity;
+        return {
+          domainId,
+          company: {
+            canonicalKey,
+            name: opportunity.companyName,
+            domain: opportunity.employerDomain ?? null,
+            website: opportunity.companyProfile?.careersUrl ?? null,
+            industry: opportunity.industry === "Not specified" ? null : opportunity.industry,
+            country: opportunity.country === "Not specified" ? null : opportunity.country,
+            atsProvider: source?.kind === "Employer" ? source.id : null,
+            confidence: opportunity.canonicalizationConfidence ?? opportunity.confidenceScore,
+            providerId: source?.id ?? opportunity.source,
+            sourceEmployerId: opportunity.companyProfile?.canonicalKey ?? opportunity.employerDomain ?? canonicalKey,
+            sourceUrl: source?.originalUrl ?? opportunity.sourceUrl ?? null,
+            observedAt: opportunity.lastObservedAt ?? opportunity.discoveredAt,
+            observation: { evidenceStatus: opportunity.companyProfile?.evidenceStatus ?? "Unknown", sourceKind: source?.kind ?? "Unknown" },
+          },
+          title: opportunity.jobTitle,
+          country: opportunity.country,
+          industry: opportunity.industry,
+          status: opportunity.status,
+          sourceUrl: opportunity.sourceUrl ?? null,
+          payload,
+        };
+      });
+      const response = await this.client.request<BatchRpcRow>("rpc/persist_opportunity_batch", {
+        method: "POST",
+        body: JSON.stringify({ target_workspace: this.workspace.workspaceId, actor_id: this.workspace.executiveId, target_batch_id: batchId, target_provider_id: context.providerId, collected_at: context.collectedAt, items }),
+      });
+      if (response.error) throw new Error(`Batch ${index + 1} failed: ${response.error.message}`);
+      const data = response.data;
+      const result = data && typeof data === "object" && "persist_opportunity_batch" in data ? data.persist_opportunity_batch : data;
+      if (!result) throw new Error(`Batch ${index + 1} returned no persistence telemetry`);
+      telemetry.push(result as IngestionBatchTelemetry);
+    }
+    this.rows = null;
+    return telemetry;
   }
 
   private async upsertEmployer(opportunity: Opportunity) {

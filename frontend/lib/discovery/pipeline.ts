@@ -59,6 +59,7 @@ export class OpportunityIngestionPipeline {
       if (!validDate(batch.collectedAt)) throw Object.assign(new Error("Provider returned an invalid collection time"), { code: "INVALID_PROVIDER_BATCH", retryable: false });
       const existing = [...await (this.sink.listForBatch?.(batch) ?? this.sink.list())];
       const items: IngestionItemResult[] = [];
+      const pending: Opportunity[] = [];
       for (const job of batch.jobs.slice(0, request.maximumResults)) {
         const validation = validateDiscoveryJob(job, provider);
         if (validation.length) {
@@ -76,7 +77,7 @@ export class OpportunityIngestionPipeline {
           const duplicate = duplicateIndex >= 0 ? existing[duplicateIndex] : undefined;
           const repeatedObservation = Boolean(duplicate?.sources?.some(source => candidate.sources?.some(incoming => incoming.id === source.id && incoming.originalId === source.originalId)));
           const opportunity = duplicate ? mergeOpportunityObservations(duplicate, candidate, batch.collectedAt) : candidate;
-          await this.sink.upsert(opportunity);
+          if (this.sink.upsertBatch) pending.push(opportunity); else await this.sink.upsert(opportunity);
           if (duplicateIndex >= 0) existing[duplicateIndex] = opportunity; else existing.push(opportunity);
           const disposition = repeatedObservation ? "duplicate" : duplicate ? "updated" : "inserted";
           items.push({ sourceId: job.sourceId, disposition, opportunityId: opportunity.id, warnings: normalized.warnings });
@@ -97,12 +98,16 @@ export class OpportunityIngestionPipeline {
           const sources = (current.sources ?? []).map(source => missing.includes(source) ? { ...source, status: "Closed" as const, lastFetchedAt: batch.collectedAt, fetchStatus: "Succeeded" as const } : source);
           const remainsActive = sources.some(source => source.status !== "Closed");
           const deactivated: Opportunity = { ...current, sources, status: remainsActive ? current.status : "Archived", closedAt: remainsActive ? current.closedAt : batch.collectedAt, closureReason: remainsActive ? current.closureReason : `${provider.source.name} no longer reports this opportunity`, lifecycle: [...(current.lifecycle ?? []), { status: remainsActive ? current.status : "Archived", occurredAt: batch.collectedAt, reason: remainsActive ? `${provider.source.name} source observation closed` : "No active source continues to report this opportunity", source: "System" }] };
-          await this.sink.upsert(deactivated);
+          if (this.sink.upsertBatch) pending.push(deactivated); else await this.sink.upsert(deactivated);
           const sourceId = missing.map(source => source.originalId).join(",");
           items.push({ sourceId, disposition: "deactivated", opportunityId: current.id, warnings: [] });
           await this.monitor.record({ type: "item-processed", runId: request.runId, providerId, occurredAt: batch.collectedAt, sourceId, disposition: "deactivated" });
         }
       }
+      const canonicalPending = [...new Map(pending.map((opportunity) => [opportunity.id, opportunity])).values()];
+      const persistence = this.sink.upsertBatch && canonicalPending.length
+        ? await this.sink.upsertBatch(canonicalPending, { runId: request.runId, providerId, collectedAt: batch.collectedAt })
+        : undefined;
       const imported = items.filter(item => item.disposition === "inserted" || item.disposition === "updated").length;
       const ignored = items.length - imported;
       const errors = items.flatMap(item => item.error ? [item.error] : []);
@@ -110,7 +115,7 @@ export class OpportunityIngestionPipeline {
       const finishedAt = new Date().toISOString();
       const run = { id: request.runId, source: provider.id, status, startedAt, finishedAt, durationMs: Math.max(0, Date.parse(finishedAt) - Date.parse(startedAt)), jobsFound: batch.jobs.length, jobsImported: imported, jobsIgnored: ignored, errors, warnings: items.flatMap(item => item.warnings), isDemo: false } as const;
       await this.monitor.record({ type: "run-completed", runId: request.runId, providerId, occurredAt: finishedAt, status, imported, ignored });
-      return { run, items, nextRefreshAt: later(batch.collectedAt, policy.cadenceMinutes) };
+      return { run, items, persistence, nextRefreshAt: later(batch.collectedAt, policy.cadenceMinutes) };
     } catch (error) {
       const occurredAt = new Date().toISOString();
       const code = typeof error === "object" && error && "code" in error ? String(error.code) : "PROVIDER_COLLECTION_FAILED";
