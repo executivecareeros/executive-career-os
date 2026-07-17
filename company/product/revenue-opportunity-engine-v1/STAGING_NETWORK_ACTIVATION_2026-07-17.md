@@ -1,5 +1,7 @@
 # Staging Network Activation — 2026-07-17
 
+> Historical activation snapshot. It is superseded for current state by [`../orion/ORION_EXECUTION_STATUS.md`](../orion/ORION_EXECUTION_STATUS.md). The zero-schedule state below describes the pre-activation moment and is retained as audit evidence.
+
 ## Verified State
 
 - Staging project: `orendalis-staging`

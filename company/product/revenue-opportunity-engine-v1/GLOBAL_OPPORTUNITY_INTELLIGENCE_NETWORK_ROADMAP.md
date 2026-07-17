@@ -1,5 +1,7 @@
 # Global Opportunity Intelligence Network Roadmap
 
+> Historical architecture record. The authoritative M1–M4 execution source is now [`../orion/ORION_MASTER_PLAN.md`](../orion/ORION_MASTER_PLAN.md). This document is preserved for audit history and must not be used to override current Orion status, metrics, or gates.
+
 > Purpose: Evolve the existing Opportunity Coverage Engine into ORENDALIS's trusted global opportunity intelligence network without replacing working foundations.
 
 - **Authority:** ODS 2.0 and the Founder Global Opportunity Intelligence Network directive
