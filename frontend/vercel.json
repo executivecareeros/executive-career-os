@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/operations/opportunity-refresh",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}
