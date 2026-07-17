@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: M6 Executive Decision Intelligence validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: M7 Executive Validation Platform validated locally
 
 | Field | Current truth |
 |---|---|
-| Milestone | M6 — Executive Decision Intelligence |
+| Milestone | M7 — Executive Validation & Learning Platform |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, Continuous Engineering Intelligence v1, Employment Knowledge Graph v1, and Executive Decision Intelligence v1 |
+| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, Continuous Engineering Intelligence v1, Employment Knowledge Graph v1, Executive Decision Intelligence v1, and Executive Validation Platform v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: M6 Executive Decision Intell
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** validate Opportunity, Employer, and Compensation decision explanations with executives, then add confirmed career/profile evidence to measure Career Progression and Executive Fit without inference.
-- **Last completed task:** six reusable decision domains, five mandatory recommendation gates, conservative confidence, structured Atlas advice, and explicit recommendation refusal now convert canonical knowledge into explainable support.
+- **Next highest-value task:** run a consented executive validation cohort for Opportunity, Employer, and Compensation explanations; collect at least 20 structured feedback records and reviewed judgments before declaring Learning Readiness.
+- **Last completed task:** ten reusable validation dimensions, immutable recommendation snapshots, structured feedback, independent outcomes, reviewed validity, conservative confidence calibration, and evidence-only learning rules now measure decision value without causal invention.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

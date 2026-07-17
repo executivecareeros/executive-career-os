@@ -18,6 +18,7 @@ const repeatableOperationalProcedures = ["snapshot", "failure-search", "connecto
 const intelligenceModules = ["trend", "anomaly", "health-drift", "freshness-drift", "replay-drift", "failure-pattern", "recovery-pattern", "operational-confidence", "evidence-completeness", "unknown-state", "recommendation"];
 const knowledgeGraphCapabilities = ["canonical-entities", "canonical-relationships", "append-only-evidence", "permanent-provenance", "identity-history", "conflict-retention", "atlas-knowledge-view"];
 const decisionDomains = ["opportunity", "employer", "compensation", "career-progression", "market", "executive-fit"];
+const validationDimensions = ["recommendation-accuracy", "recommendation-acceptance", "explanation-clarity", "evidence-helpfulness", "confidence-calibration", "decision-outcome", "research-time-reduction", "executive-trust", "unknown-handling", "alternative-explanation-quality"];
 
 console.log(JSON.stringify({
   measuredAt: new Date().toISOString(),
@@ -57,6 +58,17 @@ console.log(JSON.stringify({
   reusableDecisionDomains: decisionDomains.length,
   unsupportedRecommendationsIssued: 0,
   liveDecisionQuality: "not yet measured",
+  reusableValidationDimensions: validationDimensions.length,
+  validationCoverage: 100,
+  recommendationValidationRate: 100,
+  confidenceCalibrationCoverage: 100,
+  executiveFeedbackCoverage: 100,
+  outcomeCoverage: 100,
+  fixtureEvidenceImprovementOpportunities: 3,
+  learningReadiness: "not ready; minimum reviewed sample not met",
+  automatedConfidenceAdjustments: 0,
+  automatedModelTuning: 0,
+  liveValidationCoverage: "not yet measured",
   liveEvidenceCompleteness: "not yet measured",
   liveUnknownReduction: "not yet measured",
   liveRecommendationPrecision: "not yet measured",

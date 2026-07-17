@@ -93,6 +93,22 @@ Version `orion-decision-intelligence-v1` is measured by the deterministic six-do
 
 Three fixture domains produced decision support; three correctly withheld recommendations. Fixture results validate the contract, not live executive decision quality.
 
+## M7 Executive Validation measures
+
+Version `orion-executive-validation-v1` is measured by a deterministic two-case fixture covering all ten validation dimensions.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Validation Coverage | measured dimensions ÷ ten dimensions | 100% | Unknown |
+| Recommendation Validation Rate | cases with reviewed judgment ÷ cases | 100% | Unknown |
+| Confidence Calibration Coverage | cases with numeric confidence and reviewed binary judgment ÷ cases | 100% | Unknown |
+| Executive Feedback Coverage | cases with structured feedback ÷ cases | 100% | Unknown |
+| Outcome Coverage | cases with verified outcome ÷ cases | 100% | Unknown |
+| Evidence Improvement Opportunities | insufficient evidence selections + additional evidence requests | 3 | Unknown |
+| Learning Readiness | complete coverage + no unreviewed input + ≥20 feedback + ≥20 reviewed binary judgments | Not ready | Unknown |
+
+The fixture proves that a positive outcome does not override a Not Supported judgment. No confidence adjustment or model tuning is automated.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.

@@ -1,5 +1,29 @@
 # Orion Decision Log
 
+## 2026-07-17 — Separate recommendation, feedback, outcome, and validity
+
+- **Context:** acceptance, career outcome, and recommendation quality can disagree; collapsing them would create false learning evidence.
+- **Options considered:** learn directly from clicks/outcomes; store one mutable decision record; preserve four append-only record types with independent evidence.
+- **Chosen option:** immutable recommendation snapshots, structured executive feedback, separately verified outcomes, and reviewed validity judgments.
+- **Reasoning:** an accepted recommendation is not necessarily correct and an offer does not prove the prior recommendation was evidence-valid.
+- **Trade-offs:** learning requires deliberate review and larger samples; M7 fixture Learning Readiness remains Not ready.
+- **Reversibility:** the validation layer is derived and changes no recommendation, graph evidence, confidence, or outcome history.
+- **Owner:** Sol / Executive Intelligence.
+- **Affected:** validation, calibration, and future learning inputs.
+- **Follow-up:** collect a consented 20-case baseline before establishing production targets or changing models.
+
+## 2026-07-17 — Prohibit automatic confidence calibration
+
+- **Context:** calibration evidence may reveal drift, but small or biased samples cannot safely tune decision confidence.
+- **Options considered:** automatically adjust confidence; report outcome-correlated confidence; report reviewed calibration evidence and require a versioned decision for changes.
+- **Chosen option:** retain predicted confidence, observed outcome, reviewed validity, calibration error, drift, and reliability while making zero automatic adjustments.
+- **Reasoning:** outcomes remain contextual and confidence changes require sufficient reviewed evidence.
+- **Trade-offs:** detected drift creates an investigation, not an immediate model change.
+- **Reversibility:** future versioned calibration can use retained history without rewriting it.
+- **Owner:** Sol / Atlas.
+- **Affected:** M6 confidence model validation.
+- **Follow-up:** calculate live reliability only after at least 20 reviewed points and evaluate the 50-point calibration criterion.
+
 ## 2026-07-17 — Require five gates for every executive recommendation
 
 - **Context:** the Knowledge Graph can support many conclusions, but knowledge volume does not prove decision value or executive trust.
