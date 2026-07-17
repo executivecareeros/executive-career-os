@@ -7,30 +7,30 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 | Milestone | M1 — measured canonical network |
 | Phase | Phase 1 — Network Measurement Foundation |
 | Release | Phoenix II foundation is on `main`; authenticated production acceptance for Orion metric change is not applicable until deployed |
-| Current version | `986b164` before this Orion increment |
+| Current version | `ed6c077` |
 | Canonical opportunities | 169 |
 | Active opportunities | 169 (last verified cohort snapshot; lifecycle RPC deployment pending) |
 | Executive opportunities | 41 |
-| Canonical employers | 1 active canonical employer in the live network cohort |
+| Canonical employers | 2 active canonical employers in the measured workspace |
 | Verified employers | 0 under strict domain + verified time + confidence ≥80 rule |
-| Production providers | Greenhouse: scheduled and healthy in isolated network staging |
+| Production providers | Greenhouse: scheduled in isolated network staging; seven-day success 88.9%, below the 97% warning threshold |
 | Other providers | Adapters exist; none may be counted as live without schedule/run evidence |
-| Freshness | 168/169 observed within 36h at last measurement (99.4%) |
-| Duplicate rate | 0 duplicate source identifiers; Orion canonical duplicate-rate RPC pending deployment |
-| GOCI | Not yet measured from deployed v1 contract; must remain Unknown |
-| Latest deployment | Network staging Ready for `986b164` |
+| Freshness | 32.5% observed within the v1 48-hour window; stale rate 67.5% |
+| Duplicate rate | 0.6% source-observation consolidation rate; no duplicate canonical records detected by source identity |
+| GOCI | 28 overall: North America 42, Oceania 42, Latin America 41, Middle East 41, Asia 33, Europe 31, UK 7, Africa 0, Worldwide Remote 0 |
+| Latest deployment | Network staging Ready for `ed6c077`; migration `202607170007` applied |
 
 ## Blockers and priority
 
-- **P0:** deploy/apply `202607170007`, read the secured snapshot, and validate GOCI/metric outputs against the verified cohort.
+- **P0:** restore provider success to at least 97% and opportunity freshness to at least 90%; identify whether stale records require complete-snapshot closure or broader refresh throughput.
 - **P1:** activate two additional compliant providers to reach three reliable providers; verify 100 canonical employers; normalize geography; expose provider health and regional breakdown in Company Control.
-- **Work in progress:** Orion program and M1 metrics contract.
-- **Next highest-value task:** apply the metrics migration to isolated network staging and establish an approved employer/provider expansion cohort from Lever and Ashby.
-- **Last completed task:** canonical employer identity repair and two idempotent Greenhouse runs.
+- **Work in progress:** provider run/freshness diagnosis from the first secured Orion snapshot.
+- **Next highest-value task:** diagnose the stale 67.5% of active inventory and failed/warning run evidence before expanding cohorts.
+- **Last completed task:** Orion operating system, secured metric snapshot and profile-independent GOCI v1 deployed to isolated network staging.
 
 ## Quality state
 
-Previous network increment passed opportunity-universe, discovery, Greenhouse, provider expansion, durable ingestion, TypeScript, lint, and production build checks. The current increment must additionally pass `test:orion-metrics`, migration safety/RLS review, and applicable regression tests.
+Passed: Orion metrics, geographic coverage, durable ingestion, scheduler security, Greenhouse, provider expansion, TypeScript, ESLint, database architecture, PostgreSQL migration replay, RLS, and the 126-page production build.
 
 ## Ownership
 

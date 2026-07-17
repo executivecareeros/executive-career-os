@@ -8,7 +8,7 @@ Build the world’s most comprehensive and trusted Executive Opportunity Intelli
 
 ## Current production baseline
 
-Phoenix II is present on `main` (`2b1d92c` is an ancestor of the current branch). The current verified network build is `986b164`. Isolated network staging runs one Greenhouse employer schedule every 15 minutes. The last two observed runs completed without errors and were idempotent. Verified evidence: 170 raw source records, 169 canonical opportunities, 41 executive-title opportunities, 1 active canonical employer, 0 strictly verified employers, 168 opportunities observed within 36 hours, and 0 duplicate source identifiers. These figures are a point-in-time staging baseline, not a claim about production-wide global coverage.
+Phoenix II is present on `main` (`2b1d92c` is an ancestor of the current branch). Orion metrics build `ed6c077` is Ready in isolated network staging, which runs one Greenhouse employer schedule every 15 minutes. The first secured snapshot reports 170 raw source observations, 169 active canonical opportunities, 41 executive-title opportunities, 2 active canonical employers, 0 strictly verified employers, 26 country labels, 32.5% opportunity freshness within 48 hours, 88.9% provider success over seven days, 0.6% source-observation consolidation, and GOCI 28. These figures are a point-in-time staging baseline, not a claim about production-wide global coverage. The low freshness and provider-success results supersede earlier manual “healthy” interpretations.
 
 ## Architecture baseline and current-state map
 
@@ -102,7 +102,7 @@ Metrics → trustworthy M1 decisions. Provider health + contract tests → safe 
 
 ## Blockers and highest-value next task
 
-No Founder gate blocks the next step. Apply `202607170007` to isolated network staging, deploy the matching code, read/verify the secured Orion snapshot, then activate compliant Lever and Ashby employer cohorts and strict employer-domain verification. Production changes require the existing release authorization gate.
+No Founder gate blocks the next step. Diagnose and correct the 67.5% stale active inventory and the run failures/warnings behind 88.9% provider success. Only after health meets the documented thresholds should compliant Lever and Ashby cohorts and strict employer-domain verification expand M1 coverage. Production changes require the existing release authorization gate.
 
 ## Completed work and release history
 
@@ -111,7 +111,7 @@ No Founder gate blocks the next step. Apply `202607170007` to isolated network s
 - Canonical employer registry: `4aebafe`.
 - Cross-provider employer identity protection: `7a00e7c`.
 - Employer refresh repair: `986b164`.
-- Orion program and M1 metrics: current increment (commit assigned after validation).
+- Orion program and M1 metrics: `ed6c077`.
 
 Historical Phoenix and Revenue Opportunity Engine records remain audit evidence. Major decisions are indexed in `ORION_DECISION_LOG.md`.
 
@@ -123,4 +123,4 @@ Historical Phoenix and Revenue Opportunity Engine records remain audit evidence.
 
 ## Change log
 
-- 2026-07-17: Orion operating system established; M1 baseline recorded; secured metrics/GOCI v1 implemented; existing target milestones preserved.
+- 2026-07-17: Orion operating system established; M1 baseline recorded; secured metrics/GOCI v1 deployed to network staging; freshness and provider-success P0 exposed; existing target milestones preserved.
