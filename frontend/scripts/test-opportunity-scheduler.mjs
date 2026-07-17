@@ -17,6 +17,7 @@ const vercel = JSON.parse(await readFile(resolve(root, "frontend/vercel.json"), 
 
 assert.match(route, /schedulerRequestAuthorized/);
 assert.match(route, /Unauthorized/);
+assert.match(route, /maxDuration = 240/, "A full provider cohort must have enough runtime to finish before its queue lease expires");
 assert.match(proxy, /serverAuthenticatedPaths/);
 assert.match(proxy, /\/api\/operations\/opportunity-refresh/);
 assert.match(proxy, /serverAuthenticatedPaths\.includes\(path\)/);

@@ -4,7 +4,10 @@ import { runOpportunityScheduler } from "@/lib/discovery/scheduler-runtime";
 import { createSchedulerSupabaseClient } from "@/lib/supabase/scheduler";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+// A full employer cohort can require more than one minute of deterministic,
+// workspace-isolated canonical writes. Keep this below the five-minute queue
+// lease so an interrupted invocation remains safely reclaimable.
+export const maxDuration = 240;
 
 export async function GET(request: Request) {
   if (!schedulerRequestAuthorized(request.headers.get("authorization"), process.env.CRON_SECRET)) {
