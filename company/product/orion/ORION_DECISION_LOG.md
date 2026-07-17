@@ -48,6 +48,30 @@
 - **Affected:** durable ingestion runtime, scheduler runtime, isolated network staging schedule.
 - **Follow-up:** deploy, reclaim the expired job, run a second idempotent full refresh, and update the Orion baseline.
 
+## 2026-07-17 — Separate ATS careers provenance from official employer domains
+
+- **Context:** a Greenhouse board proves an employer careers source but does not prove the employer's official corporate domain.
+- **Options considered:** store the ATS host as official domain; omit the board; preserve it as careers provenance while official domain remains Unknown.
+- **Chosen option:** preserve the public board as `careers_url`, never as `official_domain`.
+- **Reasoning:** company pages remain useful without presenting an ATS hostname as corporate identity.
+- **Trade-offs:** official-domain coverage is currently 0%; Extended Intelligence Coverage reports that gap.
+- **Reversibility:** verified official domains can be added later without changing canonical identity.
+- **Owner:** Sol / Employer Intelligence.
+- **Affected:** Greenhouse normalization, employer ingestion, company surfaces, coverage metrics.
+- **Follow-up:** add a verified-domain workflow in a later employer-intelligence increment.
+
+## 2026-07-17 — Score exact Greenhouse board identity at 90
+
+- **Context:** two legacy employers had exact board identity and source provenance but predated recorded employer-resolution confidence.
+- **Options considered:** leave confidence Unknown; infer from company name; assign the existing high-reliability provider score only when board identity and source URL are explicit.
+- **Chosen option:** deterministic 90 identity-resolution confidence for explicit Greenhouse board provenance.
+- **Reasoning:** this measures confidence in canonical identity resolution, not employer quality or verification, and requires no fuzzy matching.
+- **Trade-offs:** verified-employer count remains zero until official-domain verification exists.
+- **Reversibility:** later evidence may raise the score; the migration never lowers stronger evidence.
+- **Owner:** Sol / Employer Intelligence.
+- **Affected:** legacy Greenhouse employer observations and the confidence metric.
+- **Follow-up:** retain the same evidence contract for future Greenhouse cohorts.
+
 ## Standing decisions
 
 - Paid placement never overrides recommendation relevance.

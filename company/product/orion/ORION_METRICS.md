@@ -58,3 +58,12 @@ For each region, capped component scores are:
 Overall GOCI uses fixed market weights: North America 20%, Europe 18%, Asia 14%, Worldwide Remote 10%, UK 10%, Latin America 8%, Middle East 8%, Africa 6%, Oceania 6%. Missing regions score zero. Changing reference targets or weights requires an Orion decision log entry. Country, industry, function, executive-level, provider, employer, and freshness breakdowns remain visible beside the index; the single number is not a substitute for them.
 
 Known limitation: v1 regional classification uses explicit source geography strings and conservative patterns. “Remote” without explicit scope is not Worldwide Remote. ISO country/region normalization is a P1 task.
+
+## Employer Intelligence Coverage
+
+Version `orion-employer-intelligence-v1` is produced by `public.get_orion_employer_intelligence_coverage`. The denominator is every active canonical employer in the workspace; Unknown contributes zero.
+
+- Registry Coverage uses eight equal components: canonical identity, provider identity, provenance, alias, freshness within seven days, recorded identity-resolution confidence, active opportunity count, and measured executive opportunity count.
+- Extended Intelligence Coverage uses the same eight components plus official domain and careers URL, for ten equal components.
+- Each numerator is the number of canonical employers with evidence for that component. Aggregate coverage is earned points divided by canonical employers × component count.
+- Current Greenhouse evidence: 3 canonical employers; Registry 100%; Extended 90%; provenance 100%; confidence 100%; careers URL 100%; official domain 0%. Official domains remain Unknown rather than being inferred from ATS hosts.

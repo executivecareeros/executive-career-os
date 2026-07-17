@@ -34,6 +34,7 @@ const employerCompatibilityMigration = await readFile(resolve(root, "supabase/mi
 const employerCoverageMigration = await readFile(resolve(root, "supabase/migrations/202607170008_employer_intelligence_coverage.sql"), "utf8");
 const greenhouseBackfillMigration = await readFile(resolve(root, "supabase/migrations/202607170009_backfill_greenhouse_employers.sql"), "utf8");
 const greenhouseSourceBackfillMigration = await readFile(resolve(root, "supabase/migrations/202607170010_backfill_greenhouse_source_ids.sql"), "utf8");
+const greenhouseConfidenceMigration = await readFile(resolve(root, "supabase/migrations/202607170011_greenhouse_employer_confidence.sql"), "utf8");
 const store = await readFile(resolve(root, "frontend/lib/discovery/supabase-ingestion.ts"), "utf8");
 for (const table of ["opportunity_provider_schedules", "opportunity_provider_jobs", "opportunity_provider_runs"]) assert.match(migration, new RegExp(`create table public\\.${table}`));
 assert.match(migration, /for update skip locked/i, "Database claim must be concurrency-safe");
@@ -63,5 +64,8 @@ assert.match(greenhouseBackfillMigration, /greenhouse-employer-backfill-v1/, "Em
 assert.match(greenhouseSourceBackfillMigration, /greenhouse-employer-backfill-v2/, "Legacy source-identity backfill must be versioned and measurable");
 assert.match(greenhouseSourceBackfillMigration, /originalId.*\^\[a-zA-Z0-9_-\]\+\-\[0-9\]\+\$/s, "Legacy fallback must accept only an explicit Greenhouse source identity");
 assert.doesNotMatch(greenhouseSourceBackfillMigration, /similarity\s*\(/i, "Employer backfill must not use ambiguous fuzzy matching");
+assert.match(greenhouseConfidenceMigration, /source_employer_id/, "Employer confidence requires explicit provider identity evidence");
+assert.match(greenhouseConfidenceMigration, /source_url/, "Employer confidence requires explicit source provenance");
+assert.match(greenhouseConfidenceMigration, /greatest\(c\.identity_confidence,90\)/, "Exact Greenhouse board provenance has deterministic resolution confidence");
 
 console.log("Durable opportunity ingestion checks passed.");

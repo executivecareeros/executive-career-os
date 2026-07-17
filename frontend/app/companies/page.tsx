@@ -15,7 +15,7 @@ export default async function CompaniesPage() {
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspaceId = resolved.context.workspace!.workspaceId;
   const [companyResponse, opportunityResponse] = await Promise.all([
-    client.request<CompanyRow[]>(`companies?select=id,name,country,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at&workspace_id=eq.${workspaceId}&archived_at=is.null&order=name.asc`),
+    client.request<CompanyRow[]>(`companies?select=id,name,country,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null&order=name.asc`),
     client.request<OpportunityRow[]>(`opportunities?select=domain_id,company_id,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&order=updated_at.desc`),
   ]);
   if (companyResponse.error || opportunityResponse.error) throw new Error("Canonical company evidence could not be loaded safely.");

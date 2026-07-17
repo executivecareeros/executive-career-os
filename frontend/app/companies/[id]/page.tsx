@@ -29,7 +29,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspaceId = resolved.context.workspace!.workspaceId;
   const [companyResponse, response] = await Promise.all([
-    client.request<CompanyRow[]>(`companies?select=id,name,country,industry,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at&workspace_id=eq.${workspaceId}&archived_at=is.null`),
+    client.request<CompanyRow[]>(`companies?select=id,name,country,industry,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null`),
     client.request<OpportunityRow[]>(`opportunities?select=domain_id,company_id,payload,updated_at&workspace_id=eq.${workspaceId}&archived_at=is.null&order=updated_at.desc`),
   ]);
   if (response.error || companyResponse.error) throw new Error("Company evidence could not be loaded safely.");
