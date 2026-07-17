@@ -116,6 +116,8 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
   };
   const incomingIsStronger = incoming.confidenceScore > existing.confidenceScore || (incoming.confidenceScore === existing.confidenceScore && evidenceRichness(incoming) > evidenceRichness(existing));
   const strongest = incomingIsStronger ? incoming : existing;
+  const reactivated = existing.status === "Archived" && sources.length > 0;
+  const mergedStatus = reactivated ? incoming.status : strongest.status;
   const freshness = assessOpportunityFreshness({ ...strongest, lastObservedAt: observedAt }, observedAt);
   const repairedCompanyProfile = incoming.companyProfile?.canonicalKey
     ? {
@@ -136,12 +138,15 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
     sources,
     source: sources.map(source => source.name).join(" · ") || strongest.source,
     sourceUrl: strongest.sourceUrl ?? existing.sourceUrl,
+    status: mergedStatus,
+    closedAt: reactivated ? undefined : strongest.closedAt,
+    closureReason: reactivated ? undefined : strongest.closureReason,
     discoveredAt: existing.discoveredAt < incoming.discoveredAt ? existing.discoveredAt : incoming.discoveredAt,
     lastObservedAt: observedAt,
     freshness,
     lifecycle: [
       ...(existing.lifecycle ?? []),
-      { status: existing.status, occurredAt: observedAt, reason: sources.length > (existing.sources?.length ?? 0) ? "Additional source observation merged" : "Source observation refreshed", source: "System" },
+      { status: mergedStatus, occurredAt: observedAt, reason: reactivated ? "Active source observation restored" : sources.length > (existing.sources?.length ?? 0) ? "Additional source observation merged" : "Source observation refreshed", source: "System" },
     ],
   };
 }

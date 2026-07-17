@@ -71,5 +71,8 @@ const scopedClosureRegistry = new OpportunityProviderRegistry().register({ ...pr
 const scopedClosure = await new OpportunityIngestionPipeline(scopedClosureRegistry, scopedSink).ingest("ashby", request("run-scoped-close"));
 assert.equal(scopedClosure.items.filter(item => item.disposition === "deactivated").length, 1, "A complete snapshot may close only its declared employer/feed scope");
 assert.equal((await scopedSink.list()).find(item => item.companyProfile?.canonicalKey === "ashby:scope-b")?.status, "Discovered", "One employer cohort must never archive another cohort from the same provider");
+const scopedRestoreRegistry = new OpportunityProviderRegistry().register(provider("ashby", "Ashby", [scopedJobs[0]]));
+await new OpportunityIngestionPipeline(scopedRestoreRegistry, scopedSink).ingest("ashby", request("run-scoped-restore"));
+assert.equal((await scopedSink.list()).find(item => item.companyProfile?.canonicalKey === "ashby:scope-a")?.status, "Discovered", "A newly observed active source must restore a previously archived canonical opportunity");
 
 console.log("Discovery ingestion pipeline checks passed.");
