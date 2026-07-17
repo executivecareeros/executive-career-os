@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: M5 Employment Knowledge Graph Foundation validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: M6 Executive Decision Intelligence validated locally
 
 | Field | Current truth |
 |---|---|
-| Milestone | M5 — Employment Knowledge Graph Foundation |
+| Milestone | M6 — Executive Decision Intelligence |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, Continuous Engineering Intelligence v1, and Employment Knowledge Graph v1 |
+| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, Continuous Engineering Intelligence v1, Employment Knowledge Graph v1, and Executive Decision Intelligence v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: M5 Employment Knowledge Grap
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** project a bounded durable staging cohort into the graph, measure live graph coverage and query needs, then decide whether durable graph persistence is economically justified.
-- **Last completed task:** thirteen justified entity kinds, eleven canonical relationship kinds, append-only evidence, explicit conflict retention, governed identity decisions, and a raw-record-free Atlas knowledge view now form one reusable graph contract.
+- **Next highest-value task:** validate Opportunity, Employer, and Compensation decision explanations with executives, then add confirmed career/profile evidence to measure Career Progression and Executive Fit without inference.
+- **Last completed task:** six reusable decision domains, five mandatory recommendation gates, conservative confidence, structured Atlas advice, and explicit recommendation refusal now convert canonical knowledge into explainable support.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

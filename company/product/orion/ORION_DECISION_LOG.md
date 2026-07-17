@@ -1,5 +1,29 @@
 # Orion Decision Log
 
+## 2026-07-17 — Require five gates for every executive recommendation
+
+- **Context:** the Knowledge Graph can support many conclusions, but knowledge volume does not prove decision value or executive trust.
+- **Options considered:** domain-specific scores; free-form Atlas recommendations; one reusable decision assessment with mandatory quality, explainability, evidence, confidence, and trust gates.
+- **Chosen option:** six domain models share one structured assessment; Atlas issues `Review evidence` only when all five gates pass and otherwise issues `Do not recommend` with a next evidence action.
+- **Reasoning:** the same transparent standard applies across opportunities, employers, compensation, progression, market, and fit without opaque weights.
+- **Trade-offs:** several useful-looking recommendations remain unavailable until career, profile, market-scope, and eligibility evidence exists.
+- **Reversibility:** the decision layer is derived from the M5 bounded graph and changes no source evidence or canonical state.
+- **Owner:** Sol / Executive Intelligence.
+- **Affected:** Atlas decision input and explanation contract.
+- **Follow-up:** validate explanation usefulness with real executives and measure decision outcomes before calibration.
+
+## 2026-07-17 — Confidence equals the weakest required evidence
+
+- **Context:** an average confidence score could conceal one unsupported requirement behind several strong facts.
+- **Options considered:** weighted score; average evidence confidence; conservative weakest-evidence classification with conflict and missing-evidence caps.
+- **Chosen option:** missing or conflicting requirements cap confidence at Low; otherwise confidence equals the weakest cited evidence, with Very High requiring two independent sources.
+- **Reasoning:** no strong fact compensates for a weak required fact, and every level remains explainable.
+- **Trade-offs:** confidence is deliberately conservative and is not a probability of career success.
+- **Reversibility:** the model is versioned and can be calibrated using measured outcomes without rewriting evidence history.
+- **Owner:** Sol / Atlas.
+- **Affected:** all six decision domains.
+- **Follow-up:** retain Unknown for unsupported live measures and collect outcome evidence before changing thresholds.
+
 ## 2026-07-17 — Establish one evidence-first Employment Knowledge Graph
 
 - **Context:** certified connectors, operations, and engineering intelligence produced trustworthy evidence, but future intelligence would otherwise reason over provider-shaped records and duplicate identity/conflict logic.

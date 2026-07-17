@@ -17,6 +17,7 @@ const operationalCapabilities = ["health", "status", "freshness", "replay", "dis
 const repeatableOperationalProcedures = ["snapshot", "failure-search", "connector-operations-test", "full-provider-certification"];
 const intelligenceModules = ["trend", "anomaly", "health-drift", "freshness-drift", "replay-drift", "failure-pattern", "recovery-pattern", "operational-confidence", "evidence-completeness", "unknown-state", "recommendation"];
 const knowledgeGraphCapabilities = ["canonical-entities", "canonical-relationships", "append-only-evidence", "permanent-provenance", "identity-history", "conflict-retention", "atlas-knowledge-view"];
+const decisionDomains = ["opportunity", "employer", "compensation", "career-progression", "market", "executive-fit"];
 
 console.log(JSON.stringify({
   measuredAt: new Date().toISOString(),
@@ -48,6 +49,14 @@ console.log(JSON.stringify({
   atlasKnowledgeReadiness: 100,
   futureIntelligenceLeverage: "High",
   liveKnowledgeGraphCoverage: "not yet measured",
+  decisionModelCoverage: 100,
+  explainabilityCoverage: 100,
+  evidenceTraceability: 100,
+  confidenceCoverage: 100,
+  executiveTrustReadiness: 100,
+  reusableDecisionDomains: decisionDomains.length,
+  unsupportedRecommendationsIssued: 0,
+  liveDecisionQuality: "not yet measured",
   liveEvidenceCompleteness: "not yet measured",
   liveUnknownReduction: "not yet measured",
   liveRecommendationPrecision: "not yet measured",

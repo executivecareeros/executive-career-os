@@ -78,6 +78,21 @@ Version `orion-knowledge-graph-v1` is measured by the deterministic graph certif
 
 Fixture results certify the contract, not live production completeness. Live values remain Unknown until a bounded durable staging cohort is projected and measured.
 
+## M6 Decision Intelligence measures
+
+Version `orion-decision-intelligence-v1` is measured by the deterministic six-domain certification fixture.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Decision Model Coverage | assessed registered domains ÷ six registered domains | 100% | Unknown |
+| Explainability Coverage | assessments with summary, Unknowns, actions, and five gates ÷ assessments | 100% | Unknown |
+| Evidence Traceability | assessments whose cited evidence resolves to graph evidence ÷ assessments | 100% | Unknown |
+| Confidence Coverage | assessments with measured confidence or explicit insufficient-evidence state ÷ assessments | 100% | Unknown |
+| Executive Trust Readiness | assessments disclosing uncertainty and issuing recommendations only when all gates pass ÷ assessments | 100% | Unknown |
+| Future Intelligence Leverage | High when all six reusable domains are assessed through one contract | High | Unknown |
+
+Three fixture domains produced decision support; three correctly withheld recommendations. Fixture results validate the contract, not live executive decision quality.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.
