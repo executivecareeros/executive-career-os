@@ -124,6 +124,21 @@ Version `orion-institutional-learning-v1` is measured by a deterministic governe
 
 The fixture validates lifecycle and governance behavior, not live organizational knowledge. It records zero automatic learning, zero model updates, and zero historical recommendation changes.
 
+## M9 Executive Experience measures
+
+Version `orion-executive-experience-v1` is measured by a deterministic ten-object, seven-journey fixture.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Experience Contract Coverage | represented canonical object kinds ÷ ten registered kinds | 100% | Unknown |
+| Journey Coverage | validated journey kinds ÷ seven registered journeys | 100% | Unknown |
+| Communication Consistency | journey interactions passing outputs, gates, disclosures, and recommendation safety ÷ evaluated interactions | 100% | Unknown |
+| Disclosure Coverage | satisfied mandatory disclosures ÷ required journey disclosures | 100% | Unknown |
+| Trust Communication Readiness | Ready only when all seven journeys are present and valid | Ready | Unknown |
+| Future UX Reuse Potential | High only when every object definition is rendering-independent | High | Unknown |
+
+Fixture measurements certify the semantic contract, not live executive comprehension. M7 must measure clarity, helpfulness, Unknown handling, alternative quality, and trust in a consented cohort.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.

@@ -14,5 +14,6 @@ export * from "./employment-knowledge-graph";
 export * from "./executive-decision-intelligence";
 export * from "./executive-validation-platform";
 export * from "./institutional-learning";
+export * from "./executive-experience-contract";
 export * from "./registry";
 export * from "./types";

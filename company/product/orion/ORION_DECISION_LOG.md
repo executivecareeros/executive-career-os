@@ -1,5 +1,17 @@
 # Orion Decision Log
 
+## 2026-07-17 — Separate executive communication semantics from presentation
+
+- **Context:** M6–M8 govern evidence, decisions, validation, and learning, but multiple interfaces could communicate the same result inconsistently.
+- **Options considered:** encode guidance in each UI; define prose templates; create one channel-neutral semantic contract with object and journey gates.
+- **Chosen option:** ten canonical experience objects and seven journey contracts carry mandatory evidence, confidence, Unknown, conflict, alternative, and action disclosures.
+- **Reasoning:** channels can evolve without changing meaning or permitting unsupported recommendations.
+- **Trade-offs:** the contract does not itself prove that executives understand the communication; live comprehension still requires M7 validation.
+- **Reversibility:** the versioned contract can be superseded while preserving earlier decision and communication records.
+- **Owner:** Sol / Executive Experience.
+- **Affected:** Atlas communication across web, mobile, APIs, reports, and future interfaces.
+- **Follow-up:** integrate one bounded Opportunity Review surface and measure the complete journey through M7.
+
 ## 2026-07-17 — Govern institutional learning as immutable reviewed revisions
 
 - **Context:** M7 can produce validation evidence, but evidence must not silently become organizational truth or alter historical recommendations.

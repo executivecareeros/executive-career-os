@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: M8 Institutional Learning validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: M9 Executive Experience Contract validated locally
 
 | Field | Current truth |
 |---|---|
-| Milestone | M8 — Institutional Learning & Governance |
+| Milestone | M9 — Executive Experience Contract |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Four certified connectors pass common certification plus Engineering Operations, Engineering Intelligence, Employment Knowledge Graph, Executive Decision Intelligence, Executive Validation, and Institutional Learning v1 |
+| Current version | Four certified connectors pass common certification plus Engineering Operations, Engineering Intelligence, Employment Knowledge Graph, Executive Decision Intelligence, Executive Validation, Institutional Learning, and Executive Experience Contract v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: M8 Institutional Learning va
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** run a consented executive validation cohort for Opportunity, Employer, and Compensation explanations; collect at least 20 structured feedback records and reviewed judgments before proposing any live institutional learning.
-- **Last completed task:** a ten-domain, append-only institutional ledger now governs review, approval, lifecycle, expiry, and bounded reuse without automatic learning or historical recommendation mutation.
+- **Next highest-value task:** apply the M9 contract to a bounded Atlas Opportunity Review surface, then measure its clarity and trust through the consented M7 cohort without redesigning the interface.
+- **Last completed task:** ten channel-neutral experience objects and seven canonical journeys now enforce evidence, confidence, Unknown, conflict, alternative, and next-action disclosures consistently.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 
