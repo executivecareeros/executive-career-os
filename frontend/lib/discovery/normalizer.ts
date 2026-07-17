@@ -15,7 +15,9 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
     const employmentType = job.employmentType === "Full-time" || job.employmentType === "Contract" || job.employmentType === "Interim" ? job.employmentType : "Unknown";
     const canonicalUrl = job.originalUrl?.replace(/[?#].*$/, "");
     let employerDomain: string | undefined;
-    try { employerDomain = new URL(job.company.website ?? job.originalUrl ?? "").hostname.toLowerCase().replace(/^www\./, ""); } catch { /* Unknown remains explicit. */ }
+    // An ATS posting URL identifies the publishing system, not the employer.
+    // Only an employer-controlled website may establish employerDomain.
+    try { employerDomain = job.company.website ? new URL(job.company.website).hostname.toLowerCase().replace(/^www\./, "") : undefined; } catch { /* Unknown remains explicit. */ }
     const opportunity: Opportunity = {
       id: `discovered-${job.source}-${job.sourceId}`,
       externalIds: [job.sourceId],

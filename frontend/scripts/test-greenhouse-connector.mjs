@@ -16,4 +16,6 @@ assert.equal(result.jobs[0].company.name, "Example Company");
 assert.equal(result.jobs[0].rawMetadata.workArrangement, "Remote");
 assert.equal(result.jobs[0].description, "Lead global growth & partnerships.");
 assert.equal(result.jobs[0].originalUrl, "https://job-boards.greenhouse.io/example/jobs/42");
+assert.equal(result.jobs[0].company.canonicalKey, "greenhouse:example");
+assert.equal(result.jobs[0].company.website, undefined, "The Greenhouse board host is not the employer's official domain");
 console.log("Greenhouse production connector checks passed.");

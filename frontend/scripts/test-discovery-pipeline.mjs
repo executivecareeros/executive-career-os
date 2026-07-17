@@ -23,6 +23,7 @@ const first = await pipeline.ingest("greenhouse", request("run-1"));
 assert.equal(first.run.status, "completed");
 assert.equal(first.items[0].disposition, "inserted");
 assert.equal(first.nextRefreshAt, "2026-07-14T20:00:00.000Z");
+assert.equal((await sink.list())[0].employerDomain, undefined, "An ATS posting host must never become the employer domain");
 
 const reconciled = await pipeline.ingest("lever", request("run-2"));
 assert.equal(reconciled.items[0].disposition, "updated");

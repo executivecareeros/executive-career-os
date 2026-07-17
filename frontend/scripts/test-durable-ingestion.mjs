@@ -30,6 +30,7 @@ const root = resolve(import.meta.dirname, "../..");
 const migration = await readFile(resolve(root, "supabase/migrations/202607170002_durable_opportunity_ingestion.sql"), "utf8");
 const schedulerClaimMigration = await readFile(resolve(root, "supabase/migrations/202607170004_scheduler_service_role_claim.sql"), "utf8");
 const employerMigration = await readFile(resolve(root, "supabase/migrations/202607170005_employer_intelligence_registry.sql"), "utf8");
+const employerCompatibilityMigration = await readFile(resolve(root, "supabase/migrations/202607170006_remove_employer_digest_dependency.sql"), "utf8");
 const store = await readFile(resolve(root, "frontend/lib/discovery/supabase-ingestion.ts"), "utf8");
 for (const table of ["opportunity_provider_schedules", "opportunity_provider_jobs", "opportunity_provider_runs"]) assert.match(migration, new RegExp(`create table public\\.${table}`));
 assert.match(migration, /for update skip locked/i, "Database claim must be concurrency-safe");
@@ -44,5 +45,6 @@ assert.match(employerMigration, /is_active_workspace_member/, "Employer intellig
 assert.match(employerMigration, /auth\.role\(\) <> 'service_role'/, "The isolated scheduler may update employer intelligence");
 assert.match(store, /rpc\/upsert_employer_observation/, "Every durable opportunity must resolve a canonical employer");
 assert.match(store, /company_id: companyId/, "Canonical opportunities must link to the canonical employer");
+assert.doesNotMatch(employerMigration + employerCompatibilityMigration, /\bdigest\s*\(/, "Employer identity must not depend on an extension schema");
 
 console.log("Durable opportunity ingestion checks passed.");
