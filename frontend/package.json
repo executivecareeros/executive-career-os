@@ -41,7 +41,8 @@
     "test:project-simplicity": "node scripts/test-project-simplicity.mjs",
     "test:linkedin-bridge": "node --experimental-transform-types scripts/test-linkedin-opportunity-bridge.mjs",
     "test:bilingual-experience": "node scripts/test-bilingual-experience.mjs",
-    "test:public-acquisition": "node scripts/test-public-acquisition.mjs"
+    "test:public-acquisition": "node scripts/test-public-acquisition.mjs",
+    "test:profile-state": "node --experimental-transform-types scripts/test-profile-state.mjs"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

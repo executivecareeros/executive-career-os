@@ -4,12 +4,11 @@
 **Storage rule:** Internal repository record; never expose through product pages, public APIs, search indexing, analytics, or executive/employer views.  
 **Data rule:** Do not record passwords, tokens, MFA codes, private keys, payment data, or raw sensitive user documents.
 
-## Active issues
+## Active issue index
 
 | Issue ID | Created | Status | Priority | Category | Affected feature | Environment | Luna attempts | Recommended model | Founder action | Next review |
 |---|---|---|---|---|---|---|---:|---|---|---|
 | ESC-2026-0717-001 | 2026-07-17 | Sol implementation complete; staging acceptance pending | P0 | Geographic eligibility and confidence ranking | Authenticated opportunities, search, Atlas | Staging pending | 2 | Sol | Apply migration and validate authenticated staging | Before production deployment |
-| ESC-2026-0717-002 | 2026-07-17 | Scheduler deployed inert; isolated staging boundary required | P0 | Durable opportunity ingestion | Provider schedules, jobs, runs, and daily ingestion | Production-bound Vercel project | 0 | Sol | Approve a Vercel environment that has no production domains | Before scheduler activation |
 
 ### ESC-2026-0717-001
 
@@ -36,6 +35,8 @@
 
 ### ESC-2026-0717-002
 
+**Status:** Closed on 2026-07-17. The detail below is preserved as historical escalation evidence.
+
 - **User impact:** Opportunity collection cannot yet refresh autonomously; executives may receive stale or incomplete inventory.
 - **Business impact:** Live coverage, freshness, and provider reliability cannot be measured continuously.
 - **Security/privacy impact:** Durable records are workspace-scoped with RLS. The scheduler has constant-time bearer authentication, but activation is stopped because the Vercel project named `orendalis-staging` currently owns the live production domains. A scheduler credential created during configuration was rotated; its superseded key must be revoked before activation. No scheduler secret remains configured in Vercel.
@@ -46,7 +47,10 @@
 - **Deployment state:** Scheduler code is deployed but inert. Migrations `202607170001`, `202607170002`, and `202607170003` are applied. The unauthenticated live endpoint returns `401`. Vercel scheduler variables were removed before redeployment, so no autonomous trigger can execute.
 - **Acceptance required:** Establish a Vercel staging environment with no production domains; revoke the superseded Supabase scheduler key; configure replacement server-only credentials there; activate one compliant provider; persist two live runs; verify idempotency, inventory metrics, Search/Atlas consumption, and desktop/mobile status evidence.
 - **Rollback:** Disable schedules and trigger, allow leases to expire, revert application code, preserve audit history, then remove unused scheduler tables only after verification.
+- **Closure evidence:** Dedicated `orendalis-network-staging` deployment has no production domain, authenticated scheduler execution succeeded, Greenhouse produced canonical inventory across repeated idempotent runs, and provider health was recorded. Resolving commit: `a6f4068`.
 
 ## Closed issues
 
-None recorded in this register.
+| Issue ID | Closed | Resolution evidence |
+|---|---|---|
+| ESC-2026-0717-002 | 2026-07-17 | Isolated network staging is active with no production domain, authenticated scheduling, two idempotent Greenhouse runs, canonical inventory, and provider health. Resolving commit: `a6f4068`. |
