@@ -12,6 +12,8 @@ const publicPaths = [
   "/sitemap.xml",
 ];
 
+const serverAuthenticatedPaths = ["/api/operations/opportunity-refresh"];
+
 const demoOnlyModules: Array<[prefix: string, module: string]> = [
   ["/workspace", "workspace"],
   ["/assistant", "atlas"],
@@ -42,6 +44,7 @@ export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   if (path === "/") return NextResponse.next();
   if (publicPaths.some((item) => path.startsWith(item)) || path.startsWith("/api/auth/")) return NextResponse.next();
+  if (serverAuthenticatedPaths.includes(path)) return NextResponse.next();
 
   if (!request.cookies.has("ecos-access-token") && !request.cookies.has("ecos-refresh-token")) {
     const url = new URL("/login", request.url);
