@@ -1,5 +1,17 @@
 # Orion Decision Log
 
+## 2026-07-17 — Build Atlas Opportunity Review as orchestration over Orion
+
+- **Context:** Orion M1A–M9 provide trusted knowledge, decisions, validation, governance, and communication semantics; Atlas needs an executive-facing opportunity review without a parallel reasoning system.
+- **Options considered:** add a new Atlas scoring engine; assemble prose in the UI; compose M6 assessments through M9 experience objects into one canonical review.
+- **Chosen option:** a twelve-section rendering-independent review with eligible and explicitly withheld paths.
+- **Reasoning:** executives receive concise decision support while all evidence, confidence, uncertainty, conflict, and gate semantics remain governed by Orion.
+- **Trade-offs:** contract validation does not prove live comprehension or trust; one consented M7 cohort remains required.
+- **Reversibility:** Atlas orchestration is derived and non-mutating; Orion evidence and decisions remain unchanged.
+- **Owner:** Sol / Atlas Product.
+- **Affected:** executive opportunity review composition and Atlas product status.
+- **Follow-up:** render one bounded existing opportunity surface and measure the live experience.
+
 ## 2026-07-17 — Separate executive communication semantics from presentation
 
 - **Context:** M6–M8 govern evidence, decisions, validation, and learning, but multiple interfaces could communicate the same result inconsistently.

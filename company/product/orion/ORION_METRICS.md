@@ -139,6 +139,23 @@ Version `orion-executive-experience-v1` is measured by a deterministic ten-objec
 
 Fixture measurements certify the semantic contract, not live executive comprehension. M7 must measure clarity, helpfulness, Unknown handling, alternative quality, and trust in a consented cohort.
 
+## Atlas 1.0 Opportunity Review measures
+
+Version `atlas-opportunity-review-v1` is measured by deterministic eligible and withheld review fixtures.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Opportunity Review Completion | reviews passing twelve sections, evidence, recommendation safety, M9 journey, and reading gates ÷ reviews | 100% | Unknown |
+| Evidence Visibility | reviews whose experience evidence resolves to source assessment evidence ÷ reviews | 100% | Unknown |
+| Recommendation Eligibility | Recommendation Available reviews ÷ reviews | 50% | Unknown |
+| Recommendation Withheld Rate | Recommendation Withheld reviews ÷ reviews | 50% | Unknown |
+| Average Unknown Count | mean material non-conflict Unknowns per review | 1.5 | Unknown |
+| Conflict Visibility | conflict-bearing reviews satisfying the M9 conflict disclosure ÷ conflict-bearing reviews | 100% | Unknown |
+| Executive Reading Efficiency | estimated review words ÷ 180 words per minute; report ≤5-minute coverage | 2-minute average; 100% ≤5 | Unknown |
+| Future Personalization Readiness | Ready when canonical opportunity, M6 version, and M9 version remain explicit | Ready | Unknown |
+
+Fixture results validate review composition and safety. They do not measure live comprehension, decision quality, or executive trust.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.

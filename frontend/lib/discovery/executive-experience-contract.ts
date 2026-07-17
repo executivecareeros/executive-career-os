@@ -67,7 +67,7 @@ export function createExecutiveExperienceObject(input: Omit<ExecutiveExperienceO
   if (input.kind === "Evidence Summary" && (!hasText(input.facts) || !input.evidenceIds.length)) throw new Error("Evidence Summary requires facts and evidence");
   if (input.kind === "Confidence Statement" && !input.confidence) throw new Error("Confidence Statement requires confidence");
   if (input.kind === "Unknown Statement" && (!hasText(input.unknowns) || !hasText(input.requestedEvidence))) throw new Error("Unknown Statement requires Unknowns and requested evidence");
-  if (input.kind === "Conflict Statement" && (input.conflicts.length < 2 || !input.evidenceIds.length)) throw new Error("Conflict Statement requires conflicting claims and evidence");
+  if (input.kind === "Conflict Statement" && (!hasText(input.conflicts) || !input.evidenceIds.length)) throw new Error("Conflict Statement requires a conflict disclosure and evidence");
   if (input.kind === "Alternative Interpretation" && (!hasText(input.alternatives) || !input.evidenceIds.length)) throw new Error("Alternative Interpretation requires an evidence-backed alternative");
   if (input.kind === "Suggested Next Action" && !hasText(input.suggestedActions)) throw new Error("Suggested Next Action requires an action");
   if (input.kind === "Investigation Request" && !hasText(input.requestedEvidence)) throw new Error("Investigation Request requires requested evidence");

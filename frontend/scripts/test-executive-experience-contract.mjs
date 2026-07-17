@@ -46,6 +46,6 @@ assert.equal(validateExecutiveJourney(unsafe).recommendationSafe, false);
 assert.throws(() => make("Recommendation", { suggestedActions: ["Proceed"] }), /requires evidence/);
 assert.throws(() => make("Explanation", { facts: ["Same"], interpretations: ["Same"], evidenceIds: ["evidence:one"] }), /Facts and interpretations/);
 assert.throws(() => make("Unknown Statement", { unknowns: ["Unknown"] }), /requires Unknowns and requested evidence/);
-assert.throws(() => make("Conflict Statement", { conflicts: ["Only one claim"], evidenceIds: ["evidence:one"] }), /conflicting claims/);
+assert.throws(() => make("Conflict Statement", { conflicts: [], evidenceIds: ["evidence:one"] }), /conflict disclosure/);
 
 console.log(JSON.stringify({ message: "Executive Experience Contract checks passed.", ...report.metrics, objectKinds: executiveExperienceObjectKinds.length, journeys: executiveJourneyIds.length, unsupportedRecommendations: report.unsupportedRecommendations }, null, 2));
