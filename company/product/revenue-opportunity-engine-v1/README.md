@@ -27,6 +27,7 @@ Executives should no longer spend hours visiting fragmented job boards, applican
 | `REVENUE_ROADMAP.md` | Smallest sequence that supports the first paying executive |
 | `EXECUTIVE_OPPORTUNITY_INTELLIGENCE_PHASE_1.md` | Deterministic intelligence view for every collected canonical Opportunity |
 | `GLOBAL_OPPORTUNITY_INTELLIGENCE_NETWORK_ROADMAP.md` | Five-phase roadmap from the existing Coverage Engine to a trusted global opportunity graph |
+| `DURABLE_INGESTION_OPERATIONS.md` | Persistent scheduling, queue, run-history, capacity, activation, and rollback controls |
 
 ## Decision
 
