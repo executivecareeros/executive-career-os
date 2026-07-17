@@ -89,7 +89,9 @@ export class OpportunityIngestionPipeline {
       }
       if (batch.completeSnapshot) {
         const observedIds = new Set(batch.jobs.map(job => job.sourceId));
+        const snapshotScopes = new Set(batch.snapshotScopeKeys ?? []);
         for (const current of existing) {
+          if (snapshotScopes.size && !snapshotScopes.has(current.companyProfile?.canonicalKey ?? "")) continue;
           const missing = (current.sources ?? []).filter(source => source.id === provider.id && source.status !== "Closed" && source.originalId && !observedIds.has(source.originalId));
           if (!missing.length) continue;
           const sources = (current.sources ?? []).map(source => missing.includes(source) ? { ...source, status: "Closed" as const, lastFetchedAt: batch.collectedAt, fetchStatus: "Succeeded" as const } : source);

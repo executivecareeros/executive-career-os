@@ -60,4 +60,16 @@ const closure = await new OpportunityIngestionPipeline(closureRegistry, closureS
 assert.equal(closure.items.filter(item => item.disposition === "deactivated").length, 2);
 assert.equal((await closureSink.list()).every(item => item.status === "Archived" && item.sources.every(source => source.status === "Closed")), true, "A complete source snapshot must deactivate missing jobs");
 
+const scopedJobs = [
+  job("scope-a-1", "ashby", { title: "Vice President Sales", company: { sourceId: "a", canonicalKey: "ashby:scope-a", name: "Scope A" } }),
+  job("scope-b-1", "ashby", { title: "Chief Commercial Officer", company: { sourceId: "b", canonicalKey: "ashby:scope-b", name: "Scope B" } }),
+];
+const scopedInitialRegistry = new OpportunityProviderRegistry().register(provider("ashby", "Ashby", scopedJobs));
+const scopedSink = new MemoryOpportunityIngestionSink();
+await new OpportunityIngestionPipeline(scopedInitialRegistry, scopedSink).ingest("ashby", request("run-scoped-initial"));
+const scopedClosureRegistry = new OpportunityProviderRegistry().register({ ...provider("ashby", "Ashby", []), async collect(current) { return { providerId: "ashby", collectedAt: current.requestedAt, jobs: [], completeSnapshot: true, snapshotScopeKeys: ["ashby:scope-a"] }; } });
+const scopedClosure = await new OpportunityIngestionPipeline(scopedClosureRegistry, scopedSink).ingest("ashby", request("run-scoped-close"));
+assert.equal(scopedClosure.items.filter(item => item.disposition === "deactivated").length, 1, "A complete snapshot may close only its declared employer/feed scope");
+assert.equal((await scopedSink.list()).find(item => item.companyProfile?.canonicalKey === "ashby:scope-b")?.status, "Discovered", "One employer cohort must never archive another cohort from the same provider");
+
 console.log("Discovery ingestion pipeline checks passed.");

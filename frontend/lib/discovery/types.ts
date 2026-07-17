@@ -225,6 +225,8 @@ export interface ProviderCollectionBatch {
   sourceRevision?: string;
   /** True only when this batch represents the provider's complete active inventory for the requested scope. */
   completeSnapshot?: boolean;
+  /** Stable employer/feed scopes covered by a complete snapshot. Prevents one provider cohort closing another. */
+  snapshotScopeKeys?: readonly string[];
 }
 
 /** Collection-only provider boundary. Providers never create domain Opportunities directly. */

@@ -29,6 +29,7 @@ const result = await provider.collect({ runId: "lever-run", requestedAt: "2026-0
 assert.equal(result.jobs.length, 101);
 assert.deepEqual(calls, [{ skip: 0, limit: 100 }, { skip: 100, limit: 100 }], "Lever must page using the documented skip/limit contract");
 assert.equal(result.completeSnapshot, true);
+assert.deepEqual(result.snapshotScopeKeys, ["lever:global:palantir"]);
 assert.equal(result.jobs[0].company.name, "Palantir Technologies");
 assert.equal(result.jobs[0].company.canonicalKey, "lever:global:palantir");
 assert.equal(result.jobs[0].company.careersUrl, "https://jobs.lever.co/palantir");

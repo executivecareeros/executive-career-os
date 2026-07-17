@@ -13,6 +13,7 @@ const first = await provider.collect(request);
 const replay = await provider.collect({ ...request, runId: "ashby-replay" });
 assert.equal(first.jobs.length, 1);
 assert.equal(first.completeSnapshot, true);
+assert.deepEqual(first.snapshotScopeKeys, ["ashby:lightspeedhq"]);
 assert.equal(first.jobs[0].sourceId, replay.jobs[0].sourceId);
 assert.equal(first.jobs[0].company.name, "Lightspeed Commerce");
 assert.equal(first.jobs[0].company.careersUrl, "https://jobs.ashbyhq.com/lightspeedhq");
