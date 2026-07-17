@@ -1,5 +1,29 @@
 # Orion Decision Log
 
+## 2026-07-17 — Establish one evidence-first Employment Knowledge Graph
+
+- **Context:** certified connectors, operations, and engineering intelligence produced trustworthy evidence, but future intelligence would otherwise reason over provider-shaped records and duplicate identity/conflict logic.
+- **Options considered:** let each intelligence module query raw records; introduce a graph database and rewrite persistence; add a deterministic canonical graph projection over existing normalized and operational evidence.
+- **Chosen option:** `orion-knowledge-graph-v1`, a derived non-mutating projection with thirteen bounded entity kinds, eleven canonical relationship kinds, append-only evidence, explicit identity history, conflict retention, and a restricted Atlas view.
+- **Reasoning:** it delivers immediate evidence-backed reasoning while permanently reducing provider and intelligence coupling; no schema or infrastructure expansion is justified before live query evidence exists.
+- **Trade-offs:** the graph is currently projected in memory; durable live graph coverage and performance remain Unknown.
+- **Reversibility:** projection and consumer contract can be removed without changing connector records, canonical inventory, scheduler, persistence, operations, or certification history.
+- **Owner:** Sol / Employment Intelligence.
+- **Affected:** Orion canonical intelligence model and Atlas input boundary.
+- **Follow-up:** project one bounded staging cohort and measure live coverage, query latency, and storage economics before considering persistence.
+
+## 2026-07-17 — Keep unsupported employer identities separate
+
+- **Context:** employer names can match across ATS platforms without proving one legal identity.
+- **Options considered:** merge normalized names; require every provider to share one key; prefer canonical key or employer-controlled domain and otherwise retain source-scoped identities.
+- **Chosen option:** source-scoped separation until an evidenced identity decision exists; `Merged` decisions without evidence are rejected.
+- **Reasoning:** false merges contaminate every downstream opportunity, company, market, and Atlas conclusion.
+- **Trade-offs:** temporary duplicate employer candidates can remain pending.
+- **Reversibility:** new evidence adds a merge decision without deleting prior entities, observations, or conflicts.
+- **Owner:** Sol / Employer Intelligence.
+- **Affected:** graph employer identity and future reconciliation.
+- **Follow-up:** define governed legal-entity alias evidence only after a verified-domain cohort is measured.
+
 ## 2026-07-17 — Build intelligence only from versioned operations evidence
 
 - **Context:** M3A made connector operations observable; M4 must explain changes without duplicating telemetry or speculating.

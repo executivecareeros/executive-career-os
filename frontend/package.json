@@ -50,8 +50,9 @@
     "test:provider-certification": "node --experimental-transform-types scripts/test-provider-certification.mjs",
     "test:connector-operations": "node --experimental-transform-types scripts/test-connector-operations.mjs",
     "test:engineering-intelligence": "node --experimental-transform-types scripts/test-engineering-intelligence.mjs",
+    "test:employment-knowledge-graph": "node --experimental-transform-types scripts/test-employment-knowledge-graph.mjs",
     "measure:provider-reuse": "node scripts/measure-provider-reuse.mjs",
-    "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
+    "certify:providers": "npm run test:greenhouse-connector && npm run test:lever-connector && npm run test:ashby-connector && npm run test:provider-expansion && npm run test:provider-certification && npm run test:connector-operations && npm run test:engineering-intelligence && npm run test:employment-knowledge-graph && npm run test:discovery-pipeline && npm run test:durable-ingestion && npm run test:opportunity-scheduler && npm run test:orion-metrics && npm run lint && npm run build"
   },
   "dependencies": {
     "mammoth": "^1.12.0",

@@ -10,5 +10,6 @@ export * from "./provider-scaffold";
 export * from "./provider-certification";
 export * from "./connector-operations";
 export * from "./engineering-intelligence";
+export * from "./employment-knowledge-graph";
 export * from "./registry";
 export * from "./types";

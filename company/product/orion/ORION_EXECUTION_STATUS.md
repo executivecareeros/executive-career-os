@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: M4 Continuous Engineering Intelligence validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: M5 Employment Knowledge Graph Foundation validated locally
 
 | Field | Current truth |
 |---|---|
-| Milestone | M4 — Continuous Engineering Intelligence |
+| Milestone | M5 — Employment Knowledge Graph Foundation |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, and Continuous Engineering Intelligence v1 |
+| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, Continuous Engineering Intelligence v1, and Employment Knowledge Graph v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: M4 Continuous Engineering In
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** project durable staging operations history into M4, measure live recommendation precision, and calibrate investigation thresholds without automating remediation.
-- **Last completed task:** eleven deterministic intelligence modules now explain operational trends, anomalies, drift, failure and recovery patterns, evidence gaps, and advisory investigations without new telemetry or operational actions.
+- **Next highest-value task:** project a bounded durable staging cohort into the graph, measure live graph coverage and query needs, then decide whether durable graph persistence is economically justified.
+- **Last completed task:** thirteen justified entity kinds, eleven canonical relationship kinds, append-only evidence, explicit conflict retention, governed identity decisions, and a raw-record-free Atlas knowledge view now form one reusable graph contract.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the 126-page production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

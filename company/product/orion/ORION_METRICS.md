@@ -61,6 +61,23 @@ Overall GOCI uses fixed market weights: North America 20%, Europe 18%, Asia 14%,
 
 Known limitation: v1 regional classification uses explicit source geography strings and conservative patterns. “Remote” without explicit scope is not Worldwide Remote. ISO country/region normalization is a P1 task.
 
+## M5 Knowledge Graph measures
+
+Version `orion-knowledge-graph-v1` is measured by the deterministic graph certification fixture.
+
+| Measure | Exact formula | Fixture result | Live state |
+|---|---|---:|---|
+| Knowledge Graph Coverage | mean of entity, relationship, evidence, provenance coverage | 100% | Unknown |
+| Entity Coverage | required foundational entity kinds present ÷ required kinds | 100% | Unknown |
+| Relationship Coverage | required canonical relationship kinds present ÷ required kinds | 100% | Unknown |
+| Evidence Coverage | entities with evidence IDs ÷ entities | 100% | Unknown |
+| Provenance Coverage | evidence with connector, source, and observation time ÷ evidence | 100% | Unknown |
+| Conflict Resolution Coverage | assertions not conflicted or retaining evidence for every value ÷ assertions | 100% | Unknown |
+| Atlas Knowledge Readiness | minimum of entity, relationship, evidence, provenance coverage | 100% | Unknown |
+| Future Intelligence Leverage | High only when Atlas Knowledge Readiness is 100% | High | Unknown |
+
+Fixture results certify the contract, not live production completeness. Live values remain Unknown until a bounded durable staging cohort is projected and measured.
+
 ## M2A measured snapshot — 2026-07-17
 
 Greenhouse plus Lever produced 805 raw source observations, 804 canonical and active opportunities, 118 executive-classified opportunities, 5 measured employers, and 2 active providers. Provider success was 92.9% over the retained seven-day history; opportunity freshness was 85.8%; duplicate consolidation was 0.1%; canonicalization confidence was 90.0%; employer confidence was 72.0%. Provider-scoped employer and opportunity provenance were both 100%, with zero duplicate source identities and zero duplicate employer canonical keys.
