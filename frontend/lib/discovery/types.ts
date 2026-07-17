@@ -300,7 +300,7 @@ export interface OpportunityIngestionOutcome {
   nextRetryAt?: string;
 }
 
-export type CoverageQueueStatus = "queued" | "running" | "completed" | "retrying" | "failed";
+export type CoverageQueueStatus = "queued" | "running" | "completed" | "retrying" | "failed" | "cancelled";
 export interface OpportunityProviderRegistration {
   providerId: DiscoverySourceKind;
   priority: number;
@@ -323,6 +323,11 @@ export interface CoverageQueueStore {
   list(): Promise<readonly CoverageQueueItem[]>;
   put(item: CoverageQueueItem): Promise<void>;
   remove(id: string): Promise<void>;
+  claimNext?(availableAt: string, workerId: string, leaseSeconds: number): Promise<CoverageQueueItem | undefined>;
+}
+export interface CoverageRunStore {
+  list(): Promise<readonly OpportunityIngestionOutcome[]>;
+  put(outcome: OpportunityIngestionOutcome, attempt: number): Promise<void>;
 }
 export interface OpportunityCoverageMetrics {
   registeredProviders: number;

@@ -5,7 +5,7 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import { providerFromCareersUrl } from "@/lib/discovery/providers/factory";
 import { extractLinkedInJobUrlsFromAlert, importLinkedInOpportunity as runLinkedInBridge } from "@/lib/discovery/linkedin-bridge";
 import { OpportunityCoverageEngine } from "@/lib/discovery/coverage-engine";
-import { recordDiscoveryRun, SupabaseOpportunityIngestionSink } from "@/lib/discovery/supabase-ingestion";
+import { recordDiscoveryRun, SupabaseCoverageQueueStore, SupabaseCoverageRunStore, SupabaseOpportunityIngestionSink } from "@/lib/discovery/supabase-ingestion";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { buildExecutiveOpportunityIntelligence, opportunityIntelligenceBlueprint } from "@/lib/opportunity-intelligence";
 import type { Opportunity } from "@/types/opportunity";
@@ -90,7 +90,7 @@ export async function refreshOpportunityBoard(formData: FormData) {
   catch (error) { redirect(`/opportunities?collection=error&message=${encodeURIComponent(error instanceof Error ? error.message : "The careers board could not be read.")}`); }
   const client = createServerSupabaseClient(resolved.accessToken);
   const requestedAt = new Date().toISOString();
-  const engine = new OpportunityCoverageEngine(new SupabaseOpportunityIngestionSink(client, resolved.context)).register(provider, { priority: 1, enabled: true, maximumResults: 100 });
+  const engine = new OpportunityCoverageEngine(new SupabaseOpportunityIngestionSink(client, resolved.context), new SupabaseCoverageQueueStore(client, resolved.context), undefined, undefined, new SupabaseCoverageRunStore(client, resolved.context)).register(provider, { priority: 1, enabled: true, maximumResults: 100 });
   await engine.enqueue(provider.id, { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] }, requestedAt);
   const outcome = await engine.runNext(requestedAt);
   if (!outcome) redirect("/opportunities?collection=error&message=No%20collection%20run%20was%20available.");
