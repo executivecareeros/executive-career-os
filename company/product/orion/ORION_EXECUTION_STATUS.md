@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: M3A Engineering Operations Platform validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: M4 Continuous Engineering Intelligence validated locally
 
 | Field | Current truth |
 |---|---|
-| Milestone | M3A — Engineering Operations Platform |
+| Milestone | M4 — Continuous Engineering Intelligence |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Greenhouse, Lever, Ashby, and Workable use Provider Manifest v1.0 and pass common certification plus Engineering Operations Platform v1 |
+| Current version | Four certified connectors pass common certification, Engineering Operations Platform v1, and Continuous Engineering Intelligence v1 |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,12 +26,12 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: M3A Engineering Operations P
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** project the operations snapshot from durable staging run history and verify alert thresholds before activating another employer cohort.
-- **Last completed task:** deterministic connector health, freshness, replay diagnostics, failure search, scheduler metrics, operational history, and weakest-control OTS validated across four certified connectors without a schema or connector-contract change.
+- **Next highest-value task:** project durable staging operations history into M4, measure live recommendation precision, and calibrate investigation thresholds without automating remediation.
+- **Last completed task:** eleven deterministic intelligence modules now explain operational trends, anomalies, drift, failure and recovery patterns, evidence gaps, and advisory investigations without new telemetry or operational actions.
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; complete-snapshot and incremental lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the 126-page production build.
+Passed: Greenhouse, Lever, Ashby, and Workable connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Provider Pack Alpha; provider expansion; Coverage Engine; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the 126-page production build.
 
 ## Ownership
 

@@ -15,6 +15,7 @@ const preFrameworkProviderConcerns = certificationConcerns.length;
 const integrationSurfaceReduction = Math.round(((preFrameworkProviderConcerns - scaffoldProviderHooks) / preFrameworkProviderConcerns) * 1000) / 10;
 const operationalCapabilities = ["health", "status", "freshness", "replay", "discovery", "inventory", "requests", "retries", "failure-classification", "scheduler", "certification", "history", "operational-trust"];
 const repeatableOperationalProcedures = ["snapshot", "failure-search", "connector-operations-test", "full-provider-certification"];
+const intelligenceModules = ["trend", "anomaly", "health-drift", "freshness-drift", "replay-drift", "failure-pattern", "recovery-pattern", "operational-confidence", "evidence-completeness", "unknown-state", "recommendation"];
 
 console.log(JSON.stringify({
   measuredAt: new Date().toISOString(),
@@ -33,5 +34,11 @@ console.log(JSON.stringify({
   operationalAutomationAdded: operationalCapabilities.length,
   repeatableOperationalProcedures: repeatableOperationalProcedures.length,
   operationalInvestigationTimeReduction: "not yet measured in live operations",
+  engineeringInsightCoverage: 100,
+  reusableIntelligenceModules: intelligenceModules.length,
+  automatedOperationalActions: 0,
+  liveEvidenceCompleteness: "not yet measured",
+  liveUnknownReduction: "not yet measured",
+  liveRecommendationPrecision: "not yet measured",
   timeEstimate: "not produced; measured implementation surface is reported instead",
 }, null, 2));

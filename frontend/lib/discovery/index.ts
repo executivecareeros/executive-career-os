@@ -9,5 +9,6 @@ export * from "./provider-sdk";
 export * from "./provider-scaffold";
 export * from "./provider-certification";
 export * from "./connector-operations";
+export * from "./engineering-intelligence";
 export * from "./registry";
 export * from "./types";

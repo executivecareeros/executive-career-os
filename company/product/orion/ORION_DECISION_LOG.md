@@ -1,5 +1,29 @@
 # Orion Decision Log
 
+## 2026-07-17 — Build intelligence only from versioned operations evidence
+
+- **Context:** M3A made connector operations observable; M4 must explain changes without duplicating telemetry or speculating.
+- **Options considered:** persist a second intelligence event stream; use probabilistic narrative generation; create deterministic projections over ordered operations snapshots.
+- **Chosen option:** eleven reusable intelligence modules consume only `ConnectorOperationsSnapshot` history and produce evidence-qualified insights and advisory recommendations.
+- **Reasoning:** operational understanding remains reproducible, provider-independent, reversible, and bounded by existing evidence.
+- **Trade-offs:** fewer than three samples cannot establish a trend; fewer than five cannot establish an anomaly; live precision remains Unknown until staging history is evaluated.
+- **Reversibility:** the pure intelligence projection can be removed without changing telemetry, providers, scheduler, persistence, or inventory.
+- **Owner:** Sol / Engineering Intelligence.
+- **Affected:** trend, anomaly, drift, pattern, recommendation, and Atlas advisory contracts.
+- **Follow-up:** measure the model against durable staging history before considering any operational automation.
+
+## 2026-07-17 — Keep Atlas Engineering Advisor advisory-only
+
+- **Context:** engineering recommendations may identify an investigation but M4 does not authorize operational actions.
+- **Options considered:** automatically retry or pause connectors; emit unstructured advice; return structured recommendations with evidence, alternatives, confidence, and impact.
+- **Chosen option:** structured advisory-only recommendations; zero automated actions.
+- **Reasoning:** engineers gain decision support without allowing inferred conclusions to mutate operational state.
+- **Trade-offs:** humans remain responsible for investigation and remediation.
+- **Reversibility:** advisor output is derived and non-mutating.
+- **Owner:** Sol / Engineering Intelligence.
+- **Affected:** Atlas engineering explanation contract.
+- **Follow-up:** measure recommendation precision and unknown reduction on live operational history.
+
 ## 2026-07-17 — Derive operations from existing immutable evidence
 
 - **Context:** four connectors certify through one platform, but health, replay, freshness, scheduler, and failure investigation remained distributed across run, queue, manifest, and certification records.
