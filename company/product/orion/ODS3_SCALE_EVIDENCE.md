@@ -21,18 +21,41 @@ These results measure deterministic batch payload construction only. They do not
 
 | Records | Batches at 100 | Duration | Throughput | Encoded payload | Peak heap | CPU | AI tokens |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 10,000 | 100 | 5 ms | 2,002,136/s | 2.9 MiB | 4.8 MiB | 5 ms | 0 |
-| 100,000 | 1,000 | 44 ms | 2,295,638/s | 29.4 MiB | 9.7 MiB | 45 ms | 0 |
-| 1,000,000 | 10,000 | 443 ms | 2,255,947/s | 298.9 MiB total streamed | 41.6 MiB | 450 ms | 0 |
+| 10,000 | 100 | 5 ms | 2,181,520/s | 2.9 MiB | 4.8 MiB | 5 ms | 0 |
+| 100,000 | 1,000 | 43 ms | 2,343,151/s | 29.4 MiB | 9.7 MiB | 44 ms | 0 |
+| 1,000,000 | 10,000 | 443 ms | 2,259,456/s | 298.9 MiB total streamed | 41.6 MiB | 449 ms | 0 |
 
-The bounded loop prevents global materialization; total payload volume grows linearly while peak application memory remains bounded. Database capacity remains unverified until the migration is applied to isolated staging and real RPC duration, rows, queue depth, retries, and failures are observed.
+The bounded loop prevents global materialization; total payload volume grows linearly while peak application memory remains bounded.
+
+## Isolated staging execution evidence
+
+Checkpoint captured 2026-07-18 from aggregate-only runtime telemetry:
+
+- Scheduler completed three of three jobs with zero execution failures and zero retries.
+- 179 provider records were persisted in three database batch calls; batch transaction time was 2,547 ms.
+- End-to-end scheduler duration was 14,136 ms.
+- The execution made 40 database/network requests: 18 reads and 22 writes, totaling 13,663 ms of observed request time.
+- CPU was 566 ms user and 59 ms system; heap used was 44.7 MiB; RSS changed by 0.8 MiB.
+- AI-token use was zero. No opportunity contents, identifiers, credentials, or personal data were logged.
+- Seven-day persistence telemetry recorded 70 batches and 4,703 records, with a 67.2-record mean batch and 761 ms mean transaction duration.
+- The bounded coverage query initially exceeded the statement timeout. Aggregating active country evidence once reduced it below the timeout and made country, industry, provider, and persistence evidence observable in the same run.
+- Three historical failed queue records remain visible beside three newly queued records. Current executions are succeeding; the historical failures require operational disposition rather than concealment.
+
+## Coverage checkpoint
+
+- Active canonical inventory: 16,102.
+- Registry: 249 ISO 3166 countries and territories; 78 currently contain opportunity evidence and 171 do not.
+- Provider freshness: Ashby 100%, Greenhouse 99.9%, Lever 100%; LinkedIn observation freshness 20% and provider health Unknown because it is not an automated provider.
+- Provider health: Ashby, Greenhouse, and Lever Healthy. Greenhouse consolidates a 4.1% duplicate observation rate; Ashby and Lever report 0% at this checkpoint.
+- Opportunity mix: 1,559 executive-classified, 1,148 commercial, and 2,490 remote.
+- Industry classification is the next material data-quality gap: 16,101 of 16,102 active opportunities are `not specified`; the remaining record is `unclassified`. Classification confidence is therefore 0% and no industry-level claim is production-ready.
 
 ## Current capacity conclusion
 
-- 10K: current live inventory; application and existing scheduler evidence accepted.
+- 10K: live inventory, transaction batching, scheduler execution, and aggregate telemetry accepted.
 - 100K: application-side batching is validated; database-side capacity remains pending staging telemetry.
 - 1M: bounded application simulation is successful; production readiness is not claimed.
-- Current maximum production-safe capacity: 10,260 verified active opportunities until staging database evidence expands the bound.
+- Current maximum production-safe capacity: the measured 16,102 active opportunities. A higher bound requires a staged load test with database lock-wait, rollback, queue-latency, and concurrent-worker evidence.
 
 ## Economics
 
@@ -45,7 +68,7 @@ The bounded loop prevents global materialization; total payload volume grows lin
 
 ## Next bottleneck
 
-Remote PostgreSQL transaction duration and source-reassignment query cost under concurrent provider runs. Measure before increasing concurrency.
+Industry classification is the highest product-data gap. The next scale bottleneck is remote PostgreSQL transaction duration and source-reassignment cost under concurrent workers; current evidence uses one worker and cannot approve the 100K database tier.
 
 ## Knowledge graph recommendation
 

@@ -27,6 +27,8 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 | Employer Intelligence Coverage | Provider-scoped employer and opportunity provenance 100%; official domains remain Unknown unless verified |
 | Latest deployment | Isolated network staging Ready with an authenticated every-minute scheduler and no production domain |
 
+ODS 3.0 observability checkpoint: 16,102 active canonical opportunities; 78 of 249 canonical countries/territories represented; three of three measured scheduler jobs completed; 179 records persisted through three transactions in 14.1 seconds; zero AI tokens. Industry classification remains unavailable for effectively the entire inventory and is the next data-quality constraint.
+
 ## Blockers and priority
 
 - **P0:** close the Russia market gap through a compliant source authorization; do not count language-only or city-name false positives as Russia coverage.
