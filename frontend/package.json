@@ -35,6 +35,7 @@
     "test:geographic-confidence": "node --experimental-transform-types scripts/test-geographic-confidence.mjs"
     ,"test:source-expansion": "node --experimental-transform-types scripts/test-source-expansion.mjs"
     ,"test:durable-ingestion": "node --experimental-transform-types scripts/test-durable-ingestion.mjs"
+    ,"test:geographic-coverage": "node --experimental-transform-types scripts/test-geographic-coverage.mjs"
     ,"test:collected-opportunity-decision": "node scripts/test-collected-opportunity-decision.mjs",
     "test:project-simplicity": "node scripts/test-project-simplicity.mjs",
     "test:linkedin-bridge": "node --experimental-transform-types scripts/test-linkedin-opportunity-bridge.mjs",

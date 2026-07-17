@@ -2,6 +2,7 @@ export * from "./connectors";
 export * from "./normalizer";
 export * from "./pipeline";
 export * from "./coverage-engine";
+export * from "./geographic-coverage";
 export * from "./providers/factory";
 export * from "./registry";
 export * from "./types";
