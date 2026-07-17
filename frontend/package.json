@@ -35,6 +35,7 @@
     "test:tier-one-coverage": "node --experimental-transform-types scripts/test-tier-one-coverage.mjs",
     "test:opportunity-intelligence": "node --experimental-transform-types scripts/test-opportunity-intelligence.mjs",
     "test:geographic-confidence": "node --experimental-transform-types scripts/test-geographic-confidence.mjs"
+    ,"test:founder-product-corrections": "node --experimental-transform-types scripts/test-founder-product-corrections.mjs"
     ,"test:source-expansion": "node --experimental-transform-types scripts/test-source-expansion.mjs"
     ,"test:durable-ingestion": "node --experimental-transform-types scripts/test-durable-ingestion.mjs"
     ,"test:geographic-coverage": "node --experimental-transform-types scripts/test-geographic-coverage.mjs"

@@ -1,13 +1,13 @@
 # Orion Execution Status
 
-Last updated: 2026-07-17 · Owner: Sol · Handover: Orion stable; Atlas 2.1 product integration validated locally
+Last updated: 2026-07-17 · Owner: Sol · Handover: Orion stable; Atlas 2.2A founder product corrections validated locally
 
 | Field | Current truth |
 |---|---|
 | Milestone | Orion M9 complete — powering Atlas Product Program |
 | Phase | Phase 2 — multi-provider expansion |
 | Release | M2B Ashby Provider Expansion is deployed to isolated network staging |
-| Current version | Orion M1A–M9 stable; Atlas Opportunity Review and Decision Workspace are integrated into the existing opportunity product surface with append-only persistence ready |
+| Current version | Orion M1A–M9 stable; Atlas 2.2A adds an immediate executive briefing, role-first review, confirmed-history matching, and useful confidence separation without changing Orion or Atlas reasoning architecture |
 | Canonical opportunities | 1,042 |
 | Active opportunities | 1,042 |
 | Executive opportunities | 157 |
@@ -26,8 +26,8 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Orion stable; Atlas 2.1 prod
 
 - **P0:** none. Ashby completed a 238-observation first pass and a post-fix 238-observation replay with zero changes, zero errors, and no cross-employer lifecycle closures.
 - **P1:** freshness is 89.1%, just below the 90% warning threshold; Worldwide Remote coverage remains zero; retained seven-day provider success is 86.4% because failed certification attempts remain in audit history.
-- **Next highest-value task:** apply the Atlas 2.1 migration in an isolated environment, deploy, and measure the authenticated journey through a consented M7 cohort.
-- **Last completed task:** Atlas 2.1 integrates review, confidence, evidence, Unknowns, conflicts, tasks, questions, notes, stages, reassessment, decisions, and immutable timeline recovery on the canonical opportunity page.
+- **Next highest-value task:** expand measured live executive and commercial coverage through lawful Greenhouse, Lever, and Ashby employer cohorts, then activate certified providers only after first-run and replay evidence.
+- **Last completed task:** Atlas 2.2A makes Recommendations the default authenticated opportunity view, uses confirmed career history in matching, separates confidence scores, places Atlas above the raw review, and orders the review around the executive decision.
 
 ## Quality state
 

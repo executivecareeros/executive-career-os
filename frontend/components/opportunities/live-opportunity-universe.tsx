@@ -13,13 +13,13 @@ import { assessOpportunityFreshness } from "@/lib/opportunity-universe";
 import type { Locale } from "@/lib/locale";
 import { LiveOpportunityCard } from "./live-opportunity-card";
 import { LinkedInImportPanel } from "./linkedin-import-panel";
-import { assessOpportunityConfidence, sortOpportunitiesForExecutive, type ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
+import { assessOpportunityConfidence, sortOpportunitiesForExecutive, type ExecutiveCareerContext, type ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
 
 type JobsView = "Search" | "Recommended";
-type Props = { opportunity?: LiveOpportunityViewModel; collected: Opportunity[]; geographicProfile: ExecutiveGeographicProfile; canConfirmFounderFixture: boolean; profileConfirmationAction: () => void | Promise<void>; collectionNotice?: string; collectionMessage?: string; imported?: string; found?: string; collectionAction: (formData: FormData) => void | Promise<void>; linkedInAction: (formData: FormData) => void | Promise<void>; alertAction: (formData: FormData) => void | Promise<void>; linkedInNotice?: string; verification?: string; linkedInResetKey?: string; initialQuery?: string; locale?: Locale; cvComplete?: boolean; savedRoles?: string; newRoles?: string };
+type Props = { opportunity?: LiveOpportunityViewModel; collected: Opportunity[]; geographicProfile: ExecutiveGeographicProfile; careerContext: ExecutiveCareerContext; canConfirmFounderFixture: boolean; profileConfirmationAction: () => void | Promise<void>; collectionNotice?: string; collectionMessage?: string; imported?: string; found?: string; collectionAction: (formData: FormData) => void | Promise<void>; linkedInAction: (formData: FormData) => void | Promise<void>; alertAction: (formData: FormData) => void | Promise<void>; linkedInNotice?: string; verification?: string; linkedInResetKey?: string; initialQuery?: string; locale?: Locale; cvComplete?: boolean; savedRoles?: string; newRoles?: string };
 
-export function LiveOpportunityUniverse({ opportunity, collected, geographicProfile, canConfirmFounderFixture, profileConfirmationAction, collectionNotice, collectionMessage, imported, found, collectionAction, linkedInAction, alertAction, linkedInNotice, verification, linkedInResetKey, initialQuery = "", locale = "en", cvComplete, savedRoles, newRoles }: Props) {
-  const [view, setView] = useState<JobsView>(opportunity?.atlasAction ? "Recommended" : "Search");
+export function LiveOpportunityUniverse({ opportunity, collected, geographicProfile, careerContext, canConfirmFounderFixture, profileConfirmationAction, collectionNotice, collectionMessage, imported, found, collectionAction, linkedInAction, alertAction, linkedInNotice, verification, linkedInResetKey, initialQuery = "", locale = "en", cvComplete, savedRoles, newRoles }: Props) {
+  const [view, setView] = useState<JobsView>(opportunity?.atlasAction || collected.length ? "Recommended" : "Search");
   const [query, setQuery] = useState(initialQuery);
   const [location, setLocation] = useState("");
   const [company, setCompany] = useState("");
@@ -30,17 +30,20 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
   const [eligibleOnly, setEligibleOnly] = useState(false);
   const tr = locale === "tr";
   const collectedVisible = useMemo(() => {
+    if (view === "Recommended") return sortOpportunitiesForExecutive(collected, geographicProfile, careerContext).filter((item) => {
+      const assessment = assessOpportunityConfidence(item, geographicProfile, careerContext);
+      return assessment.eligibility !== "Not Currently Eligible";
+    }).slice(0, 12);
     const filtered = collected.filter((item) => {
-    if (view === "Recommended") return false;
     const text = `${item.companyName} ${item.jobTitle} ${item.location} ${item.source} ${item.industry}`.toLowerCase();
     const salary = item.salaryMax ?? item.salaryMin ?? 0;
-    const eligibility = assessOpportunityConfidence(item, geographicProfile).eligibility;
+    const eligibility = assessOpportunityConfidence(item, geographicProfile, careerContext).eligibility;
     return (!eligibleOnly || eligibility === "Eligible" || eligibility === "Probably Eligible") && (!query || text.includes(query.toLowerCase())) && (!location || item.location.toLowerCase().includes(location.toLowerCase())) && (!company || item.companyName.toLowerCase().includes(company.toLowerCase())) && (!workModel || item.workArrangement === workModel) && (!industry || (item.industry ?? "").toLowerCase().includes(industry.toLowerCase())) && (!minimumSalary || salary >= Number(minimumSalary));
     });
     if (sort === "newest") return [...filtered].sort((a,b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
     if (sort === "company") return [...filtered].sort((a,b) => a.companyName.localeCompare(b.companyName));
-    return sortOpportunitiesForExecutive(filtered, geographicProfile);
-  }, [collected, company, eligibleOnly, geographicProfile, industry, location, minimumSalary, query, sort, view, workModel]);
+    return sortOpportunitiesForExecutive(filtered, geographicProfile, careerContext);
+  }, [careerContext, collected, company, eligibleOnly, geographicProfile, industry, location, minimumSalary, query, sort, view, workModel]);
   const clearFilters = () => { setQuery(""); setLocation(""); setCompany(""); setIndustry(""); setWorkModel(""); setMinimumSalary(""); };
 
   return <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10">
@@ -68,17 +71,17 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
 
     <div className="mt-6">
       {view === "Recommended" && opportunity && <LiveOpportunityCard opportunity={opportunity} />}
-      {view === "Search" && collectedVisible.length > 0 && <div className="grid gap-5 xl:grid-cols-2">{collectedVisible.map((item) => <CollectedOpportunityCard key={item.id} opportunity={item} locale={locale} geographicProfile={geographicProfile} />)}</div>}
-      {view === "Recommended" && !opportunity && <EmptyState eyebrow={tr ? "Atlas önerileri" : "Atlas recommendations"} title={tr ? "Henüz öneri yok" : "No recommendations yet"} description={tr ? "Kaydedilmiş kariyer profilini incele. Atlas, doğrulanmış deneyimin ve tercihlerin yeterli olduğunda hangi fırsatların ilgini hak ettiğini açıklar." : "Review your saved career profile. Atlas will explain which opportunities deserve attention when your confirmed experience and preferences provide enough evidence."} action={<SecondaryButton href="/workspace">{tr ? "Profili incele" : "Review profile"}</SecondaryButton>} />}
+      {(view === "Search" || (view === "Recommended" && !opportunity)) && collectedVisible.length > 0 && <div className="grid gap-5 xl:grid-cols-2">{collectedVisible.map((item) => <CollectedOpportunityCard key={item.id} opportunity={item} locale={locale} geographicProfile={geographicProfile} careerContext={careerContext} />)}</div>}
+      {view === "Recommended" && !opportunity && !collectedVisible.length && <EmptyState eyebrow={tr ? "Atlas önerileri" : "Atlas recommendations"} title={tr ? "Henüz öneri yok" : "No recommendations yet"} description={tr ? "Kaydedilmiş kariyer profilini incele. Atlas, doğrulanmış deneyimin ve tercihlerin yeterli olduğunda hangi fırsatların ilgini hak ettiğini açıklar." : "Review your saved career profile. Atlas will explain which opportunities deserve attention when your confirmed experience and preferences provide enough evidence."} action={<SecondaryButton href="/workspace">{tr ? "Profili incele" : "Review profile"}</SecondaryButton>} />}
       {view === "Search" && !collectedVisible.length && <EmptyState eyebrow={tr ? "İş ara" : "Search jobs"} title={collected.length ? (tr ? "Bu filtrelerle eşleşen iş yok" : "No jobs match these filters") : (tr ? "İş araman burada başlıyor" : "Your job search starts here")} description={collected.length ? (tr ? "Bir veya daha fazla filtreyi genişletmeyi dene." : "Try widening one or more filters.") : (tr ? "Kaynaklar bağlandıkça işler burada görünür. Yukarıdan bir şirket kariyer sayfası da ekleyebilirsin." : "Jobs will appear here as sources are connected. You can also add a company career page above.")} action={collected.length ? <SecondaryButton onClick={clearFilters}>{tr ? "Filtreleri temizle" : "Clear filters"}</SecondaryButton> : <SecondaryButton href="/import">{tr ? "CV'ni yükle" : "Upload your CV"}</SecondaryButton>} />}
     </div>
   </div>;
 }
 
-function CollectedOpportunityCard({ opportunity, locale, geographicProfile }: { opportunity: Opportunity; locale: Locale; geographicProfile: ExecutiveGeographicProfile }) {
+function CollectedOpportunityCard({ opportunity, locale, geographicProfile, careerContext }: { opportunity: Opportunity; locale: Locale; geographicProfile: ExecutiveGeographicProfile; careerContext: ExecutiveCareerContext }) {
   const freshness = assessOpportunityFreshness(opportunity);
   const tr = locale === "tr";
-  const confidence = assessOpportunityConfidence(opportunity, geographicProfile);
+  const confidence = assessOpportunityConfidence(opportunity, geographicProfile, careerContext);
   const salary = opportunity.salaryMin !== undefined || opportunity.salaryMax !== undefined
     ? `${opportunity.salaryCurrency ?? "Currency not confirmed"} ${opportunity.salaryMin?.toLocaleString("en-GB") ?? "?"}${opportunity.salaryMax !== undefined ? `–${opportunity.salaryMax.toLocaleString("en-GB")}` : ""}`
     : (tr ? "Ücret açıklanmadı" : "Compensation not disclosed");

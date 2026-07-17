@@ -1,6 +1,6 @@
 import { assessOpportunityFreshness } from "./opportunity-universe.ts";
 import type { Opportunity, OpportunityLifecycleEvent, OpportunitySource } from "@/types/opportunity";
-import { assessOpportunityConfidence, unknownGeographicProfile, type ExecutiveGeographicProfile, type OpportunityConfidenceResult } from "./opportunity-geography.ts";
+import { assessOpportunityConfidence, unknownGeographicProfile, type ExecutiveCareerContext, type ExecutiveGeographicProfile, type OpportunityConfidenceResult } from "./opportunity-geography.ts";
 
 export type IntelligenceCertainty = "Confirmed" | "Estimated" | "Unknown";
 export type OpportunityIntelligenceEvidence = { label: string; value: string; certainty: IntelligenceCertainty; source: string };
@@ -76,14 +76,14 @@ function relation(candidate: Opportunity, current: Opportunity): OpportunityRela
   return score ? { opportunityId: candidate.id, companyName: candidate.companyName, jobTitle: candidate.jobTitle, score: Math.min(100, score), basis } : undefined;
 }
 
-export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, blueprint: OpportunityIntelligenceBlueprint, universe: readonly Opportunity[], now = new Date().toISOString(), geographicProfile: ExecutiveGeographicProfile = unknownGeographicProfile()): ExecutiveOpportunityIntelligence {
+export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, blueprint: OpportunityIntelligenceBlueprint, universe: readonly Opportunity[], now = new Date().toISOString(), geographicProfile: ExecutiveGeographicProfile = unknownGeographicProfile(), careerContext?: ExecutiveCareerContext): ExecutiveOpportunityIntelligence {
   const strengths: string[] = [];
   const concerns: string[] = [];
   const missingInformation: string[] = [];
   const evidence: OpportunityIntelligenceEvidence[] = [];
   const scores: number[] = [];
   const provenance = sourceEvidence(opportunity);
-  const opportunityConfidence = assessOpportunityConfidence(opportunity, geographicProfile);
+  const opportunityConfidence = assessOpportunityConfidence(opportunity, geographicProfile, careerContext);
   const confirmedSource = provenance.length === 1 ? provenance[0].name : `${provenance.length} source observations`;
   const observationCertainty: IntelligenceCertainty = opportunity.verificationStatus === "Unverified LinkedIn observation" ? "Estimated" : "Confirmed";
 

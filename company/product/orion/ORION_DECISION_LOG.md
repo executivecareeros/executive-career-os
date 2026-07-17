@@ -248,6 +248,17 @@
 - Employer claims begin after M2; publishing begins after claim governance and M3 readiness.
 - Historical opportunity truth is retained; source closure does not mean deletion.
 
+## 2026-07-17 — Prioritize confirmed executive context without changing Atlas reasoning
+
+- **Context:** Founder validation found that live Best Match ordering reused generic opportunity scores, Atlas appeared too late, and role review yielded to company context too early.
+- **Options considered:** redesign Atlas reasoning; add opaque personalization; reuse only confirmed career history through the existing confidence engine and reorganize the existing product surface.
+- **Chosen option:** use confirmed role, industry, technology, and responsibility evidence in deterministic ranking; keep hard geographic eligibility caps; place the evidence-backed Atlas briefing first; preserve the existing decision workspace and immutable history.
+- **Reasoning:** the correction improves executive prioritization and decision clarity without unsupported inference, new architecture, or a second reasoning system.
+- **Trade-offs:** live inventory breadth is unchanged; provider expansion remains the highest-value unfinished correction.
+- **Reversibility:** the career context is an optional input and the previous scoring path remains the fallback when confirmed history is unavailable.
+- **Owner:** Sol / Atlas Product.
+- **Follow-up:** measure score distribution and executive coverage after the next lawful live cohort expansion.
+
 ## 2026-07-17 — Certify Workable through the scaffold without claiming complete snapshots
 
 - **Context:** Workable already had a public-feed adapter, but had not passed the M2X manifest, scaffold, and permanent certification gates.

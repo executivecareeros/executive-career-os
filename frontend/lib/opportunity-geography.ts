@@ -22,6 +22,26 @@ export type ExecutiveGeographicProfile = {
   profileConfidence: number;
 };
 
+export type ExecutiveCareerContext = {
+  roleTitles: string[];
+  industries: string[];
+  capabilities: string[];
+};
+
+export function executiveCareerContextFromRows(rows: Array<{ role_title?: string; notes?: string }>): ExecutiveCareerContext {
+  const industries = new Set<string>();
+  const capabilities = new Set<string>();
+  for (const row of rows) {
+    if (!row.notes) continue;
+    try {
+      const notes = JSON.parse(row.notes) as { industries?: unknown; technologies?: unknown; responsibilities?: unknown };
+      for (const value of Array.isArray(notes.industries) ? notes.industries : []) if (typeof value === "string" && value.trim()) industries.add(value.trim());
+      for (const value of [...(Array.isArray(notes.technologies) ? notes.technologies : []), ...(Array.isArray(notes.responsibilities) ? notes.responsibilities : [])]) if (typeof value === "string" && value.trim()) capabilities.add(value.trim());
+    } catch { /* Plain-text legacy notes are not promoted into ranking evidence. */ }
+  }
+  return { roleTitles: rows.map((row) => row.role_title?.trim()).filter((value): value is string => Boolean(value)), industries: [...industries], capabilities: [...capabilities].slice(0, 40) };
+}
+
 export type EligibilityState = "Eligible" | "Probably Eligible" | "Eligibility Unknown" | "Relocation Required" | "Sponsorship Required" | "Not Currently Eligible";
 export type OpportunityConfidenceResult = {
   eligibility: EligibilityState;
@@ -93,6 +113,40 @@ const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
 const opportunityText = (opportunity: Opportunity) => normalize([opportunity.country, opportunity.location, opportunity.workArrangement, opportunity.summary, ...(opportunity.exclusions ?? []), ...(opportunity.riskFlags ?? [])].join(" "));
 const has = (text: string, expression: RegExp) => expression.test(text);
 
+const executiveRoleFamilies = {
+  sales: ["sales", "account executive", "commercial director"],
+  revenue: ["revenue", "cro", "chief revenue officer"],
+  businessDevelopment: ["business development", "partnership", "alliances"],
+  commercialLeadership: ["commercial leadership", "commercial strategy", "go to market", "gtm"],
+  generalManagement: ["general manager", "managing director", "country manager", "business unit"],
+  enterpriseTechnology: ["enterprise software", "saas", "artificial intelligence", "cybersecurity", "broadcast technology", "media technology"],
+} as const;
+
+function familyMatches(text: string) {
+  const padded = ` ${normalize(text)} `;
+  return Object.entries(executiveRoleFamilies).filter(([, terms]) => terms.some((term) => padded.includes(` ${normalize(term)} `))).map(([family]) => family);
+}
+
+function careerFit(opportunity: Opportunity, context?: ExecutiveCareerContext) {
+  const baseline = clamp(opportunity.executiveFitScore || opportunity.overallScore || 0);
+  if (!context || !context.roleTitles.length) return { professionalFit: baseline, industryFit: clamp(opportunity.strategicOpportunityScore || 50) };
+  const roleEvidence = context.roleTitles.join(" ");
+  const profileFamilies = new Set(familyMatches(roleEvidence));
+  const opportunityFamilies = familyMatches(`${opportunity.jobTitle} ${opportunity.summary}`);
+  const familyOverlap = opportunityFamilies.filter((family) => profileFamilies.has(family)).length;
+  const roleTokens = new Set(normalize(roleEvidence).split(" ").filter((token) => token.length > 3));
+  const opportunityTokens = new Set(normalize(opportunity.jobTitle).split(" ").filter((token) => token.length > 3));
+  const tokenOverlap = [...opportunityTokens].filter((token) => roleTokens.has(token)).length;
+  const titleFit = opportunityFamilies.length ? clamp(42 + familyOverlap * 24 + tokenOverlap * 8) : clamp(38 + tokenOverlap * 12);
+  const opportunityCapabilityText = normalize([opportunity.summary, ...opportunity.requiredSkills, ...opportunity.keyResponsibilities].join(" "));
+  const capabilityMatches = context.capabilities.filter((capability) => opportunityCapabilityText.includes(normalize(capability))).length;
+  const capabilityFit = context.capabilities.length ? clamp(35 + (capabilityMatches / Math.min(context.capabilities.length, 8)) * 65) : 50;
+  const industryText = normalize(`${opportunity.industry} ${opportunity.summary}`);
+  const industryMatches = context.industries.filter((industry) => industryText.includes(normalize(industry))).length;
+  const industryFit = context.industries.length ? clamp(35 + (industryMatches / Math.min(context.industries.length, 4)) * 65) : clamp(opportunity.strategicOpportunityScore || 50);
+  return { professionalFit: clamp(baseline * .25 + titleFit * .55 + capabilityFit * .20), industryFit };
+}
+
 export function classifyGeographicEligibility(opportunity: Opportunity, profile: ExecutiveGeographicProfile): { state: EligibilityState; explanation: string; missingInformation: string[] } {
   const text = opportunityText(opportunity);
   const excluded = profile.excludedCountries.value.map(normalize);
@@ -136,16 +190,17 @@ function geographicFitScore(opportunity: Opportunity, eligibility: EligibilitySt
   return ({ Eligible: 90, "Probably Eligible": 85, "Relocation Required": 60, "Sponsorship Required": 50, "Eligibility Unknown": 40, "Not Currently Eligible": 0 } as Record<EligibilityState, number>)[eligibility];
 }
 
-export function assessOpportunityConfidence(opportunity: Opportunity, profile: ExecutiveGeographicProfile): OpportunityConfidenceResult {
+export function assessOpportunityConfidence(opportunity: Opportunity, profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext): OpportunityConfidenceResult {
   const eligibility = classifyGeographicEligibility(opportunity, profile);
-  const professionalFit = clamp(opportunity.executiveFitScore || opportunity.overallScore || 0);
+  const career = careerFit(opportunity, careerContext);
+  const professionalFit = career.professionalFit;
   const leadershipFit = professionalFit;
   const experienceFit = clamp(opportunity.overallScore || professionalFit);
   const required = opportunity.requiredSkills ?? [];
   const strengths = opportunity.matchingStrengths ?? [];
   const text = opportunityText(opportunity);
   const skillsFit = required.length ? clamp(strengths.length / required.length * 100) : 50;
-  const industryFit = clamp(opportunity.strategicOpportunityScore || 50);
+  const industryFit = career.industryFit;
   const languageFit = profile.languagePreferences.value.length ? (profile.languagePreferences.value.some(language => text.includes(normalize(language))) ? 100 : 50) : 50;
   const preferred = profile.preferredCountries.value.map(normalize);
   const worldwideRemotePreference = profile.remotePreference.value === "Worldwide" && opportunity.workArrangement === "Remote" && has(text, /\b(worldwide|global remote|work from anywhere|anywhere)\b/);
@@ -155,7 +210,7 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const sourceConfidence = clamp(opportunity.confidenceScore ?? 0);
   const dataCompleteness = clamp(opportunity.completenessScore ?? [opportunity.companyName, opportunity.jobTitle, opportunity.location, opportunity.country, opportunity.summary, opportunity.sourceUrl].filter(Boolean).length / 6 * 100);
   const missingPenalty = eligibility.missingInformation.length * 3 + (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 8 : 0);
-  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .20 + experienceFit * .20 + skillsFit * .15 + preferenceFit * .10 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
+  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .30 + skillsFit * .15 + industryFit * .10 + preferenceFit * .10 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
   const opportunityConfidence = Math.min(hardCap[eligibility.state], clamp(weighted));
   const evidenceCompleteness = clamp(100 - eligibility.missingInformation.length * 15 - (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 20 : 0));
   const label: OpportunityConfidenceResult["label"] = eligibility.state === "Not Currently Eligible" ? "Not Currently Eligible" : eligibility.state === "Relocation Required" || eligibility.state === "Sponsorship Required" ? "Stretch or Relocation Option" : eligibility.state === "Eligibility Unknown" ? "Eligibility Unclear" : opportunityConfidence >= 85 ? "Excellent Opportunity" : opportunityConfidence >= 70 ? "Strong Opportunity" : opportunityConfidence >= 50 ? "Worth Reviewing" : "Possible Fit";
@@ -163,9 +218,9 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   return { eligibility: eligibility.state, professionalFit, leadershipFit, experienceFit, skillsFit, industryFit, languageFit, preferenceFit, freshness, sourceConfidence, dataCompleteness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, missingInformation: eligibility.missingInformation, hardExclusions };
 }
 
-export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile) {
+export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext) {
   return [...opportunities].sort((left, right) => {
-    const a = assessOpportunityConfidence(left, profile), b = assessOpportunityConfidence(right, profile);
+    const a = assessOpportunityConfidence(left, profile, careerContext), b = assessOpportunityConfidence(right, profile, careerContext);
     return b.opportunityConfidence - a.opportunityConfidence || b.recommendationConfidence - a.recommendationConfidence || Date.parse(right.publishedAt) - Date.parse(left.publishedAt) || left.companyName.localeCompare(right.companyName);
   });
 }
