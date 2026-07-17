@@ -108,7 +108,7 @@ export class OpportunityIngestionPipeline {
       const finishedAt = new Date().toISOString();
       const run = { id: request.runId, source: provider.id, status, startedAt, finishedAt, durationMs: Math.max(0, Date.parse(finishedAt) - Date.parse(startedAt)), jobsFound: batch.jobs.length, jobsImported: imported, jobsIgnored: ignored, errors, warnings: items.flatMap(item => item.warnings), isDemo: false } as const;
       await this.monitor.record({ type: "run-completed", runId: request.runId, providerId, occurredAt: finishedAt, status, imported, ignored });
-      return { run, items, nextRefreshAt: later(finishedAt, policy.cadenceMinutes) };
+      return { run, items, nextRefreshAt: later(batch.collectedAt, policy.cadenceMinutes) };
     } catch (error) {
       const occurredAt = new Date().toISOString();
       const code = typeof error === "object" && error && "code" in error ? String(error.code) : "PROVIDER_COLLECTION_FAILED";

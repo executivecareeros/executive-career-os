@@ -261,8 +261,13 @@ export interface OpportunityProviderAdapter {
   readonly name: string;
   readonly evaluation: OpportunityProviderEvaluation;
   supports(locator: URL): boolean;
-  create(locator: string): OpportunityProvider;
+  create(locator: string, context?: ProviderLocatorContext): OpportunityProvider;
 }
+
+export type ProviderLocatorContext = {
+  /** Verified hiring-organization name supplied with the controlled provider schedule. */
+  companyName?: string;
+};
 
 export type IngestionDisposition = "inserted" | "updated" | "duplicate" | "rejected" | "deactivated";
 export interface IngestionItemResult {

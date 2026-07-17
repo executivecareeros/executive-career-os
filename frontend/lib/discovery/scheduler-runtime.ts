@@ -24,13 +24,18 @@ export type SchedulerSummary = {
 
 const later = (iso: string, minutes: number) => new Date(Date.parse(iso) + minutes * 60_000).toISOString();
 const message = (error: unknown) => error instanceof Error ? error.message : "Provider execution failed";
+const providerFor = (schedule: ScheduleRow) => providerFromCareersUrl(
+  String(schedule.locator.url ?? ""),
+  undefined,
+  { companyName: typeof schedule.locator.companyName === "string" ? schedule.locator.companyName : undefined },
+);
 
 function contextFor(schedule: ScheduleRow, requestId: string): RepositoryContext {
   return { requestId, actorId: schedule.created_by, correlationId: requestId, timestamp: new Date().toISOString(), workspace: { workspaceId: schedule.workspace_id, executiveId: schedule.created_by, membershipId: "scheduler", role: "Owner", permissionScope: [], language: "en", timezone: schedule.timezone, capabilities: ["opportunity-ingestion"], requestId, isDemo: false } };
 }
 
 async function enqueue(client: SupabaseDataClient, schedule: ScheduleRow, now: string) {
-  const policy = refreshPolicyFor(providerFromCareersUrl(String(schedule.locator.url ?? "")));
+  const policy = refreshPolicyFor(providerFor(schedule));
   const id = randomUUID();
   const response = await client.request("opportunity_provider_jobs", { method: "POST", body: JSON.stringify({ id, workspace_id: schedule.workspace_id, schedule_id: schedule.id, provider_id: schedule.provider_id, status: "queued", priority: schedule.priority, attempt: 0, maximum_attempts: policy.maximumAttempts, requested_at: now, available_at: now, filters: schedule.filters, created_by: schedule.created_by }) });
   if (response.error) {
@@ -43,7 +48,7 @@ async function enqueue(client: SupabaseDataClient, schedule: ScheduleRow, now: s
 }
 
 async function executeClaim(client: SupabaseDataClient, schedule: ScheduleRow, claimed: ClaimedRow, now: string): Promise<OpportunityIngestionOutcome> {
-  const provider = providerFromCareersUrl(String(schedule.locator.url ?? ""));
+  const provider = providerFor(schedule);
   if (provider.id !== claimed.provider_id || provider.id !== schedule.provider_id) throw new Error("PROVIDER_SCHEDULE_MISMATCH");
   const registry = new OpportunityProviderRegistry().register(provider);
   const context = contextFor(schedule, claimed.id);

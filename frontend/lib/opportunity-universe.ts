@@ -61,9 +61,10 @@ export function isCanonicalOpportunityMatch(left: Opportunity, right: Opportunit
   if (conflictingSameProviderIdentity) return false;
   const leftCompanyKey = normalizeIdentityPart(left.companyProfile?.canonicalKey ?? left.companyId ?? "");
   const rightCompanyKey = normalizeIdentityPart(right.companyProfile?.canonicalKey ?? right.companyId ?? "");
+  const companyNamesMatch = normalizeIdentityPart(left.companyName) === normalizeIdentityPart(right.companyName);
   const companyMatches = leftCompanyKey && rightCompanyKey
-    ? leftCompanyKey === rightCompanyKey
-    : normalizeIdentityPart(left.companyName) === normalizeIdentityPart(right.companyName);
+    ? leftCompanyKey === rightCompanyKey || companyNamesMatch
+    : companyNamesMatch;
   if (!companyMatches || normalizeIdentityPart(left.jobTitle) !== normalizeIdentityPart(right.jobTitle)) return false;
   const leftLocation = normalizeIdentityPart(`${left.country}|${left.location}`);
   const rightLocation = normalizeIdentityPart(`${right.country}|${right.location}`);

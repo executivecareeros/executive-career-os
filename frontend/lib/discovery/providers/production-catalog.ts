@@ -21,7 +21,7 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
   },
   {
     id: "lever", name: "Lever", supports: (url) => ["jobs.lever.co", "jobs.eu.lever.co"].includes(url.hostname.toLowerCase()),
-    create: (locator) => { const board = parseLeverBoard(locator); return new LeverOpportunityProvider(board.site, board.region); },
+    create: (locator, context) => { const board = parseLeverBoard(locator); return new LeverOpportunityProvider(board.site, board.region, context?.companyName); },
     evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
   },
   {

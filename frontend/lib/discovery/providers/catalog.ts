@@ -1,4 +1,4 @@
-import type { OpportunityProvider, OpportunityProviderAdapter } from "../types";
+import type { OpportunityProvider, OpportunityProviderAdapter, ProviderLocatorContext } from "../types";
 
 export class OpportunityProviderCatalog {
   private readonly adapters = new Map<string, OpportunityProviderAdapter>();
@@ -20,12 +20,12 @@ export class OpportunityProviderCatalog {
     return [...this.adapters.values()];
   }
 
-  resolve(locator: string): OpportunityProvider {
+  resolve(locator: string, context?: ProviderLocatorContext): OpportunityProvider {
     let url: URL;
     try { url = new URL(locator.trim()); } catch { throw new Error("Enter a valid company careers URL."); }
     if (url.protocol !== "https:") throw new Error("Only secure company careers URLs are supported.");
     const adapter = this.list().find((candidate) => candidate.evaluation.reviewStatus === "approved" && candidate.supports(url));
     if (!adapter) throw new Error("This source is not available yet. ORENDALIS continuously reviews additional opportunity ecosystems.");
-    return adapter.create(locator);
+    return adapter.create(locator, context);
   }
 }
