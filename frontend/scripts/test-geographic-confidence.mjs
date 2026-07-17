@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { assessOpportunityConfidence, founderGeographicProfileFixture, sortOpportunitiesForExecutive } from "../lib/opportunity-geography.ts";
+import { assessOpportunityConfidence, founderGeographicProfileFixture, preferProfileFact, sortOpportunitiesForExecutive } from "../lib/opportunity-geography.ts";
 
 const base = { id:"base",companyName:"Company",companyInitials:"CO",jobTitle:"Commercial Director",location:"Unknown",country:"Unknown",workArrangement:"Unknown",employmentType:"Full-time",industry:"Technology",companySize:"Enterprise",source:"Employer",publishedAt:"2026-07-16T00:00:00Z",discoveredAt:"2026-07-16T00:00:00Z",executiveFitScore:92,strategicOpportunityScore:85,overallScore:90,confidenceScore:90,status:"Discovered",priority:"High",travelRequirement:"Unknown",summary:"Lead international commercial growth.",keyResponsibilities:[],requiredSkills:["Enterprise sales","Leadership"],preferredSkills:[],matchingStrengths:["Enterprise sales","Leadership"],missingRequirements:[],riskFlags:[],exclusions:[],decisionRationale:"",recommendedCVProfile:"",coverLetterRecommended:false,notes:"",freshness:{status:"Fresh",ageHours:24,staleAfterHours:168} };
 const opportunity=(id,location,country,workArrangement="Hybrid",summary=base.summary)=>({...base,id,location,country,workArrangement,summary});
@@ -26,5 +26,6 @@ assert.equal(results["us-only"].eligibility,"Not Currently Eligible");
 assert.ok(results["us-only"].opportunityConfidence <= 20);
 assert.ok(results.eu.opportunityConfidence > results["us-sponsor"].opportunityConfidence);
 const order=sortOpportunitiesForExecutive(fixtures,profile).map(item=>item.id);
-assert.deepEqual(order,["worldwide","emea","eu","turkiye","relocation","unknown","us-sponsor","us-only"]);
+assert.deepEqual(order,["worldwide","emea","eu","turkiye","relocation","us-sponsor","unknown","us-only"]);
+assert.equal(preferProfileFact(profile.homeCountry, { ...profile.homeCountry, value: "Unknown", state: "Inferred", source: "Later CV import" }).value, "Türkiye", "Confirmed facts must not be overwritten by inferred imports");
 console.log("Geographic confidence ranking checks passed.");

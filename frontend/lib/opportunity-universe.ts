@@ -51,6 +51,14 @@ const unspecified = new Set(["", "not specified", "unknown"]);
 
 /** Conservative cross-provider identity match. Uncertain records remain separate for review instead of being falsely merged. */
 export function isCanonicalOpportunityMatch(left: Opportunity, right: Opportunity) {
+  const leftSources = left.sources ?? [];
+  const rightSources = right.sources ?? [];
+  if (leftSources.some((source) => rightSources.some((candidate) => source.id === candidate.id && source.originalId && source.originalId === candidate.originalId))) return true;
+  const leftCanonicalUrl = normalizeCanonicalUrl(left.canonicalUrl ?? left.sourceUrl);
+  const rightCanonicalUrl = normalizeCanonicalUrl(right.canonicalUrl ?? right.sourceUrl);
+  if (leftCanonicalUrl && leftCanonicalUrl === rightCanonicalUrl) return true;
+  const conflictingSameProviderIdentity = leftSources.some((source) => rightSources.some((candidate) => source.id === candidate.id && source.originalId && candidate.originalId && source.originalId !== candidate.originalId));
+  if (conflictingSameProviderIdentity) return false;
   const leftCompanyKey = normalizeIdentityPart(left.companyProfile?.canonicalKey ?? left.companyId ?? "");
   const rightCompanyKey = normalizeIdentityPart(right.companyProfile?.canonicalKey ?? right.companyId ?? "");
   const companyMatches = leftCompanyKey && rightCompanyKey
@@ -61,6 +69,12 @@ export function isCanonicalOpportunityMatch(left: Opportunity, right: Opportunit
   const rightLocation = normalizeIdentityPart(`${right.country}|${right.location}`);
   if (leftLocation === rightLocation) return true;
   return unspecified.has(normalizeIdentityPart(left.country)) || unspecified.has(normalizeIdentityPart(right.country));
+}
+
+function normalizeCanonicalUrl(value?: string) {
+  if (!value) return "";
+  try { const url = new URL(value); return `${url.hostname.toLowerCase().replace(/^www\./, "")}${url.pathname.replace(/\/$/, "")}`; }
+  catch { return ""; }
 }
 
 export function findCanonicalOpportunityIndex(opportunities: readonly Opportunity[], candidate: Opportunity) {
@@ -80,7 +94,10 @@ export function assessOpportunityFreshness(opportunity: Opportunity, now = new D
 
 export function mergeOpportunityObservations(existing: Opportunity, incoming: Opportunity, observedAt: string): Opportunity {
   const combined = [...(existing.sources ?? []), ...(incoming.sources ?? [])];
-  const sources = [...new Map(combined.map(source => [`${source.id}|${source.originalId ?? ""}`, source])).values()];
+  const sources = [...new Map(combined.map(source => {
+    const prior = existing.sources?.find(item => item.id === source.id && item.originalId === source.originalId);
+    return [`${source.id}|${source.originalId ?? ""}`, { ...prior, ...source, firstSeenAt: prior?.firstSeenAt ?? source.firstSeenAt ?? source.collectedAt, lastSeenAt: observedAt, lastFetchedAt: observedAt, status: "Active" as const, fetchStatus: "Succeeded" as const }];
+  })).values()];
   const evidenceRichness = (item: Opportunity) => {
     const generic = /^(employer not confirmed|not specified|linkedin opportunity \d+)$/i;
     return [item.companyName, item.jobTitle, item.location].filter((value) => value && !generic.test(value)).length * 1_000 + (item.summary?.length ?? 0);
@@ -91,6 +108,9 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
   return {
     ...strongest,
     id: existing.id,
+    externalIds: [...new Set([...(existing.externalIds ?? []), ...(incoming.externalIds ?? [])])],
+    canonicalUrl: strongest.canonicalUrl ?? existing.canonicalUrl ?? incoming.canonicalUrl,
+    employerDomain: strongest.employerDomain ?? existing.employerDomain ?? incoming.employerDomain,
     visibility: "Private",
     verificationStatus: existing.verificationStatus === "Employer source matched" || incoming.verificationStatus === "Employer source matched" ? "Employer source matched" : existing.verificationStatus ?? incoming.verificationStatus,
     sources,
@@ -103,6 +123,24 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
       ...(existing.lifecycle ?? []),
       { status: existing.status, occurredAt: observedAt, reason: sources.length > (existing.sources?.length ?? 0) ? "Additional source observation merged" : "Source observation refreshed", source: "System" },
     ],
+  };
+}
+
+export function activeCanonicalOpportunities(opportunities: readonly Opportunity[]) {
+  return opportunities.filter((opportunity) => opportunity.status !== "Archived" && opportunity.sources?.some((source) => source.status !== "Closed") !== false);
+}
+
+export function summarizeCanonicalInventory(opportunities: readonly Opportunity[], now = new Date().toISOString()) {
+  const active = activeCanonicalOpportunities(opportunities);
+  const day = now.slice(0, 10);
+  return {
+    rawSourceRecords: opportunities.reduce((total, item) => total + Math.max(1, item.sources?.length ?? 0), 0),
+    activeSourceRecords: active.reduce((total, item) => total + Math.max(1, item.sources?.filter(source => source.status !== "Closed").length ?? 0), 0),
+    activeCanonicalOpportunities: active.length,
+    newToday: active.filter(item => item.discoveredAt.slice(0, 10) === day).length,
+    updatedToday: active.filter(item => item.lastObservedAt?.slice(0, 10) === day).length,
+    deactivatedToday: opportunities.filter(item => item.closedAt?.slice(0, 10) === day).length,
+    staleOpportunities: active.filter(item => assessOpportunityFreshness(item, now).status === "Stale").length,
   };
 }
 

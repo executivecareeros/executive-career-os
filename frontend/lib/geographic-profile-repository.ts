@@ -1,14 +1,8 @@
 import type { SupabaseDataClient } from "@/lib/supabase/client";
 import type { RepositoryContext } from "@/lib/repositories";
-import { founderGeographicProfileFixture, type ExecutiveGeographicProfile, unknownGeographicProfile } from "@/lib/opportunity-geography";
+import { founderGeographicProfileFixture, hydrateExecutiveGeographicProfile, unknownGeographicProfile } from "@/lib/opportunity-geography";
 
 type Row = { id: string; payload: Record<string, unknown>; version: number };
-
-function isProfile(value: unknown): value is ExecutiveGeographicProfile {
-  if (!value || typeof value !== "object") return false;
-  const profile = value as Partial<ExecutiveGeographicProfile>;
-  return Boolean(profile.homeCountry && profile.currentCountry && profile.citizenships && profile.workAuthorizations && profile.preferredCountries && profile.excludedCountries);
-}
 
 export async function loadExecutiveGeographicProfile(client: SupabaseDataClient, context: RepositoryContext) {
   const workspaceId = context.workspace!.workspaceId, executiveId = context.workspace!.executiveId;
@@ -17,7 +11,7 @@ export async function loadExecutiveGeographicProfile(client: SupabaseDataClient,
     if (/does not exist|schema cache/i.test(response.error.message)) return unknownGeographicProfile();
     throw new Error(response.error.message);
   }
-  return isProfile(response.data?.[0]?.payload) ? response.data[0].payload : unknownGeographicProfile();
+  return response.data?.[0]?.payload ? hydrateExecutiveGeographicProfile(response.data[0].payload) : unknownGeographicProfile();
 }
 
 export async function confirmFounderGeographicProfile(client: SupabaseDataClient, context: RepositoryContext, confirmedAt = new Date().toISOString()) {

@@ -21,6 +21,13 @@ export type OpportunitySource = {
   originalUrl?: string;
   collectedAt: string;
   confidence: "High" | "Medium" | "Low" | "Unknown";
+  firstSeenAt?: string;
+  lastSeenAt?: string;
+  lastFetchedAt?: string;
+  lastVerifiedAt?: string;
+  status?: "Active" | "Closed" | "Unknown";
+  fetchStatus?: "Succeeded" | "Failed" | "Unknown";
+  parserVersion?: string;
 };
 
 export type OpportunityFreshnessStatus = "Fresh" | "Recent" | "Stale" | "Unknown";
@@ -52,6 +59,10 @@ export type OpportunityCompanyProfile = {
 
 export type Opportunity = {
   id: string;
+  externalIds?: string[];
+  normalizedTitle?: string;
+  canonicalUrl?: string;
+  employerDomain?: string;
   companyId?: string;
   companyName: string;
   companyInitials: string;
@@ -97,6 +108,11 @@ export type Opportunity = {
   recommendedCVProfile: string;
   coverLetterRecommended: boolean;
   applicationDeadline?: string;
+  closedAt?: string;
+  closureReason?: string;
+  canonicalizationConfidence?: number;
+  completenessScore?: number;
+  legitimacyState?: "Verified" | "Probable" | "Unverified" | "Rejected";
   notes: string;
 };
 

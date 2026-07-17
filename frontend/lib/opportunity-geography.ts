@@ -1,18 +1,21 @@
 import type { Opportunity } from "@/types/opportunity";
 
 export type KnowledgeState = "Observed" | "Inferred" | "Confirmed" | "Unknown";
-export type ProfileFact<T> = { value: T; state: KnowledgeState; source: string; confidence: number; lastUpdated: string };
+export type ProfileFact<T> = { value: T; state: KnowledgeState; source: string; sourceReference: string | null; confidence: number; createdAt: string; lastUpdated: string; confirmedAt: string | null; superseded: boolean };
 export type ExecutiveGeographicProfile = {
   homeCountry: ProfileFact<string | null>;
   currentCountry: ProfileFact<string | null>;
+  currentCity: ProfileFact<string | null>;
   citizenships: ProfileFact<string[]>;
   workAuthorizations: ProfileFact<string[]>;
   preferredCountries: ProfileFact<string[]>;
   excludedCountries: ProfileFact<string[]>;
+  preferredRegions: ProfileFact<string[]>;
   remotePreference: ProfileFact<"Worldwide" | "EMEA" | "EU" | "Country restricted" | "No preference" | null>;
   hybridPreference: ProfileFact<boolean | null>;
   onsitePreference: ProfileFact<boolean | null>;
   relocationPreference: ProfileFact<"Willing" | "Not willing" | "Ask first" | null>;
+  sponsorshipRequirement: ProfileFact<"Required" | "Not required" | "Unknown" | null>;
   timezonePreference: ProfileFact<string[]>;
   languagePreferences: ProfileFact<string[]>;
   travelPreference: ProfileFact<string | null>;
@@ -23,32 +26,66 @@ export type EligibilityState = "Eligible" | "Probably Eligible" | "Eligibility U
 export type OpportunityConfidenceResult = {
   eligibility: EligibilityState;
   professionalFit: number;
+  leadershipFit: number;
+  experienceFit: number;
   skillsFit: number;
+  industryFit: number;
+  languageFit: number;
   preferenceFit: number;
   freshness: number;
+  sourceConfidence: number;
+  dataCompleteness: number;
   opportunityConfidence: number;
   recommendationConfidence: number;
   label: "Excellent Opportunity" | "Strong Opportunity" | "Worth Reviewing" | "Possible Fit" | "Stretch or Relocation Option" | "Eligibility Unclear" | "Not Currently Eligible";
   explanation: string;
   missingInformation: string[];
+  hardExclusions: string[];
 };
 
 const now = "1970-01-01T00:00:00.000Z";
-const unknown = <T>(value: T): ProfileFact<T> => ({ value, state: "Unknown", source: "No confirmed evidence", confidence: 0, lastUpdated: now });
+const unknown = <T>(value: T): ProfileFact<T> => ({ value, state: "Unknown", source: "No confirmed evidence", sourceReference: null, confidence: 0, createdAt: now, lastUpdated: now, confirmedAt: null, superseded: false });
 export const unknownGeographicProfile = (): ExecutiveGeographicProfile => ({
-  homeCountry: unknown(null), currentCountry: unknown(null), citizenships: unknown([]), workAuthorizations: unknown([]), preferredCountries: unknown([]), excludedCountries: unknown([]), remotePreference: unknown(null), hybridPreference: unknown(null), onsitePreference: unknown(null), relocationPreference: unknown(null), timezonePreference: unknown([]), languagePreferences: unknown([]), travelPreference: unknown(null), profileConfidence: 0,
+  homeCountry: unknown(null), currentCountry: unknown(null), currentCity: unknown(null), citizenships: unknown([]), workAuthorizations: unknown([]), preferredCountries: unknown([]), excludedCountries: unknown([]), preferredRegions: unknown([]), remotePreference: unknown(null), hybridPreference: unknown(null), onsitePreference: unknown(null), relocationPreference: unknown(null), sponsorshipRequirement: unknown(null), timezonePreference: unknown([]), languagePreferences: unknown([]), travelPreference: unknown(null), profileConfidence: 0,
 });
+
+function hydrateFact<T>(fallback: ProfileFact<T>, value: unknown): ProfileFact<T> {
+  if (!value || typeof value !== "object" || !("value" in value)) return fallback;
+  const incoming = value as Partial<ProfileFact<T>>;
+  return { ...fallback, ...incoming, sourceReference: incoming.sourceReference ?? null, createdAt: incoming.createdAt ?? incoming.lastUpdated ?? fallback.createdAt, confirmedAt: incoming.confirmedAt ?? (incoming.state === "Confirmed" ? incoming.lastUpdated ?? null : null), superseded: incoming.superseded ?? false } as ProfileFact<T>;
+}
+
+/** Adds newly introduced profile fields without changing or promoting legacy evidence. */
+export function hydrateExecutiveGeographicProfile(value: unknown): ExecutiveGeographicProfile {
+  const fallback = unknownGeographicProfile();
+  if (!value || typeof value !== "object") return fallback;
+  const profile = value as Partial<ExecutiveGeographicProfile>;
+  return {
+    homeCountry: hydrateFact(fallback.homeCountry, profile.homeCountry), currentCountry: hydrateFact(fallback.currentCountry, profile.currentCountry), currentCity: hydrateFact(fallback.currentCity, profile.currentCity), citizenships: hydrateFact(fallback.citizenships, profile.citizenships), workAuthorizations: hydrateFact(fallback.workAuthorizations, profile.workAuthorizations), preferredCountries: hydrateFact(fallback.preferredCountries, profile.preferredCountries), excludedCountries: hydrateFact(fallback.excludedCountries, profile.excludedCountries), preferredRegions: hydrateFact(fallback.preferredRegions, profile.preferredRegions), remotePreference: hydrateFact(fallback.remotePreference, profile.remotePreference), hybridPreference: hydrateFact(fallback.hybridPreference, profile.hybridPreference), onsitePreference: hydrateFact(fallback.onsitePreference, profile.onsitePreference), relocationPreference: hydrateFact(fallback.relocationPreference, profile.relocationPreference), sponsorshipRequirement: hydrateFact(fallback.sponsorshipRequirement, profile.sponsorshipRequirement), timezonePreference: hydrateFact(fallback.timezonePreference, profile.timezonePreference), languagePreferences: hydrateFact(fallback.languagePreferences, profile.languagePreferences), travelPreference: hydrateFact(fallback.travelPreference, profile.travelPreference), profileConfidence: typeof profile.profileConfidence === "number" ? profile.profileConfidence : 0,
+  };
+}
+
+export function preferProfileFact<T>(existing: ProfileFact<T>, incoming: ProfileFact<T>) {
+  if (existing.state === "Confirmed" && incoming.state !== "Confirmed") return existing;
+  if (existing.state === "Confirmed" && incoming.state === "Confirmed" && Date.parse(existing.lastUpdated) > Date.parse(incoming.lastUpdated)) return existing;
+  return incoming;
+}
 
 export const founderGeographicProfileFixture = (lastUpdated = "2026-07-17T00:00:00.000Z"): ExecutiveGeographicProfile => ({
   ...unknownGeographicProfile(),
-  homeCountry: { value: "Türkiye", state: "Confirmed", source: "Executive confirmation", confidence: 1, lastUpdated },
-  currentCountry: { value: "Türkiye", state: "Confirmed", source: "Executive confirmation", confidence: 1, lastUpdated },
-  citizenships: { value: ["Türkiye", "European Union"], state: "Confirmed", source: "Executive-confirmed CV evidence", confidence: 1, lastUpdated },
-  workAuthorizations: { value: ["Türkiye", "European Union"], state: "Confirmed", source: "Executive confirmation", confidence: 1, lastUpdated },
-  preferredCountries: { value: ["Türkiye", "European Union", "EMEA"], state: "Confirmed", source: "Founder acceptance fixture", confidence: 1, lastUpdated },
-  remotePreference: { value: "Worldwide", state: "Confirmed", source: "Founder acceptance fixture", confidence: 1, lastUpdated },
+  homeCountry: confirmedFact("Türkiye", "Executive confirmation", lastUpdated),
+  currentCountry: confirmedFact("Türkiye", "Executive confirmation", lastUpdated),
+  citizenships: confirmedFact(["Türkiye", "European Union"], "Executive-confirmed CV evidence", lastUpdated),
+  workAuthorizations: confirmedFact(["Türkiye", "European Union"], "Executive confirmation", lastUpdated),
+  preferredCountries: confirmedFact(["Türkiye", "European Union", "EMEA"], "Founder acceptance fixture", lastUpdated),
+  preferredRegions: confirmedFact(["EMEA", "European Union"], "Founder acceptance fixture", lastUpdated),
+  remotePreference: confirmedFact("Worldwide", "Founder acceptance fixture", lastUpdated),
   profileConfidence: 0.82,
 });
+
+function confirmedFact<T>(value: T, source: string, timestamp: string): ProfileFact<T> {
+  return { value, state: "Confirmed", source, sourceReference: null, confidence: 1, createdAt: timestamp, lastUpdated: timestamp, confirmedAt: timestamp, superseded: false };
+}
 
 const normalize = (value: string) => value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").trim();
 const includesAny = (text: string, values: string[]) => values.some(value => text.includes(normalize(value)));
@@ -89,34 +126,41 @@ export function classifyGeographicEligibility(opportunity: Opportunity, profile:
   return { state: "Eligibility Unknown", explanation: "Current evidence is insufficient to confirm geographic eligibility.", missingInformation: missing };
 }
 
-const hardCap: Record<EligibilityState, number> = { Eligible: 100, "Probably Eligible": 100, "Eligibility Unknown": 54, "Relocation Required": 59, "Sponsorship Required": 49, "Not Currently Eligible": 20 };
+const hardCap: Record<EligibilityState, number> = { Eligible: 100, "Probably Eligible": 100, "Eligibility Unknown": 49, "Relocation Required": 59, "Sponsorship Required": 54, "Not Currently Eligible": 20 };
 function geographicFitScore(opportunity: Opportunity, eligibility: EligibilityState) {
   const text = opportunityText(opportunity);
   if (has(text, /\b(worldwide|global remote|work from anywhere|anywhere)\b/) && opportunity.workArrangement === "Remote") return 100;
   if (has(text, /\b(emea|europe middle east africa)\b/)) return 98;
   if (has(text, /\b(eu|eea|european union|europe)\b/)) return 96;
   if (has(text, /\b(turkiye|turkey|istanbul|ankara)\b/)) return 94;
-  return ({ Eligible: 90, "Probably Eligible": 85, "Relocation Required": 60, "Eligibility Unknown": 45, "Sponsorship Required": 30, "Not Currently Eligible": 0 } as Record<EligibilityState, number>)[eligibility];
+  return ({ Eligible: 90, "Probably Eligible": 85, "Relocation Required": 60, "Sponsorship Required": 50, "Eligibility Unknown": 40, "Not Currently Eligible": 0 } as Record<EligibilityState, number>)[eligibility];
 }
 
 export function assessOpportunityConfidence(opportunity: Opportunity, profile: ExecutiveGeographicProfile): OpportunityConfidenceResult {
   const eligibility = classifyGeographicEligibility(opportunity, profile);
   const professionalFit = clamp(opportunity.executiveFitScore || opportunity.overallScore || 0);
+  const leadershipFit = professionalFit;
+  const experienceFit = clamp(opportunity.overallScore || professionalFit);
   const required = opportunity.requiredSkills ?? [];
   const strengths = opportunity.matchingStrengths ?? [];
-  const skillsFit = required.length ? clamp(strengths.length / required.length * 100) : 50;
-  const preferred = profile.preferredCountries.value.map(normalize);
   const text = opportunityText(opportunity);
+  const skillsFit = required.length ? clamp(strengths.length / required.length * 100) : 50;
+  const industryFit = clamp(opportunity.strategicOpportunityScore || 50);
+  const languageFit = profile.languagePreferences.value.length ? (profile.languagePreferences.value.some(language => text.includes(normalize(language))) ? 100 : 50) : 50;
+  const preferred = profile.preferredCountries.value.map(normalize);
   const worldwideRemotePreference = profile.remotePreference.value === "Worldwide" && opportunity.workArrangement === "Remote" && has(text, /\b(worldwide|global remote|work from anywhere|anywhere)\b/);
   const preferenceFit = worldwideRemotePreference || (preferred.length && includesAny(text, preferred)) ? 100 : preferred.length ? 45 : 50;
   const ageHours = opportunity.freshness?.ageHours;
   const freshness = ageHours === undefined ? ({ Fresh: 100, Recent: 75, Stale: 25, Unknown: 45 }[opportunity.freshness?.status ?? "Unknown"]) : ageHours <= 48 ? 100 : ageHours <= 168 ? 75 : ageHours <= 720 ? 45 : 20;
+  const sourceConfidence = clamp(opportunity.confidenceScore ?? 0);
+  const dataCompleteness = clamp(opportunity.completenessScore ?? [opportunity.companyName, opportunity.jobTitle, opportunity.location, opportunity.country, opportunity.summary, opportunity.sourceUrl].filter(Boolean).length / 6 * 100);
   const missingPenalty = eligibility.missingInformation.length * 3 + (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 8 : 0);
-  const weighted = geographicFitScore(opportunity, eligibility.state) * .35 + professionalFit * .25 + skillsFit * .20 + preferenceFit * .10 + freshness * .10 - missingPenalty;
+  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .20 + experienceFit * .20 + skillsFit * .15 + preferenceFit * .10 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
   const opportunityConfidence = Math.min(hardCap[eligibility.state], clamp(weighted));
   const evidenceCompleteness = clamp(100 - eligibility.missingInformation.length * 15 - (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 20 : 0));
   const label: OpportunityConfidenceResult["label"] = eligibility.state === "Not Currently Eligible" ? "Not Currently Eligible" : eligibility.state === "Relocation Required" || eligibility.state === "Sponsorship Required" ? "Stretch or Relocation Option" : eligibility.state === "Eligibility Unknown" ? "Eligibility Unclear" : opportunityConfidence >= 85 ? "Excellent Opportunity" : opportunityConfidence >= 70 ? "Strong Opportunity" : opportunityConfidence >= 50 ? "Worth Reviewing" : "Possible Fit";
-  return { eligibility: eligibility.state, professionalFit, skillsFit, preferenceFit, freshness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, missingInformation: eligibility.missingInformation };
+  const hardExclusions = eligibility.state === "Not Currently Eligible" ? [eligibility.explanation] : [];
+  return { eligibility: eligibility.state, professionalFit, leadershipFit, experienceFit, skillsFit, industryFit, languageFit, preferenceFit, freshness, sourceConfidence, dataCompleteness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, missingInformation: eligibility.missingInformation, hardExclusions };
 }
 
 export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile) {

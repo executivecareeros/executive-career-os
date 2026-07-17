@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { assessOpportunityFreshness } from "../opportunity-universe.ts";
+import { summarizeCanonicalInventory } from "../opportunity-universe.ts";
 import { OpportunityIngestionPipeline, refreshPolicyFor } from "./pipeline.ts";
 import { OpportunityProviderRegistry } from "./registry.ts";
 import type { CoverageQueueItem, CoverageQueueStore, DiscoveryFilter, DiscoveryHealth, IngestionMonitor, OpportunityCoverageSnapshot, OpportunityIngestionOutcome, OpportunityIngestionSink, OpportunityProvider, OpportunityProviderRegistration } from "./types";
@@ -76,7 +76,7 @@ export class OpportunityCoverageEngine {
     const observed = this.outcomes.reduce((total, outcome) => total + outcome.run.jobsFound, 0);
     const imported = items.filter((item) => item.disposition === "inserted" || item.disposition === "updated").length;
     const rejected = items.filter((item) => item.disposition === "rejected").length;
-    const fresh = opportunities.filter((opportunity) => ["Fresh", "Recent"].includes(assessOpportunityFreshness(opportunity, this.clock().toISOString()).status)).length;
-    return { providers: [...this.registrations.values()].sort((a, b) => a.priority - b.priority), queue, metrics: { registeredProviders: this.registrations.size, healthyProviders: health.filter((item) => ["available", "connected"].includes(item.status)).length, queuedRuns: queue.filter((item) => ["queued", "retrying", "running"].includes(item.status)).length, completedRuns: this.outcomes.filter((item) => item.run.status !== "failed").length, failedRuns: this.outcomes.filter((item) => item.run.status === "failed").length, opportunitiesObserved: observed, opportunitiesImported: imported, duplicateObservations: items.filter((item) => item.disposition === "duplicate").length, rejectedObservations: rejected, qualityRate: observed ? Math.round(((observed - rejected) / observed) * 100) : 100, freshnessRate: opportunities.length ? Math.round((fresh / opportunities.length) * 100) : 100, calculatedAt: this.clock().toISOString() } };
+    const inventory = summarizeCanonicalInventory(opportunities, this.clock().toISOString());
+    return { providers: [...this.registrations.values()].sort((a, b) => a.priority - b.priority), queue, metrics: { registeredProviders: this.registrations.size, healthyProviders: health.filter((item) => ["available", "connected"].includes(item.status)).length, queuedRuns: queue.filter((item) => ["queued", "retrying", "running"].includes(item.status)).length, completedRuns: this.outcomes.filter((item) => item.run.status !== "failed").length, failedRuns: this.outcomes.filter((item) => item.run.status === "failed").length, opportunitiesObserved: observed, opportunitiesImported: imported, ...inventory, duplicateObservations: items.filter((item) => item.disposition === "duplicate").length, rejectedObservations: rejected, qualityRate: observed ? Math.round(((observed - rejected) / observed) * 100) : 100, freshnessRate: inventory.activeCanonicalOpportunities ? Math.round(((inventory.activeCanonicalOpportunities - inventory.staleOpportunities) / inventory.activeCanonicalOpportunities) * 100) : 100, calculatedAt: this.clock().toISOString() } };
   }
 }

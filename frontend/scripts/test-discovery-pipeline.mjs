@@ -48,4 +48,15 @@ assert.ok(unavailable.nextRetryAt);
 assert.ok(events.some(event => event.type === "run-completed"));
 assert.ok(events.some(event => event.type === "run-failed"));
 
+const distinctRegistry = new OpportunityProviderRegistry().register(provider("greenhouse", "Greenhouse", [job("gh-100", "greenhouse"), job("gh-101", "greenhouse")]));
+const distinctSink = new MemoryOpportunityIngestionSink();
+await new OpportunityIngestionPipeline(distinctRegistry, distinctSink).ingest("greenhouse", request("run-distinct"));
+assert.equal((await distinctSink.list()).length, 2, "Different requisitions from the same provider must remain separate");
+
+const closureRegistry = new OpportunityProviderRegistry().register({ ...provider("greenhouse", "Greenhouse", []), async collect(current) { return { providerId: "greenhouse", collectedAt: current.requestedAt, jobs: [], completeSnapshot: true }; } });
+const closureSink = new MemoryOpportunityIngestionSink(await distinctSink.list());
+const closure = await new OpportunityIngestionPipeline(closureRegistry, closureSink).ingest("greenhouse", request("run-close"));
+assert.equal(closure.items.filter(item => item.disposition === "deactivated").length, 2);
+assert.equal((await closureSink.list()).every(item => item.status === "Archived" && item.sources.every(source => source.status === "Closed")), true, "A complete source snapshot must deactivate missing jobs");
+
 console.log("Discovery ingestion pipeline checks passed.");

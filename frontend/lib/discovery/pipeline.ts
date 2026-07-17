@@ -87,6 +87,20 @@ export class OpportunityIngestionPipeline {
           await this.monitor.record({ type: "item-processed", runId: request.runId, providerId, occurredAt: batch.collectedAt, sourceId: job.sourceId, disposition: "rejected" });
         }
       }
+      if (batch.completeSnapshot) {
+        const observedIds = new Set(batch.jobs.map(job => job.sourceId));
+        for (const current of existing) {
+          const missing = (current.sources ?? []).filter(source => source.id === provider.id && source.status !== "Closed" && source.originalId && !observedIds.has(source.originalId));
+          if (!missing.length) continue;
+          const sources = (current.sources ?? []).map(source => missing.includes(source) ? { ...source, status: "Closed" as const, lastFetchedAt: batch.collectedAt, fetchStatus: "Succeeded" as const } : source);
+          const remainsActive = sources.some(source => source.status !== "Closed");
+          const deactivated: Opportunity = { ...current, sources, status: remainsActive ? current.status : "Archived", closedAt: remainsActive ? current.closedAt : batch.collectedAt, closureReason: remainsActive ? current.closureReason : `${provider.source.name} no longer reports this opportunity`, lifecycle: [...(current.lifecycle ?? []), { status: remainsActive ? current.status : "Archived", occurredAt: batch.collectedAt, reason: remainsActive ? `${provider.source.name} source observation closed` : "No active source continues to report this opportunity", source: "System" }] };
+          await this.sink.upsert(deactivated);
+          const sourceId = missing.map(source => source.originalId).join(",");
+          items.push({ sourceId, disposition: "deactivated", opportunityId: current.id, warnings: [] });
+          await this.monitor.record({ type: "item-processed", runId: request.runId, providerId, occurredAt: batch.collectedAt, sourceId, disposition: "deactivated" });
+        }
+      }
       const imported = items.filter(item => item.disposition === "inserted" || item.disposition === "updated").length;
       const ignored = items.length - imported;
       const errors = items.flatMap(item => item.error ? [item.error] : []);

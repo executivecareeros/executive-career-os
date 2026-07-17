@@ -221,6 +221,8 @@ export interface ProviderCollectionBatch {
   jobs: readonly DiscoveryJob[];
   nextCursor?: string;
   sourceRevision?: string;
+  /** True only when this batch represents the provider's complete active inventory for the requested scope. */
+  completeSnapshot?: boolean;
 }
 
 /** Collection-only provider boundary. Providers never create domain Opportunities directly. */
@@ -260,7 +262,7 @@ export interface OpportunityProviderAdapter {
   create(locator: string): OpportunityProvider;
 }
 
-export type IngestionDisposition = "inserted" | "updated" | "duplicate" | "rejected";
+export type IngestionDisposition = "inserted" | "updated" | "duplicate" | "rejected" | "deactivated";
 export interface IngestionItemResult {
   sourceId: string;
   disposition: IngestionDisposition;
@@ -330,6 +332,12 @@ export interface OpportunityCoverageMetrics {
   failedRuns: number;
   opportunitiesObserved: number;
   opportunitiesImported: number;
+  activeSourceRecords: number;
+  activeCanonicalOpportunities: number;
+  newToday: number;
+  updatedToday: number;
+  deactivatedToday: number;
+  staleOpportunities: number;
   duplicateObservations: number;
   rejectedObservations: number;
   qualityRate: number;

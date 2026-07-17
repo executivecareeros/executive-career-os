@@ -24,6 +24,8 @@ assert.equal(snapshot.metrics.registeredProviders, 2);
 assert.equal(snapshot.metrics.healthyProviders, 2);
 assert.equal(snapshot.metrics.opportunitiesObserved, 2);
 assert.equal(snapshot.metrics.opportunitiesImported, 2);
+assert.equal(snapshot.metrics.activeSourceRecords, 2);
+assert.equal(snapshot.metrics.activeCanonicalOpportunities, 1, "Public inventory uses active canonical opportunities, not raw source rows");
 assert.equal(snapshot.metrics.qualityRate, 100);
 assert.equal(snapshot.metrics.freshnessRate, 100);
 

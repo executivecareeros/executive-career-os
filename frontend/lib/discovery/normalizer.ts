@@ -13,8 +13,15 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
     const staleAfterHours = reliability.type === "Manual Import" ? 336 : reliability.type === "Executive Search Firm" ? 72 : 36;
     const workArrangement = job.rawMetadata.workArrangement === "Remote" || job.rawMetadata.workArrangement === "Hybrid" || job.rawMetadata.workArrangement === "On-site" ? job.rawMetadata.workArrangement : "Unknown";
     const employmentType = job.employmentType === "Full-time" || job.employmentType === "Contract" || job.employmentType === "Interim" ? job.employmentType : "Unknown";
+    const canonicalUrl = job.originalUrl?.replace(/[?#].*$/, "");
+    let employerDomain: string | undefined;
+    try { employerDomain = new URL(job.company.website ?? job.originalUrl ?? "").hostname.toLowerCase().replace(/^www\./, ""); } catch { /* Unknown remains explicit. */ }
     const opportunity: Opportunity = {
       id: `discovered-${job.source}-${job.sourceId}`,
+      externalIds: [job.sourceId],
+      normalizedTitle: job.title.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").trim(),
+      canonicalUrl,
+      employerDomain,
       companyName: job.company.name,
       companyInitials,
       jobTitle: job.title,
@@ -28,7 +35,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       sourceUrl: job.originalUrl,
       visibility: "Private",
       verificationStatus: job.rawMetadata.verificationStatus === "Employer source matched" ? "Employer source matched" : job.rawMetadata.verificationStatus === "Unverified LinkedIn observation" ? "Unverified LinkedIn observation" : undefined,
-      sources: [{ id: job.source, name: job.source, kind: sourceKind, originalId: job.sourceId, originalUrl: job.originalUrl, collectedAt: job.discoveredAt, confidence: reliability.score >= 75 ? "High" : reliability.score >= 50 ? "Medium" : "Low" }],
+      sources: [{ id: job.source, name: job.source, kind: sourceKind, originalId: job.sourceId, originalUrl: job.originalUrl, collectedAt: job.discoveredAt, confidence: reliability.score >= 75 ? "High" : reliability.score >= 50 ? "Medium" : "Low", firstSeenAt: job.discoveredAt, lastSeenAt: job.discoveredAt, lastFetchedAt: job.discoveredAt, lastVerifiedAt: job.discoveredAt, status: "Active", fetchStatus: "Succeeded", parserVersion: this.version }],
       lastObservedAt: job.discoveredAt,
       freshness: { status: "Fresh", lastObservedAt: job.discoveredAt, ageHours: 0, staleAfterHours },
       lifecycle: [{ status: "Discovered", occurredAt: job.discoveredAt, reason: `Collected from ${job.source}`, source: "System" }],
@@ -42,6 +49,9 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       strategicOpportunityScore: 0,
       overallScore: 0,
       confidenceScore: reliability.score,
+      canonicalizationConfidence: reliability.score,
+      completenessScore: Math.round([job.title, job.company.name, job.location, job.country, job.description, job.originalUrl, job.publishedAt].filter(Boolean).length / 7 * 100),
+      legitimacyState: reliability.score >= 75 ? "Verified" : reliability.score >= 50 ? "Probable" : "Unverified",
       status: "Discovered",
       priority: "Low",
       travelRequirement: "Not assessed",
