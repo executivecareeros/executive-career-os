@@ -45,6 +45,7 @@ assert.match(employerMigration, /is_active_workspace_member/, "Employer intellig
 assert.match(employerMigration, /auth\.role\(\) <> 'service_role'/, "The isolated scheduler may update employer intelligence");
 assert.match(store, /rpc\/upsert_employer_observation/, "Every durable opportunity must resolve a canonical employer");
 assert.match(store, /company_id: companyId/, "Canonical opportunities must link to the canonical employer");
-assert.doesNotMatch(employerMigration + employerCompatibilityMigration, /\bdigest\s*\(/, "Employer identity must not depend on an extension schema");
+assert.match(employerCompatibilityMigration, /create or replace function public\.upsert_employer_observation/, "The compatibility migration must replace the original function");
+assert.doesNotMatch(employerCompatibilityMigration, /\bdigest\s*\(/, "The active employer identity function must not depend on an extension schema");
 
 console.log("Durable opportunity ingestion checks passed.");

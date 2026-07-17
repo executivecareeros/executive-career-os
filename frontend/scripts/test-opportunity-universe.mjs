@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { canTransitionOpportunity, clusterDuplicateOpportunities, isCanonicalOpportunityMatch, isInUniverseStage, opportunityDuplicateKey, resolveUniverseStage, summarizeOpportunityUniverse } from "../lib/opportunity-universe.ts";
+import { canTransitionOpportunity, clusterDuplicateOpportunities, isCanonicalOpportunityMatch, isInUniverseStage, mergeOpportunityObservations, opportunityDuplicateKey, resolveUniverseStage, summarizeOpportunityUniverse } from "../lib/opportunity-universe.ts";
 import { toLiveOpportunity } from "../lib/live-opportunity.ts";
 
 const base = {
@@ -25,6 +25,15 @@ assert.equal(clusters[0].canonical.id, "one");
 assert.equal(clusters[0].sourceCount, 2);
 assert.equal(clusters[0].requiresReview, true);
 assert.equal(isCanonicalOpportunityMatch({ ...base, companyName: "Provider A label", companyProfile: { canonicalKey: "company:global-123", name: "Provider A label", evidenceStatus: "Partial" } }, { ...duplicate, companyName: "Provider B label", companyProfile: { canonicalKey: "company:global-123", name: "Provider B label", evidenceStatus: "Partial" } }), true, "Resolved company identity must reconcile cross-provider labels");
+
+const repairedEmployerIdentity = mergeOpportunityObservations(
+  { ...base, employerDomain: "job-boards.greenhouse.io", companyProfile: { canonicalKey: "job-boards.greenhouse.io", name: "Datadog", website: "https://job-boards.greenhouse.io/datadog", evidenceStatus: "Partial" }, sources: [{ id: "greenhouse", name: "Greenhouse", kind: "Employer", originalId: "datadog-1", collectedAt: base.discoveredAt, confidence: "High" }] },
+  { ...base, employerDomain: undefined, companyProfile: { canonicalKey: "greenhouse:datadog", name: "Datadog", evidenceStatus: "Unknown" }, sources: [{ id: "greenhouse", name: "Greenhouse", kind: "Employer", originalId: "datadog-1", collectedAt: duplicate.discoveredAt, confidence: "High" }] },
+  duplicate.discoveredAt,
+);
+assert.equal(repairedEmployerIdentity.employerDomain, undefined, "An incoming connector identity must clear a historical ATS publishing domain");
+assert.equal(repairedEmployerIdentity.companyProfile?.canonicalKey, "greenhouse:datadog");
+assert.equal(repairedEmployerIdentity.companyProfile?.website, undefined);
 assert.equal(isCanonicalOpportunityMatch(base, { ...duplicate, jobTitle: "Chief Operating Officer" }), false, "Different roles must never be merged");
 
 const summary = summarizeOpportunityUniverse([base, { ...base, id: "three", universeStage: "Universe", source: "Recruiter" }]);

@@ -77,6 +77,17 @@ function normalizeCanonicalUrl(value?: string) {
   catch { return ""; }
 }
 
+const atsPublishingHosts = new Set([
+  "boards.greenhouse.io", "job-boards.greenhouse.io", "boards.eu.greenhouse.io",
+  "jobs.lever.co", "jobs.eu.lever.co", "jobs.ashbyhq.com", "apply.workable.com",
+]);
+
+function isAtsPublishingUrl(value?: string) {
+  if (!value) return false;
+  try { return atsPublishingHosts.has(new URL(value.includes("://") ? value : `https://${value}`).hostname.toLowerCase().replace(/^www\./, "")); }
+  catch { return false; }
+}
+
 export function findCanonicalOpportunityIndex(opportunities: readonly Opportunity[], candidate: Opportunity) {
   return opportunities.findIndex((opportunity) => isCanonicalOpportunityMatch(opportunity, candidate));
 }
@@ -105,12 +116,20 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
   const incomingIsStronger = incoming.confidenceScore > existing.confidenceScore || (incoming.confidenceScore === existing.confidenceScore && evidenceRichness(incoming) > evidenceRichness(existing));
   const strongest = incomingIsStronger ? incoming : existing;
   const freshness = assessOpportunityFreshness({ ...strongest, lastObservedAt: observedAt }, observedAt);
+  const repairedCompanyProfile = incoming.companyProfile?.canonicalKey
+    ? {
+        ...existing.companyProfile,
+        ...incoming.companyProfile,
+        website: incoming.companyProfile.website ?? (isAtsPublishingUrl(existing.companyProfile?.website) ? undefined : existing.companyProfile?.website),
+      }
+    : strongest.companyProfile;
   return {
     ...strongest,
     id: existing.id,
     externalIds: [...new Set([...(existing.externalIds ?? []), ...(incoming.externalIds ?? [])])],
     canonicalUrl: strongest.canonicalUrl ?? existing.canonicalUrl ?? incoming.canonicalUrl,
-    employerDomain: strongest.employerDomain ?? existing.employerDomain ?? incoming.employerDomain,
+    employerDomain: incoming.employerDomain ?? (isAtsPublishingUrl(existing.employerDomain) ? undefined : strongest.employerDomain ?? existing.employerDomain),
+    companyProfile: repairedCompanyProfile,
     visibility: "Private",
     verificationStatus: existing.verificationStatus === "Employer source matched" || incoming.verificationStatus === "Employer source matched" ? "Employer source matched" : existing.verificationStatus ?? incoming.verificationStatus,
     sources,
