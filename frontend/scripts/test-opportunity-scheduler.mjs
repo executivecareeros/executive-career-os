@@ -14,6 +14,7 @@ const runtime = await readFile(resolve(root, "frontend/lib/discovery/scheduler-r
 const proxy = await readFile(resolve(root, "frontend/proxy.ts"), "utf8");
 const migration = await readFile(resolve(root, "supabase/migrations/202607170003_provider_schedule_concurrency.sql"), "utf8");
 const vercel = JSON.parse(await readFile(resolve(root, "frontend/vercel.json"), "utf8"));
+const networkStaging = JSON.parse(await readFile(resolve(root, "frontend/vercel.network-staging.json"), "utf8"));
 
 assert.match(route, /schedulerRequestAuthorized/);
 assert.match(route, /Unauthorized/);
@@ -32,5 +33,7 @@ assert.match(runtime, /"failed"/);
 assert.match(migration, /unique index opportunity_provider_jobs_one_active_schedule_idx/i);
 assert.equal(vercel.crons[0].path, "/api/operations/opportunity-refresh");
 assert.equal(vercel.crons[0].schedule, "*/15 * * * *");
+assert.equal(networkStaging.crons[0].path, "/api/operations/opportunity-refresh");
+assert.equal(networkStaging.crons[0].schedule, "* * * * *");
 
 console.log("Opportunity scheduler security and durability checks passed.");
