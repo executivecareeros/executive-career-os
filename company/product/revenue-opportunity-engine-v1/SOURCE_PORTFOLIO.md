@@ -58,3 +58,22 @@ This portfolio tests the paid value proposition—one relevant universe, less se
 - [Workday developer documentation](https://developer.workday.com/api-overview): platform APIs exist, but current evidence does not establish a universal public jobs-collection endpoint.
 
 Source terms and interfaces can change. Revalidate official documentation and terms at implementation approval; this architecture is not an access grant.
+
+## Demand-led expansion order — 17 July 2026
+
+The executable ranking in `frontend/lib/discovery/source-expansion.ts` prioritizes expected unique useful inventory, observed demand coverage, geographic coverage, reliability, access confidence, duplicate overlap, and effort. It does not treat brand recognition or raw provider count as value.
+
+| Sequence | Source ecosystem | Access position | Next executable action |
+| ---: | --- | --- | --- |
+| 1 | SmartRecruiters | Official employer posting interface; per-use terms revalidation required | Implement one employer-scoped adapter and validate intended usage |
+| 2 | Workday | Authorized tenant or provider-confirmed interface | Confirm collection rights through an authorized tenant or partnership |
+| 3 | SAP SuccessFactors | Authorized employer OData integration | Obtain an authorized tenant and validate data-use terms |
+| 4 | Teamtailor | Authorized employer or partner feed | Obtain an authorized feed or partner credential |
+| 5 | iCIMS | Authorized employer integration | Qualify an employer-authorized integration and contractual basis |
+| 6 | Oracle Recruiting / Taleo | Authorized employer integration | Identify a supported employer publication interface |
+| 7 | Executive search partner feeds | Contracted partner feed | Secure the first partner agreement and confidential-data terms |
+| 8 | Public and international institution feeds | Official APIs, XML, JSON, or RSS | Select the highest-demand official feed and implement the structured-feed adapter |
+| 9 | BambooHR | Employer-published feed or authorized API | Validate the public employer feed pattern and add a reusable adapter |
+| 10 | Jobvite | Employer-published feed or authorized integration | Qualify a permitted employer-scoped endpoint |
+
+The precise ordering is recalculated from demand and coverage inputs. Any contractual, paid, legal, or personal-data gate remains disabled until Founder approval.

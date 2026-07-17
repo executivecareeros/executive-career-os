@@ -8,7 +8,7 @@
 
 | Issue ID | Created | Status | Priority | Category | Affected feature | Environment | Luna attempts | Recommended model | Founder action | Next review |
 |---|---|---|---|---|---|---|---:|---|---|---|
-| ESC-2026-0717-001 | 2026-07-17 | Immediate Sol Escalation | P0 | Geographic eligibility and confidence ranking | Authenticated opportunities, search, Atlas | Production | 2 | Sol | Confirmed geographic profile; switch to Sol now | Immediate |
+| ESC-2026-0717-001 | 2026-07-17 | Sol implementation complete; staging acceptance pending | P0 | Geographic eligibility and confidence ranking | Authenticated opportunities, search, Atlas | Staging pending | 2 | Sol | Apply migration and validate authenticated staging | Before production deployment |
 
 ### ESC-2026-0717-001
 
@@ -29,7 +29,9 @@
 - **Recommended Sol mission:** Complete and validate the geographic confidence ranking across the durable profile schema, eligibility engine, shared search/ranking contract, Atlas explanations, deterministic fixtures, desktop/mobile, and production.
 - **Estimated Sol effort:** One focused mission.
 - **Required access:** Authenticated production session, repository, deployment status, and read-only runtime evidence if failures appear.
-- **Resolution:** Open.
+- **Sol implementation:** `a185c7f` introduced the durable workspace-isolated geographic profile, deterministic eligibility states, shared Search/Atlas confidence engine, Best Match ordering, Founder regression fixture, and protected Founder confirmation. `9f5e136` completed backward-compatible profile hydration, confirmed-over-inferred precedence, expanded confidence evidence, canonical opportunity lifecycle metrics, and network regression coverage.
+- **Acceptance evidence:** Deterministic Founder ordering, shared Atlas intelligence, TypeScript, lint, provider pipeline, deduplication, source closure, inventory count, RLS architecture, and production build pass locally.
+- **Resolution:** Implementation complete; remains open until migration `202607170001` is applied in staging and authenticated desktop/390px acceptance confirms live ordering and persistence.
 
 ## Closed issues
 
