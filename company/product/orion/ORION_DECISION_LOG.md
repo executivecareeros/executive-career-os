@@ -1,5 +1,29 @@
 # Orion Decision Log
 
+## 2026-07-17 — Derive operations from existing immutable evidence
+
+- **Context:** four connectors certify through one platform, but health, replay, freshness, scheduler, and failure investigation remained distributed across run, queue, manifest, and certification records.
+- **Options considered:** add a dashboard and new event database; add provider-specific logging; build a deterministic read-only projection over existing operational evidence.
+- **Chosen option:** Engineering Operations Platform v1 projects one connector snapshot from manifests, probes, immutable runs, queue state, canonical inventory, and certification reports.
+- **Reasoning:** Connector #100 receives common diagnostics without schema expansion, duplicate history, provider-specific observability, or silent assumptions.
+- **Trade-offs:** employer delta remains Unknown until immutable run outcomes record employer-level change counts; live Workable health remains unclaimed without an approved cohort.
+- **Reversibility:** projection code and tests can be removed without changing source history, connectors, scheduler, persistence, or canonical inventory.
+- **Owner:** Sol / Engineering Operations.
+- **Affected:** connector operations model, common certification command, and permanent Orion operations records.
+- **Follow-up:** project durable staging history through the same model and validate alert thresholds before additional cohort activation.
+
+## 2026-07-17 — Define OTS as the weakest measured control
+
+- **Context:** an averaged operational score could hide an unsafe replay, stale connector, or failed certification.
+- **Options considered:** weighted average; subjective health grade; minimum of every required measured control.
+- **Chosen option:** OTS equals the weakest of health, replay safety, certification, freshness, failure control, recovery success, and determinism; missing evidence produces Unknown.
+- **Reasoning:** no strong control can compensate for a failed safety invariant, and no arbitrary weights are required.
+- **Trade-offs:** OTS is deliberately conservative and remains Unknown until all seven controls are measured.
+- **Reversibility:** metric is versioned; future methodology changes preserve v1 history.
+- **Owner:** Sol / Engineering Operations.
+- **Affected:** operational measurement and connector acceptance evidence.
+- **Follow-up:** measure OTS from controlled staging history.
+
 ## 2026-07-17 — Establish Orion as the M1 execution source of truth
 
 - **Context:** Phoenix II established product and durable network foundations, but roadmap and evidence were distributed across release records.

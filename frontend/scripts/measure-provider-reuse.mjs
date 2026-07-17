@@ -13,6 +13,8 @@ const engineeringReuseIndex = Math.round((sharedCertificationConcerns / certific
 const scaffoldProviderHooks = 6;
 const preFrameworkProviderConcerns = certificationConcerns.length;
 const integrationSurfaceReduction = Math.round(((preFrameworkProviderConcerns - scaffoldProviderHooks) / preFrameworkProviderConcerns) * 1000) / 10;
+const operationalCapabilities = ["health", "status", "freshness", "replay", "discovery", "inventory", "requests", "retries", "failure-classification", "scheduler", "certification", "history", "operational-trust"];
+const repeatableOperationalProcedures = ["snapshot", "failure-search", "connector-operations-test", "full-provider-certification"];
 
 console.log(JSON.stringify({
   measuredAt: new Date().toISOString(),
@@ -25,5 +27,11 @@ console.log(JSON.stringify({
   providerSpecificLinesTotal: Object.values(providerSpecificLines).reduce((total, count) => total + count, 0),
   scaffoldProviderHooks,
   integrationSurfaceReduction,
+  sharedOperationalCapabilities: operationalCapabilities.length,
+  certifiedConnectorsUsingOperationsPlatform: adapters.length,
+  providerSpecificOperationsImplementations: 0,
+  operationalAutomationAdded: operationalCapabilities.length,
+  repeatableOperationalProcedures: repeatableOperationalProcedures.length,
+  operationalInvestigationTimeReduction: "not yet measured in live operations",
   timeEstimate: "not produced; measured implementation surface is reported instead",
 }, null, 2));
