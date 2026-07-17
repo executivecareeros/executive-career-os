@@ -57,7 +57,7 @@ export class OpportunityIngestionPipeline {
       const batch = await provider.collect(request);
       if (batch.providerId !== provider.id) throw Object.assign(new Error("Provider returned a mismatched batch"), { code: "PROVIDER_BATCH_MISMATCH", retryable: false });
       if (!validDate(batch.collectedAt)) throw Object.assign(new Error("Provider returned an invalid collection time"), { code: "INVALID_PROVIDER_BATCH", retryable: false });
-      const existing = [...await this.sink.list()];
+      const existing = [...await (this.sink.listForBatch?.(batch) ?? this.sink.list())];
       const items: IngestionItemResult[] = [];
       for (const job of batch.jobs.slice(0, request.maximumResults)) {
         const validation = validateDiscoveryJob(job, provider);

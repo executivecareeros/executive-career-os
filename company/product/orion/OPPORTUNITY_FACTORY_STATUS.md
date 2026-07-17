@@ -1,6 +1,6 @@
 # Opportunity Factory Status
 
-Last updated: 2026-07-18 · Authority: ODS 2.0 and Executive Opportunity Universe Directive
+Last updated: 2026-07-18 · Authority: ODS 3.0 and Executive Opportunity Universe Directive
 
 ## Measured network
 
@@ -33,6 +33,8 @@ Verified ATS source identity and strict corporate-domain verification are delibe
 - The isolated network scheduler runs every minute with an authenticated staging-only secret and no production domain.
 - Atomic queue claims supported bounded concurrent workers; the observed live checkpoint completed 26 runs with zero failures and 5,051 canonical changes in 30 minutes.
 - Stable opportunity content fingerprints preserve current Atlas analysis for unchanged records and mark materially changed records for reassessment.
+- Employer-scoped canonical matching replaces the former full-inventory read on every provider refresh. At the current 10,260-opportunity checkpoint, a 250-role employer board reduces the comparison set by approximately 41×; at 100,000 global opportunities the same bounded board reduces it by approximately 400×.
+- Empty complete snapshots retain the safe global fallback so a provider can still close previously active observations. No lifecycle or canonical identity rule was weakened for the scaling gain.
 - Durable employer and opportunity counts remain unchanged until a validated cohort runs in isolated staging.
 
 ## SmartRecruiters admission evidence
@@ -51,4 +53,4 @@ Sources: [SmartRecruiters Posting API](https://developers.smartrecruiters.com/do
 
 ## Current constraint
 
-The first operational milestone is complete for employer-source and opportunity volume. The measured G20 country-market check has evidence in 18 of 19 countries; Russia is the remaining zero-evidence market. The current approved Greenhouse/Ashby cohort contains no posting with strict Russia location evidence. A Russia-relevant source such as HeadHunter requires separate terms and authorization review before activation. Ashby public metadata proves the active ATS board but does not expose a supported corporate domain, so domain verification remains unknown unless independent evidence exists. No domain is inferred from an employer name.
+The first operational milestone is complete for employer-source and opportunity volume. The next engineering-economics constraint is write amplification: one employer observation and one opportunity write are still performed per collected record. The new scoped-read boundary makes 100,000-opportunity reads sustainable, but 1,000,000-opportunity throughput requires a transaction-safe batch persistence path before materially increasing worker concurrency. The measured G20 country-market check has evidence in 18 of 19 countries; Russia is the remaining zero-evidence market. The current approved Greenhouse/Ashby cohort contains no posting with strict Russia location evidence. A Russia-relevant source such as HeadHunter requires separate terms and authorization review before activation. Ashby public metadata proves the active ATS board but does not expose a supported corporate domain, so domain verification remains unknown unless independent evidence exists. No domain is inferred from an employer name.

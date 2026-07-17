@@ -53,6 +53,10 @@ assert.match(store, /private rows: Row\[\] \| null = null/, "A provider run must
 assert.match(store, /const rows = await this\.loadRows\(\)/, "Opportunity upserts must reuse the run-scoped inventory cache");
 assert.match(store, /limit=\$\{pageSize\}&offset=\$\{offset\}/, "Durable opportunity inventory must page beyond the PostgREST 1,000-row response limit");
 assert.match(store, /if \(page\.length < pageSize\) break/, "Durable opportunity pagination must stop after the final page");
+assert.match(store, /async listForBatch\(batch: ProviderCollectionBatch\)/, "Provider refreshes must support employer-scoped canonical inventory reads");
+assert.match(store, /companies\?select=id/, "Batch-scoped reads must resolve canonical employers first");
+assert.match(store, /company_id=in\./, "Batch-scoped reads must load only opportunities belonging to matching employers");
+assert.match(store, /if \(!canonicalKeys\.length && !companyNames\.length\) return this\.list\(\)/, "Unscoped snapshots must retain the safe full-inventory fallback");
 assert.match(employerCompatibilityMigration, /create or replace function public\.upsert_employer_observation/, "The compatibility migration must replace the original function");
 assert.doesNotMatch(employerCompatibilityMigration, /\bdigest\s*\(/, "The active employer identity function must not depend on an extension schema");
 assert.match(employerCoverageMigration, /orion-employer-intelligence-v1/, "Employer intelligence coverage must be explicitly versioned");

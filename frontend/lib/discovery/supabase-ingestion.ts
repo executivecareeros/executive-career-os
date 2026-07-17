@@ -3,12 +3,17 @@ import { randomUUID } from "node:crypto";
 import type { RepositoryContext } from "@/lib/repositories/types";
 import type { SupabaseDataClient } from "@/lib/supabase/client";
 import type { Opportunity } from "@/types/opportunity";
-import type { CoverageQueueItem, CoverageQueueStore, CoverageRunStore, DiscoveryFilter, DiscoverySourceKind, OpportunityIngestionOutcome, OpportunityIngestionSink } from "./types";
+import type { CoverageQueueItem, CoverageQueueStore, CoverageRunStore, DiscoveryFilter, DiscoverySourceKind, OpportunityIngestionOutcome, OpportunityIngestionSink, ProviderCollectionBatch } from "./types";
 
 type Row = { id: string; domain_id: string; payload: Record<string, unknown> };
 type QueueRow = { id: string; provider_id: DiscoverySourceKind; status: CoverageQueueItem["status"]; priority: number; attempt: number; maximum_attempts: number; requested_at: string; available_at: string; filters: DiscoveryFilter };
 type RunRow = { payload: OpportunityIngestionOutcome };
 type EmployerRpcRow = string | { upsert_employer_observation?: string };
+type CompanyIdentityRow = { id: string };
+
+const queryChunkSize = 40;
+const chunks = <T>(values: readonly T[], size = queryChunkSize) => Array.from({ length: Math.ceil(values.length / size) }, (_, index) => values.slice(index * size, (index + 1) * size));
+const postgrestQuoted = (value: string) => `"${value.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
 
 const queueItem = (row: QueueRow): CoverageQueueItem => ({ id: row.id, providerId: row.provider_id, status: row.status, priority: row.priority, attempt: row.attempt, maximumAttempts: row.maximum_attempts, requestedAt: row.requested_at, availableAt: row.available_at, filters: row.filters });
 
@@ -86,6 +91,43 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
 
   async list() {
     return (await this.loadRows()).map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
+  }
+
+  async listForBatch(batch: ProviderCollectionBatch) {
+    if (this.rows) return this.rows.map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
+    const canonicalKeys = [...new Set([
+      ...(batch.snapshotScopeKeys ?? []),
+      ...batch.jobs.map((job) => job.company.canonicalKey).filter((value): value is string => Boolean(value?.trim())),
+    ].map((value) => value.trim()))];
+    const companyNames = [...new Set(batch.jobs.map((job) => job.company.name.trim()).filter(Boolean))];
+
+    // An empty complete snapshot still needs the global inventory so the provider's
+    // previously active observations can be closed safely.
+    if (!canonicalKeys.length && !companyNames.length) return this.list();
+
+    const companyIds = new Set<string>();
+    const identityGroups = [...chunks(canonicalKeys).map((values) => ({ field: "canonical_key", values })), ...chunks(companyNames).map((values) => ({ field: "name", values }))];
+    for (const group of identityGroups) {
+      if (!group.values.length) continue;
+      const filter = group.values.map(postgrestQuoted).join(",");
+      const response = await this.client.request<CompanyIdentityRow[]>(`companies?select=id&workspace_id=eq.${this.workspace.workspaceId}&${group.field}=in.(${encodeURIComponent(filter)})&limit=${group.values.length}`);
+      if (response.error) throw new Error(response.error.message);
+      for (const company of response.data ?? []) companyIds.add(company.id);
+    }
+
+    if (!companyIds.size) {
+      this.rows = [];
+      return [];
+    }
+
+    const rows: Row[] = [];
+    for (const group of chunks([...companyIds])) {
+      const response = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&archived_at=is.null&company_id=in.(${group.join(",")})&order=id.asc&limit=1000`);
+      if (response.error) throw new Error(response.error.message);
+      rows.push(...(response.data ?? []));
+    }
+    this.rows = [...new Map(rows.map((row) => [row.id, row])).values()];
+    return this.rows.map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
   }
 
   async upsert(opportunity: Opportunity) {

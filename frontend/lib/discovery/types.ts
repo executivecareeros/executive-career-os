@@ -282,6 +282,13 @@ export interface IngestionItemResult {
 
 export interface OpportunityIngestionSink {
   list(): Promise<readonly Opportunity[]>;
+  /**
+   * Returns only canonical opportunities that can match the collected provider batch.
+   * Durable sinks use this boundary to avoid loading the global inventory for every
+   * employer-scoped refresh. Implementations may fall back to list() when the batch
+   * does not contain a safe scope.
+   */
+  listForBatch?(batch: ProviderCollectionBatch): Promise<readonly Opportunity[]>;
   upsert(opportunity: Opportunity): Promise<void>;
 }
 

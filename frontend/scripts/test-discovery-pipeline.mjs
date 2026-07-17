@@ -19,6 +19,18 @@ const events = [];
 const pipeline = new OpportunityIngestionPipeline(registry, sink, { record(event) { events.push(event); } });
 const request = runId => ({ runId, requestedAt, maximumResults: 25, filters });
 
+let globalListCalls = 0;
+let scopedListCalls = 0;
+const scopedReadRecords = new Map();
+const scopedReadSink = {
+  async list() { globalListCalls += 1; return [...scopedReadRecords.values()]; },
+  async listForBatch(batch) { scopedListCalls += 1; assert.equal(batch.jobs[0].company.name, "North Star Holdings"); return [...scopedReadRecords.values()]; },
+  async upsert(opportunity) { scopedReadRecords.set(opportunity.id, opportunity); },
+};
+await new OpportunityIngestionPipeline(new OpportunityProviderRegistry().register(provider("greenhouse", "Greenhouse", [job("gh-scoped", "greenhouse")])), scopedReadSink).ingest("greenhouse", request("run-scoped-read"));
+assert.equal(scopedListCalls, 1, "A capable durable sink must receive the collected batch for scoped canonical matching");
+assert.equal(globalListCalls, 0, "A scoped provider refresh must not read the global opportunity inventory");
+
 const first = await pipeline.ingest("greenhouse", request("run-1"));
 assert.equal(first.run.status, "completed");
 assert.equal(first.items[0].disposition, "inserted");
