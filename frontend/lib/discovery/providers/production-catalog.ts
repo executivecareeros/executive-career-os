@@ -26,7 +26,7 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
   },
   {
     id: "ashby", name: "Ashby", supports: (url) => url.hostname.toLowerCase() === "jobs.ashbyhq.com",
-    create: (locator) => new AshbyOpportunityProvider(parseAshbyBoard(locator)),
+    create: (locator, context) => new AshbyOpportunityProvider(parseAshbyBoard(locator), context?.companyName),
     evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
   },
   {

@@ -1,4 +1,5 @@
 export const orionMetricsVersion = "orion-m1-metrics-v1" as const;
+export const orionQualityMetricsVersion = "orion-m2-quality-v1" as const;
 
 export const gociRegions = [
   "worldwide-remote",
@@ -42,6 +43,51 @@ export type GlobalOpportunityCoverageIndex = {
   score: number;
   regions: readonly GociRegionalResult[];
 };
+
+const round = (value: number) => Math.round(value * 10) / 10;
+
+export type ProviderReliabilityEvidence = {
+  scheduledRuns: number; completedRuns: number; replayRuns: number; replaySafeRuns: number;
+  onCadenceRuns: number; errorCount: number;
+};
+export function calculateProviderReliabilityIndex(e: ProviderReliabilityEvidence) {
+  const schedulerHealth = percentage(e.onCadenceRuns, e.scheduledRuns);
+  const ingestionSuccess = percentage(e.completedRuns, e.scheduledRuns);
+  const replaySuccess = percentage(e.replaySafeRuns, e.replayRuns);
+  const refreshConsistency = e.scheduledRuns > 0 ? percentage(e.onCadenceRuns, e.scheduledRuns) : 0;
+  const errorControl = e.scheduledRuns > 0 ? clamp(100 - percentage(e.errorCount, e.scheduledRuns)) : 0;
+  return { version: orionQualityMetricsVersion, score: round(schedulerHealth * .2 + ingestionSuccess * .3 + replaySuccess * .2 + refreshConsistency * .15 + errorControl * .15), components: { schedulerHealth: round(schedulerHealth), ingestionSuccess: round(ingestionSuccess), replaySuccess: round(replaySuccess), refreshConsistency: round(refreshConsistency), errorControl: round(errorControl) } };
+}
+
+export type EmployerResolutionEvidence = { opportunities: number; linkedOpportunities: number; duplicateEmployerKeys: number; replayChecks: number; replayConsistentChecks: number };
+export function calculateEmployerResolutionAccuracy(e: EmployerResolutionEvidence) {
+  const linkage = percentage(e.linkedOpportunities, e.opportunities);
+  const duplicateControl = e.linkedOpportunities > 0 ? clamp(100 - percentage(e.duplicateEmployerKeys, e.linkedOpportunities)) : 0;
+  const replayConsistency = percentage(e.replayConsistentChecks, e.replayChecks);
+  return { version: orionQualityMetricsVersion, score: round(linkage * .7 + duplicateControl * .2 + replayConsistency * .1), components: { linkage: round(linkage), duplicateControl: round(duplicateControl), replayConsistency: round(replayConsistency) } };
+}
+
+export const opportunityCompletenessFields = ["title", "location", "applicationUrl", "compensation", "workArrangement", "employmentType", "confidence"] as const;
+export type OpportunityCompletenessEvidence = Record<(typeof opportunityCompletenessFields)[number], { supported: boolean; present: boolean }>;
+export function calculateOpportunityCompletenessIndex(items: readonly OpportunityCompletenessEvidence[]) {
+  let supported = 0, present = 0;
+  for (const item of items) for (const field of opportunityCompletenessFields) if (item[field].supported) { supported += 1; if (item[field].present) present += 1; }
+  return { version: orionQualityMetricsVersion, score: round(percentage(present, supported)), supportedFields: supported, presentFields: present };
+}
+
+export const rciRegions = ["north-america", "europe", "united-kingdom", "asia", "middle-east", "latin-america", "africa", "worldwide-remote"] as const;
+export type RciRegion = (typeof rciRegions)[number];
+export type RegionalCoverageEvidence = { region: RciRegion; opportunities: number; remoteOpportunities: number };
+export function calculateRegionalCoverageIndex(evidence: readonly RegionalCoverageEvidence[]) {
+  const byRegion = new Map(evidence.map(item => [item.region, item]));
+  const regions = rciRegions.map(region => byRegion.get(region) ?? { region, opportunities: 0, remoteOpportunities: 0 });
+  const active = regions.filter(region => region.opportunities > 0).length;
+  const counts = regions.map(region => region.opportunities);
+  const maximum = Math.max(...counts, 0);
+  const balance = maximum > 0 ? percentage(counts.reduce((sum, count) => sum + count / maximum, 0), regions.length) : 0;
+  const breadth = percentage(active, regions.length);
+  return { version: orionQualityMetricsVersion, score: round(breadth * .6 + balance * .4), breadth: round(breadth), balance: round(balance), regions };
+}
 
 const regionWeights: Readonly<Record<GociRegion, number>> = {
   "worldwide-remote": 10,
