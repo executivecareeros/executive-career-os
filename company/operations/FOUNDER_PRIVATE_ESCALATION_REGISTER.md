@@ -8,7 +8,7 @@
 
 | Issue ID | Created | Status | Priority | Category | Affected feature | Environment | Luna attempts | Recommended model | Founder action | Next review |
 |---|---|---|---|---|---|---|---:|---|---|---|
-| ESC-2026-0717-001 | 2026-07-17 | Recorded for Sol | P1 | Geographic eligibility and confidence ranking | Authenticated opportunities, search, Atlas | Production | 1 | Sol | Confirmed geographic profile; deeper ranking review required | 2026-07-24 |
+| ESC-2026-0717-001 | 2026-07-17 | Immediate Sol Escalation | P0 | Geographic eligibility and confidence ranking | Authenticated opportunities, search, Atlas | Production | 2 | Sol | Confirmed geographic profile; switch to Sol now | Immediate |
 
 ### ESC-2026-0717-001
 
@@ -22,10 +22,11 @@
 - **Reproduction:** Sign in, open opportunities, run the ten geographic fixtures, compare default order, filters, explanations, desktop, and 390px mobile behavior.
 - **Expected:** Eligibility precedes professional fit; uncertain or ineligible roles are clearly labeled and not promoted by default.
 - **Actual:** Deterministic eligibility helpers and list ordering exist, but end-to-end live validation is outstanding.
-- **Why Luna cannot complete it:** Requires deeper cross-surface ranking review and authenticated production acceptance beyond the bounded implementation pass.
+- **Luna attempts:** Two bounded attempts: deterministic geography helper/list ordering (`ed48ebc`), then final review against the required authenticated profile/search contract. The second attempt found the minimum data model and end-to-end acceptance were not present.
+- **Why Luna cannot complete it:** The current architecture has Blueprint country preferences but no durable authenticated geographic profile model; search and Ranked Opportunities do not share a complete eligibility/confidence contract; Atlas explanations do not consume that contract; and live authenticated desktop/mobile acceptance is unavailable through this execution surface.
 - **Current workaround:** Treat the current ranking as not accepted for high-confidence production use; preserve explicit eligibility labels.
 - **Risk of waiting:** Executives may see geographically impractical roles and lose trust.
-- **Recommended Sol mission:** Complete and validate the geographic confidence ranking across profile schema, search defaults/filters, Ranked Opportunities, Atlas explanations, deterministic fixtures, desktop/mobile, and production.
+- **Recommended Sol mission:** Complete and validate the geographic confidence ranking across the durable profile schema, eligibility engine, shared search/ranking contract, Atlas explanations, deterministic fixtures, desktop/mobile, and production.
 - **Estimated Sol effort:** One focused mission.
 - **Required access:** Authenticated production session, repository, deployment status, and read-only runtime evidence if failures appear.
 - **Resolution:** Open.
