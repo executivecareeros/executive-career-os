@@ -7,7 +7,7 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 | Milestone | M1 — measured canonical network |
 | Phase | Phase 1 — Network Measurement Foundation |
 | Release | Phoenix II foundation is on `main`; authenticated production acceptance for Orion metric change is not applicable until deployed |
-| Current version | `ed6c077` |
+| Current version | `5f03a9f` deployed baseline; full-refresh recovery change awaiting deployment |
 | Canonical opportunities | 169 |
 | Active opportunities | 169 (last verified cohort snapshot; lifecycle RPC deployment pending) |
 | Executive opportunities | 41 |
@@ -24,13 +24,15 @@ Last updated: 2026-07-17 · Owner: Sol · Handover: Not ready
 
 - **P0:** restore provider success to at least 97% and opportunity freshness to at least 90%; identify whether stale records require complete-snapshot closure or broader refresh throughput.
 - **P1:** activate two additional compliant providers to reach three reliable providers; verify 100 canonical employers; normalize geography; expose provider health and regional breakdown in Company Control.
-- **Work in progress:** provider run/freshness diagnosis from the first secured Orion snapshot.
-- **Next highest-value task:** diagnose the stale 67.5% of active inventory and failed/warning run evidence before expanding cohorts.
+- **Verified diagnosis:** the 10-record schedule limit refreshed only the first slice of the cohort. Raising it to 250 exposed two bounded runtime defects: repeated full-inventory reads made the run exceed its lease, and the scheduler did not reclaim an expired job unless the schedule itself was also due.
+- **Correction prepared:** run-scoped inventory caching removes repeated reads; expired work is now reclaimable independently from schedule due state. The isolated staging schedule is configured for 250 records at the existing 12-hour cadence.
+- **Work in progress:** deploy the recovery correction, allow the expired job to be reclaimed, then remeasure freshness, provider health and GOCI.
+- **Next highest-value task:** complete and measure the first full-cohort refresh before expanding providers or employers.
 - **Last completed task:** Orion operating system, secured metric snapshot and profile-independent GOCI v1 deployed to isolated network staging.
 
 ## Quality state
 
-Passed: Orion metrics, geographic coverage, durable ingestion, scheduler security, Greenhouse, provider expansion, TypeScript, ESLint, database architecture, PostgreSQL migration replay, RLS, and the 126-page production build.
+Passed: Orion metrics, geographic coverage, durable ingestion, scheduler security, Greenhouse, provider expansion, TypeScript, ESLint, database architecture, PostgreSQL migration replay, RLS, and the prior 126-page production build. Current build compilation is blocked only by restricted Google Fonts network access; TypeScript and ESLint pass for the recovery change.
 
 ## Ownership
 

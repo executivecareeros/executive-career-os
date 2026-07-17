@@ -65,40 +65,50 @@ export class SupabaseCoverageRunStore implements CoverageRunStore {
 }
 
 export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSink {
+  private rows: Row[] | null = null;
   constructor(private readonly client: SupabaseDataClient, private readonly context: RepositoryContext) {}
   private get workspace() { return this.context.workspace!; }
 
-  async list() {
+  private async loadRows() {
+    if (this.rows) return this.rows;
     const response = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&archived_at=is.null`);
     if (response.error) throw new Error(response.error.message);
-    return (response.data ?? []).map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
+    this.rows = response.data ?? [];
+    return this.rows;
+  }
+
+  async list() {
+    return (await this.loadRows()).map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
   }
 
   async upsert(opportunity: Opportunity) {
-    const existing = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&domain_id=eq.${encodeURIComponent(opportunity.id)}&limit=1`);
-    if (existing.error) throw new Error(existing.error.message);
+    const rows = await this.loadRows();
+    const existing = rows.find((row) => row.domain_id === opportunity.id);
     const incomingSources = new Set((opportunity.sources ?? []).map((source) => `${source.id}|${source.originalId ?? ""}`));
     if (incomingSources.size) {
-      const all = await this.client.request<Row[]>(`opportunities?select=id,domain_id,payload&workspace_id=eq.${this.workspace.workspaceId}&archived_at=is.null`);
-      if (all.error) throw new Error(all.error.message);
-      for (const row of all.data ?? []) {
+      for (const row of rows) {
         if (row.domain_id === opportunity.id) continue;
         const other = { ...row.payload, id: row.domain_id } as Opportunity;
         const sources = (other.sources ?? []).filter((source) => !incomingSources.has(`${source.id}|${source.originalId ?? ""}`));
         if (sources.length === (other.sources ?? []).length) continue;
-        const patched = await this.client.request<Row[]>(`opportunities?id=eq.${row.id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ payload: { ...row.payload, sources, source: sources.map((source) => source.name).join(" · ") || other.source }, updated_at: new Date().toISOString() }) });
+        const payload = { ...row.payload, sources, source: sources.map((source) => source.name).join(" · ") || other.source };
+        const patched = await this.client.request<Row[]>(`opportunities?id=eq.${row.id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ payload, updated_at: new Date().toISOString() }) });
         if (patched.error) throw new Error(patched.error.message);
+        row.payload = payload;
       }
     }
     const companyId = await this.upsertEmployer(opportunity);
     const { id: domainId, ...payload } = { ...opportunity, companyId };
-    if (existing.data?.[0]) {
-      const updated = await this.client.request<Row[]>(`opportunities?id=eq.${existing.data[0].id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ company_id: companyId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, updated_at: new Date().toISOString() }) });
+    if (existing) {
+      const updated = await this.client.request<Row[]>(`opportunities?id=eq.${existing.id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ company_id: companyId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, updated_at: new Date().toISOString() }) });
       if (updated.error) throw new Error(updated.error.message);
+      existing.payload = payload;
       return;
     }
-    const created = await this.client.request<Row[]>("opportunities", { method: "POST", body: JSON.stringify({ id: randomUUID(), domain_id: domainId, workspace_id: this.workspace.workspaceId, company_id: companyId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, created_by: this.workspace.executiveId }) });
+    const id = randomUUID();
+    const created = await this.client.request<Row[]>("opportunities", { method: "POST", body: JSON.stringify({ id, domain_id: domainId, workspace_id: this.workspace.workspaceId, company_id: companyId, title: opportunity.jobTitle, country: opportunity.country, industry: opportunity.industry, status: opportunity.status, source_url: opportunity.sourceUrl ?? null, payload, created_by: this.workspace.executiveId }) });
     if (created.error) throw new Error(created.error.message);
+    rows.push({ id, domain_id: domainId, payload });
     // The canonical payload contains source attribution atomically with the opportunity.
     // Append-only provenance expansion is intentionally deferred until a transaction RPC exists.
   }

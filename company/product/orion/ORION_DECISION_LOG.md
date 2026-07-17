@@ -36,6 +36,18 @@
 - **Affected:** `orion-metrics.ts`, migration `202607170007`, metrics documentation.
 - **Follow-up:** add normalized geography dimensions and operational surface.
 
+## 2026-07-17 — Refresh the complete cohort and recover expired work
+
+- **Context:** the first secured snapshot showed only 32.5% of active opportunities observed within 48 hours. The staging schedule refreshed ten records per run; a controlled 250-record run then exceeded its execution lease.
+- **Options considered:** preserve the ten-record slice; increase cadence and repeatedly refresh the same slice; cache the run inventory and make expired jobs independently reclaimable.
+- **Chosen option:** retain the existing provider and scheduler architecture, cache one workspace inventory per run, and decouple expired-job recovery from schedule due selection.
+- **Reasoning:** this removes repeated reads and closes a durable-queue recovery gap without adding infrastructure or provider-specific architecture.
+- **Trade-offs:** employer and opportunity writes remain sequential; live full-cohort duration must be measured before additional provider cohorts are enabled.
+- **Reversibility:** code change is reversible; the isolated staging maximum can be reduced independently.
+- **Owner:** Sol / Opportunity Coverage Engine.
+- **Affected:** durable ingestion runtime, scheduler runtime, isolated network staging schedule.
+- **Follow-up:** deploy, reclaim the expired job, run a second idempotent full refresh, and update the Orion baseline.
+
 ## Standing decisions
 
 - Paid placement never overrides recommendation relevance.

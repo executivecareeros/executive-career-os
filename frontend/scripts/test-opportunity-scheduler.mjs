@@ -23,6 +23,8 @@ assert.match(proxy, /serverAuthenticatedPaths\.includes\(path\)/);
 assert.doesNotMatch(route + runtime, /console\.(log|error)|SUPABASE_SCHEDULER_KEY\s*[:=]\s*["'][^"']+/);
 assert.match(runtime, /claim_next_opportunity_provider_job/);
 assert.match(runtime, /enabled=eq\.true/);
+assert.doesNotMatch(runtime, /next_run_at=lte/, "Expired leased jobs must be recoverable even when their schedule is no longer due");
+assert.match(runtime, /dueSchedules = schedules\.filter/, "Due schedules must be selected independently from recoverable queued work");
 assert.match(runtime, /lease_seconds: 300/);
 assert.match(runtime, /"retrying"/);
 assert.match(runtime, /"failed"/);

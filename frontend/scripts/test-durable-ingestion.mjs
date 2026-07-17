@@ -45,6 +45,8 @@ assert.match(employerMigration, /is_active_workspace_member/, "Employer intellig
 assert.match(employerMigration, /auth\.role\(\) <> 'service_role'/, "The isolated scheduler may update employer intelligence");
 assert.match(store, /rpc\/upsert_employer_observation/, "Every durable opportunity must resolve a canonical employer");
 assert.match(store, /company_id: companyId/, "Canonical opportunities must link to the canonical employer");
+assert.match(store, /private rows: Row\[\] \| null = null/, "A provider run must cache its workspace inventory instead of reloading it for every opportunity");
+assert.match(store, /const rows = await this\.loadRows\(\)/, "Opportunity upserts must reuse the run-scoped inventory cache");
 assert.match(employerCompatibilityMigration, /create or replace function public\.upsert_employer_observation/, "The compatibility migration must replace the original function");
 assert.doesNotMatch(employerCompatibilityMigration, /\bdigest\s*\(/, "The active employer identity function must not depend on an extension schema");
 

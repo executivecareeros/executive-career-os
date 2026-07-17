@@ -61,11 +61,12 @@ async function executeClaim(client: SupabaseDataClient, schedule: ScheduleRow, c
 
 export async function runOpportunityScheduler(client: SupabaseDataClient, now = new Date().toISOString(), maximumJobs = 3): Promise<SchedulerSummary> {
   const correlationId = randomUUID();
-  const due = await client.request<ScheduleRow[]>(`opportunity_provider_schedules?select=*&enabled=eq.true&next_run_at=lte.${encodeURIComponent(now)}&order=priority.asc,next_run_at.asc&limit=${maximumJobs}`);
-  if (due.error) throw new Error(due.error.message);
-  const schedules = due.data ?? [];
+  const configured = await client.request<ScheduleRow[]>("opportunity_provider_schedules?select=*&enabled=eq.true&order=priority.asc,next_run_at.asc");
+  if (configured.error) throw new Error(configured.error.message);
+  const schedules = configured.data ?? [];
+  const dueSchedules = schedules.filter(schedule => schedule.next_run_at && schedule.next_run_at <= now).slice(0, maximumJobs);
   let jobsEnqueued = 0;
-  for (const schedule of schedules) if (await enqueue(client, schedule, now)) jobsEnqueued += 1;
+  for (const schedule of dueSchedules) if (await enqueue(client, schedule, now)) jobsEnqueued += 1;
 
   let jobsExecuted = 0, completed = 0, failed = 0, recordsDiscovered = 0, recordsChanged = 0;
   for (const workspaceId of [...new Set(schedules.map(schedule => schedule.workspace_id))]) {
@@ -90,5 +91,5 @@ export async function runOpportunityScheduler(client: SupabaseDataClient, now = 
       }
     }
   }
-  return { correlationId, dueSchedules: schedules.length, jobsEnqueued, jobsExecuted, completed, failed, recordsDiscovered, recordsChanged };
+  return { correlationId, dueSchedules: dueSchedules.length, jobsEnqueued, jobsExecuted, completed, failed, recordsDiscovered, recordsChanged };
 }
