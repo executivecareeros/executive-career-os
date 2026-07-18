@@ -35,11 +35,11 @@ export async function GET(request: Request) {
       },
       health: () => rawClient.health(),
     };
-    const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 6) || 6));
+    const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 12) || 12));
     const summary = await runOpportunityScheduler(client, undefined, maximumJobs);
     const schedules = await client.request<Array<{ workspace_id: string; created_by: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,locator&enabled=eq.true&limit=5000");
     const workspaceId = schedules.data?.[0]?.workspace_id;
-    const sourceExpansionLimit = Math.max(0, Math.min(50, Number(process.env.OPPORTUNITY_SOURCE_EXPANSION_LIMIT ?? 18) || 18));
+    const sourceExpansionLimit = Math.max(0, Math.min(50, Number(process.env.OPPORTUNITY_SOURCE_EXPANSION_LIMIT ?? 50) || 50));
     let sourceExpansion: Record<string, unknown> | undefined;
     if (workspaceId && schedules.data?.[0]?.created_by && sourceExpansionLimit) {
       try {
