@@ -28,7 +28,10 @@ The change reuses existing server-side workspace reads and introduces no schema,
 - TypeScript: passed.
 - ESLint: passed.
 - Next.js production build: passed, 126 routes.
-- Live desktop and 390px usefulness acceptance: pending deployment.
+- Live authenticated desktop: passed on `e827fc3`; no horizontal overflow or browser warnings/errors.
+- Live authenticated 390px: passed on `e827fc3`; no horizontal overflow; visible actions measured 42–48 px high.
+- Live content: eight confirmed roles, eight material questions, current opportunity, Atlas perspective and preserved Pursue decision rendered from the Founder workspace.
+- Founder usefulness and return-behavior acceptance: pending.
 
 ## Rollback
 
@@ -36,4 +39,4 @@ Revert the briefing commit. No data migration or external state change is involv
 
 ## Remaining gate
 
-Deploy the commit, capture current desktop and 390px evidence, and obtain Founder confirmation that the briefing communicates the next useful action within ten seconds.
+Obtain Founder confirmation that the briefing communicates the next useful action within ten seconds, then establish return-behavior and freshness-comprehension evidence.
