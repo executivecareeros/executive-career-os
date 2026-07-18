@@ -34,6 +34,13 @@ const repairedEmployerIdentity = mergeOpportunityObservations(
 assert.equal(repairedEmployerIdentity.employerDomain, undefined, "An incoming connector identity must clear a historical ATS publishing domain");
 assert.equal(repairedEmployerIdentity.companyProfile?.canonicalKey, "greenhouse:datadog");
 assert.equal(repairedEmployerIdentity.companyProfile?.website, undefined);
+const compensationUpgrade = mergeOpportunityObservations(
+  { ...base, salaryDisclosure: "Not disclosed" },
+  { ...base, salaryMin: 180000, salaryMax: 220000, salaryCurrency: "EUR", salaryDisclosure: "Published range" },
+  duplicate.discoveredAt,
+);
+assert.equal(compensationUpgrade.salaryMin, 180000, "A refreshed published range must upgrade the canonical opportunity");
+assert.equal(compensationUpgrade.salaryDisclosure, "Published range");
 assert.equal(isCanonicalOpportunityMatch(base, { ...duplicate, jobTitle: "Chief Operating Officer" }), false, "Different roles must never be merged");
 
 const summary = summarizeOpportunityUniverse([base, { ...base, id: "three", universeStage: "Universe", source: "Recruiter" }]);

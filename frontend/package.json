@@ -39,7 +39,9 @@
     "test:provider-expansion": "node --experimental-transform-types scripts/test-provider-expansion.mjs",
     "test:tier-one-coverage": "node --experimental-transform-types scripts/test-tier-one-coverage.mjs",
     "test:opportunity-intelligence": "node --experimental-transform-types scripts/test-opportunity-intelligence.mjs",
-    "test:geographic-confidence": "node --experimental-transform-types scripts/test-geographic-confidence.mjs"
+    "test:geographic-confidence": "node --experimental-transform-types scripts/test-geographic-confidence.mjs",
+    "test:published-compensation": "node --experimental-transform-types scripts/test-published-compensation.mjs",
+    "test:opportunity-actions": "node scripts/test-opportunity-actions.mjs"
     ,"test:executive-search": "node --experimental-transform-types scripts/test-executive-search.mjs"
     ,"test:employer-intelligence": "node --experimental-transform-types scripts/test-employer-intelligence.mjs"
     ,"test:official-company-facts": "node --experimental-transform-types scripts/test-official-company-facts.mjs"

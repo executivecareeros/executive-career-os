@@ -116,6 +116,7 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
   };
   const incomingIsStronger = incoming.confidenceScore > existing.confidenceScore || (incoming.confidenceScore === existing.confidenceScore && evidenceRichness(incoming) > evidenceRichness(existing));
   const strongest = incomingIsStronger ? incoming : existing;
+  const compensation = incoming.salaryMin !== undefined || incoming.salaryMax !== undefined ? incoming : existing;
   const reactivated = existing.status === "Archived" && sources.length > 0;
   const mergedStatus = reactivated ? incoming.status : strongest.status;
   const freshness = assessOpportunityFreshness({ ...strongest, lastObservedAt: observedAt }, observedAt);
@@ -140,6 +141,10 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
     sources,
     source: sources.map(source => source.name).join(" · ") || strongest.source,
     sourceUrl: strongest.sourceUrl ?? existing.sourceUrl,
+    salaryMin: compensation.salaryMin,
+    salaryMax: compensation.salaryMax,
+    salaryCurrency: compensation.salaryCurrency,
+    salaryDisclosure: compensation.salaryDisclosure,
     contentFingerprint: nextContentFingerprint,
     atlasAnalyzedFingerprint: contentChanged ? existing.atlasAnalyzedFingerprint : existing.atlasAnalyzedFingerprint ?? strongest.atlasAnalyzedFingerprint,
     atlasAnalysisStatus: contentChanged ? "Pending" : existing.atlasAnalysisStatus ?? strongest.atlasAnalysisStatus,

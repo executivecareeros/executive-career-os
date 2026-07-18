@@ -1,6 +1,7 @@
 import type { Opportunity } from "@/types/opportunity";
 import type { ConnectorContext, DiscoveryJob, DiscoveryResult, OpportunityNormalizer, SourceReliability } from "./types";
 import { classifyOpportunityIndustry } from "./industry-classification.ts";
+import { extractPublishedCompensation } from "./published-compensation.ts";
 
 export const NORMALIZATION_VERSION = "1.0.0";
 
@@ -23,6 +24,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
     const employmentType = job.employmentType === "Full-time" || job.employmentType === "Contract" || job.employmentType === "Interim" ? job.employmentType : "Unknown";
     const canonicalUrl = job.originalUrl?.replace(/[?#].*$/, "");
     const industry = classifyOpportunityIndustry(job);
+    const compensation = job.salary ?? extractPublishedCompensation(job.description);
     let employerDomain: string | undefined;
     // An ATS posting URL identifies the publishing system, not the employer.
     // Only an employer-controlled website may establish employerDomain.
@@ -56,10 +58,10 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       companyProfile: { canonicalKey: job.company.canonicalKey, name: job.company.name, website: job.company.website, careersUrl: job.company.careersUrl, industry: job.company.industry, size: job.company.size, evidenceStatus: job.company.website || job.company.careersUrl || job.company.industry || job.company.size ? "Partial" : "Unknown" },
       publishedAt: job.publishedAt ?? job.discoveredAt,
       discoveredAt: job.discoveredAt,
-      salaryMin: job.salary?.minimum,
-      salaryMax: job.salary?.maximum,
-      salaryCurrency: job.salary?.currency,
-      salaryDisclosure: job.salary?.minimum !== undefined && job.salary?.maximum !== undefined ? "Published range" : job.salary?.minimum !== undefined ? "Published minimum" : job.salary?.maximum !== undefined ? "Published maximum" : "Not disclosed",
+      salaryMin: compensation?.minimum,
+      salaryMax: compensation?.maximum,
+      salaryCurrency: compensation?.currency,
+      salaryDisclosure: compensation?.minimum !== undefined && compensation?.maximum !== undefined ? "Published range" : compensation?.minimum !== undefined ? "Published minimum" : compensation?.maximum !== undefined ? "Published maximum" : "Not disclosed",
       executiveFitScore: 0,
       strategicOpportunityScore: 0,
       overallScore: 0,
