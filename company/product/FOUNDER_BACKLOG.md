@@ -12,7 +12,7 @@
 | Logo | 🟢 Complete | 100% | Medium | None | Maintain | Preserve canonical ORENDALIS mark and Home behavior |
 | Executive dashboard | 🟡 Beta Ready | 65% | Critical | Live inventory and analytics | Executive Experience | Make ranked opportunity and Atlas value immediately measurable |
 | Company pages | 🟡 In Progress | 65% | Critical | Verified domains and enrichment | Company Intelligence | Replace Unknown identity fields only with evidence-backed enrichment |
-| Opportunity pages | 🟡 Beta Ready | 80% | Critical | Live contract repair | Product Truth | Repair live-product-truth contract and validate real records |
+| Opportunity pages | 🟡 Beta Ready | 85% | Critical | Live executive acceptance | Product Truth | Product-truth contract passes; validate authenticated real records |
 | Atlas improvements | 🟡 Beta Ready | 75% | Critical | Live executive outcomes | Atlas Validation | Measure recommendation usefulness and calibration |
 | Atlas UX | 🟡 In Progress | 70% | High | Executive usability sessions | Atlas Validation | Reduce review density without hiding evidence or uncertainty |
 | Search improvements | 🟡 Beta Ready | 80% | Critical | Live query telemetry | Search Quality | Measure precision, zero-result rate and latency on production inventory |
@@ -27,9 +27,9 @@
 | Performance improvements | 🟡 In Progress | 65% | High | Live APM and DB telemetry | Observability | Instrument page/API/DB latency before optimizing further |
 | Mobile responsiveness | 🟡 Beta Ready | 70% | High | 390px acceptance matrix | Executive Experience | Complete authenticated journey acceptance at 390px |
 | Accessibility | 🟡 In Progress | 55% | High | Automated and keyboard audits | Executive Experience | Run WCAG 2.2 AA audit and remediate failures |
-| Security | 🟡 Beta Ready | 75% | Critical | Runtime RLS verification and recovery evidence | Security Closure | Execute RLS tests against an isolated database and close owner recovery gaps |
+| Security | 🟡 Beta Ready | 85% | Critical | Provider recovery evidence | Security Closure | Close owner recovery and external alert gaps; runtime RLS passes |
 | Observability | 🟡 In Progress | 65% | Critical | Alert destination/provider decision | Observability | Add production dashboards, tracing and tested founder alerts |
-| Global opportunity coverage | 🟡 In Progress | 75% | Critical | Balanced provider cohort activation | Coverage Expansion | Activate verified balanced cohorts and publish one authoritative inventory snapshot |
+| Global opportunity coverage | 🟡 In Progress | 80% | Critical | Balanced provider cohort activation | Coverage Expansion | Activate verified balanced cohorts; authoritative snapshot now established |
 | CV/profile accuracy | 🟡 Beta Ready | 85% | Critical | Real-user regression corpus | Activation Quality | Add anonymized fixtures for every previously observed extraction defect |
 
 ## Governance

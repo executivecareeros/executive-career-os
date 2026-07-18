@@ -53,6 +53,7 @@
     "test:public-acquisition": "node scripts/test-public-acquisition.mjs",
     "test:profile-state": "node --experimental-transform-types scripts/test-profile-state.mjs",
     "test:live-product-truth": "node scripts/test-live-product-truth.mjs",
+    "test:inventory-authority": "node scripts/test-inventory-authority.mjs",
     "test:orion-metrics": "node --experimental-transform-types scripts/test-orion-metrics.mjs",
     "test:provider-certification": "node --experimental-transform-types scripts/test-provider-certification.mjs",
     "test:connector-operations": "node --experimental-transform-types scripts/test-connector-operations.mjs",

@@ -4,6 +4,8 @@ Last updated: 2026-07-18 · Authority: ODS 3.0 and Executive Opportunity Univers
 
 ## Measured network
 
+The authoritative current point-in-time evidence is `AUTHORITATIVE_INVENTORY_SNAPSHOT.md`. The table below is retained as an earlier audited baseline and must not be presented as the current inventory.
+
 | Measure | Current durable evidence | Change in this increment |
 |---|---:|---:|
 | Active canonical opportunities | 10,260 and increasing under the live scheduler | +9,218 from the pre-X100 baseline |
@@ -18,7 +20,7 @@ Last updated: 2026-07-18 · Authority: ODS 3.0 and Executive Opportunity Univers
 | Source observations consolidated | 10,759 into 10,260 canonical opportunities | 499 duplicate observations consolidated |
 | Provider run failures in the latest 30-minute checkpoint | 0 of 26 completed runs | No failures |
 
-Latest ODS 3.0 observability checkpoint: 16,102 active canonical opportunities, 249 canonical countries/territories, 78 countries with opportunity evidence, 70 measured persistence batches covering 4,703 records, and three of three scheduler jobs completed with zero current-run failures. This later checkpoint supersedes the inventory row above for operational scale decisions; the table is retained as the earlier audited baseline.
+Latest authoritative ODS 3.0 observability checkpoint: 16,102 active canonical opportunities, 249 canonical countries/territories, 78 countries with opportunity evidence, 70 measured persistence batches covering 4,703 records, and three of three scheduler jobs completed with zero current-run failures. This checkpoint supersedes the inventory row above for operational scale decisions.
 
 Verified ATS source identity and strict corporate-domain verification are deliberately separate. A source is counted as verified only after an official public provider API returns active postings for that employer board. A company is counted as strict domain-verified only when the registry also holds a supported official domain, verification timestamp, and identity confidence of at least 80.
 

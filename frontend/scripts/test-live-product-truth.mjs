@@ -16,7 +16,7 @@ const checks = {
   compensation_uses_live_records: proxy.includes('path === "/compensation"') && compensation.includes("compensation_records?select="),
   live_opportunity_precedes_fixtures: opportunity.indexOf('NEXT_PUBLIC_DATA_ACCESS_MODE !== "supabase"') < opportunity.indexOf("const opportunity = getOpportunityById(id)"),
   company_directory_is_searchable_and_paginated: companies.includes("Search companies") && companies.includes("Page {Math.min(page, pages)} of {pages}"),
-  company_evidence_is_explicit: companies.includes("Evidence confidence") && companies.includes("Executive relevance"),
+  company_evidence_is_explicit: companies.includes("Identity confidence") && companies.includes("Average executive relevance") && companies.includes("Company overview is not inferred"),
   applications_use_workspace_records: applications.includes("applications?select=") && applications.includes("application_activities?select=") && applications.includes("application_documents?select="),
   no_invented_application_activity: applications.includes("never invents employer actions") && applications.includes("not an employer application"),
 };

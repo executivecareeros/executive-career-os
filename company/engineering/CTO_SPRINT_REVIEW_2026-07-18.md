@@ -10,7 +10,7 @@ The sprint objective was to activate ODS 4.0 and strengthen the Global Employer 
 
 Measured value delivered:
 
-- 1,068 canonical employer records and a latest recorded 20,658-opportunity inventory; 20,653 records have deterministic industry classification (99.98%).
+- 1,068 canonical employer records and a latest authoritative measured inventory of 16,102 active opportunities.
 - 1,068 Company Intelligence payloads; 252 have evidence-supported industries and 816 correctly remain Unknown.
 - Balanced provider discovery proved 9 verified employers across Greenhouse, Ashby and SmartRecruiters, representing 400 advertised opportunities from 2,618 indexed candidates; 2 invalid candidates were isolated; 0 records were persisted during the proof.
 - The latest operational checkpoint recorded 16,102 active opportunities, 78/249 countries, 3/3 successful scheduler jobs, and zero AI tokens.
@@ -29,7 +29,7 @@ Progress reflects verified current scope, not delivery dates.
 | Logo | Complete | 100% | Shared `OrendalisMark` links to Home | None material | Preserve through regression tests |
 | Executive dashboard | Beta Ready | 65% | Executive briefing/home components exist | Live usefulness and freshness measurement | Connect dashboard acceptance to real inventory |
 | Company pages | In Progress | 65% | Canonical employer intelligence, evidence and hiring activity | 816/1,068 industries Unknown; products/services generally Unknown | Evidence-backed enrichment sprint |
-| Opportunity pages | Beta Ready | 80% | Role-first review, provenance, Atlas rationale and actions | Live product-truth test failing | Repair contract and validate live data |
+| Opportunity pages | Beta Ready | 85% | Role-first review, provenance, Atlas rationale and actions; live product-truth contract passes | Live executive acceptance | Validate real records with an authenticated executive |
 | Atlas improvements | Beta Ready | 75% | Explainable decision objects, unknowns, alternatives, actions | Live outcome quality unknown | Calibrated executive validation |
 | Atlas UX | In Progress | 70% | Integrated opportunity review and decision workspace | Density and live comprehension remain unmeasured | Usability test with executives |
 | Search improvements | Beta Ready | 80% | Filters, aliases, partial matching and suggestions | Live precision/latency/zero-result metrics Unknown | Instrument and tune real queries |
@@ -44,7 +44,7 @@ Progress reflects verified current scope, not delivery dates.
 | Performance | In Progress | 65% | 1M-record application simulation and scheduler telemetry | Live APM/API/DB page telemetry incomplete | Install deterministic production telemetry |
 | Mobile responsiveness | Beta Ready | 70% | Responsive shell/sidebar/styles | Full 390px authenticated acceptance missing | Run route-by-route 390px matrix |
 | Accessibility | In Progress | 55% | Focus-visible, semantics and reduced-motion support | WCAG audit Unknown | Automated + keyboard + contrast audit |
-| Security | Beta Ready | 75% | Auth, RLS definitions, input checks, append-only controls | Runtime RLS test unavailable; recovery gaps | Execute isolated runtime security suite |
+| Security | Beta Ready | 85% | Auth, RLS, input checks, append-only controls and runtime identity matrix pass | Provider recovery and alert gaps | Close recovery ownership and tested alert path |
 | Observability | In Progress | 65% | Scheduler/provider/batch telemetry and health | No production APM, tracing or tested founder alerts | Observability closure sprint |
 
 No Founder request in the review brief is omitted; the permanent dashboard also preserves the wider idea inventory.
@@ -64,7 +64,7 @@ No Founder request in the review brief is omitted; the permanent dashboard also 
 | Global Employer Expansion | Fully compliant for sprint scope | Balanced read-only cohort proof; durable activation remains next work |
 | Atlas Executive Intelligence | Partially compliant | Facts/preferences/interpretations/unknowns separated; live efficacy Unknown |
 | Executive Experience | Partially compliant | Major journeys exist; accessibility and real-user acceptance incomplete |
-| Launch & Operations | Partially compliant | Runbooks and telemetry exist; alerts/tracing/runtime RLS gaps remain |
+| Launch & Operations | Partially compliant | Runbooks, telemetry and runtime RLS evidence exist; alerts/tracing remain incomplete |
 | Executive Reputation | Not yet implemented | Backlog/research only |
 | Trust Engine | Partially compliant | Capabilities distributed, not unified |
 | Executive Workspace | Partially compliant | Core workspace exists; Rooms/calendar/full documents scope incomplete |
@@ -77,9 +77,9 @@ No Founder request in the review brief is omitted; the permanent dashboard also 
 
 **Weaknesses:** company and opportunity pages load broad datasets rather than targeted records; ODS reports contain multiple checkpoint totals that can be misread as current; Trust rules are distributed; live UX telemetry is absent; some English-only legacy code/tests remain.
 
-**Risks:** inventory drift without a single authoritative snapshot; RLS runtime behavior not proven in this environment; provider/legal dependence; incomplete company facts reducing trust; no tested external alert path; large in-memory reads as inventory scales.
+**Risks:** provider/legal dependence; incomplete company facts reducing trust; no tested external alert path; large in-memory reads as inventory scales. Inventory drift is now controlled by a versioned snapshot contract and runtime RLS behavior is verified in the isolated database.
 
-**Recommendations:** establish one versioned inventory snapshot; repair live contract tests; replace broad reads with indexed targeted queries; run runtime RLS suite; implement production latency/error dashboards and alerts; unify the Trust Fact contract before adding more intelligence surfaces.
+**Recommendations:** replace broad reads with indexed targeted queries; implement production latency/error dashboards and alerts; unify the Trust Fact contract before adding more intelligence surfaces. The versioned inventory snapshot, live contracts and runtime RLS suite are now complete.
 
 Architecture quality is high for deterministic ingestion and reasoning, moderate for live product operations. Modularity, reuse and separation of concerns are strong. Maintainability risk is concentrated in historical UI/CSS and duplicated status documentation.
 
@@ -128,10 +128,10 @@ Remaining Founder requests: quieter executive UX, live usefulness measurement, c
 | Surface | Readiness | Evidence / remaining gap |
 |---|---|---|
 | Homepage | Beta Ready | Product promise and authenticated briefing exist; conversion telemetry Unknown |
-| Landing/auth pages | Beta Ready | Routes respond; public-acquisition test is stale against English-only policy |
+| Landing/auth pages | Beta Ready | Routes respond; acquisition contract now enforces English-only metadata and sitemap behavior |
 | Dashboard | Beta Ready | Executive briefing exists; real freshness/usefulness acceptance incomplete |
 | Company pages | Needs improvement | Evidence-backed but enrichment and targeted queries incomplete |
-| Opportunity pages | Beta Ready | Rich role-first review; live truth contract currently failing |
+| Opportunity pages | Beta Ready | Rich role-first review; live truth contract passes |
 | Atlas | Needs improvement | Strong reasoning contract; executive UX and live outcome evidence incomplete |
 | Navigation | Beta Ready | Responsive sidebar and Home logo behavior; full keyboard audit missing |
 | Search | Beta Ready | Strong deterministic interface; live metrics missing |
@@ -202,7 +202,7 @@ Largest measured bottleneck: database/network duration (96.7% of detailed schedu
 - Audit logging: append-only/bootstrap/decision/provider records exist; complete security-event coverage is partial.
 - Privacy: data minimization, private workspace and Unknown-by-default principles exist.
 
-Blocker: runtime RLS suite could not run because the isolated database runtime was unavailable. Runtime RLS status is **Unknown**, not Passed.
+Runtime closure update: the isolated PostgreSQL suite passed 62-table schema/runtime checks and the RLS identity matrix on 2026-07-18. Owner access, cross-workspace denial, compensation permission, invited-user denial, no-membership denial and anonymous denial all matched the expected policy.
 
 ## 15. Observability Review
 
@@ -237,7 +237,7 @@ Recommendations: enforce Vercel/Supabase spend alerts; retain deterministic proc
 | Opportunity connectors | Beta Ready | Certified, isolated scheduling and health evidence; legal/provider expansion remains governed |
 | Canonicalization/deduplication | Production Ready | Deterministic, replay-safe and broadly tested |
 | Persistence pipeline | Beta Ready | Transaction/idempotency evidence; 1M live DB tier not approved |
-| Opportunity Intelligence | Beta Ready | Strong deterministic contracts; live truth test needs repair |
+| Opportunity Intelligence | Beta Ready | Strong deterministic contracts and product-truth test pass; live outcome validation remains |
 | Company Intelligence | Development | Material company identity/enrichment gaps |
 | Search | Beta Ready | Strong feature contract; production relevance/latency Unknown |
 | Atlas decision advisor | Beta Ready | Explainability strong; live usefulness/calibration Unknown |
@@ -246,7 +246,7 @@ Recommendations: enforce Vercel/Supabase spend alerts; retain deterministic proc
 | Trust Engine | Development | Distributed controls, no unified implementation |
 | Executive Rooms | Research | Specification only |
 | Observability | Development | No tested alerts or complete tracing |
-| Security | Beta Ready | Static controls strong; runtime RLS evidence missing |
+| Security | Beta Ready | Static and isolated runtime RLS controls pass; provider recovery/alert evidence remains |
 | Accessibility | Development | No complete WCAG acceptance evidence |
 | Mobile | Beta Ready | Responsive foundation; complete authenticated matrix missing |
 
@@ -256,32 +256,32 @@ The authoritative permanent dashboard is maintained in `company/product/FOUNDER_
 
 ## 19. Top 10 Highest-ROI Roadmap
 
-1. **Product Truth & Runtime Security Closure** — repair two stale/failing live contracts and run isolated RLS tests; prevents false production claims.
-2. **Authoritative Inventory Snapshot** — eliminate conflicting totals and expose one timestamped employer/opportunity/freshness view.
-3. **Company Intelligence Enrichment** — verified domains, headquarters, products/services and provenance materially improve Atlas trust.
-4. **Live Search and Ranking Evaluation** — measure precision, zero-result rate, latency and decision usefulness on labelled executive queries.
-5. **Production Observability & Alerts** — page/API/DB telemetry and tested founder alerts reduce incident duration and operational risk.
-6. **Targeted Data Access** — replace full-universe reads on company/opportunity pages to protect scale and latency.
-7. **Real Executive Activation Acceptance** — reduce landing-to-first-useful-opportunity time and remove remaining CV/profile friction.
-8. **Atlas Calibration** — measure recommendation confidence against executive outcomes before adding intelligence.
-9. **Accessibility and 390px Closure** — make the existing product reliably usable rather than expanding scope.
-10. **Balanced Provider Cohort Activation** — expand coverage only after truth, security and observability gates are green.
+1. **Company Intelligence Enrichment** — verified domains, headquarters, products/services and provenance materially improve Atlas trust.
+2. **Live Search and Ranking Evaluation** — measure precision, zero-result rate, latency and decision usefulness on labelled executive queries.
+3. **Production Observability & Alerts** — page/API/DB telemetry and tested founder alerts reduce incident duration and operational risk.
+4. **Targeted Data Access** — replace full-universe reads on company/opportunity pages to protect scale and latency.
+5. **Real Executive Activation Acceptance** — reduce landing-to-first-useful-opportunity time and remove remaining CV/profile friction.
+6. **Atlas Calibration** — measure recommendation confidence against executive outcomes before adding intelligence.
+7. **Accessibility and 390px Closure** — make the existing product reliably usable rather than expanding scope.
+8. **Balanced Provider Cohort Activation** — expand coverage after observability gates are green.
+9. **Unified Trust Fact Contract** — remove distributed semantics before expanding intelligence surfaces.
+10. **Current Screenshot Acceptance Set** — produce commit-linked visual evidence for major desktop/mobile routes.
 
 ## 20. Next Sprint Proposal
 
-**Recommended sprint: Product Truth & Runtime Security Closure (3–5 engineering days).**
+**Approved sprint: Product Truth & Runtime Security Closure — completed 2026-07-18.**
 
-Why now: the current architecture is capable, but production confidence is undermined by a stale public-acquisition test, a failing live-company-evidence contract, unavailable runtime RLS evidence and multiple inventory totals. More enrichment or UX work would build on disputed truth.
+It reconciled English-only acquisition and live-company-evidence contracts, verified PostgreSQL/RLS behavior in isolation, and established one authoritative versioned inventory checkpoint.
 
 Business impact: restores trustworthy release decisions, protects executive data, prevents misleading Company Intelligence and creates one measurable baseline. Technical impact: reconciles contracts, executes runtime isolation, versions inventory evidence and establishes go/no-go gates. Founder impact: one factual dashboard instead of conflicting reports.
 
-Risks: tests may expose real production defects; isolated database setup may require environment access. Success metrics: all current product-truth/security checks pass; runtime RLS passes for all exposed tables; one authoritative inventory snapshot; zero unsupported company claims; clean build/lint/typecheck; no architecture changes.
+Success metrics achieved: product-truth and acquisition checks pass; runtime RLS identity matrix passes; the authoritative inventory contract passes; production build, TypeScript and lint pass; no architecture or infrastructure changes.
 
 ## 21. Final CTO Recommendation
 
 As CTO, build Product Truth & Runtime Security Closure next, then Company Intelligence enrichment and live ranking evaluation. Postpone Executive Rooms, Room Intelligence, reputation, new editions and speculative AI until the existing executive journey produces measured trust and retention. Eliminate stale contract tests, broad dataset reads, report metric drift and distributed Trust semantics. The highest-priority Founder request should be trustworthy Company and Opportunity Intelligence, not new surface area.
 
-The largest concerns are absent runtime RLS evidence, missing external alerts, incomplete company identity facts, conflicting inventory checkpoints and unmeasured live Atlas/search usefulness.
+The largest remaining concerns are missing external alerts, incomplete company identity facts, broad page-level data reads and unmeasured live Atlas/search usefulness.
 
 ## Founder Backlog Dashboard
 
@@ -292,7 +292,7 @@ The largest concerns are absent runtime RLS evidence, missing external alerts, i
 | Branding & Logo | 🟡 In Progress | 80% | High | Consolidate premium design tokens |
 | Executive Dashboard | 🟡 Beta Ready | 65% | Critical | Validate live briefing value |
 | Company Intelligence | 🟡 In Progress | 60% | Critical | Complete verified enrichment |
-| Opportunity Intelligence | 🟡 Beta Ready | 75% | Critical | Repair live truth contract |
+| Opportunity Intelligence | 🟡 Beta Ready | 80% | Critical | Validate live executive outcomes |
 | Atlas Improvements | 🟡 Beta Ready | 75% | Critical | Calibrate against executive outcomes |
 | Search | 🟡 Beta Ready | 80% | Critical | Instrument real relevance and speed |
 | Executive Workspace | 🟡 Beta Ready | 65% | High | Complete real-user acceptance |
@@ -301,16 +301,17 @@ The largest concerns are absent runtime RLS evidence, missing external alerts, i
 | Trust Engine | 🟡 Development | 45% | High | Unify Trust Fact contract |
 | Performance | 🟡 In Progress | 65% | High | Measure live API/DB latency |
 | Mobile & Accessibility | 🟡 In Progress | 60% | High | Complete WCAG and 390px matrix |
-| Security | 🟡 Beta Ready | 75% | Critical | Execute runtime RLS validation |
+| Security | 🟡 Beta Ready | 85% | Critical | Close recovery and alert evidence |
 | Observability | 🟡 In Progress | 65% | Critical | Add tested production alerts |
 
 ## Validation Record
 
 Passed in this review: Company Intelligence, Opportunity Intelligence, geographic confidence, search, Atlas Product Integration, Employment Knowledge Graph, profile state, import validation, static database architecture, scheduler security/durability, batch persistence, executive experience contracts, Atlas Opportunity Review, Atlas Decision Workspace, TypeScript, lint and production build.
 
-Exceptions:
+Closure update:
 
-- Public acquisition test expects a Turkish alternate removed by the Founder-approved English-only policy; contract reconciliation required.
-- Live product truth test fails the company-evidence assertion; investigation required.
-- Runtime RLS test was not executed because the isolated database runtime was unavailable; status Unknown.
-- Historical screenshots are not current acceptance evidence.
+- Public acquisition contract now enforces the Founder-approved English-only metadata and sitemap.
+- Live product truth contract passes against the current explicit company evidence labels.
+- Runtime PostgreSQL and RLS isolation tests pass after the isolated database runtime was authorized.
+- Authoritative inventory contract prevents historical baselines from being presented as current.
+- Historical screenshots remain non-current acceptance evidence.

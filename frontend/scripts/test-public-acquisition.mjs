@@ -11,7 +11,7 @@ const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
 assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/);
 assert.match(layout, /Find your next executive opportunity/);
 assert.match(layout, /canonical: "\/"/);
-assert.match(layout, /"tr": "\/\?lang=tr"/);
+assert.doesNotMatch(layout, /\?lang=tr/);
 assert.match(layout, /card: "summary_large_image"/);
 assert.match(layout, /orendalis-social-preview\.png/);
 assert.match(layout, /icon: "\/icon\.svg"/);
@@ -21,16 +21,14 @@ await access(new URL("../app/icon.svg", import.meta.url));
 for (const phrase of ["Find your next executive opportunity.", "Upload your CV", "Search jobs", "Sign in"]) {
   assert.ok(`${landing}\n${locale}`.includes(phrase), `Missing English public acquisition copy: ${phrase}`);
 }
-for (const phrase of ["Bir sonraki yönetici fırsatını bul.", "CV’ni yükle", "İş ara", "Giriş yap"]) {
-  assert.ok(`${landing}\n${locale}`.includes(phrase), `Missing Turkish public acquisition copy: ${phrase}`);
-}
+assert.match(locale, /getLocale\(\): Promise<Locale> \{ return "en"; \}/);
 
 assert.match(robots, /sitemap: "https:\/\/www\.orendalis\.com\/sitemap\.xml"/);
 for (const privateRoute of ["/applications", "/company-control", "/import", "/opportunities", "/workspace"]) {
   assert.ok(robots.includes(`"${privateRoute}"`), `Private route must be excluded from indexing: ${privateRoute}`);
 }
-assert.match(sitemap, /https:\/\/www\.orendalis\.com\/\?lang=en/);
-assert.match(sitemap, /https:\/\/www\.orendalis\.com\/\?lang=tr/);
+assert.match(sitemap, /url: "https:\/\/www\.orendalis\.com"/);
+assert.doesNotMatch(sitemap, /\?lang=/);
 assert.ok(proxy.includes('"/robots.txt"'), "robots.txt must be reachable without authentication");
 assert.ok(proxy.includes('"/sitemap.xml"'), "sitemap.xml must be reachable without authentication");
 
