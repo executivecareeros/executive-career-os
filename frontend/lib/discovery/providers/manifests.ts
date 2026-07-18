@@ -65,4 +65,26 @@ export const smartRecruitersProviderManifest = {
   reliability: { ...common.reliability, rationale: "Published directly through the employer's official public SmartRecruiters Posting API." },
 } as const satisfies ProviderManifest;
 
-export const certifiedProviderManifests = [greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest, smartRecruitersProviderManifest] as const;
+export const recruiteeProviderManifest = {
+  ...common,
+  identity: { id: "recruitee", name: "Recruitee", category: "Corporate Website", description: "Published employer opportunities from the authorization-free Recruitee Careers Site API." },
+  access: { ...common.access, endpointOrigins: ["https://*.recruitee.com"] },
+  pagination: { strategy: "none" },
+  fields: { sourceId: "offers[].id", title: "offers[].title", employerId: "careers subdomain", employerName: "offers[].company_name", location: "offers[].location|city|country", compensation: "offers[].salary", publishedAt: "offers[].updated_at|published_at" },
+  lifecycle: { snapshot: "incremental", scope: "employer-feed" },
+  retry: { ...common.retry, unavailableCode: "RECRUITEE_UNAVAILABLE" },
+  reliability: { ...common.reliability, rationale: "Published directly through the employer's Recruitee Careers Site API, which official documentation states requires no authorization." },
+} as const satisfies ProviderManifest;
+
+export const personioProviderManifest = {
+  ...common,
+  identity: { id: "personio", name: "Personio", category: "Corporate Website", description: "Published employer opportunities from the employer-enabled Personio XML career feed." },
+  access: { ...common.access, endpointOrigins: ["https://*.jobs.personio.com", "https://*.jobs.personio.de"] },
+  pagination: { strategy: "none" },
+  fields: { sourceId: "position.id", title: "position.name", employerId: "career account", employerName: "position.subcompany|career account", location: "position.office|additionalOffices", compensation: "unavailable", publishedAt: "position.createdAt" },
+  lifecycle: { snapshot: "incremental", scope: "employer-feed" },
+  retry: { ...common.retry, unavailableCode: "PERSONIO_UNAVAILABLE" },
+  reliability: { ...common.reliability, rationale: "Published directly through the employer-enabled Personio XML feed documented for open job positions." },
+} as const satisfies ProviderManifest;
+
+export const certifiedProviderManifests = [greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest, smartRecruitersProviderManifest, recruiteeProviderManifest, personioProviderManifest] as const;

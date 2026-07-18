@@ -6,7 +6,9 @@ import { LeverOpportunityProvider } from "../lib/discovery/providers/lever.ts";
 import { AshbyOpportunityProvider } from "../lib/discovery/providers/ashby.ts";
 import { WorkableOpportunityProvider } from "../lib/discovery/providers/workable.ts";
 import { SmartRecruitersOpportunityProvider } from "../lib/discovery/providers/smartrecruiters.ts";
-import { greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest, smartRecruitersProviderManifest } from "../lib/discovery/providers/manifests.ts";
+import { RecruiteeOpportunityProvider } from "../lib/discovery/providers/recruitee.ts";
+import { PersonioOpportunityProvider } from "../lib/discovery/providers/personio.ts";
+import { greenhouseProviderManifest, leverProviderManifest, ashbyProviderManifest, workableProviderManifest, smartRecruitersProviderManifest, recruiteeProviderManifest, personioProviderManifest } from "../lib/discovery/providers/manifests.ts";
 
 const greenhouseFetch = async (input) => String(input).endsWith("/v1/boards/certified")
   ? new Response(JSON.stringify({ name: "Certified Greenhouse Employer" }))
@@ -28,6 +30,8 @@ const smartRecruitersFetch = async (input) => {
   if (!url.searchParams.has("offset")) return new Response(JSON.stringify({ id: "CRO-1", name: "Chief Revenue Officer", active: true, company: { identifier: "certified", name: "Certified SmartRecruiters Employer" }, location: { fullLocation: "Berlin, Germany", country: "Germany" }, releasedDate: "2026-07-17T08:00:00Z", postingUrl: "https://jobs.smartrecruiters.com/certified/CRO-1", jobAd: { sections: { jobDescription: { text: "Lead global revenue." } } } }));
   return new Response(JSON.stringify({ offset: 0, limit: 100, totalFound: 1, content: [{ id: "CRO-1", name: "Chief Revenue Officer" }] }));
 };
+const recruiteeFetch = async () => new Response(JSON.stringify({ offers: [{ id: 1, slug: "cro", title: "Chief Revenue Officer", company_name: "Certified Recruitee Employer", location: "Amsterdam, Netherlands", country: "Netherlands", careers_url: "https://certified.recruitee.com/o/cro", updated_at: "2026-07-17T08:00:00Z", description: "Lead revenue." }] }));
+const personioFetch = async () => new Response(`<?xml version="1.0"?><workzag-jobs><position><id>1</id><subcompany>Certified Personio Employer</subcompany><office>Berlin, Germany</office><name>Chief Revenue Officer</name><jobDescriptions><jobDescription><value>Lead revenue.</value></jobDescription></jobDescriptions><employmentType>permanent</employmentType><createdAt>2026-07-17T08:00:00Z</createdAt></position></workzag-jobs>`, { headers: { "Content-Type": "application/xml" } });
 
 const reports = [];
 reports.push(await runProviderCertification(new GreenhouseOpportunityProvider("certified", greenhouseFetch), greenhouseProviderManifest, 500));
@@ -35,8 +39,10 @@ reports.push(await runProviderCertification(new LeverOpportunityProvider("certif
 reports.push(await runProviderCertification(new AshbyOpportunityProvider("certified", "Certified Ashby Employer", ashbyFetch), ashbyProviderManifest, 500));
 reports.push(await runProviderCertification(new WorkableOpportunityProvider("certified", workableFetch), workableProviderManifest, 500));
 reports.push(await runProviderCertification(new SmartRecruitersOpportunityProvider("certified", smartRecruitersFetch), smartRecruitersProviderManifest, 500));
+reports.push(await runProviderCertification(new RecruiteeOpportunityProvider("certified", recruiteeFetch), recruiteeProviderManifest, 500));
+reports.push(await runProviderCertification(new PersonioOpportunityProvider("certified", "com", personioFetch), personioProviderManifest, 500));
 
-assert.deepEqual(reports.map((report) => report.providerId), ["greenhouse", "lever", "ashby", "workable", "smartrecruiters"]);
+assert.deepEqual(reports.map((report) => report.providerId), ["greenhouse", "lever", "ashby", "workable", "smartrecruiters", "recruitee", "personio"]);
 assert.equal(reports.every((report) => report.checks.replay === "passed" && report.checks.canonicalization === "passed" && report.checks.scheduler === "passed" && report.checks.metrics === "passed"), true);
 assert.equal(reports.find((report) => report.providerId === "lever")?.checks.pagination, "passed");
 assert.equal(reports.find((report) => report.providerId === "ashby")?.checks.lifecycle, "passed");

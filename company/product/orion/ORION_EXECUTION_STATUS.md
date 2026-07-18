@@ -39,7 +39,7 @@ The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTOR
 
 ## Quality state
 
-Passed: Greenhouse, Lever, Ashby, Workable, and SmartRecruiters connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Atlas Product Integration; Provider Pack Alpha; provider expansion; Coverage Engine; employer-scoped canonical reads; bounded batch persistence and replay checks; world-country registry validation; global coverage telemetry contracts; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
+Passed: Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Recruitee, and Personio connector checks; common provider certification; Engineering Operations Platform; Continuous Engineering Intelligence; Employment Knowledge Graph; Executive Decision Intelligence; Executive Validation Platform; Institutional Learning; Executive Experience Contract; Atlas Opportunity Review; Atlas Decision Workspace; Atlas Product Integration; Provider Pack Alpha; provider expansion; Coverage Engine; employer-scoped canonical reads; bounded batch persistence and replay checks; world-country registry validation; global coverage telemetry contracts; durable ingestion/replay/security; lifecycle safety; canonical reactivation; Orion metrics; scheduler recovery; TypeScript; ESLint; and the production build.
 
 ## Ownership
 

@@ -3,6 +3,7 @@ import { PersonioOpportunityProvider, parsePersonioAccount } from "../lib/discov
 import { RecruiteeOpportunityProvider, parseRecruiteeCompany } from "../lib/discovery/providers/recruitee.ts";
 import { WorkableOpportunityProvider, parseWorkableAccount } from "../lib/discovery/providers/workable.ts";
 import { providerFromCareersUrl } from "../lib/discovery/providers/factory.ts";
+import { PUBLIC_DISCOVERY_PROVIDER_IDS } from "../lib/discovery/public-employer-discovery.ts";
 
 const request = { runId: "expansion-test", requestedAt: "2026-07-14T12:00:00Z", maximumResults: 10, filters: { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] } };
 
@@ -14,6 +15,9 @@ assert.deepEqual(parsePersonioAccount("https://acme.jobs.personio.com/job/123"),
 assert.equal(providerFromCareersUrl("https://acme.recruitee.com").id, "recruitee");
 assert.equal(providerFromCareersUrl("https://apply.workable.com/acme").id, "workable");
 assert.equal(providerFromCareersUrl("https://acme.jobs.personio.de").id, "personio");
+assert.equal(PUBLIC_DISCOVERY_PROVIDER_IDS.includes("recruitee"), true);
+assert.equal(PUBLIC_DISCOVERY_PROVIDER_IDS.includes("personio"), true);
+assert.equal(PUBLIC_DISCOVERY_PROVIDER_IDS.length, 7, "Seven production providers must participate in zero-token autonomous discovery");
 
 const recruiteeFetch = async () => new Response(JSON.stringify({ offers: [{ id: 10, slug: "cro", title: "Chief Revenue Officer", company_name: "Acme", location: "Amsterdam", country: "Netherlands", country_code: "NL", remote: false, hybrid: true, department: "Executive", description: "<p>Lead revenue.</p>", requirements: "<p>Board experience.</p>", careers_url: "https://acme.recruitee.com/o/cro", published_at: "2026-07-10 09:00:00 UTC", employment_type_code: "fulltime", salary: { min: 220000, max: 280000, currency: "EUR" } }] }), { status: 200, headers: { "Content-Type": "application/json" } });
 const recruitee = await new RecruiteeOpportunityProvider("acme", recruiteeFetch).collect(request);

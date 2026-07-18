@@ -30,6 +30,10 @@ assert.match(route, /registerEmployerSourceBatch/, "Verified employer sources mu
 assert.match(route, /sourceExpansion/, "Employer expansion must expose aggregate operational evidence");
 assert.match(route, /discoveryCursor/, "Every scheduler window must advance public employer discovery");
 assert.match(publicDiscovery, /cursorWindow \* sampleTarget/, "Public discovery must rotate across the indexed employer universe instead of replaying its alphabetical prefix");
+assert.match(publicDiscovery, /interleaveCandidates/, "Public discovery must distribute verification attempts across provider ecosystems");
+assert.match(publicDiscovery, /selectDiverseSources/, "A successful discovery window must activate healthy sources across provider ecosystems before filling by volume");
+assert.doesNotMatch(publicDiscovery, /Promise\.allSettled\(definitions/, "Common Crawl provider indexes must not be queried in a rate-limit-hostile parallel burst");
+assert.match(publicDiscovery, /await pause\(150\)/, "Public index requests must be politely spaced");
 assert.doesNotMatch(route, /OpenAI|anthropic|completion|embedding/i, "Source expansion must remain zero-token");
 assert.match(runtime, /maximumJobs = 12/, "The scheduler runtime must share the twelve-job safe default");
 assert.match(proxy, /serverAuthenticatedPaths/);
