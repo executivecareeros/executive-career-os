@@ -22,6 +22,11 @@ assert.match(route, /maxDuration = 240/, "A full provider cohort must have enoug
 assert.match(route, /Math\.max\(1, Math\.min\(12,/, "Bulk execution must retain a hard per-invocation safety ceiling");
 assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 6/, "The Opportunity Factory must process six provider jobs by default");
 assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs\)/, "The bounded bulk limit must reach the scheduler runtime");
+assert.match(route, /discoverPublicEmployerSources/, "The scheduler must continuously expand verified public employer coverage");
+assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT/, "Employer expansion must remain bounded by configuration");
+assert.match(route, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
+assert.match(route, /sourceExpansion/, "Employer expansion must expose aggregate operational evidence");
+assert.doesNotMatch(route, /OpenAI|anthropic|completion|embedding/i, "Source expansion must remain zero-token");
 assert.match(runtime, /maximumJobs = 6/, "The scheduler runtime must share the six-job safe default");
 assert.match(proxy, /serverAuthenticatedPaths/);
 assert.match(proxy, /\/api\/operations\/opportunity-refresh/);
