@@ -12,7 +12,7 @@ const fetcher = async (url, init) => {
 
 const result = await retrieveOfficialCompanyFacts({ officialDomain: "acme.example", observedAt: "2026-07-18T10:00:00Z", fetcher, resolver: publicResolver });
 assert.equal(request.url, "https://acme.example/");
-assert.equal(request.init.redirect, "error");
+assert.equal(request.init.redirect, "manual");
 assert.equal(request.init.cache, "no-store");
 assert.match(request.init.headers["User-Agent"], /^ORENDALIS-/);
 assert.equal(result.facts[0]?.value, "Official Acme overview");
@@ -26,4 +26,20 @@ await assert.rejects(() => retrieveOfficialCompanyFacts({ officialDomain: "acme.
 await assert.rejects(() => retrieveOfficialCompanyFacts({ officialDomain: "acme.example", fetcher: async () => new Response("{}", { status: 200, headers: { "content-type": "application/json" } }), resolver: publicResolver }), /not HTML/);
 await assert.rejects(() => retrieveOfficialCompanyFacts({ officialDomain: "acme.example", fetcher: async () => new Response("small", { status: 200, headers: { "content-type": "text/html", "content-length": "2000001" } }), resolver: publicResolver }), /safe extraction limit/);
 await assert.rejects(() => retrieveOfficialCompanyFacts({ officialDomain: "acme.example", fetcher: async () => new Response("x".repeat(2_000_001), { status: 200, headers: { "content-type": "text/html" } }), resolver: publicResolver }), /safe extraction limit/);
+
+const redirectRequests = [];
+const redirected = await retrieveOfficialCompanyFacts({
+  officialDomain: "acme.example",
+  observedAt: "2026-07-18T10:00:00Z",
+  resolver: publicResolver,
+  fetcher: async (url) => {
+    redirectRequests.push(url.toString());
+    return url.hostname === "acme.example"
+      ? new Response(null, { status: 308, headers: { location: "https://www.acme.example/company" } })
+      : new Response(html, { status: 200, headers: { "content-type": "text/html" } });
+  },
+});
+assert.deepEqual(redirectRequests, ["https://acme.example/", "https://www.acme.example/company"]);
+assert.equal(redirected.sourceUrl, "https://www.acme.example/company");
+await assert.rejects(() => retrieveOfficialCompanyFacts({ officialDomain: "acme.example", resolver: publicResolver, fetcher: async () => new Response(null, { status: 302, headers: { location: "https://untrusted.example/" } }) }), /outside its verified domain boundary/);
 console.log("Official company retrieval security checks passed.");
