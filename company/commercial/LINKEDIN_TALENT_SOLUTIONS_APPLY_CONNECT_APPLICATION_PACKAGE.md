@@ -2,7 +2,7 @@
 
 ## Status
 
-Prepared for founder and legal review. Not submitted. No LinkedIn agreement, API access, commercial commitment, or data permission is implied.
+Submitted through LinkedIn's official Talent Solutions Partner Request Form on 2026-07-18. LinkedIn confirmed receipt and stated that its Business Development team will contact Orendalis if it elects to proceed. No LinkedIn agreement, API access, commercial commitment, or data permission is implied.
 
 ## Applicant
 
@@ -11,11 +11,12 @@ Prepared for founder and legal review. Not submitted. No LinkedIn agreement, API
 | Company | Orendalis |
 | Website | https://www.orendalis.com |
 | Product | Private executive career intelligence and decision-support platform |
-| Contact | Founder to complete |
+| Contact | Cuneyt Sen — cuneyt.sen@orendalis.com |
 | Legal entity | Founder to complete |
 | Company LinkedIn ID | Founder to complete if available |
-| Markets served | Founder to complete |
-| Current customer volume | Founder to complete with factual current data |
+| Markets served | Global opportunity network; headquarters and current controlled validation in EMEA |
+| Current customer volume | 0 external customers; pre-launch controlled founder validation |
+| Active opportunity inventory reported | 29,401 at submission time |
 
 ## Partnership request
 
@@ -86,7 +87,7 @@ No claim is made that Apply Connect grants a general job-discovery feed or permi
 - subprocessor and retention register after legal review;
 - penetration-test or independent security evidence when required by the partnership process.
 
-## Questions requiring founder or legal completion before submission
+## Questions requiring founder or legal completion before agreement or production access
 
 - legal entity, registered address, and authorized signatory;
 - commercial contact and technical contact;
@@ -96,9 +97,17 @@ No claim is made that Apply Connect grants a general job-discovery feed or permi
 - insurance, security certification, penetration testing, and business-continuity evidence requested by LinkedIn;
 - any fee, minimum commitment, Jobs terms, partner agreement, or commercial promise.
 
-## Founder submission gate
+## Founder agreement gate
 
-Do not submit this package or accept LinkedIn terms until the founder has reviewed the live application, legal terms, requested permissions, data uses, cost, contractual commitments, rollback, and partner-program fit.
+The nonbinding partner inquiry is submitted. Do not accept LinkedIn API terms, a partner agreement, data restrictions, fees, minimum commitments, or production permissions until the founder has reviewed the requested permissions, data uses, cost, contractual commitments, rollback, and program fit.
+
+## Submission evidence
+
+- Official form: LinkedIn Talent Solutions Partner Request Form.
+- Product classification: Job Board.
+- Requested integration: Job Postings, with supporting text requesting guidance on Apply Connect or another sanctioned Talent Solutions interface if more appropriate.
+- Customer statement: pre-launch, no external customers.
+- LinkedIn response: partnership request received and queued for Business Development review; no response-time or approval commitment provided.
 
 ## Official references reviewed
 
