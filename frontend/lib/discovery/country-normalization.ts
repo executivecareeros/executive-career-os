@@ -32,3 +32,25 @@ export function canonicalCountry(value: string | undefined | null) {
   if (!code) return undefined;
   return canonicalOverrides[code] ?? displayNames.of(code) ?? undefined;
 }
+
+/**
+ * Extracts a country only from explicit, delimited location evidence. City and
+ * region names are never mapped to countries, so an uncertain value stays
+ * unknown. Examples accepted: "Berlin, Germany" and "Remote (United Kingdom)".
+ */
+export function countryFromExplicitLocation(value: string | undefined | null) {
+  const candidate = value?.trim();
+  if (!candidate) return undefined;
+  const direct = canonicalCountry(candidate);
+  if (direct) return direct;
+  const segments = candidate
+    .replace(/[()\[\]]/g, "|")
+    .split(/[,;|/]|\s+[–—-]\s+/)
+    .map(segment => segment.trim())
+    .filter(Boolean);
+  for (const segment of segments) {
+    const country = canonicalCountry(segment);
+    if (country) return country;
+  }
+  return undefined;
+}
