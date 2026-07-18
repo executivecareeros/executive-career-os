@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { activateCompanyIntelligence } from "../lib/company-intelligence/activation.ts";
+import { activateCompanyIntelligence, parseCompanyIntelligenceActivationDomains } from "../lib/company-intelligence/activation.ts";
 
 const requests = [];
 let persistenceCalls = 0;
@@ -25,9 +25,12 @@ const retriever = async ({ officialDomain, observedAt }) => {
   return { canonicalName: "Company", facts, sourceUrl: `https://${officialDomain}/`, fingerprint: `official-company-facts-v1:${officialDomain}`, status: 200, contentType: "text/html", bytes: 100, durationMs: 2 };
 };
 
-const summary = await activateCompanyIntelligence(client, "workspace-1", { maximumCompanies: 100, retriever });
+assert.deepEqual(parseCompanyIntelligenceActivationDomains(" ONE.example,invalid,one.example., two.example "), ["one.example", "two.example"]);
+const summary = await activateCompanyIntelligence(client, "workspace-1", { maximumCompanies: 100, approvedDomains: ["one.example", "empty.example", "failed.example"], retriever });
 assert.match(requests[0].path, /identity_confidence=gte\.80/);
-assert.match(requests[0].path, /limit=25/);
+assert.match(requests[0].path, /official_domain=in\.\(one\.example,empty\.example,failed\.example\)/);
+assert.match(requests[0].path, /limit=3/);
+assert.equal(summary.approved, 3);
 assert.equal(summary.eligible, 3);
 assert.equal(summary.attempted, 3);
 assert.equal(summary.retrieved, 2);
@@ -43,6 +46,6 @@ assert.equal(body.target_workspace, "workspace-1");
 assert.equal(body.target_company, "company-1");
 assert.equal(body.facts.length, 1);
 
-const disabled = await activateCompanyIntelligence(client, "workspace-1", { maximumCompanies: 0, retriever });
+const disabled = await activateCompanyIntelligence(client, "workspace-1", { maximumCompanies: 25, approvedDomains: [], retriever });
 assert.equal(disabled.attempted, 0);
 console.log("Company intelligence activation checks passed.");

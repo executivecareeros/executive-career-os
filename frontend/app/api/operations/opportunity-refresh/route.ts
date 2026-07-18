@@ -3,7 +3,7 @@ import { schedulerRequestAuthorized } from "@/lib/discovery/scheduler-auth";
 import { runOpportunityScheduler } from "@/lib/discovery/scheduler-runtime";
 import { createSchedulerSupabaseClient } from "@/lib/supabase/scheduler";
 import type { SupabaseDataClient } from "@/lib/supabase/client";
-import { activateCompanyIntelligence } from "@/lib/company-intelligence/activation";
+import { activateCompanyIntelligence, parseCompanyIntelligenceActivationDomains } from "@/lib/company-intelligence/activation";
 
 export const dynamic = "force-dynamic";
 // A full employer cohort can require more than one minute of deterministic,
@@ -37,8 +37,9 @@ export async function GET(request: Request) {
     const schedules = await client.request<Array<{ workspace_id: string }>>("opportunity_provider_schedules?select=workspace_id&enabled=eq.true&limit=1");
     const workspaceId = schedules.data?.[0]?.workspace_id;
     const companyActivationLimit = Math.max(0, Math.min(25, Number(process.env.COMPANY_INTELLIGENCE_ACTIVATION_LIMIT ?? 0) || 0));
-    const companyIntelligenceActivation = workspaceId && companyActivationLimit
-      ? await activateCompanyIntelligence(client, workspaceId, { maximumCompanies: companyActivationLimit })
+    const companyActivationDomains = parseCompanyIntelligenceActivationDomains(process.env.COMPANY_INTELLIGENCE_ACTIVATION_DOMAINS);
+    const companyIntelligenceActivation = workspaceId && companyActivationLimit && companyActivationDomains.length
+      ? await activateCompanyIntelligence(client, workspaceId, { maximumCompanies: companyActivationLimit, approvedDomains: companyActivationDomains })
       : undefined;
     const employerIntelligence = workspaceId
       ? await client.request<Record<string, unknown>>("rpc/refresh_employer_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
