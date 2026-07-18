@@ -5,6 +5,20 @@
 > Authority: Founder
 > Scope: All Orendalis product, engineering, intelligence, operations, and AI-agent decisions
 
+## Authority and supporting specifications
+
+Precedence: latest explicit Founder decision → this blueprint → approved architecture decisions → current implementation → historical documentation. A supporting specification clarifies ODS 4.0 but cannot override it.
+
+- `FOUNDER_BACKLOG.md` — authoritative Founder request register.
+- `PRODUCT_CAPABILITY_REGISTER.md` — authoritative current capability and readiness register.
+- `STANDARD_ENGINEERING_REPORT_TEMPLATE.md` — mandatory sprint report.
+- `ATLAS_EXECUTIVE_INTERFACE.md` — Personal Atlas, Atlas Everywhere, and Atlas in Rooms.
+- `EXECUTIVE_ROOMS_SPECIFICATION.md` — community intelligence product and safety boundary.
+- `COMPANY_INTELLIGENCE_SPECIFICATION.md` — canonical employer intelligence contract.
+- `WEBSITE_BRAND_UX_SPECIFICATION.md` — premium experience and Founder acceptance contract.
+
+No request may be silently discarded. Unknown status must be recorded as Unknown and measured before a readiness claim.
+
 ## Mission
 Build the world's leading Executive Intelligence Platform.
 

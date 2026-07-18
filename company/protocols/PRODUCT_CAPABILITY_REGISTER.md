@@ -1,0 +1,37 @@
+# Product Capability Register
+
+> Authority: ODS 4.0 · Owner: CTO · Updated: 2026-07-18  
+> Status uses only Research, Planned, Development, Beta Ready, Production Ready, or Founder Review Required.
+
+| Subsystem | Current capability | Status | Known limitations | Routes / services | Data dependencies | Tests | Observability | Security | Founder approval |
+|---|---|---|---|---|---|---|---|---|---|
+| Public website | English landing, SEO, registration entry | Beta Ready | Conversion/accessibility evidence incomplete | `/`, `/register`, `/login` | Auth configuration | public-acquisition, project-simplicity | HTTP only; product analytics Unknown | Public/private proxy rules | Review required |
+| Authentication | Signup, verification, recovery, invitation, bootstrap | Beta Ready | Current external recovery rehearsal incomplete | auth routes; Supabase Auth | identities/invitations | email, invitation, bootstrap, runtime DB | Provider logs | RLS/auth runtime pass | Previously approved; final review required |
+| CV/Profile | Deterministic extraction, review, editing, idempotent persistence | Beta Ready | Real-CV regression corpus incomplete | `/import*`, `/workspace` | professional history/profile | import, profile-state, database | Save errors/provider logs | Private workspace, raw file not retained | Review required |
+| Search | Filters, aliases, suggestions, fuzzy assistance, salary bounds | Beta Ready | Live relevance/p95/zero-result Unknown | `/opportunities` | canonical opportunities/preferences | executive-search, geography | User query telemetry absent | Workspace-scoped preferences | Review required |
+| Opportunity Universe | Canonical, deduplicated, fresh provider inventory | Beta Ready | Current live count after snapshot Unknown | opportunities; coverage engine | providers/schedules/jobs/opportunities | connector/certification/durable suites | Strong scheduler/provider metrics | SSRF, auth, isolation tests | Review required |
+| Opportunity Intelligence | Role classification, fit, freshness, evidence, unknowns, related roles | Beta Ready | Salary/urgency completeness and live calibration | `/opportunities/[id]` | canonical opportunities/profile | opportunity-intelligence, Atlas review | Live outcome metrics absent | Evidence-only deterministic path | Review required |
+| Company Directory | Searchable paginated canonical employers | Beta Ready | Enrichment incomplete | `/companies` | companies/opportunities | live-product-truth | Count/freshness only | Workspace scope | Review required |
+| Company Intelligence | Overview, hiring footprint, confidence, evidence, fingerprint/cache | Development | Official domain/HQ/products/services/history incomplete | `/companies/[id]`; employer intelligence | canonical employer/provider evidence | company/employer intelligence | Refresh coverage partial | No inference; external URL controls | Not approved complete |
+| Atlas Decision Advisor | Structured review, explanations, unknowns, actions, snapshots | Beta Ready | Persistent Atlas Everywhere and live calibration absent | `/assistant`, `/reasoning`, `/decision-workspace` | graph/profile/opportunity/evidence | Atlas/decision/experience suites | Outcome feedback partial | Advisory-only; no automatic action | Review required |
+| Applications | Pipeline, activity/documents, decision continuity | Beta Ready | Full recruitment/compensation date coverage incomplete | `/applications*` | application/activity/document tables | live-product-truth, collected decision | User journey metrics absent | RLS and append-only history | Review required |
+| Executive Workspace | Career memory, tasks, interviews, negotiation, notes | Development | Unified documents/calendar/Rooms and extended opportunity types incomplete | workspace/productivity/interview/negotiation/tasks | workspace-owned records | productivity, memory, DB/RLS | Partial | Workspace isolation passes | Not approved complete |
+| Compensation | Append-only compensation records and planning | Development | Evidence/confidence and complete negotiation history incomplete | `/compensation`, `/live-compensation` | compensation records | DB/runtime/RLS | Partial | Dedicated permission scope | Not approved complete |
+| Knowledge Graph | 13 entity kinds, 11 relations, evidence/conflict history | Development | Executive/Country/Technology/Department/Room gaps | graph services; `/knowledge` | canonical evidence | employment-knowledge-graph | Fixture metrics | No silent identity merges | Not approved complete |
+| Trust Engine | Distributed evidence/confidence/freshness/conflict behavior | Development | No unified Trust Fact service | intelligence modules | evidence/provenance | decision/graph tests | Partial | Unknown remains Unknown | Not approved complete |
+| Executive Rooms | Specification only | Research | No routes, schema, permissions, moderation or UX | None | Future identity/trust/room data | None | None | Threat/privacy model required | Founder discovery required |
+| Provider Factory | Common adapters, certification, scheduling, retry, health | Beta Ready | More live DB capacity and legal/provider coverage needed | scheduler API; connector services | public ATS data and registry | certify:providers | Strong operational telemetry | Authenticated scheduler, SSRF controls | Expansion governed |
+| Persistence | Bounded transactional, idempotent opportunity batches | Beta Ready | Live DB tier above 16,102 not approved | Supabase RPC | PostgreSQL | batch, durable, database | Batch duration/retry | Transaction/RLS pass | Review required for scale |
+| Company Control | Operational/readiness/provider summaries | Development | Some sources/manual states and no complete alerts | `/company-control` | registers/telemetry | release evidence | Partial dashboards | Founder-only routes | Not approved complete |
+| Observability | Scheduler/provider/queue/batch logs and metrics | Development | No complete tracing, APM or tested external alert | operational telemetry | providers/DB/logs | operations/scheduler | Partial | Secret-safe aggregate logs | Alert choice required |
+| Security | Auth, workspace RLS, input validation, append-only controls | Beta Ready | Full DAST/recovery/alert evidence missing | cross-cutting | Supabase/provider ownership | static DB, runtime DB/RLS, SSRF/import | Security events partial | Runtime isolation passes | Final review required |
+| Mobile | Responsive shell and page layouts | Beta Ready | Complete authenticated 390px matrix missing | all major routes | UI | build/contracts | RUM absent | Same auth boundary | Review required |
+| Accessibility | Focus, semantics, reduced motion foundations | Development | WCAG 2.2 AA audit absent | all UI | design system | lint only/selected contracts | None | N/A | Not approved complete |
+| Branding | Canonical mark/name/palette and premium foundation | Founder Review Required | Formal visual system and route acceptance incomplete | global UI | brand assets/styles | brand/string checks | None | Protected brand spelling | Founder review required |
+
+## Current quality authority
+
+- Product Truth & Runtime Security Closure: `company/engineering/PRODUCT_TRUTH_SECURITY_CLOSURE_2026-07-18.md`.
+- Inventory: `company/product/orion/AUTHORITATIVE_INVENTORY_SNAPSHOT.md`.
+- Provider and Orion state: `company/product/orion/ORION_EXECUTION_STATUS.md`.
+- “Production Ready” requires live operational, security, recovery, performance and Founder acceptance evidence; passing fixtures alone is insufficient.

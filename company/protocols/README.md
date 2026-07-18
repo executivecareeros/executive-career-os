@@ -19,6 +19,13 @@ Orendalis work must be intentional, evidence-led, secure, reversible where possi
 | Protocol | Governs |
 | --- | --- |
 | [ODS 4.0 Master Blueprint](ODS_4_0_MASTER_BLUEPRINT.md) | Founder mission, permanent intelligence programs, CTO priorities, and token economy |
+| [Founder Backlog](FOUNDER_BACKLOG.md) | Authoritative Founder request, evidence, acceptance, and priority register |
+| [Product Capability Register](PRODUCT_CAPABILITY_REGISTER.md) | Current subsystem capability and readiness truth |
+| [Standard Engineering Report](STANDARD_ENGINEERING_REPORT_TEMPLATE.md) | Mandatory post-sprint reporting structure |
+| [Atlas Executive Interface](ATLAS_EXECUTIVE_INTERFACE.md) | Personal Atlas, Atlas Everywhere, and Atlas in Rooms |
+| [Executive Rooms Specification](EXECUTIVE_ROOMS_SPECIFICATION.md) | Community intelligence, permissions, moderation, and Atlas boundaries |
+| [Company Intelligence Specification](COMPANY_INTELLIGENCE_SPECIFICATION.md) | Canonical employer intelligence and evidence contract |
+| [Website, Brand and UX Specification](WEBSITE_BRAND_UX_SPECIFICATION.md) | Premium experience and Founder acceptance criteria |
 | [ODS Constitution](ODS_CONSTITUTION.md) | Non-negotiable principles and precedence |
 | [Authority and Accountability](AUTHORITY_AND_ACCOUNTABILITY.md) | Roles, ownership, approvals, and separation of duties |
 | [Work Lifecycle](WORK_LIFECYCLE.md) | Intake through closure |
