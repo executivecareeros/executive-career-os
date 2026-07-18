@@ -19,8 +19,8 @@ export function ExperienceZeroArrival({ locale: _locale }: { locale: Locale }) {
         <nav className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10" aria-label="Primary navigation">
           <Link href="/" className="rounded-xl bg-white px-3 py-2 text-[#0b1220] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d8cff]"><OrendalisMark /></Link>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="rounded-xl px-4 py-2.5 text-sm font-medium text-[#d6ddeb] transition hover:bg-white/10 hover:text-white">Sign in</Link>
-            <Link href="/register" className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#0b1220] shadow-lg shadow-black/10 transition hover:-translate-y-px hover:bg-[#f4f7ff]">Create your workspace</Link>
+            <Link href="/login" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-px hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8ea6ff]">Sign in</Link>
+            <Link href="/register" className="hidden min-h-11 items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#0b1220] shadow-lg shadow-black/10 transition hover:-translate-y-px hover:bg-[#f4f7ff] sm:inline-flex">Create your workspace</Link>
           </div>
         </nav>
 

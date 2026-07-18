@@ -32,5 +32,7 @@ export async function loadLatestCollectedDecision(client: SupabaseDataClient, wo
   ]);
   const opportunity = opportunities.data?.[0], ledger = ledgers.data?.[0], task = tasks.data?.[0];
   if (!opportunity || !ledger || !task) return undefined;
+  const decision = typeof opportunity.payload.executiveDecision === "object" && opportunity.payload.executiveDecision ? opportunity.payload.executiveDecision as Record<string, unknown> : undefined;
+  if (decision?.hiddenFromApplicationsAt) return undefined;
   return { commitId: commit.id, opportunityId: opportunity.domain_id, title: opportunity.title, companyName: String(opportunity.payload.companyName ?? "Company not recorded"), action: executiveAction(commit.selected_action), committedAt: commit.committed_at, reasoningSnapshotId: commit.reasoning_snapshot_id, decisionSnapshotId: commit.decision_snapshot_id, ledgerEntryId: ledger.id, task: { id: task.id, title: task.title, priority: task.priority, status: task.status } };
 }
