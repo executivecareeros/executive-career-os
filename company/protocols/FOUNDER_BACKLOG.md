@@ -61,4 +61,4 @@ The following requests remain Proposed and are not commitments: Career Capital; 
 
 ## Dashboard rule
 
-This file is the only authoritative Founder Backlog. `company/product/FOUNDER_BACKLOG.md` is a compatibility pointer. Every sprint updates IDs, evidence, acceptance status, commits and the dashboard without deleting completed entries.
+This file is the only authoritative Founder Backlog. `company/product/FOUNDER_BACKLOG.md` is a compatibility pointer. Every sprint updates IDs, evidence, acceptance status, commits and the dashboard without deleting completed entries. Every cycle report must end with a five-column Founder Backlog Dashboard: `Founder Request`, `Status`, `Progress`, `Priority`, `Next Action`. Dashboard values must be derived from this register; examples and aspirational percentages are prohibited.

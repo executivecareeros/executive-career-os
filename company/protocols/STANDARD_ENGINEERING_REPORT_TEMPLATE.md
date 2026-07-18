@@ -46,8 +46,12 @@ Required for user-facing work; include tested commit, viewport and route. Histor
 
 ## 31. Founder Backlog Dashboard
 
-| ID | Request | Status | Progress | Priority | Evidence | Next action |
-|---|---|---|---:|---|---|---|
+This dashboard is mandatory at the end of every cycle report. It must use the current authoritative facts in `FOUNDER_BACKLOG.md`, never example or aspirational percentages. Consolidated rows may group related backlog IDs, but must use the least-complete material state and name the immediate next action.
+
+| Founder Request | Status | Progress | Priority | Next Action |
+|---|---|---:|---|---|
+
+Status labels: `🟢 Complete`, `🟠 Founder Review Required`, `🟡 In Progress`, `🔴 Not Started`, `⚪ Planned`, or `⛔ Blocked`.
 
 ## 32. Top 10 Highest-ROI Remaining Tasks
 ## 33. Recommended Next Sprint
@@ -64,3 +68,4 @@ Explain why now, alternatives rejected, business/Founder/technical value, cost, 
 - Security, cost, performance and rollback reviewed.
 - Product-facing work not marked Complete without Founder approval.
 - Working tree clean; commit and push/deployment states reported separately.
+- Founder Backlog Dashboard included as the final report section using the required five-column format.
