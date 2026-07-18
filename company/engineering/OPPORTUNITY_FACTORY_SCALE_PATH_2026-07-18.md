@@ -33,3 +33,17 @@ Keep the 250,000-employer and 3,000,000-active-opportunity objectives as operati
 ## Measurement gate
 
 The next factory decision is based on observed 24-hour yield: newly registered sources, active canonical employers, active canonical opportunities, duplicates merged, freshness, failed sources, scheduler latency, and database load. Execution concurrency must not increase without this evidence.
+
+## First live cycle evidence
+
+Measured after deployment `d0925bb` and the first scheduled production cycle:
+
+- Monitored employer sources: 1,194 → 1,239 (`+45`).
+- Canonical employer identities: 1,174 → 1,176 (`+2`).
+- Hiring employers represented by active opportunities: 465 → 465 (`no change`).
+- Active canonical opportunities: 32,580 → 32,581 (`+1`).
+- Successful provider runs observed in the latest 20-minute window: 24.
+- Failed provider runs observed in the latest 20-minute window: 0.
+- Latest successful completion: 2026-07-18 20:46:25 UTC.
+
+The evidence validates source-registration scale and operational stability. It also identifies the next constraint: increasing qualified-source-to-active-opportunity yield and authoritative employer identity resolution before raising execution concurrency.
