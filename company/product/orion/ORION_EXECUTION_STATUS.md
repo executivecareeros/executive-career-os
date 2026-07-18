@@ -8,8 +8,8 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 | Phase | Phase 2 — Opportunity Factory X100 live expansion |
 | Release | Configuration-driven discovery is operating in isolated network staging; transaction-safe bounded persistence, world-country registry, and global coverage telemetry are installed for live scale validation |
 | Current version | Orion M1A–M9 stable; Atlas 2.2A adds an immediate executive briefing, role-first review, confirmed-history matching, and useful confidence separation without changing Orion or Atlas reasoning architecture |
-| Canonical opportunities | 16,102 active at the latest authoritative measured checkpoint; current live count after that checkpoint is Unknown |
-| Active opportunities | 16,102 at the latest authoritative measured checkpoint |
+| Canonical opportunities | 24,014 active at the latest authoritative measured checkpoint; current live count after that checkpoint is Unknown |
+| Active opportunities | 24,014 at the latest authoritative measured checkpoint |
 | Executive opportunities | 1,559 |
 | Commercial opportunities | 1,148 |
 | Remote opportunities | 2,490 |
@@ -17,7 +17,7 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 | Verified employer sources | 1,100 active employer boards verified through official public Greenhouse or Ashby APIs |
 | Strict domain-verified employers | 17 under the domain + verified time + confidence ≥80 rule |
 | Production providers | Greenhouse and Ashby: 1,066 enabled employer schedules in isolated network staging; Lever remains part of the established baseline |
-| Other providers | SmartRecruiters and Workable remain production-certifiable; none is counted as live without durable schedule and run evidence |
+| Other providers | SmartRecruiters is live in isolated network staging with 102 verified schedules and first-run/replay evidence; Workable remains production-certifiable pending durable activation |
 | Freshness | Ashby 100%, Greenhouse 99.9%, Lever 100% at the authoritative provider checkpoint; one global aggregate was not captured |
 | Canonical consolidation | Greenhouse 4.1%; Ashby and Lever 0% duplicate observation rate at the authoritative checkpoint |
 | Geographic checkpoint | 18 of 19 measured G20 country markets have evidence; Russia remains a truthful gap |
@@ -27,7 +27,7 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 | Employer Intelligence Coverage | Provider-scoped employer and opportunity provenance 100%; official domains remain Unknown unless verified |
 | Latest deployment | Isolated network staging Ready with an authenticated every-minute scheduler and no production domain |
 
-The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTORY_SNAPSHOT.md`. Historical totals above and elsewhere remain audit evidence, not current counters. ODS 3.0 observability recorded 16,102 active canonical opportunities; 78 of 249 canonical countries/territories represented; three of three measured scheduler jobs completed; 179 records persisted through three transactions in 14.1 seconds; zero AI tokens.
+The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTORY_SNAPSHOT_2026-07-18_02.md`. Historical totals elsewhere remain audit evidence, not current counters. The current snapshot records 24,014 active canonical opportunities, 358 employers with active opportunities, 1,168 enabled employer schedules, 23,999 opportunities observed within 48 hours, and SmartRecruiters first-run/replay admission with zero current failures. The latest country-quality checkpoint remains 78 of 249 canonical countries/territories until remeasured.
 
 ## Blockers and priority
 

@@ -30,7 +30,7 @@ Classification is a product priority, not permission to connect. Every live sour
 | Manual opportunity creation | NOW | Executive-confirmed structured form | Universal fallback and highest-control intake |
 | Job URL import | NOW | One executive-supplied URL; identify known source or request confirmation | Removes copy/paste burden without promising broad collection |
 | PDF job description import | NOW | Executive-supplied file, review, confirmation, and explicit retention choice | Common recruiter workflow and confidential mandate coverage |
-| SmartRecruiters | NOW, activation pending | Employer-specific official Posting API connector | Official documentation permits public-posting access without authentication; adapter and certification are complete, while durable first-run/replay evidence is still required before live classification |
+| SmartRecruiters | NOW, live in isolated network staging | Employer-specific official Posting API connector | 102 verified employer schedules are enabled; first run and zero-change replay passed through the common engine with public postings, bounded concurrency, and source attribution |
 | Teamtailor | NEXT | Authorized employer/partner feed | Official APIs require keys or partner/feed arrangements; not a universal anonymous source |
 | Workday | TIER 1, Founder gate | Authorized employer tenant or provider-confirmed public collection interface | Official tenant Recruiting APIs exist, but no verified universal anonymous collection interface or collection right has been established |
 | LinkedIn Jobs | TIER 1, Founder gate | Approved LinkedIn Talent Solutions partnership; link/reference import remains available | LinkedIn Talent access requires explicit partner approval and contractual acceptance; reachability is not permission |
@@ -65,7 +65,7 @@ The executable ranking in `frontend/lib/discovery/source-expansion.ts` prioritiz
 
 | Sequence | Source ecosystem | Access position | Next executable action |
 | ---: | --- | --- | --- |
-| 1 | SmartRecruiters | Official public employer posting interface; no credential required for public postings | Activate a verified employer cohort in isolated staging and record first-run/replay evidence |
+| 1 | SmartRecruiters | Official public employer posting interface; no credential required for public postings | Continue the admitted 102-employer staggered cohort and replace point-in-time inventory snapshots only after completed persistence |
 | 2 | Workday | Authorized tenant or provider-confirmed interface | Confirm collection rights through an authorized tenant or partnership |
 | 3 | SAP SuccessFactors | Authorized employer OData integration | Obtain an authorized tenant and validate data-use terms |
 | 4 | Teamtailor | Authorized employer or partner feed | Obtain an authorized feed or partner credential |

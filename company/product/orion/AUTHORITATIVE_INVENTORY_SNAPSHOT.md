@@ -3,7 +3,7 @@
 > Snapshot version: `orion-inventory-2026-07-18-01`  
 > Captured: 2026-07-18  
 > Environment: isolated network staging  
-> Status: authoritative point-in-time measurement; not a live counter  
+> Status: historical point-in-time measurement; superseded by `AUTHORITATIVE_INVENTORY_SNAPSHOT_2026-07-18_02.md`
 > Evidence source: aggregate-only ODS 3.0 runtime telemetry recorded in `ODS3_SCALE_EVIDENCE.md`
 
 ## Inventory
@@ -45,7 +45,7 @@
 
 ## Interpretation rules
 
-- This file is the single authoritative inventory checkpoint until replaced by a newer versioned snapshot generated from the same aggregate telemetry contract.
+- This file was authoritative until replaced by `AUTHORITATIVE_INVENTORY_SNAPSHOT_2026-07-18_02.md`; it is retained as historical evidence.
 - Older totals remain historical audit evidence and must be labelled as baselines.
 - Ingestion continued after capture; therefore the current live count is **Unknown** until another authenticated measurement is recorded.
 - A read-only discovery proof, advertised provider posting count, or indexed candidate count is not durable canonical inventory.
@@ -56,7 +56,7 @@
 - A global aggregate freshness percentage was not captured at this checkpoint; provider-level freshness is authoritative.
 - Current live totals after the capture time are Unknown.
 - Provider-level salary completeness and compensation confidence are Unknown.
-- Live database capacity above 16,102 active opportunities is not approved by this snapshot.
+- At capture time, capacity above 16,102 active opportunities had not yet been validated; the replacement snapshot supersedes that limit.
 
 ## Replacement procedure
 
