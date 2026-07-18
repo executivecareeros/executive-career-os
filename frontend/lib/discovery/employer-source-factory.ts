@@ -56,11 +56,16 @@ export function scheduleRowsForEmployerSources(input: { workspaceId: string; act
 }
 
 export async function registerEmployerSourceBatch(client: SupabaseDataClient, input: { workspaceId: string; actorId: string; now?: string; sources: readonly EmployerSourceHealth[] }) {
-  const existing = await client.request<{ source_key: string }[]>(`opportunity_provider_schedules?select=source_key&workspace_id=eq.${input.workspaceId}`);
+  const existing = await client.request<{ source_key: string; locator?: { url?: string } }[]>(`opportunity_provider_schedules?select=source_key,locator&workspace_id=eq.${input.workspaceId}`);
   if (existing.error) throw new Error(existing.error.message);
   const known = new Set((existing.data ?? []).map((row) => row.source_key));
+  const knownUrls = new Set((existing.data ?? []).flatMap((row) => {
+    try { return row.locator?.url ? [normalizedUrl(row.locator.url)] : []; }
+    catch { return []; }
+  }));
   const eligible = input.sources.filter((source) => source.healthStatus === "connected");
-  const rows = scheduleRowsForEmployerSources({ ...input, sources: eligible, now: input.now ?? new Date().toISOString() }).filter((row) => !known.has(row.source_key));
+  const rows = scheduleRowsForEmployerSources({ ...input, sources: eligible, now: input.now ?? new Date().toISOString() })
+    .filter((row) => !known.has(row.source_key) && !knownUrls.has(normalizedUrl(row.locator.url)));
   if (rows.length) { const inserted = await client.request("opportunity_provider_schedules", { method: "POST", body: JSON.stringify(rows) }); if (inserted.error) throw new Error(inserted.error.message); }
   return { requested: eligible.length, inserted: rows.length, unchanged: eligible.length - rows.length } as const;
 }

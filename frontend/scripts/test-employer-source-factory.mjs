@@ -24,4 +24,10 @@ assert.deepEqual(first, { requested: 2, inserted: 1, unchanged: 1 }); assert.equ
 const secondClient = { request: async (path) => path.startsWith("opportunity_provider_schedules?") ? { data: rows.map((row) => ({ source_key: row.source_key })) } : { data: null } };
 const replay = await registerEmployerSourceBatch(secondClient, { workspaceId: "workspace", actorId: "actor", now: "2026-07-17T12:00:00Z", sources: validated.validated });
 assert.deepEqual(replay, { requested: 2, inserted: 0, unchanged: 2 }, "Repeated bulk onboarding must be idempotent");
-console.log(JSON.stringify({ message: "Employer source factory checks passed.", prepared: batch.prepared.length, isolatedFailures: batch.failures.length, duplicateInputs: batch.duplicateInputs, idempotentReplay: replay.inserted === 0 }, null, 2));
+const legacyClient = { request: async (path, init) => {
+  if (path.startsWith("opportunity_provider_schedules?")) return { data: [{ source_key: "global:greenhouse-employer", locator: { url: "https://job-boards.greenhouse.io/greenhouse-employer/" } }] };
+  throw new Error(`Legacy URL identity should prevent insertion: ${init?.body}`);
+} };
+const legacyReplay = await registerEmployerSourceBatch(legacyClient, { workspaceId: "workspace", actorId: "actor", now: "2026-07-17T12:00:00Z", sources: [validated.validated[1]] });
+assert.deepEqual(legacyReplay, { requested: 1, inserted: 0, unchanged: 1 }, "Legacy source keys must deduplicate by canonical careers URL");
+console.log(JSON.stringify({ message: "Employer source factory checks passed.", prepared: batch.prepared.length, isolatedFailures: batch.failures.length, duplicateInputs: batch.duplicateInputs, idempotentReplay: replay.inserted === 0, legacyKeyReplay: legacyReplay.inserted === 0 }, null, 2));
