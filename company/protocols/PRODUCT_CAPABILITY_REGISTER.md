@@ -27,7 +27,7 @@
 | Security | Auth, workspace RLS, input validation, append-only controls | Beta Ready | Full DAST/recovery/alert evidence missing | cross-cutting | Supabase/provider ownership | static DB, runtime DB/RLS, SSRF/import | Security events partial | Runtime isolation passes | Final review required |
 | Mobile | Responsive shell and page layouts | Beta Ready | Complete authenticated 390px matrix missing | all major routes | UI | build/contracts | RUM absent | Same auth boundary | Review required |
 | Accessibility | Focus, semantics, reduced motion foundations | Development | WCAG 2.2 AA audit absent | all UI | design system | lint only/selected contracts | None | N/A | Not approved complete |
-| Branding | Intelligence Orbit mark candidate, protected name, Midnight/Cobalt/Mint palette, Geist typography, shared cards/actions/navigation | Founder Review Required | Social preview refresh and complete route/mobile acceptance remain | global UI | brand assets/styles | brand/string, public-acquisition, project-simplicity, build | None | Protected brand spelling and semantic interaction colors | Founder visual approval required |
+| Branding | Founder-approved Quiet Ascent mark, protected name, Midnight/Cobalt/Mint palette, Geist typography, shared cards/actions/navigation | Deployment Validation | Live desktop/mobile mark and favicon acceptance remain | global UI | brand assets/styles | brand/string, public-acquisition, project-simplicity, build | None | Protected brand spelling and semantic interaction colors | Original Option 5 approved 2026-07-18 |
 
 ## Current quality authority
 
