@@ -20,11 +20,28 @@ function value(formData: FormData, key: string, max: number) {
 export async function createRoomAction(formData: FormData) {
   const title = value(formData, "title", 100);
   const topic = value(formData, "topic", 600);
-  const temporary = formData.get("temporary") === "on";
+  const shortPurpose = value(formData, "shortPurpose", 180);
+  const language = value(formData, "language", 80);
+  const permanenceReason = value(formData, "permanenceReason", 600);
   const closesAt = value(formData, "closesAt", 40) || null;
-  const roomId = await rpc<string>("create_executive_room", { room_title: title, room_topic: topic, temporary, requested_closes_at: closesAt });
+  const roomId = await rpc<string>("create_executive_room_v2", { room_title: title, room_topic: topic, room_short_purpose: shortPurpose, room_language: language, permanence_request_reason: permanenceReason, requested_closes_at: closesAt });
   revalidatePath("/rooms");
   redirect(`/rooms/${roomId}`);
+}
+
+export async function joinRoomAction(formData: FormData) {
+  const roomId = value(formData, "roomId", 36);
+  await rpc("join_executive_room", { target_room: roomId });
+  revalidatePath("/rooms");
+  redirect(`/rooms/${roomId}?notice=You%20joined%20the%20room`);
+}
+
+export async function decideRoomPermanenceAction(formData: FormData) {
+  const roomId = value(formData, "roomId", 36);
+  const approve = formData.get("decision") === "approve";
+  await rpc("decide_room_permanence", { target_room: roomId, approve, decision_note: value(formData, "decisionNote", 600) });
+  revalidatePath("/company-control");
+  revalidatePath("/rooms");
 }
 
 export async function inviteMemberAction(formData: FormData) {
@@ -44,7 +61,7 @@ export async function respondInvitationAction(formData: FormData) {
 
 export async function postRoomMessageAction(formData: FormData) {
   const roomId = value(formData, "roomId", 36);
-  await rpc("post_executive_room_message", { target_room: roomId, message_body: value(formData, "body", 4000), reply_to: value(formData, "replyTo", 36) || null });
+  await rpc("post_executive_room_message_v2", { target_room: roomId, message_body: value(formData, "body", 4000), reply_to: value(formData, "replyTo", 36) || null, service_category: value(formData,"serviceCategory",80)||null, service_city:value(formData,"serviceCity",100)||null, service_country:value(formData,"serviceCountry",100)||null });
   revalidatePath(`/rooms/${roomId}`);
   redirect(`/rooms/${roomId}#discussion`);
 }

@@ -12,11 +12,12 @@ export const metadata: Metadata = { title: "Company Control Center", description
 
 export default async function CompanyControlPage() {
   let betaTriage;
+  let roomPermanenceRequests: Array<{room_id:string;title:string;short_purpose:string;language_name:string;permanence_reason:string;creator_name:string;requested_at:string;closes_at:string}> = [];
   let founderBootstrapComplete=false;
   if (isSupabaseMode()) {
     const resolved=await resolveFounderAccess();
     if (!resolved) notFound();
-    if(resolved){betaTriage=await new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken),resolved.context).founderTriage();founderBootstrapComplete=(await founderBootstrapStatus(resolved.accessToken)).status==="COMPLETE";}
+    if(resolved){const client=createServerSupabaseClient(resolved.accessToken);betaTriage=await new SupabaseBetaWorkflowRepository(client,resolved.context).founderTriage();founderBootstrapComplete=(await founderBootstrapStatus(resolved.accessToken)).status==="COMPLETE";const requests=await client.request<typeof roomPermanenceRequests>("rpc/get_founder_room_permanence_requests",{method:"POST",body:"{}"});roomPermanenceRequests=requests.data??[];}
   }
-  return <CompanyControlCenter snapshot={createCompanySnapshot()} betaTriage={betaTriage} founderBootstrapComplete={founderBootstrapComplete} />;
+  return <CompanyControlCenter snapshot={createCompanySnapshot()} betaTriage={betaTriage} founderBootstrapComplete={founderBootstrapComplete} roomPermanenceRequests={roomPermanenceRequests} />;
 }
