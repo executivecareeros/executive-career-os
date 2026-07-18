@@ -78,6 +78,7 @@ export type Opportunity = {
   workArrangement: WorkArrangement;
   employmentType: EmploymentType;
   industry: string;
+  industryClassification?: { source: "Verified provider metadata" | "Employer evidence" | "Unknown"; confidence: number; fingerprint: string };
   companySize: string;
   source: string;
   sourceUrl?: string;
@@ -94,6 +95,7 @@ export type Opportunity = {
   salaryMin?: number;
   salaryMax?: number;
   salaryCurrency?: string;
+  salaryDisclosure?: "Published range" | "Published minimum" | "Published maximum" | "Negotiable" | "Not disclosed" | "Estimated" | "Detected" | "Atlas estimate";
   executiveFitScore: number;
   strategicOpportunityScore: number;
   overallScore: number;

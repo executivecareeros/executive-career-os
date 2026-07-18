@@ -10,8 +10,7 @@ import type { LiveOpportunityViewModel } from "@/lib/live-opportunity";
 import { redirect } from "next/navigation";
 import { LiveWorkspaceEmptyState } from "@/components/live-workspace-empty-state";
 import type { Opportunity } from "@/types/opportunity";
-import { confirmGeographicProfileAction, importLinkedInJobAlert, importLinkedInOpportunity, refreshOpportunityBoard } from "./actions";
-import { getLocale } from "@/lib/locale";
+import { confirmGeographicProfileAction, refreshOpportunityBoard } from "./actions";
 import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
 import { executiveCareerContextFromRows, unknownGeographicProfile, type ExecutiveCareerContext } from "@/lib/opportunity-geography";
 import { currentSession } from "@/lib/auth/session";
@@ -20,7 +19,6 @@ type OpportunityRow = { domain_id: string; payload: Record<string, unknown> };
 type ExperienceRow = { id: string; role_title?: string; notes?: string };
 
 export default async function OpportunitiesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const locale = await getLocale();
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") {
     const resolved = await resolveAuthenticatedRepositoryContext();
     if (!resolved) redirect("/login?next=/opportunities");
@@ -53,8 +51,8 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     }
     if (unavailable) return <LiveWorkspaceEmptyState eyebrow="Executive Opportunity Universe" title="Your opportunities are temporarily unavailable" description="ORENDALIS could not safely load your private opportunity context." emptyTitle="Your records remain unchanged" emptyDescription="No empty state or recommendation is being inferred from this interruption. Return to Today and try again when the connection is available." actionHref="/" actionLabel="Return to Today" />;
     const query = await searchParams;
-    if (opportunity || collected.length) return <LiveOpportunityUniverse locale={locale} opportunity={opportunity} collected={collected} geographicProfile={geographicProfile} careerContext={executiveCareerContext} canConfirmFounderFixture={canConfirmFounderFixture} profileConfirmationAction={confirmGeographicProfileAction} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} linkedInNotice={typeof query.linkedin === "string" ? query.linkedin : undefined} verification={typeof query.verification === "string" ? query.verification : undefined} linkedInResetKey={typeof query.completedAt === "string" ? query.completedAt : undefined} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : typeof query.roles === "string" ? query.roles : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} collectionAction={refreshOpportunityBoard} linkedInAction={importLinkedInOpportunity} alertAction={importLinkedInJobAlert} />;
-    return <OpportunityUniverseEmpty locale={locale} collectionAction={refreshOpportunityBoard} linkedInAction={importLinkedInOpportunity} alertAction={importLinkedInJobAlert} linkedInNotice={typeof query.linkedin === "string" ? query.linkedin : undefined} message={typeof query.message === "string" ? query.message : undefined} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} />;
+    if (opportunity || collected.length) return <LiveOpportunityUniverse opportunity={opportunity} collected={collected} geographicProfile={geographicProfile} careerContext={executiveCareerContext} canConfirmFounderFixture={canConfirmFounderFixture} profileConfirmationAction={confirmGeographicProfileAction} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : typeof query.roles === "string" ? query.roles : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} collectionAction={refreshOpportunityBoard} />;
+    return <OpportunityUniverseEmpty collectionAction={refreshOpportunityBoard} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} />;
   }
   return <OpportunitiesWorkspace opportunities={opportunities} />;
 }
