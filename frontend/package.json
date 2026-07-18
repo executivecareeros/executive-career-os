@@ -46,6 +46,7 @@
     ,"test:product-learning": "node scripts/test-product-learning.mjs"
     ,"test:room-live-presence": "node scripts/test-room-live-presence.mjs"
     ,"test:turkiye-coverage": "node scripts/test-turkiye-coverage.mjs"
+    ,"test:company-directory-pagination": "node scripts/test-company-directory-pagination.mjs"
     ,"test:executive-search": "node --experimental-transform-types scripts/test-executive-search.mjs"
     ,"test:employer-intelligence": "node --experimental-transform-types scripts/test-employer-intelligence.mjs"
     ,"test:official-company-facts": "node --experimental-transform-types scripts/test-official-company-facts.mjs"
