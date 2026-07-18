@@ -15,6 +15,8 @@ assert.ok(searchSuggestions("reveneu", [opportunity]).includes("Chief Revenue Of
 
 const baseJob = { sourceId: "1", source: "greenhouse", title: "VP Sales", company: { sourceId: "acme", name: "Acme" }, description: "Lead revenue for our enterprise SaaS cloud platform.", discoveredAt: "2026-07-18T00:00:00Z", rawMetadata: {} };
 assert.deepEqual(classifyOpportunityIndustry({ ...baseJob, company: { ...baseJob.company, industry: "Cybersecurity" } }).source, "Verified provider metadata");
-assert.equal(classifyOpportunityIndustry(baseJob).value, "Enterprise Software");
+assert.equal(classifyOpportunityIndustry(baseJob).value, "Not specified", "role copy must not determine employer industry");
+assert.equal(classifyOpportunityIndustry({ ...baseJob, rawMetadata: { industry: "Enterprise Software" } }).value, "Enterprise Software", "explicit provider industry metadata remains valid evidence");
+assert.equal(classifyOpportunityIndustry({ ...baseJob, description: "Build an AI-first commerce platform." }).value, "Not specified", "technology mentioned in a role must not be presented as employer industry evidence");
 assert.equal(classifyOpportunityIndustry({ ...baseJob, description: "Executive leadership role." }).value, "Not specified", "unknown must remain unknown");
 console.log("Executive search and industry classification tests passed.");

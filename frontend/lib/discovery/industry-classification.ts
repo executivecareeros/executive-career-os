@@ -7,21 +7,6 @@ export type IndustryClassification = {
   fingerprint: string;
 };
 
-const RULES: readonly [string, readonly string[]][] = [
-  ["Enterprise Software", ["enterprise software", "saas", "cloud platform", "software platform", "developer platform"]],
-  ["Artificial Intelligence", ["artificial intelligence", "machine learning", "generative ai", "ai platform"]],
-  ["Cybersecurity", ["cybersecurity", "cyber security", "information security", "identity security"]],
-  ["Financial Services", ["financial services", "fintech", "banking", "payments", "insurance"]],
-  ["Healthcare", ["healthcare", "health care", "medtech", "biotechnology", "pharmaceutical"]],
-  ["Telecommunications", ["telecommunications", "telecom", "connectivity", "network operator"]],
-  ["Media & Entertainment", ["media technology", "broadcast", "streaming", "entertainment"]],
-  ["Professional Services", ["consulting", "professional services", "advisory services"]],
-  ["Manufacturing", ["manufacturing", "industrial automation", "automotive", "aerospace"]],
-  ["Retail & Consumer", ["retail", "consumer goods", "ecommerce", "e-commerce"]],
-  ["Energy", ["renewable energy", "energy", "utilities", "oil and gas"]],
-  ["Education", ["education technology", "edtech", "higher education", "learning platform"]],
-];
-
 function normalized(value: unknown) {
   return String(value ?? "").normalize("NFKC").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -32,15 +17,13 @@ function fingerprint(value: string) {
   return `industry-v1:${hash.toString(16).padStart(8, "0")}`;
 }
 
-/** Evidence-bound classification. It never infers beyond provider or employer-published text. */
+/** Evidence-bound classification. Role copy is never treated as evidence of an employer's industry. */
 export function classifyOpportunityIndustry(job: DiscoveryJob): IndustryClassification {
-  const explicit = normalized(job.company.industry);
+  const providerIndustry = job.company.industry ?? job.rawMetadata.industry;
+  const explicit = normalized(providerIndustry);
   const hasExplicit = explicit && !["not specified", "unknown", "other", "n a"].includes(explicit);
-  if (hasExplicit) return { value: String(job.company.industry).trim(), source: "Verified provider metadata", confidence: 100, fingerprint: fingerprint(explicit) };
+  if (hasExplicit) return { value: String(providerIndustry).trim(), source: "Verified provider metadata", confidence: 100, fingerprint: fingerprint(explicit) };
 
-  const evidence = normalized([job.company.name, job.description, job.rawMetadata.industry, job.rawMetadata.department, job.rawMetadata.function].join(" "));
-  for (const [industry, terms] of RULES) {
-    if (terms.some((term) => evidence.includes(normalized(term)))) return { value: industry, source: "Employer evidence", confidence: 80, fingerprint: fingerprint(`${industry}:${evidence}`) };
-  }
+  const evidence = normalized([job.company.name, job.sourceId].join(" "));
   return { value: "Not specified", source: "Unknown", confidence: 0, fingerprint: fingerprint(evidence) };
 }
