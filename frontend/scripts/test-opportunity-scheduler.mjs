@@ -28,6 +28,7 @@ assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT/, "Employer expansion mu
 assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT \?\? 50/, "The Opportunity Factory must qualify up to fifty verified public employer sources per cycle");
 assert.match(route, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
 assert.match(route, /sourceExpansion/, "Employer expansion must expose aggregate operational evidence");
+assert.match(route, /OPPORTUNITY_SCHEDULER_FAILURE/, "Scheduler failures must emit sanitized operational evidence instead of being silently suppressed");
 assert.match(route, /discoveryCursor/, "Every scheduler window must advance public employer discovery");
 assert.match(publicDiscovery, /cursorWindow \* sampleTarget/, "Public discovery must rotate across the indexed employer universe instead of replaying its alphabetical prefix");
 assert.match(publicDiscovery, /interleaveCandidates/, "Public discovery must distribute verification attempts across provider ecosystems");

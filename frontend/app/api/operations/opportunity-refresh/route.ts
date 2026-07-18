@@ -90,7 +90,11 @@ export async function GET(request: Request) {
       coverageError: coverage?.error ? { status: coverage.status, code: coverage.error.code, message: coverage.error.message.slice(0, 160) } : undefined,
     }));
     return NextResponse.json(summary, { status: summary.failed ? 207 : 200 });
-  } catch {
+  } catch (error) {
+    console.info("OPPORTUNITY_SCHEDULER_FAILURE", JSON.stringify({
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message.slice(0, 240) : "Scheduler execution failed",
+    }));
     return NextResponse.json({ error: "Scheduler execution failed" }, { status: 500 });
   }
 }
