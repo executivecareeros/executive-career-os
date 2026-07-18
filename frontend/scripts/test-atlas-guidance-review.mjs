@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [component, action, migration, page] = await Promise.all([
+const [component, action, migration, historyMigration, page] = await Promise.all([
   readFile(new URL("../components/atlas/guidance-question-review.tsx", import.meta.url), "utf8"),
   readFile(new URL("../app/assistant/actions.ts", import.meta.url), "utf8"),
   readFile(new URL("../../supabase/migrations/202607180015_atlas_guidance_responses.sql", import.meta.url), "utf8"),
+  readFile(new URL("../../supabase/migrations/202607180020_atlas_guidance_history.sql", import.meta.url), "utf8"),
   readFile(new URL("../app/assistant/page.tsx", import.meta.url), "utf8"),
 ]);
 
@@ -20,6 +21,11 @@ assert.match(action, /3 \* 24 \* 60 \* 60 \* 1000/, "guidance must be scheduled 
 assert.match(page, /next_review_at/, "answered questions must remain hidden until their review date");
 assert.match(page, /openQuestions/, "the next unanswered question must replace a completed question");
 assert.match(page, /Selected question/, "a question chosen from Ask Atlas must remain visible after navigation");
+assert.match(historyMigration, /atlas_guidance_response_history/, "guidance changes must be preserved as durable history");
+assert.match(historyMigration, /after insert or update/i, "history must be captured automatically with the saved response");
+assert.match(historyMigration, /revoke all[\s\S]*authenticated/i, "guidance history must be append-only for executives");
+assert.match(historyMigration, /is_active_workspace_member\(workspace_id\)/, "history RLS must preserve workspace isolation");
+assert.match(page, /Private guidance history/, "executives must be able to inspect what Atlas remembers");
 assert.match(migration, /unique\(workspace_id,executive_identity_id,question_id\)/, "repeated answers must update instead of duplicate");
 assert.match(migration, /enable row level security/, "guidance answers must use RLS");
 assert.match(migration, /is_active_workspace_member\(workspace_id\)/, "RLS must enforce workspace access");

@@ -58,11 +58,14 @@ async function LiveAtlas({ from, prompt }: { from?: string; prompt?: string }) {
 
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspace = resolved.context.workspace!;
-  const [profile, view, guidanceResponse] = await Promise.all([
+  const [profile, view, guidanceResponse, guidanceHistory] = await Promise.all([
     loadExecutiveProfileState(client, workspace.workspaceId, workspace.executiveId),
     new SupabaseBetaWorkflowRepository(client, resolved.context).load().catch(() => undefined),
     client.request<Array<{ question_id: string; answer: string; next_review_at: string }>>(
       `atlas_guidance_responses?workspace_id=eq.${workspace.workspaceId}&executive_identity_id=eq.${workspace.executiveId}&or=(answer.eq.__ATLAS_IRRELEVANT__,next_review_at.gt.now())&select=question_id,answer,next_review_at`,
+    ),
+    client.request<Array<{ id: string; question: string; answer: string; recorded_at: string }>>(
+      `atlas_guidance_response_history?workspace_id=eq.${workspace.workspaceId}&executive_identity_id=eq.${workspace.executiveId}&select=id,question,answer,recorded_at&order=recorded_at.desc&limit=12`,
     ),
   ]);
   const recommendation = view?.reasoning?.output.recommendation;
@@ -103,6 +106,7 @@ async function LiveAtlas({ from, prompt }: { from?: string; prompt?: string }) {
           <div className="mt-6"><Link href="/opportunities" className="inline-flex rounded-xl bg-[#17191c] px-5 py-3 text-sm font-semibold text-white">Explore opportunities</Link></div>
         </section>
       )}
+      {(guidanceHistory.data ?? []).length > 0 && <section className="mt-6 rounded-2xl border border-[#e3e5e6] bg-white p-6 shadow-sm"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[.17em] text-[#55705d]">Private guidance history</p><h2 className="mt-2 text-2xl font-semibold">What Atlas should remember</h2></div><span className="rounded-full bg-[#eef4ef] px-3 py-1 text-xs font-semibold text-[#55705d]">Private to your workspace</span></div><div className="mt-5 space-y-3">{(guidanceHistory.data ?? []).map(item => <article key={item.id} className="rounded-2xl border border-[#e5e8e6] bg-[#fafbf9] p-4"><p className="text-sm font-semibold text-[#30343a]">{item.question}</p><p className="mt-2 text-sm leading-6 text-[#626970]">{item.answer === "__ATLAS_IRRELEVANT__" ? "Marked not relevant" : item.answer}</p></article>)}</div></section>}
     </main>
   );
 }
