@@ -36,6 +36,7 @@ const countries = await readFile(resolve(root, "supabase/migrations/202607180002
 const intelligence = await readFile(resolve(root, "supabase/migrations/202607180003_global_coverage_intelligence.sql"), "utf8");
 const boundedIntelligence = await readFile(resolve(root, "supabase/migrations/202607180004_bounded_global_coverage_telemetry.sql"), "utf8");
 const operationalSummary = await readFile(resolve(root, "supabase/migrations/202607180016_operational_coverage_summary.sql"), "utf8");
+const countryNormalization = await readFile(resolve(root, "supabase/migrations/202607180017_country_alias_normalization.sql"), "utf8");
 const schedulerRoute = await readFile(resolve(root, "frontend/app/api/operations/opportunity-refresh/route.ts"), "utf8");
 assert.match(migration, /^begin;/);
 assert.match(migration, /record_count between 1 and 250/, "Database batch size must be bounded");
@@ -59,7 +60,12 @@ assert.match(boundedIntelligence, /global-coverage-intelligence-v2/);
 assert.match(operationalSummary, /get_operational_coverage_summary/);
 assert.match(operationalSummary, /operational-coverage-summary-v1/);
 assert.match(operationalSummary, /Geographic labels are deliberately not presented as verified country counts/);
+assert.match(countryNormalization, /operational-coverage-summary-v2/);
+assert.match(countryNormalization, /countries_represented/);
+assert.match(countryNormalization, /unrecognized_location_labels/);
 assert.match(schedulerRoute, /rpc\/get_operational_coverage_summary/);
+assert.match(schedulerRoute, /countriesRepresented/);
+assert.match(schedulerRoute, /unrecognizedLocationLabels/);
 assert.doesNotMatch(schedulerRoute, /rpc\/get_global_coverage_intelligence/);
 assert.match(schedulerRoute, /ODS3_OPERATIONAL_TELEMETRY/);
 

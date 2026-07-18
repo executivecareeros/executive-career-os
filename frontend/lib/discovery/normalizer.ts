@@ -2,8 +2,9 @@ import type { Opportunity } from "@/types/opportunity";
 import type { ConnectorContext, DiscoveryJob, DiscoveryResult, OpportunityNormalizer, SourceReliability } from "./types";
 import { classifyOpportunityIndustry } from "./industry-classification.ts";
 import { extractPublishedCompensation } from "./published-compensation.ts";
+import { canonicalCountry } from "./country-normalization.ts";
 
-export const NORMALIZATION_VERSION = "1.0.0";
+export const NORMALIZATION_VERSION = "1.1.0";
 
 export function opportunityContentFingerprint(job: DiscoveryJob) {
   const value = [job.title, job.company.canonicalKey ?? job.company.name, job.location, job.country, job.description, job.employmentType, job.publishedAt]
@@ -29,6 +30,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
     // An ATS posting URL identifies the publishing system, not the employer.
     // Only an employer-controlled website may establish employerDomain.
     try { employerDomain = job.company.website ? new URL(job.company.website).hostname.toLowerCase().replace(/^www\./, "") : undefined; } catch { /* Unknown remains explicit. */ }
+    const country = canonicalCountry(job.country ?? job.company.country) ?? "Not specified";
     const opportunity: Opportunity = {
       id: `discovered-${job.source}-${job.sourceId}`,
       externalIds: [job.sourceId],
@@ -41,7 +43,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       atlasAnalysisStatus: "Pending",
       jobTitle: job.title,
       location: job.location ?? "Not specified",
-      country: job.country ?? job.company.country ?? "Not specified",
+      country,
       workArrangement,
       employmentType,
       industry: industry.value,
