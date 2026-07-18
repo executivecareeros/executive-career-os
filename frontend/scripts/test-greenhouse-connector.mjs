@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
-import { GreenhouseOpportunityProvider, parseGreenhouseBoardToken } from "../lib/discovery/providers/greenhouse.ts";
+import { GreenhouseOpportunityProvider, countryFromGreenhouseLocation, parseGreenhouseBoardToken } from "../lib/discovery/providers/greenhouse.ts";
 
 assert.equal(parseGreenhouseBoardToken("https://job-boards.greenhouse.io/example/jobs/123"), "example");
 assert.equal(parseGreenhouseBoardToken("example-board"), "example-board");
 assert.throws(() => parseGreenhouseBoardToken("https://example.com/jobs"), /Only public Greenhouse/);
+assert.equal(countryFromGreenhouseLocation("Berlin, Germany"), "Germany");
+assert.equal(countryFromGreenhouseLocation("Remote - USA"), "United States");
+assert.equal(countryFromGreenhouseLocation("Austin, TX"), undefined, "State abbreviations must not be promoted to countries");
+assert.equal(countryFromGreenhouseLocation("Hybrid"), undefined, "Work arrangements must not be stored as countries");
 
 const fetcher = async (url) => {
   if (String(url).endsWith("/v1/boards/example")) return new Response(JSON.stringify({ name: "Example Company" }), { status: 200 });

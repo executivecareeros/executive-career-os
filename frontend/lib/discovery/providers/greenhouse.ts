@@ -2,6 +2,7 @@ import type { DiscoveryJob, OpportunityProvider, ProviderCollectionRequest } fro
 import { ProviderSdk } from "../provider-sdk.ts";
 import { greenhouseProviderManifest } from "./manifests.ts";
 import { plainText } from "./provider-utils.ts";
+import { countryFromExplicitLocation } from "../country-normalization.ts";
 
 type GreenhouseJob = {
   id: number;
@@ -31,9 +32,13 @@ export function parseGreenhouseBoardToken(locator: string) {
   return token;
 }
 
+export function countryFromGreenhouseLocation(value: string | undefined | null) {
+  return countryFromExplicitLocation(value);
+}
+
 function countryFrom(job: GreenhouseJob) {
   const location = job.location?.name ?? job.offices?.map((office) => office.location).find(Boolean);
-  return location?.split(",").at(-1)?.trim();
+  return countryFromGreenhouseLocation(location);
 }
 
 export class GreenhouseOpportunityProvider implements OpportunityProvider {
