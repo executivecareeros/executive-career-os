@@ -3,6 +3,10 @@
     {
       "path": "/api/operations/opportunity-refresh",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/operations/source-discovery",
+      "schedule": "7,37 * * * *"
     }
   ]
 }

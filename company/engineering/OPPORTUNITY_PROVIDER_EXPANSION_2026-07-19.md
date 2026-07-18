@@ -34,7 +34,13 @@ The 1,520 figure is source-advertised inventory in the selected verification coh
 - Employer feeds remain public and authorization-free; no account automation, cookies, access-control bypass or protected-page scraping is used.
 - Existing workspace isolation, normalization, provenance, lifecycle and canonical deduplication remain unchanged.
 - LinkedIn, Workday and any provider requiring contractual acceptance, paid licensing or ambiguous permission remain approval-gated.
-- The 15-minute production cycle now processes six provider jobs by default (24/hour), gives public discovery a strict 45-second budget and caps each newly registered cohort at 20 sources (14 by default). This preserves continuous expansion without allowing provider work plus public-index latency to consume Vercel's 240-second execution ceiling.
+- The 15-minute production ingestion cycle processes six provider jobs by default (24/hour). Public discovery no longer shares that execution window.
+
+## Independent factory loops
+
+Source discovery and canonical ingestion now run as separate authenticated operations. Canonical ingestion retains its 15-minute schedule and measured six-job ceiling. Zero-token source discovery runs twice per hour with a 150-second budget, a forty-source default and a hard fifty-source ceiling. This removes public-index latency from the canonical write window and raises theoretical verified-source registration capacity from 1,344 to 1,920 sources per day before deduplication, provider health and available candidate supply.
+
+Both operations use the same scheduler secret, server-only Supabase client, approved provider catalog, canonical pipeline and durable schedule table. The split adds no AI calls, provider-specific persistence or new external service.
 
 ## Operational recovery
 
@@ -53,6 +59,8 @@ Teamtailor documents a partner job-board integration, public webhooks and XML de
 - ESLint: pass.
 - Production build: pass, 134 routes.
 - Live mixed-provider discovery: pass.
+- Independent source-discovery authentication and bounds: pass.
+- Production build: pass, 134 routes including the dedicated source-discovery operation.
 
 ## Founder Backlog Dashboard
 

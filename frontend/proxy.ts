@@ -14,7 +14,7 @@ const publicPaths = [
   "/icon.svg",
 ];
 
-const serverAuthenticatedPaths = ["/api/operations/opportunity-refresh"];
+const serverAuthenticatedPaths = ["/api/operations/opportunity-refresh", "/api/operations/source-discovery"];
 
 const demoOnlyModules: Array<[prefix: string, module: string]> = [
   ["/discovery", "discovery"],

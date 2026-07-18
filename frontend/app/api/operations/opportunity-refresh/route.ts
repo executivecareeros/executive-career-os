@@ -4,8 +4,6 @@ import { runOpportunityScheduler } from "@/lib/discovery/scheduler-runtime";
 import { createSchedulerSupabaseClient } from "@/lib/supabase/scheduler";
 import type { SupabaseDataClient } from "@/lib/supabase/client";
 import { activateCompanyIntelligence, parseCompanyIntelligenceActivationDomains } from "@/lib/company-intelligence/activation";
-import { discoverPublicEmployerSources } from "@/lib/discovery/public-employer-discovery";
-import { prepareEmployerSourceBatch, registerEmployerSourceBatch } from "@/lib/discovery/employer-source-factory";
 
 export const dynamic = "force-dynamic";
 // A full employer cohort can require more than one minute of deterministic,
@@ -37,22 +35,8 @@ export async function GET(request: Request) {
     };
     const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 6) || 6));
     const summary = await runOpportunityScheduler(client, undefined, maximumJobs);
-    const schedules = await client.request<Array<{ workspace_id: string; created_by: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,locator&enabled=eq.true&order=created_at.desc&limit=1000");
+    const schedules = await client.request<Array<{ workspace_id: string; created_by: string }>>("opportunity_provider_schedules?select=workspace_id,created_by&enabled=eq.true&order=created_at.desc&limit=1");
     const workspaceId = schedules.data?.[0]?.workspace_id;
-    const sourceExpansionLimit = Math.max(0, Math.min(20, Number(process.env.OPPORTUNITY_SOURCE_EXPANSION_LIMIT ?? 14) || 14));
-    let sourceExpansion: Record<string, unknown> | undefined;
-    if (workspaceId && schedules.data?.[0]?.created_by && sourceExpansionLimit) {
-      try {
-        const discoveryCursor = Math.floor(Date.now() / (15 * 60_000));
-        const discovery = await discoverPublicEmployerSources({ existingUrls: (schedules.data ?? []).flatMap(item => item.locator?.url ? [item.locator.url] : []), maximumSources: sourceExpansionLimit, concurrency: 12, discoveryCursor, timeBudgetMs: 45_000 });
-        const prepared = prepareEmployerSourceBatch(discovery.sources);
-        const connected = prepared.prepared.map(source => ({ ...source, healthStatus: "connected" as const, healthMessage: "Verified through the provider's public active-job endpoint." }));
-        const registration = await registerEmployerSourceBatch(client, { workspaceId, actorId: schedules.data[0].created_by, sources: connected });
-        sourceExpansion = { candidates: discovery.candidates, attempted: discovery.attempted, failures: discovery.failures, advertisedActiveJobs: discovery.advertisedActiveJobs, ...registration, aiTokens: 0 };
-      } catch (error) {
-        sourceExpansion = { status: "isolated-failure", message: error instanceof Error ? error.message.slice(0, 160) : "Public employer discovery failed.", aiTokens: 0 };
-      }
-    }
     const companyActivationLimit = Math.max(0, Math.min(25, Number(process.env.COMPANY_INTELLIGENCE_ACTIVATION_LIMIT ?? 0) || 0));
     const companyActivationDomains = parseCompanyIntelligenceActivationDomains(process.env.COMPANY_INTELLIGENCE_ACTIVATION_DOMAINS);
     const companyIntelligenceActivation = workspaceId && companyActivationLimit && companyActivationDomains.length
@@ -85,7 +69,6 @@ export async function GET(request: Request) {
       persistence: evidence?.persistence ?? {},
       employerIntelligence: employerIntelligence?.data ?? undefined,
       companyIntelligenceActivation,
-      sourceExpansion,
       employerIntelligenceError: employerIntelligence?.error ? { status: employerIntelligence.status, code: employerIntelligence.error.code, message: employerIntelligence.error.message.slice(0, 160) } : undefined,
       coverageError: coverage?.error ? { status: coverage.status, code: coverage.error.code, message: coverage.error.message.slice(0, 160) } : undefined,
     }));

@@ -10,6 +10,7 @@ assert.equal(schedulerRequestAuthorized("Bearer secret", undefined), false);
 
 const root = resolve(import.meta.dirname, "../..");
 const route = await readFile(resolve(root, "frontend/app/api/operations/opportunity-refresh/route.ts"), "utf8");
+const discoveryRoute = await readFile(resolve(root, "frontend/app/api/operations/source-discovery/route.ts"), "utf8");
 const runtime = await readFile(resolve(root, "frontend/lib/discovery/scheduler-runtime.ts"), "utf8");
 const publicDiscovery = await readFile(resolve(root, "frontend/lib/discovery/public-employer-discovery.ts"), "utf8");
 const proxy = await readFile(resolve(root, "frontend/proxy.ts"), "utf8");
@@ -23,24 +24,27 @@ assert.match(route, /maxDuration = 240/, "A full provider cohort must have enoug
 assert.match(route, /Math\.max\(1, Math\.min\(12,/, "Bulk execution must retain a hard per-invocation safety ceiling");
 assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 6/, "The Opportunity Factory must use the measured six-job production default");
 assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs\)/, "The bounded bulk limit must reach the scheduler runtime");
-assert.match(route, /discoverPublicEmployerSources/, "The scheduler must continuously expand verified public employer coverage");
-assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT/, "Employer expansion must remain bounded by configuration");
-assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT \?\? 14/, "The Opportunity Factory must use the measured healthy source cohort by default");
-assert.match(route, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
-assert.match(route, /sourceExpansion/, "Employer expansion must expose aggregate operational evidence");
+assert.doesNotMatch(route, /discoverPublicEmployerSources/, "Public-index latency must not consume the canonical ingestion execution window");
 assert.match(route, /OPPORTUNITY_SCHEDULER_FAILURE/, "Scheduler failures must emit sanitized operational evidence instead of being silently suppressed");
-assert.match(route, /discoveryCursor/, "Every scheduler window must advance public employer discovery");
-assert.match(route, /timeBudgetMs:\s*45_000/, "Public discovery must leave headroom inside the Vercel execution ceiling");
-assert.match(route, /Math\.min\(20/, "Each cycle must cap newly registered sources to a healthy bounded cohort");
+assert.match(discoveryRoute, /schedulerRequestAuthorized/);
+assert.match(discoveryRoute, /discoverPublicEmployerSources/, "The dedicated source cycle must continuously expand verified public employer coverage");
+assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_LIMIT/, "Employer expansion must remain bounded by configuration");
+assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_LIMIT \?\? 40/, "The dedicated cycle must use the measured forty-source default");
+assert.match(discoveryRoute, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
+assert.match(discoveryRoute, /discoveryCursor/, "Every source cycle must advance public employer discovery");
+assert.match(discoveryRoute, /timeBudgetMs:\s*150_000/, "Source discovery must retain a hard execution budget");
+assert.match(discoveryRoute, /Math\.min\(50/, "Each source cycle must cap newly registered sources");
+assert.match(discoveryRoute, /ZERO_TOKEN_SOURCE_DISCOVERY/, "Source discovery must expose aggregate operational evidence");
 assert.match(publicDiscovery, /cursorWindow \* sampleTarget/, "Public discovery must rotate across the indexed employer universe instead of replaying its alphabetical prefix");
 assert.match(publicDiscovery, /interleaveCandidates/, "Public discovery must distribute verification attempts across provider ecosystems");
 assert.match(publicDiscovery, /selectDiverseSources/, "A successful discovery window must activate healthy sources across provider ecosystems before filling by volume");
 assert.doesNotMatch(publicDiscovery, /Promise\.allSettled\(definitions/, "Common Crawl provider indexes must not be queried in a rate-limit-hostile parallel burst");
 assert.match(publicDiscovery, /await pause\(150\)/, "Public index requests must be politely spaced");
-assert.doesNotMatch(route, /OpenAI|anthropic|completion|embedding/i, "Source expansion must remain zero-token");
+assert.doesNotMatch(route + discoveryRoute, /OpenAI|anthropic|completion|embedding/i, "Source expansion must remain zero-token");
 assert.match(runtime, /maximumJobs = 12/, "The scheduler runtime must share the twelve-job safe default");
 assert.match(proxy, /serverAuthenticatedPaths/);
 assert.match(proxy, /\/api\/operations\/opportunity-refresh/);
+assert.match(proxy, /\/api\/operations\/source-discovery/);
 assert.match(proxy, /serverAuthenticatedPaths\.includes\(path\)/);
 assert.doesNotMatch(route + runtime, /console\.(log|error)|SUPABASE_SCHEDULER_KEY\s*[:=]\s*["'][^"']+/);
 assert.match(runtime, /claim_next_opportunity_provider_job/);
@@ -53,9 +57,13 @@ assert.match(runtime, /lease_seconds: 300/);
 assert.match(runtime, /"retrying"/);
 assert.match(runtime, /"failed"/);
 assert.match(migration, /unique index opportunity_provider_jobs_one_active_schedule_idx/i);
-assert.equal(vercel.crons[0].path, "/api/operations/opportunity-refresh");
-assert.equal(vercel.crons[0].schedule, "*/15 * * * *");
-assert.equal(networkStaging.crons[0].path, "/api/operations/opportunity-refresh");
-assert.equal(networkStaging.crons[0].schedule, "* * * * *");
+assert.deepEqual(vercel.crons, [
+  { path: "/api/operations/opportunity-refresh", schedule: "*/15 * * * *" },
+  { path: "/api/operations/source-discovery", schedule: "7,37 * * * *" },
+]);
+assert.deepEqual(networkStaging.crons, [
+  { path: "/api/operations/opportunity-refresh", schedule: "* * * * *" },
+  { path: "/api/operations/source-discovery", schedule: "*/5 * * * *" },
+]);
 
 console.log("Opportunity scheduler security and durability checks passed.");
