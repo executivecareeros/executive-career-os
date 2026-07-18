@@ -59,7 +59,7 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#f7f3ec]">
+      <body className="min-h-full bg-[#f5f7fb]">
         <AppShell publicExperience={publicExperience} locale={locale} signedInEmail={session?.user.email}>{children}</AppShell>
       </body>
     </html>

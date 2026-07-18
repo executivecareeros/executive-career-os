@@ -5,7 +5,7 @@
 
 | Subsystem | Current capability | Status | Known limitations | Routes / services | Data dependencies | Tests | Observability | Security | Founder approval |
 |---|---|---|---|---|---|---|---|---|---|
-| Public website | English landing, SEO, registration entry | Beta Ready | Conversion/accessibility evidence incomplete | `/`, `/register`, `/login` | Auth configuration | public-acquisition, project-simplicity | HTTP only; product analytics Unknown | Public/private proxy rules | Review required |
+| Public website | English premium landing, clear Atlas/evidence positioning, CV and opportunity entry, redesigned authentication | Founder Review Required | Founder comprehension, conversion, mobile and accessibility evidence incomplete | `/`, `/register`, `/login` | Auth configuration | public-acquisition, project-simplicity, executive-experience contract | HTTP only; product analytics Unknown | Public/private proxy rules | Founder visual review required |
 | Authentication | Signup, verification, recovery, invitation, bootstrap | Beta Ready | Current external recovery rehearsal incomplete | auth routes; Supabase Auth | identities/invitations | email, invitation, bootstrap, runtime DB | Provider logs | RLS/auth runtime pass | Previously approved; final review required |
 | CV/Profile | Deterministic extraction, review, editing, idempotent persistence | Beta Ready | Real-CV regression corpus incomplete | `/import*`, `/workspace` | professional history/profile | import, profile-state, database | Save errors/provider logs | Private workspace, raw file not retained | Review required |
 | Search | Filters, aliases, suggestions, fuzzy assistance, salary bounds | Beta Ready | Live relevance/p95/zero-result Unknown | `/opportunities` | canonical opportunities/preferences | executive-search, geography | User query telemetry absent | Workspace-scoped preferences | Review required |
@@ -27,7 +27,7 @@
 | Security | Auth, workspace RLS, input validation, append-only controls | Beta Ready | Full DAST/recovery/alert evidence missing | cross-cutting | Supabase/provider ownership | static DB, runtime DB/RLS, SSRF/import | Security events partial | Runtime isolation passes | Final review required |
 | Mobile | Responsive shell and page layouts | Beta Ready | Complete authenticated 390px matrix missing | all major routes | UI | build/contracts | RUM absent | Same auth boundary | Review required |
 | Accessibility | Focus, semantics, reduced motion foundations | Development | WCAG 2.2 AA audit absent | all UI | design system | lint only/selected contracts | None | N/A | Not approved complete |
-| Branding | Canonical mark/name/palette and premium foundation | Founder Review Required | Formal visual system and route acceptance incomplete | global UI | brand assets/styles | brand/string checks | None | Protected brand spelling | Founder review required |
+| Branding | Intelligence Orbit mark candidate, protected name, Midnight/Cobalt/Mint palette, Geist typography, shared cards/actions/navigation | Founder Review Required | Social preview refresh and complete route/mobile acceptance remain | global UI | brand assets/styles | brand/string, public-acquisition, project-simplicity, build | None | Protected brand spelling and semantic interaction colors | Founder visual approval required |
 
 ## Current quality authority
 

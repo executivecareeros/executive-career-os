@@ -6,6 +6,16 @@
 
 Canonical brand is `ORENDALIS`; never localized or locale-uppercased. The shared mark returns Home, has an accessible name and works at supported sizes. The system defines typography, palette, spacing, iconography, motion, focus and component states. English is the only enabled production language; localization architecture remains dormant and configurable.
 
+### Visual system — Founder review candidate 2026-07-18
+
+- **Mark:** the ORENDALIS Intelligence Orbit combines a complete orbit (the executive's career context), an ascending evidence path (progress with direction) and a mint origin point (the executive remains the source).
+- **Typography:** self-hosted Geist across interface and display surfaces; hierarchy comes from scale, weight and spacing rather than multiple typefaces.
+- **Primary palette:** Midnight `#0B1220`, Cobalt `#3457D5`, Direction Blue `#6D8CFF`, Signal Mint `#7DE2C6`, Canvas `#F5F7FB`, White `#FFFFFF`.
+- **Interaction rule:** cobalt identifies direction and interaction; mint identifies positive/ready state; neither is used as decorative body text.
+- **Surface rule:** solid content surfaces by default; translucent material is reserved for navigation and high-value briefing previews.
+- **Shape rule:** 12–22 px radii, with controls using 12 px rather than ambiguous black capsules.
+- **Language:** English only in production surfaces; no visible language selector.
+
 ## Experience principles
 
 Premium, calm, credible, minimal and evidence-aware. Every screen answers where the executive is, what changed, why it matters and what to do next. No engineering vocabulary, dead ends, ambiguous black controls, fabricated content, hidden actions or excessive reading.

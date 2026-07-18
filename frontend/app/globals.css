@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-.orendalis-arrival { background: #f7f3ec; }
+.orendalis-arrival { background: #f5f7fb; }
 
-.orendalis-display { font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
-.orendalis-eyebrow { font-size: .68rem; font-weight: 650; letter-spacing: .24em; text-transform: uppercase; color: #936b3f; }
+.orendalis-display { font-family: var(--font-geist-sans), Arial, sans-serif; font-weight: 590; }
+.orendalis-eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #3457d5; }
+.orendalis-wordmark { color: var(--orendalis-ink); }
 .orendalis-horizon { position: absolute; inset: 11% -18% auto 44%; aspect-ratio: 1; border: 1px solid rgba(184, 161, 124, .12); border-radius: 9999px; box-shadow: 0 0 0 5rem rgba(255,255,255,.008), 0 0 0 10rem rgba(255,255,255,.006); }
 .orendalis-horizon::after { content: ""; position: absolute; left: 15%; right: 15%; top: 51%; height: 1px; background: linear-gradient(90deg, transparent, rgba(199,171,126,.45), transparent); }
 .orendalis-primary-action { display: inline-flex; min-height: 3.25rem; align-items: center; justify-content: center; gap: .75rem; border-radius: 9999px; background: #efe8dc; padding: .85rem 1.4rem; color: #11161b; font-size: .84rem; font-weight: 700; transition: transform 180ms ease, background 180ms ease; }
@@ -24,21 +25,24 @@
 }
 
 :root {
-  --background: #f7f3ec;
-  --foreground: #22211f;
-  --orendalis-ivory: #f7f3ec;
-  --orendalis-paper: #fffdf9;
-  --orendalis-charcoal: #22211f;
-  --orendalis-muted: #706c66;
-  --orendalis-border: #e3ddd3;
-  --orendalis-accent: #936b3f;
-  --orendalis-accent-soft: #eee2d2;
-  --atlas-surface: #fffdf9;
-  --atlas-surface-raised: #faf6ef;
-  --atlas-border: #e3ddd3;
-  --atlas-accent: #936b3f;
-  --atlas-radius: 1rem;
-  --atlas-shadow: 0 18px 55px rgba(54, 43, 31, 0.07);
+  --background: #f5f7fb;
+  --foreground: #0b1220;
+  --orendalis-ivory: #f5f7fb;
+  --orendalis-paper: #ffffff;
+  --orendalis-charcoal: #0b1220;
+  --orendalis-ink: #0b1220;
+  --orendalis-muted: #5f6b7a;
+  --orendalis-border: #dfe5ee;
+  --orendalis-accent: #3457d5;
+  --orendalis-accent-strong: #2545bd;
+  --orendalis-accent-soft: #e9efff;
+  --orendalis-mint: #7de2c6;
+  --atlas-surface: #ffffff;
+  --atlas-surface-raised: #f8faff;
+  --atlas-border: #dfe5ee;
+  --atlas-accent: #3457d5;
+  --atlas-radius: 1.25rem;
+  --atlas-shadow: 0 18px 55px rgba(31, 49, 84, 0.09);
 }
 
 @theme inline {
@@ -56,7 +60,7 @@ body {
   font-feature-settings: "kern" 1, "liga" 1;
 }
 
-::selection { background: #e7d4bc; color: #22211f; }
+::selection { background: #cfdbff; color: #0b1220; }
 :focus-visible { outline: 2px solid var(--atlas-accent); outline-offset: 3px; }
 a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 textarea { font: inherit; }
@@ -82,7 +86,7 @@ select {
   animation: page-enter 220ms cubic-bezier(.2,.8,.2,1);
 }
 
-.atlas-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(147,107,63,.25) transparent; }
+.atlas-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(52,87,213,.25) transparent; }
 .atlas-surface { background: var(--atlas-surface); border: 1px solid var(--atlas-border); box-shadow: var(--atlas-shadow); }
 .atlas-kicker { font-size: .6875rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--orendalis-accent); }
 
@@ -95,7 +99,7 @@ select {
 [data-executive-shell] [class*="text-slate-2"],
 [data-executive-shell] [class*="text-slate-3"],
 [data-executive-shell] [class*="text-slate-4"],
-[data-executive-shell] [class*="text-slate-5"] { color: #6f757b; }
+[data-executive-shell] [class*="text-slate-5"] { color: #5f6b7a; }
 [data-executive-shell] [class*="bg-slate-950"],
 [data-executive-shell] [class*="bg-slate-900"] { background-color: #fff; }
 [data-executive-shell] [class*="bg-white/[."] { background-color: #fff; }
@@ -103,7 +107,7 @@ select {
 [data-executive-shell] .atlas-kicker { color: var(--orendalis-accent); }
 
 /* Legacy screens inherit one calm executive system while their behavior remains unchanged. */
-[data-executive-shell] { background: var(--orendalis-ivory); color: var(--orendalis-charcoal); }
+[data-executive-shell] { background: radial-gradient(circle at 70% -20%, rgba(109,140,255,.09), transparent 34rem), var(--orendalis-ivory); color: var(--orendalis-charcoal); }
 [data-executive-shell] [class*="text-blue-"],
 [data-executive-shell] [class*="text-sky-"],
 [data-executive-shell] [class*="text-cyan-"] { color: var(--orendalis-accent); }
@@ -112,16 +116,23 @@ select {
 [data-executive-shell] [class*="bg-cyan-"] { background-color: var(--orendalis-accent-soft); }
 [data-executive-shell] [class*="border-blue-"],
 [data-executive-shell] [class*="border-sky-"],
-[data-executive-shell] [class*="border-cyan-"] { border-color: #c8aa86; }
+[data-executive-shell] [class*="border-cyan-"] { border-color: #9eb1f4; }
 [data-executive-shell] [class*="focus-visible:ring-blue-"]:focus-visible,
 [data-executive-shell] [class*="focus:ring-blue-"]:focus { --tw-ring-color: var(--orendalis-accent); }
 [data-executive-shell] input,
 [data-executive-shell] select,
-[data-executive-shell] textarea { color: var(--orendalis-charcoal); border-color: var(--orendalis-border); background: var(--orendalis-paper); }
+[data-executive-shell] textarea { color: var(--orendalis-charcoal); border-color: var(--orendalis-border); background: var(--orendalis-paper); box-shadow: 0 1px 2px rgba(11,18,32,.025); }
 [data-executive-shell] input::placeholder,
 [data-executive-shell] textarea::placeholder { color: #999189; }
 [data-executive-shell] table { color: var(--orendalis-charcoal); }
 [data-executive-shell] hr { border-color: var(--orendalis-border); }
+
+.orendalis-grid {
+  background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.orendalis-glass { background: rgba(255,255,255,.76); border: 1px solid rgba(255,255,255,.8); box-shadow: 0 24px 80px rgba(4,12,28,.15); backdrop-filter: blur(18px); }
+.orendalis-gradient-text { color: #f8faff; background: linear-gradient(110deg,#fff 15%,#b8c7ff 58%,#8fe7d0); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 
 @keyframes atlas-pulse { 0%,100%{opacity:.45} 50%{opacity:.8} }
 .atlas-skeleton { animation: atlas-pulse 1.5s ease-in-out infinite; background: rgba(148,163,184,.1); border-radius: .75rem; }
