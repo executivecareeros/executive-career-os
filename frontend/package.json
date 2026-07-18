@@ -85,6 +85,7 @@
     "test:atlas-decision-workspace": "node --experimental-transform-types scripts/test-atlas-decision-workspace.mjs",
     "test:atlas-product-integration": "node --experimental-transform-types scripts/test-atlas-product-integration.mjs",
     "test:atlas-guidance-review": "node scripts/test-atlas-guidance-review.mjs",
+    "test:atlas-everywhere": "node --experimental-transform-types scripts/test-atlas-everywhere.mjs",
     "test:country-normalization": "node --experimental-transform-types scripts/test-country-normalization.mjs",
     "test:batch-persistence": "node --experimental-transform-types scripts/test-batch-persistence.mjs",
     "measure:batch-capacity": "node scripts/measure-batch-capacity.mjs",

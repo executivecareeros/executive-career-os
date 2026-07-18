@@ -14,9 +14,11 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import { loadExecutiveProfileState } from "@/lib/profile/executive-profile-state.server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { resolveAtlasHandoffContext } from "@/lib/atlas/page-context";
 
-export default async function AssistantPage() {
-  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <LiveAtlas />;
+export default async function AssistantPage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
+  const { from } = await searchParams;
+  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <LiveAtlas from={from} />;
   const pending = agentTasks.filter(task => task.state === "pending");
   const completed = agentTasks.filter(task => task.state === "completed");
 
@@ -50,7 +52,7 @@ export default async function AssistantPage() {
   );
 }
 
-async function LiveAtlas() {
+async function LiveAtlas({ from }: { from?: string }) {
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect("/login?next=/assistant");
 
@@ -66,6 +68,7 @@ async function LiveAtlas() {
   const recommendation = view?.reasoning?.output.recommendation;
   const questions = view?.reasoning?.output.questions ?? [];
   const existingAnswers = new Map((guidanceResponse.data ?? []).map(item => [item.question_id, item.answer]));
+  const handoff = resolveAtlasHandoffContext(from);
 
   return (
     <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6 lg:px-10">
@@ -75,6 +78,7 @@ async function LiveAtlas() {
         description="Atlas distinguishes confirmed facts from unknowns and explains what could change a recommendation."
         actions={<div className="flex flex-wrap gap-3"><Link href="/workspace" className="inline-flex rounded-xl border border-[#d9dcde] bg-white px-5 py-3 text-sm font-semibold text-[#30343a]">Review profile</Link><Link href="/opportunities" className="inline-flex rounded-xl bg-[#17191c] px-5 py-3 text-sm font-semibold text-white">Ranked opportunities</Link></div>}
       />
+      {handoff && <section className="mt-6 rounded-2xl border border-[#cad7ee] bg-[#f5f8ff] p-5"><p className="text-xs font-semibold uppercase tracking-[.17em] text-[#3457d5]">Continuing from {handoff.label}</p><h2 className="mt-2 text-xl font-semibold">{handoff.title}</h2><p className="mt-2 text-sm leading-6 text-[#5f6b7a]">{handoff.summary}</p><div className="mt-4 flex flex-wrap gap-2">{handoff.prompts.map(prompt => <span key={prompt} className="rounded-full border border-[#cfdaf0] bg-white px-3 py-2 text-xs font-medium text-[#35445d]">{prompt}</span>)}</div><Link href={handoff.returnHref} className="mt-4 inline-flex text-sm font-semibold text-[#3457d5]">Return to {handoff.label} →</Link></section>}
       <section className="mt-8 rounded-2xl border border-[#d8ddd9] bg-[#f6f8f6] p-6">
         <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#55705d]">Current context</p>
         <h2 className="mt-3 text-2xl font-semibold">Atlas is {profile.atlasState.toLowerCase()}</h2>

@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ExecutiveCommandBar } from "./executive-command-bar";
 import type { Locale } from "@/lib/locale";
 import { ProductLearningTracker } from "./product-learning-tracker";
+import { AtlasEverywhere } from "./atlas/atlas-everywhere";
 
 export function AppShell({ children, publicExperience = false, locale = "en", signedInName, signedInEmail }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale; signedInName?: string; signedInEmail?: string }>) {
   const menu = useMobileMenu();
@@ -49,6 +50,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
         <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} locale={locale} signedInName={signedInName} signedInEmail={signedInEmail} />
         <PageContent locale={locale}>{children}</PageContent>
       </main>
+      {signedInEmail && <AtlasEverywhere />}
     </div>
   );
 }
