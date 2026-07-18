@@ -35,6 +35,9 @@ export async function GET(request: Request) {
     const summary = await runOpportunityScheduler(client);
     const schedules = await client.request<Array<{ workspace_id: string }>>("opportunity_provider_schedules?select=workspace_id&enabled=eq.true&limit=1");
     const workspaceId = schedules.data?.[0]?.workspace_id;
+    const employerIntelligence = workspaceId
+      ? await client.request<Record<string, unknown>>("rpc/refresh_employer_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
+      : undefined;
     const coverage = workspaceId
       ? await client.request<Record<string, unknown>>("rpc/get_global_coverage_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
       : undefined;
@@ -60,6 +63,8 @@ export async function GET(request: Request) {
       industries: Array.isArray(evidence?.industries) ? evidence.industries.slice(0, 10) : [],
       providers: evidence?.providers ?? [],
       persistence: evidence?.persistence ?? {},
+      employerIntelligence: employerIntelligence?.data ?? undefined,
+      employerIntelligenceError: employerIntelligence?.error ? { status: employerIntelligence.status, code: employerIntelligence.error.code, message: employerIntelligence.error.message.slice(0, 160) } : undefined,
       coverageError: coverage?.error ? { status: coverage.status, code: coverage.error.code, message: coverage.error.message.slice(0, 160) } : undefined,
     }));
     return NextResponse.json(summary, { status: summary.failed ? 207 : 200 });
