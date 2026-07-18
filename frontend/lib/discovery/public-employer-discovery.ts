@@ -1,6 +1,6 @@
 import type { EmployerSourceInput } from "./employer-source-factory";
 
-type Definition = { provider: "greenhouse" | "ashby" | "smartrecruiters" | "lever"; indexedHost: string; careers: (slug: string) => string };
+type Definition = { provider: "greenhouse" | "ashby" | "smartrecruiters" | "lever" | "workable"; indexedHost: string; careers: (slug: string) => string };
 type VerifiedEmployer = EmployerSourceInput & { provider: Definition["provider"]; activeJobs: number };
 
 const definitions: readonly Definition[] = [
@@ -9,6 +9,7 @@ const definitions: readonly Definition[] = [
   { provider: "smartrecruiters", indexedHost: "careers.smartrecruiters.com/", careers: slug => `https://careers.smartrecruiters.com/${slug}` },
   { provider: "lever", indexedHost: "jobs.lever.co/", careers: slug => `https://jobs.lever.co/${slug}` },
   { provider: "lever", indexedHost: "jobs.eu.lever.co/", careers: slug => `https://jobs.eu.lever.co/${slug}` },
+  { provider: "workable", indexedHost: "apply.workable.com/", careers: slug => `https://apply.workable.com/${slug}` },
 ];
 const reserved = new Set(["apply", "jobs", "job", "privacy", "robots.txt", "sitemap.xml"]);
 const atsHosts = new Set(["boards.greenhouse.io", "job-boards.greenhouse.io", "boards.eu.greenhouse.io", "jobs.ashbyhq.com", "careers.smartrecruiters.com", "jobs.smartrecruiters.com", "jobs.lever.co", "jobs.eu.lever.co"]);
@@ -68,6 +69,12 @@ async function verify(definition: Definition, slug: string): Promise<VerifiedEmp
     const jobs = Array.isArray(listing) ? listing : [];
     if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
     return { provider: definition.provider, employerName: plainName(slug), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
+  }
+  if (definition.provider === "workable") {
+    const listing = await json(`https://www.workable.com/api/accounts/${encodeURIComponent(slug)}?details=true`);
+    const jobs = Array.isArray(listing.jobs) ? listing.jobs as Array<{ url?: string; shortlink?: string }> : [];
+    if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
+    return { provider: definition.provider, employerName: String(listing.name || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
   const listing = await json(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(slug)}/postings?destination=PUBLIC&limit=1&offset=0`);
   const total = Number(listing.totalFound);
