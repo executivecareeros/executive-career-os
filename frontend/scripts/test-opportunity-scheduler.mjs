@@ -21,7 +21,7 @@ assert.match(route, /schedulerRequestAuthorized/);
 assert.match(route, /Unauthorized/);
 assert.match(route, /maxDuration = 240/, "A full provider cohort must have enough runtime to finish before its queue lease expires");
 assert.match(route, /Math\.max\(1, Math\.min\(12,/, "Bulk execution must retain a hard per-invocation safety ceiling");
-assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 12/, "The Opportunity Factory must use the validated twelve-job ceiling by default");
+assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 6/, "The Opportunity Factory must use the measured six-job production default");
 assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs\)/, "The bounded bulk limit must reach the scheduler runtime");
 assert.match(route, /discoverPublicEmployerSources/, "The scheduler must continuously expand verified public employer coverage");
 assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT/, "Employer expansion must remain bounded by configuration");

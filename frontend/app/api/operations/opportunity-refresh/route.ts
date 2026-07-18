@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       },
       health: () => rawClient.health(),
     };
-    const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 12) || 12));
+    const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 6) || 6));
     const summary = await runOpportunityScheduler(client, undefined, maximumJobs);
     const schedules = await client.request<Array<{ workspace_id: string; created_by: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,locator&enabled=eq.true&order=created_at.desc&limit=1000");
     const workspaceId = schedules.data?.[0]?.workspace_id;

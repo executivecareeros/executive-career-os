@@ -34,11 +34,11 @@ The 1,520 figure is source-advertised inventory in the selected verification coh
 - Employer feeds remain public and authorization-free; no account automation, cookies, access-control bypass or protected-page scraping is used.
 - Existing workspace isolation, normalization, provenance, lifecycle and canonical deduplication remain unchanged.
 - LinkedIn, Workday and any provider requiring contractual acceptance, paid licensing or ambiguous permission remain approval-gated.
-- The 15-minute production cycle now gives public discovery a strict 45-second budget and caps each newly registered cohort at 20 sources (14 by default). This preserves continuous expansion without allowing public-index latency to consume Vercel's 240-second execution ceiling.
+- The 15-minute production cycle now processes six provider jobs by default (24/hour), gives public discovery a strict 45-second budget and caps each newly registered cohort at 20 sources (14 by default). This preserves continuous expansion without allowing provider work plus public-index latency to consume Vercel's 240-second execution ceiling.
 
 ## Operational recovery
 
-The live project lacked its server-only scheduler credential. Restoring an obsolete credential correctly failed closed with HTTP 403. It was replaced through the existing secure Supabase/Vercel controls without exposing or committing the value. The next authorized cycle reached the factory but exposed a separate 240-second timeout caused by combining the provider queue with an unbounded public-index window. The bounded discovery budget above is the corrective action; sanitized failure evidence remains available without secrets.
+The live project lacked its server-only scheduler credential. Restoring an obsolete credential correctly failed closed with HTTP 403. It was replaced through the existing secure Supabase/Vercel controls without exposing or committing the value. The next authorized cycle reached the factory but exposed a separate 240-second timeout caused by combining twelve provider jobs with public-index discovery. The measured six-job default and bounded discovery budget above are the corrective action; sanitized failure evidence remains available without secrets.
 
 ## Next provider gate
 
