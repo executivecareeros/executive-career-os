@@ -9,7 +9,7 @@ import { useState } from "react";
 import { ExecutiveCommandBar } from "./executive-command-bar";
 import type { Locale } from "@/lib/locale";
 
-export function AppShell({ children, publicExperience = false, locale = "en", signedInEmail }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale; signedInEmail?: string }>) {
+export function AppShell({ children, publicExperience = false, locale = "en", signedInName, signedInEmail }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale; signedInName?: string; signedInEmail?: string }>) {
   const menu = useMobileMenu();
   const pathname = usePathname();
   const [focusMode, setFocusMode] = useState(false);
@@ -19,7 +19,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
     <div data-executive-shell className="min-h-screen bg-[#f5f7fb] text-[#0b1220] lg:flex">
       {!focusMode && <Sidebar locale={locale} />}
 
-      <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} locale={locale} signedInEmail={signedInEmail} />
+      <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} locale={locale} signedInName={signedInName} signedInEmail={signedInEmail} />
 
       {menu.isOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -44,7 +44,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
       )}
 
       <main className="min-w-0 flex-1">
-        <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} locale={locale} signedInEmail={signedInEmail} />
+        <ExecutiveCommandBar focusMode={focusMode} onToggleFocus={()=>setFocusMode(value=>!value)} locale={locale} signedInName={signedInName} signedInEmail={signedInEmail} />
         <PageContent locale={locale}>{children}</PageContent>
       </main>
     </div>

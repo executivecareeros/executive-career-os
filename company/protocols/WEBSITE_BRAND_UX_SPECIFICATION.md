@@ -9,6 +9,7 @@ Canonical brand is `ORENDALIS`; never localized or locale-uppercased. The shared
 ### Visual system — Founder review candidate 2026-07-18
 
 - **Mark:** the ORENDALIS Intelligence Orbit combines a complete orbit (the executive's career context), an ascending evidence path (progress with direction) and a mint origin point (the executive remains the source).
+- **Founder logo decision:** three scalable directions are under review: Intelligence Orbit (complete career intelligence), North Star (trusted decision guidance) and Open Horizon (a wider opportunity universe). The current production mark remains unchanged until the Founder selects one direction.
 - **Typography:** self-hosted Geist across interface and display surfaces; hierarchy comes from scale, weight and spacing rather than multiple typefaces.
 - **Primary palette:** Midnight `#0B1220`, Cobalt `#3457D5`, Direction Blue `#6D8CFF`, Signal Mint `#7DE2C6`, Canvas `#F5F7FB`, White `#FFFFFF`.
 - **Interaction rule:** cobalt identifies direction and interaction; mint identifies positive/ready state; neither is used as decorative body text.
@@ -35,6 +36,7 @@ Premium, calm, credible, minimal and evidence-aware. Every screen answers where 
 | Mobile | Full authenticated journey at 390px; no clipped, hidden or unreachable action |
 | Accessibility | WCAG 2.2 AA automated/manual, keyboard, focus, contrast, zoom and screen-reader evidence |
 | Visual consistency | All major routes use approved tokens/components; current commit-linked screenshots reviewed by Founder |
+| Signed-in identity | Header shows the executive's confirmed full name; email appears only when no confirmed name exists; a name is never inferred from an email address |
 
 ## Measurement
 

@@ -22,6 +22,22 @@ export async function confirmCvHistory(formData: FormData) {
   const client = createServerSupabaseClient(resolved.accessToken);
   const documentContext = String(formData.get("documentContext") ?? "").slice(0, 20_000);
   const workspaceId = resolved.context.workspace!.workspaceId;
+  try {
+    const context = JSON.parse(documentContext) as { profile?: { fullName?: unknown } };
+    const fullName = typeof context.profile?.fullName === "string" ? context.profile.fullName.trim().replace(/\s+/g, " ").slice(0, 120) : "";
+    if (fullName.length >= 2) {
+      const identity = await client.request<Array<{ profile?: Record<string, unknown> }>>(`executive_identities?select=profile&id=eq.${resolved.context.actorId}&limit=1`);
+      if (identity.data?.[0]) {
+        await client.request(`executive_identities?id=eq.${resolved.context.actorId}`, {
+          method: "PATCH",
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ profile: { ...(identity.data[0].profile ?? {}), fullName } }),
+        });
+      }
+    }
+  } catch {
+    // The CV remains saveable when optional profile context is absent or malformed.
+  }
   const existing = await client.request<Array<{ organization_name: string; role_title: string; start_date?: string }>>(`professional_experiences?select=organization_name,role_title,start_date&workspace_id=eq.${workspaceId}&archived_at=is.null`);
   if (existing.error) throw new Error("Your existing history could not be checked safely.");
   const keys = new Set((existing.data ?? []).map(item => `${item.organization_name}|${item.role_title}|${item.start_date?.slice(0, 7) ?? ""}`.toLowerCase()));
