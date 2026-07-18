@@ -9,6 +9,8 @@ Opportunity cards and Opportunity Review now provide a direct, truthful external
 
 The ingestion boundary now preserves structured provider compensation and conservatively extracts an explicitly published salary range from source descriptions. Extraction requires compensation language, a range, and a currency symbol or code. It never estimates a missing range. A bare dollar symbol preserves the published numbers while leaving currency unconfirmed.
 
+Existing canonical records display that same explicit range immediately from their saved source text, without waiting for the next provider schedule. The next normal refresh persists the structured fields.
+
 When a refreshed provider observation adds compensation to an existing canonical opportunity, the merge upgrades that canonical record without producing a duplicate.
 
 ## Validation

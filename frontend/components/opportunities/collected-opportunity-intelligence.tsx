@@ -8,13 +8,15 @@ import { toPlainText } from "@/lib/plain-text";
 import type { Locale } from "@/lib/locale";
 import type { ReactNode } from "react";
 import { OpportunityApplicationLink } from "./opportunity-application-link";
+import { resolvePublishedCompensation } from "@/lib/discovery/published-compensation";
 
 type DecisionState = { action?: "Pursue" | "Watch" | "Skip"; status?: "Finalized"; finalizedAt?: string };
 
 export function CollectedOpportunityIntelligence({ opportunity, intelligence, decisionNotice, idempotencyKey }: { opportunity: Opportunity; intelligence: ExecutiveOpportunityIntelligence; decisionNotice?: string; idempotencyKey: string; locale?: Locale }) {
   const draft = (opportunity as Opportunity & { executiveDecisionDraft?: DecisionState }).executiveDecisionDraft;
   const finalDecision = (opportunity as Opportunity & { executiveDecision?: DecisionState }).executiveDecision;
-  const salary = opportunity.salaryMin || opportunity.salaryMax ? `${opportunity.salaryCurrency ?? ""} ${opportunity.salaryMin?.toLocaleString() ?? ""}${opportunity.salaryMax ? `–${opportunity.salaryMax.toLocaleString()}` : ""}`.trim() : "Not listed";
+  const compensation = resolvePublishedCompensation(opportunity);
+  const salary = compensation?.minimum !== undefined || compensation?.maximum !== undefined ? `${compensation.currency ?? "Currency unconfirmed"} ${compensation.minimum?.toLocaleString("en-GB") ?? "?"}${compensation.maximum !== undefined ? `–${compensation.maximum.toLocaleString("en-GB")}` : ""}` : "Not listed";
   const roleSummary = opportunity.summary ? toPlainText(opportunity.summary) : "The employer has not provided a complete role summary.";
   const expectedImpact = opportunity.keyResponsibilities.length ? opportunity.keyResponsibilities.slice(0, 3) : [];
   const leadershipExpectations = opportunity.keyResponsibilities.filter((item) => /lead|manage|direct|own|executive|board|strategy/i.test(item));

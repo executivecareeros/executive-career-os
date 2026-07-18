@@ -36,3 +36,11 @@ export function extractPublishedCompensation(value?: string): PublishedCompensat
   }
   return undefined;
 }
+
+/** Uses persisted structured compensation first, then an explicit published range in the saved source text. */
+export function resolvePublishedCompensation(value: { salaryMin?: number; salaryMax?: number; salaryCurrency?: string; summary?: string }): PublishedCompensation | undefined {
+  if (value.salaryMin !== undefined || value.salaryMax !== undefined) {
+    return { minimum: value.salaryMin, maximum: value.salaryMax, currency: value.salaryCurrency };
+  }
+  return extractPublishedCompensation(value.summary);
+}
