@@ -1,6 +1,6 @@
 # Executive Rooms MVP Gate
 
-> Status: Founder gate in preparation. No room data, users, schema, provider, deployment, or production behavior exists.
+> Status: Founder approved the bounded invite-only MVP on 2026-07-18. Runtime implementation is complete locally and awaiting controlled staging migration/deployment validation. No room or invitation data has been fabricated.
 
 ## Product promise
 
@@ -16,7 +16,7 @@ Executive Rooms are private professional knowledge environments. They are not so
 | Company diligence room | Executives discuss a canonical company briefing and open questions | Company reference, evidence links, replies, explicit Atlas comparison | Users understand fact versus interpretation and identify one unresolved question |
 | Time-boxed executive roundtable | A temporary cohort collaborates then closes predictably | Scheduled room, visible expiry, archive/export controls, deletion workflow | Participants understand retention before joining and accept the close-out behavior |
 
-These are hypotheses, not validated customer evidence. Implementation remains gated until the Founder accepts the validation evidence or explicitly approves a bounded internal prototype.
+These remain customer-value hypotheses. The Founder explicitly approved a bounded internal prototype; external invitation or commercial rollout remains gated by real executive validation.
 
 ## MVP boundary
 
@@ -48,11 +48,22 @@ Engineering can reuse current infrastructure, but database growth, moderation ti
 
 Feature flag Rooms off; deny all room access; preserve security/moderation audit for the approved security retention period; execute participant-content deletion or export according to the selected policy. Rollback must not silently retain content beyond the disclosed rule.
 
-## Founder decisions required before runtime implementation
+## Founder decisions recorded
 
-1. Approve a bounded invite-only internal prototype using the five use cases above.
-2. Select retention option in `ROOMS_RETENTION_AND_DELETION.md`.
-3. Confirm verified Orendalis executive accounts are the only MVP participants.
-4. Confirm Atlas is command-only, with no scheduled summaries in MVP.
-5. Accept the moderation/appeal ownership model and name the accountable human moderator.
+1. Bounded invite-only internal prototype: approved.
+2. Retention: 90-day bounded room archive; 12-month minimum-body security/moderation audit.
+3. Participants: verified Orendalis executive accounts only.
+4. Atlas: explicit command only; no scheduled or ambient summaries.
+5. Moderation: owner/moderator model approved; room owner is accountable during the internal prototype.
 
+## Runtime evidence
+
+- Atomic room and owner-membership creation.
+- Recipient-bound invitations to existing verified executive identities.
+- Owner, Moderator and Participant permissions enforced in database functions.
+- Row-level room isolation on rooms, memberships, messages, pins, bookmarks, invitations and audit.
+- Replies, pins, personal bookmarks, archive and explicit Atlas invocation.
+- Source IDs preserved for every Atlas room response; ambient monitoring explicitly disabled.
+- Append-only moderation audit with safe metadata only.
+- No public discovery, files, guests, DMs, reactions, feeds or new infrastructure.
+- Contract test, lint, TypeScript and production build pass.
