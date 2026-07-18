@@ -31,7 +31,7 @@ function LiveWorkspace({ experiences, profile, preferences, preferencesSaved }: 
 
     <section className="mt-8 rounded-2xl border border-[#d8ddd9] bg-[#f6f8f6] p-6 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#55705d]">Active career profile</p><h2 className="mt-2 text-2xl font-semibold text-[#17191c]">{profile.activeCv?.filename ?? "Confirmed profile"}</h2></div>
+        <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-[#55705d]">Active career profile</p><h2 className="mt-2 text-2xl font-semibold text-[#17191c]">Your confirmed career profile</h2></div>
         <span className="inline-flex rounded-full border border-[#acd5b8] bg-[#eaf7ed] px-3 py-1 text-xs font-semibold text-[#28613a]">Active</span>
       </div>
       <dl className="mt-6 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">

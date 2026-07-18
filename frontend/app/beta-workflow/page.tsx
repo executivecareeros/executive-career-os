@@ -181,7 +181,7 @@ export default async function BetaWorkflowPage({
               <Input
                 label="Organization"
                 name="organizationName"
-                placeholder="Example: Aurora Meridian Group"
+                placeholder="Example: Your employer"
               />
               <Input
                 label="Executive role"
@@ -209,7 +209,7 @@ export default async function BetaWorkflowPage({
                 <TextArea
                   label="Notes (optional)"
                   name="notes"
-                  placeholder="Example: Led a multi-market transformation and portfolio review."
+                  placeholder="Add only responsibilities or outcomes you can confirm."
                 />
               </div>
               <Submit>Confirm history record</Submit>

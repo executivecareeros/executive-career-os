@@ -58,6 +58,7 @@
     "test:bilingual-experience": "node scripts/test-bilingual-experience.mjs",
     "test:public-acquisition": "node scripts/test-public-acquisition.mjs",
     "test:profile-state": "node --experimental-transform-types scripts/test-profile-state.mjs",
+    "test:production-truth-cleanup": "node scripts/test-production-truth-cleanup.mjs",
     "test:live-product-truth": "node scripts/test-live-product-truth.mjs",
     "test:inventory-authority": "node scripts/test-inventory-authority.mjs",
     "test:orion-metrics": "node --experimental-transform-types scripts/test-orion-metrics.mjs",

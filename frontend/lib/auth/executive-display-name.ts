@@ -15,7 +15,11 @@ function record(value: unknown): Record<string, unknown> | undefined {
 function text(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
   const cleaned = value.trim().replace(/\s+/g, " ");
-  return cleaned.length >= 2 && cleaned.length <= 120 ? cleaned : undefined;
+  if (cleaned.length < 2 || cleaned.length > 120) return undefined;
+  if (cleaned === cleaned.toUpperCase() && /[A-Z]/.test(cleaned)) {
+    return cleaned.toLocaleLowerCase("en").replace(/(^|[\s'-])([a-z])/g, (_, boundary: string, letter: string) => `${boundary}${letter.toUpperCase()}`);
+  }
+  return cleaned;
 }
 
 export function confirmedExecutiveName(value: unknown): string | undefined {

@@ -45,7 +45,7 @@ export async function SimpleExecutiveHome({ resolved, locale }: { resolved: Reso
     {profileState?.hasStructuredProfile && <section className="mt-7 flex flex-col gap-4 rounded-2xl border border-[#d8ddd9] bg-[#f6f8f6] p-5 sm:flex-row sm:items-center sm:justify-between" aria-label="Active executive profile">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#55705d]">Active profile</p>
-        <h2 className="mt-2 text-lg font-semibold">{profileState.activeCv?.filename ?? "Your confirmed career profile"}</h2>
+        <h2 className="mt-2 text-lg font-semibold">Your confirmed career profile</h2>
         <p className="mt-1 text-sm leading-6 text-[#626970]">{profileState.confirmedRoleCount} confirmed {profileState.confirmedRoleCount === 1 ? "role" : "roles"} · Atlas {profileState.atlasState.toLowerCase()}</p>
       </div>
       <div className="flex flex-wrap gap-3"><SecondaryButton href="/workspace">View saved profile</SecondaryButton><SecondaryButton href="/import">Update CV</SecondaryButton></div>
