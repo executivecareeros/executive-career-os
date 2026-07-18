@@ -19,6 +19,10 @@ const networkStaging = JSON.parse(await readFile(resolve(root, "frontend/vercel.
 assert.match(route, /schedulerRequestAuthorized/);
 assert.match(route, /Unauthorized/);
 assert.match(route, /maxDuration = 240/, "A full provider cohort must have enough runtime to finish before its queue lease expires");
+assert.match(route, /Math\.max\(1, Math\.min\(12,/, "Bulk execution must retain a hard per-invocation safety ceiling");
+assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 6/, "The Opportunity Factory must process six provider jobs by default");
+assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs\)/, "The bounded bulk limit must reach the scheduler runtime");
+assert.match(runtime, /maximumJobs = 6/, "The scheduler runtime must share the six-job safe default");
 assert.match(proxy, /serverAuthenticatedPaths/);
 assert.match(proxy, /\/api\/operations\/opportunity-refresh/);
 assert.match(proxy, /serverAuthenticatedPaths\.includes\(path\)/);
