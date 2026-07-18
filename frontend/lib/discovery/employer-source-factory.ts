@@ -56,16 +56,15 @@ export function scheduleRowsForEmployerSources(input: { workspaceId: string; act
 }
 
 export async function registerEmployerSourceBatch(client: SupabaseDataClient, input: { workspaceId: string; actorId: string; now?: string; sources: readonly EmployerSourceHealth[] }) {
-  const existing = await client.request<{ source_key: string; locator?: { url?: string } }[]>(`opportunity_provider_schedules?select=source_key,locator&workspace_id=eq.${input.workspaceId}`);
-  if (existing.error) throw new Error(existing.error.message);
-  const known = new Set((existing.data ?? []).map((row) => row.source_key));
-  const knownUrls = new Set((existing.data ?? []).flatMap((row) => {
-    try { return row.locator?.url ? [normalizedUrl(row.locator.url)] : []; }
-    catch { return []; }
-  }));
   const eligible = input.sources.filter((source) => source.healthStatus === "connected");
-  const rows = scheduleRowsForEmployerSources({ ...input, sources: eligible, now: input.now ?? new Date().toISOString() })
-    .filter((row) => !known.has(row.source_key) && !knownUrls.has(normalizedUrl(row.locator.url)));
-  if (rows.length) { const inserted = await client.request("opportunity_provider_schedules", { method: "POST", body: JSON.stringify(rows) }); if (inserted.error) throw new Error(inserted.error.message); }
-  return { requested: eligible.length, inserted: rows.length, unchanged: eligible.length - rows.length } as const;
+  const rows = scheduleRowsForEmployerSources({ ...input, sources: eligible, now: input.now ?? new Date().toISOString() });
+  if (!rows.length) return { requested: 0, inserted: 0, unchanged: 0 } as const;
+  const inserted = await client.request<EmployerSourceScheduleRow[]>("opportunity_provider_schedules?on_conflict=workspace_id,provider_id,source_key", {
+    method: "POST",
+    headers: { Prefer: "resolution=ignore-duplicates,return=representation" },
+    body: JSON.stringify(rows),
+  });
+  if (inserted.error) throw new Error(inserted.error.message);
+  const insertedCount = inserted.data?.length ?? 0;
+  return { requested: eligible.length, inserted: insertedCount, unchanged: eligible.length - insertedCount } as const;
 }

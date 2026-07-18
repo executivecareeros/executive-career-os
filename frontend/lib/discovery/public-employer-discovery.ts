@@ -83,7 +83,7 @@ async function verify(definition: Definition, slug: string): Promise<VerifiedEmp
   return { provider: definition.provider, employerName: String(content[0]?.company?.name || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: total, maximumResults: 1_000, refreshMinutes: 720 };
 }
 
-export async function discoverPublicEmployerSources(input: { existingUrls: readonly string[]; maximumSources?: number; concurrency?: number }) {
+export async function discoverPublicEmployerSources(input: { existingUrls: readonly string[]; maximumSources?: number; concurrency?: number; discoveryCursor?: number }) {
   const maximumSources = Math.max(0, Math.min(50, Math.trunc(input.maximumSources ?? 18)));
   if (!maximumSources) return { sources: [] as VerifiedEmployer[], candidates: 0, attempted: 0, failures: 0, advertisedActiveJobs: 0, aiTokens: 0 };
   const known = new Set(input.existingUrls.map(value => value.replace(/\/+$/, "")));
@@ -102,6 +102,9 @@ export async function discoverPublicEmployerSources(input: { existingUrls: reado
   }
   if (!candidates.length) throw new Error("PUBLIC_EMPLOYER_INDEX_UNAVAILABLE");
   const sampleTarget = Math.min(candidates.length, Math.max(maximumSources * 4, maximumSources));
+  const cursorWindow = Math.max(0, Math.trunc(input.discoveryCursor ?? 0));
+  const start = candidates.length ? (cursorWindow * sampleTarget) % candidates.length : 0;
+  if (start) candidates = [...candidates.slice(start), ...candidates.slice(0, start)];
   const accepted: VerifiedEmployer[] = [];
   let cursor = 0, attempted = 0, failures = 0;
   async function worker() {

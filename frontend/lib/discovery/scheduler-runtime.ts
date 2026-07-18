@@ -15,7 +15,7 @@ type ScheduleRow = {
   locator: Record<string, unknown>; filters: DiscoveryFilter; created_by: string;
 };
 type ClaimedRow = { id: string; provider_id: string; status: CoverageQueueItem["status"]; priority: number; attempt: number; maximum_attempts: number; requested_at: string; available_at: string; filters: DiscoveryFilter };
-type JobScheduleRow = { schedule_id: string | null };
+type JobScheduleRow = { schedule_id: string | null; workspace_id: string };
 
 export type SchedulerSummary = {
   correlationId: string; dueSchedules: number; jobsEnqueued: number; jobsExecuted: number;
@@ -67,23 +67,31 @@ async function executeClaim(client: SupabaseDataClient, schedule: ScheduleRow, c
 
 export async function runOpportunityScheduler(client: SupabaseDataClient, now = new Date().toISOString(), maximumJobs = 12): Promise<SchedulerSummary> {
   const correlationId = randomUUID();
-  const configured = await client.request<ScheduleRow[]>("opportunity_provider_schedules?select=*&enabled=eq.true&order=priority.asc,next_run_at.asc");
+  const dueBefore = encodeURIComponent(now);
+  const configured = await client.request<ScheduleRow[]>(`opportunity_provider_schedules?select=*&enabled=eq.true&next_run_at=lte.${dueBefore}&order=priority.asc,next_run_at.asc&limit=${maximumJobs}`);
   if (configured.error) throw new Error(configured.error.message);
   const schedules = configured.data ?? [];
-  const dueSchedules = schedules.filter(schedule => schedule.next_run_at && schedule.next_run_at <= now).slice(0, maximumJobs);
+  const dueSchedules = schedules.filter(schedule => schedule.next_run_at && schedule.next_run_at <= now);
   let jobsEnqueued = 0;
   for (const schedule of dueSchedules) if (await enqueue(client, schedule, now)) jobsEnqueued += 1;
 
   let jobsExecuted = 0, completed = 0, failed = 0, recordsDiscovered = 0, recordsChanged = 0;
   let persistenceBatches = 0, persistenceRecords = 0, persistenceDatabaseCalls = 0, persistenceDurationMs = 0;
-  for (const workspaceId of [...new Set(schedules.map(schedule => schedule.workspace_id))]) {
+  const activeJobs = await client.request<JobScheduleRow[]>("opportunity_provider_jobs?select=schedule_id,workspace_id&status=in.(queued,running,retrying)&limit=1000");
+  if (activeJobs.error) throw new Error(activeJobs.error.message);
+  const workspaceIds = [...new Set([...schedules.map(schedule => schedule.workspace_id), ...(activeJobs.data ?? []).map(job => job.workspace_id)])];
+  for (const workspaceId of workspaceIds) {
     for (let count = 0; count < maximumJobs; count += 1) {
       const claim = await client.request<ClaimedRow[]>("rpc/claim_next_opportunity_provider_job", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId, worker_id: correlationId, available_before: now, lease_seconds: 300 }) });
       if (claim.error) throw new Error(claim.error.message);
       const claimed = claim.data?.[0];
       if (!claimed) break;
-      const job = await client.request<JobScheduleRow[]>(`opportunity_provider_jobs?select=schedule_id&id=eq.${claimed.id}&limit=1`);
-      const schedule = schedules.find(candidate => candidate.id === job.data?.[0]?.schedule_id);
+      const job = await client.request<JobScheduleRow[]>(`opportunity_provider_jobs?select=schedule_id,workspace_id&id=eq.${claimed.id}&limit=1`);
+      const scheduleId = job.data?.[0]?.schedule_id;
+      const configuredSchedule = scheduleId
+        ? await client.request<ScheduleRow[]>(`opportunity_provider_schedules?select=*&id=eq.${scheduleId}&enabled=eq.true&limit=1`)
+        : undefined;
+      const schedule = configuredSchedule?.data?.[0];
       if (!schedule) {
         await client.request(`opportunity_provider_jobs?id=eq.${claimed.id}`, { method: "PATCH", body: JSON.stringify({ status: "failed", lease_owner: null, lease_expires_at: null, last_error: { code: "SCHEDULE_NOT_AVAILABLE" }, updated_at: new Date().toISOString() }) });
         failed += 1; jobsExecuted += 1; continue;

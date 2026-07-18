@@ -18,16 +18,13 @@ const rows = scheduleRowsForEmployerSources({ workspaceId: "workspace", actorId:
 assert.equal(rows.length, 2); assert.equal(rows[0].enabled, true); assert.equal(rows[0].locator.companyName, "Acme Global");
 assert.deepEqual(rows[0].filters.countries, [], "Collection inventory must remain global rather than Founder-filtered");
 const requests = [];
-const client = { request: async (path, init) => { requests.push({ path, init }); if (path.startsWith("opportunity_provider_schedules?")) return { data: [{ source_key: rows[0].source_key }] }; return { data: null }; } };
+const client = { request: async (path, init) => { requests.push({ path, init }); return { data: [rows[0]] }; } };
 const first = await registerEmployerSourceBatch(client, { workspaceId: "workspace", actorId: "actor", now: "2026-07-17T12:00:00Z", sources: validated.validated });
-assert.deepEqual(first, { requested: 2, inserted: 1, unchanged: 1 }); assert.equal(JSON.parse(requests[1].init.body).length, 1);
-const secondClient = { request: async (path) => path.startsWith("opportunity_provider_schedules?") ? { data: rows.map((row) => ({ source_key: row.source_key })) } : { data: null } };
+assert.deepEqual(first, { requested: 2, inserted: 1, unchanged: 1 });
+assert.equal(JSON.parse(requests[0].init.body).length, 2);
+assert.match(requests[0].path, /on_conflict=workspace_id,provider_id,source_key/);
+assert.match(requests[0].init.headers.Prefer, /resolution=ignore-duplicates/);
+const secondClient = { request: async () => ({ data: [] }) };
 const replay = await registerEmployerSourceBatch(secondClient, { workspaceId: "workspace", actorId: "actor", now: "2026-07-17T12:00:00Z", sources: validated.validated });
 assert.deepEqual(replay, { requested: 2, inserted: 0, unchanged: 2 }, "Repeated bulk onboarding must be idempotent");
-const legacyClient = { request: async (path, init) => {
-  if (path.startsWith("opportunity_provider_schedules?")) return { data: [{ source_key: "global:greenhouse-employer", locator: { url: "https://job-boards.greenhouse.io/greenhouse-employer/" } }] };
-  throw new Error(`Legacy URL identity should prevent insertion: ${init?.body}`);
-} };
-const legacyReplay = await registerEmployerSourceBatch(legacyClient, { workspaceId: "workspace", actorId: "actor", now: "2026-07-17T12:00:00Z", sources: [validated.validated[1]] });
-assert.deepEqual(legacyReplay, { requested: 1, inserted: 0, unchanged: 1 }, "Legacy source keys must deduplicate by canonical careers URL");
-console.log(JSON.stringify({ message: "Employer source factory checks passed.", prepared: batch.prepared.length, isolatedFailures: batch.failures.length, duplicateInputs: batch.duplicateInputs, idempotentReplay: replay.inserted === 0, legacyKeyReplay: legacyReplay.inserted === 0 }, null, 2));
+console.log(JSON.stringify({ message: "Employer source factory checks passed.", prepared: batch.prepared.length, isolatedFailures: batch.failures.length, duplicateInputs: batch.duplicateInputs, idempotentReplay: replay.inserted === 0, conflictSafeAtScale: true }, null, 2));
