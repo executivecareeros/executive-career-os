@@ -12,7 +12,7 @@ The old beige/black system made actions and hierarchy ambiguous. A smaller seman
 The first viewport now explains the Opportunity Universe, Atlas, evidence, privacy and the next action without internal terminology.
 
 ## 4. Implementation
-Implemented the Intelligence Orbit mark, Midnight/Cobalt/Mint palette, Geist display hierarchy, redesigned landing page, authentication frame, sidebar, mobile header, page headers, cards and primary/secondary actions.
+Implemented the Intelligence Orbit mark, public favicon route, Midnight/Cobalt/Mint palette, Geist display hierarchy, redesigned landing page, authentication frame, sidebar, mobile header, page headers, cards and primary/secondary actions.
 
 ## 5. User-Facing Changes
 Visitors now see one clear promise, CV and opportunity entry points, an Atlas briefing preview, three product principles and an explicit trust statement. Signed-in executives receive a calmer white navigation layer and consistent controls.
@@ -63,7 +63,7 @@ No provider, font-license, infrastructure or runtime AI cost added. The logo is 
 Runtime AI tokens: 0.
 
 ## 21. Tests and Validation
-Passed: public acquisition, Project Simplicity, Executive Experience Contract (100% coverage), ESLint, TypeScript and production build (126 routes). Desktop browser render passed for homepage, login and authenticated shell.
+Passed: public acquisition (including anonymous favicon access), Project Simplicity, Executive Experience Contract (100% coverage), ESLint, TypeScript and production build (126 routes). Desktop browser render passed for homepage, login and authenticated shell.
 
 ## 22. Risks
 Founder may prefer a different mark direction. Remaining legacy route-specific colors may still drift. Mobile, keyboard, contrast and screen-reader acceptance are not yet complete.

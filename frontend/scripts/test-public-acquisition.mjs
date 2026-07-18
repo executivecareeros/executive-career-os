@@ -31,5 +31,6 @@ assert.match(sitemap, /url: "https:\/\/www\.orendalis\.com"/);
 assert.doesNotMatch(sitemap, /\?lang=/);
 assert.ok(proxy.includes('"/robots.txt"'), "robots.txt must be reachable without authentication");
 assert.ok(proxy.includes('"/sitemap.xml"'), "sitemap.xml must be reachable without authentication");
+assert.ok(proxy.includes('"/icon.svg"'), "brand icon must be reachable without authentication");
 
 console.log("Public acquisition checks passed.");

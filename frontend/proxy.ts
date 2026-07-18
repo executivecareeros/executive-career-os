@@ -10,6 +10,7 @@ const publicPaths = [
   "/auth/confirm",
   "/robots.txt",
   "/sitemap.xml",
+  "/icon.svg",
 ];
 
 const serverAuthenticatedPaths = ["/api/operations/opportunity-refresh"];
