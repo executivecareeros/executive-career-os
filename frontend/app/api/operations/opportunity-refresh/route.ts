@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       ? await client.request<Record<string, unknown>>("rpc/refresh_employer_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
       : undefined;
     const coverage = workspaceId
-      ? await client.request<Record<string, unknown>>("rpc/get_global_coverage_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
+      ? await client.request<Record<string, unknown>>("rpc/get_operational_coverage_summary", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
       : undefined;
     const evidence = coverage?.data;
     const queue = workspaceId
@@ -59,14 +59,10 @@ export async function GET(request: Request) {
       queue: { ...queueByStatus, observed: (queue?.data ?? []).length },
       resources: { cpuUserMs: Math.round(cpu.user / 1000), cpuSystemMs: Math.round(cpu.system / 1000), rssDeltaMiB: Number(((memory.rss - memoryStart.rss) / 1048576).toFixed(1)), heapUsedMiB: Number((memory.heapUsed / 1048576).toFixed(1)), networkRequests: database.calls, cacheHits: 0, aiTokens: 0 },
       database: { ...database, durationMs: Math.round(database.durationMs) },
-      countriesRepresented: evidence?.countriesRepresented,
-      countriesWithOpportunities: evidence?.countriesWithOpportunities,
-      countriesWithoutOpportunities: evidence?.countriesWithoutOpportunities,
-      countriesRefreshed: evidence?.countriesRefreshed,
-      registryCompleteness: evidence?.registryCompleteness,
-      countryCoverageConfidence: evidence?.countryCoverageConfidence,
-      activeOpportunities: evidence?.activeOpportunities,
-      industries: Array.isArray(evidence?.industries) ? evidence.industries.slice(0, 10) : [],
+      canonicalOpportunities: evidence?.canonicalOpportunities,
+      employers: evidence?.employers,
+      geographicLabels: evidence?.geographicLabels,
+      freshOpportunities: evidence?.freshOpportunities,
       providers: evidence?.providers ?? [],
       persistence: evidence?.persistence ?? {},
       employerIntelligence: employerIntelligence?.data ?? undefined,
