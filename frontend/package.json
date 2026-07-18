@@ -31,6 +31,8 @@
     "test:ashby-connector": "node --experimental-transform-types scripts/test-ashby-connector.mjs",
     "test:smartrecruiters-connector": "node --experimental-transform-types scripts/test-smartrecruiters-connector.mjs",
     "test:employer-source-factory": "node --experimental-transform-types scripts/test-employer-source-factory.mjs",
+    "test:employer-cohort-allocation": "node --experimental-transform-types scripts/test-employer-cohort-allocation.mjs",
+    "discover:employer-cohort": "node --experimental-transform-types scripts/discover-employer-cohort.mjs",
     "test:opportunity-fingerprint": "node --experimental-transform-types scripts/test-opportunity-fingerprint.mjs",
     "test:coverage-engine": "node --experimental-transform-types scripts/test-coverage-engine.mjs",
     "test:provider-pack-alpha": "node --experimental-transform-types scripts/test-provider-pack-alpha.mjs",

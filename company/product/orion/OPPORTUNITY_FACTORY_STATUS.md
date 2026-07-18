@@ -24,6 +24,7 @@ Verified ATS source identity and strict corporate-domain verification are delibe
 
 ## Factory automation increment
 
+- ODS 4.0 employer discovery now reserves cohort capacity across every approved indexed provider before using overflow capacity. This prevents a high-volume earlier provider from exhausting the target before SmartRecruiters is evaluated. A read-only nine-employer proof on 2026-07-18 verified three Greenhouse, three Ashby, and three SmartRecruiters employers representing 400 advertised active opportunities from 2,618 indexed candidates. Two invalid candidates were isolated. Durable employer and opportunity counts remain unchanged until a balanced cohort is activated in isolated staging.
 - Versioned configuration boundary accepts up to 1,000 employer sources per batch.
 - Automatic approved-provider detection selects Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee, Personio, Workable, or a bounded structured company career page.
 - Duplicate inputs are removed before network or persistence work.

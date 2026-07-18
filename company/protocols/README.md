@@ -1,11 +1,11 @@
-# Orendalis Development System 2.0
+# Orendalis Development System 4.0
 
 > Purpose: Define the permanent operating protocols for building, validating, releasing, securing, documenting, and governing Orendalis.
 
 ## Status
 
 - **Name:** Orendalis Development System
-- **Version:** ODS 2.0
+- **Version:** ODS 4.0
 - **Authority:** Founder-approved company protocol framework
 - **Applies to:** founders, employees, contractors, engineers, designers, product leaders, reviewers, operators, and AI agents
 - **Review cadence:** quarterly and after any material failure, incident, or governance change
@@ -18,6 +18,7 @@ Orendalis work must be intentional, evidence-led, secure, reversible where possi
 
 | Protocol | Governs |
 | --- | --- |
+| [ODS 4.0 Master Blueprint](ODS_4_0_MASTER_BLUEPRINT.md) | Founder mission, permanent intelligence programs, CTO priorities, and token economy |
 | [ODS Constitution](ODS_CONSTITUTION.md) | Non-negotiable principles and precedence |
 | [Authority and Accountability](AUTHORITY_AND_ACCOUNTABILITY.md) | Roles, ownership, approvals, and separation of duties |
 | [Work Lifecycle](WORK_LIFECYCLE.md) | Intake through closure |
@@ -62,6 +63,8 @@ When instructions conflict, use this order:
 7. defaults, conventions, and personal preference.
 
 The higher authority does not silently erase the lower record. Record the conflict, decision, reason, and resulting update.
+
+Within ODS, the Founder-approved [ODS 4.0 Master Blueprint](ODS_4_0_MASTER_BLUEPRINT.md) governs product and engineering priorities. Existing detailed protocols remain binding implementation controls unless they conflict with the Blueprint.
 
 ## Relationship to Existing Records
 

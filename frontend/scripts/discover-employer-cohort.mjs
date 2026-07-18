@@ -1,4 +1,5 @@
 import { writeFile } from "node:fs/promises";
+import { allocateProviderCohortTargets } from "../lib/discovery/employer-cohort-allocation.ts";
 
 const args = new Map(process.argv.slice(2).map((value, index, all) => value.startsWith("--") ? [value.slice(2), all[index + 1]?.startsWith("--") ? "true" : all[index + 1]] : ["", ""]));
 const target = Math.max(1, Math.min(2_000, Number(args.get("target") ?? 1_000)));
@@ -66,19 +67,43 @@ async function verify(definition, slug) {
   return { provider: definition.provider, slug, employerName: String(companyName || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: Number(listing.totalFound) };
 }
 
-const candidates = [];
-for (const definition of definitions) for (const slug of await indexedSlugs(definition)) candidates.push({ definition, slug });
+const candidatesByProvider = new Map();
+for (const definition of definitions) candidatesByProvider.set(definition.provider, (await indexedSlugs(definition)).map((slug) => ({ definition, slug })));
+const candidates = [...candidatesByProvider.values()].flat();
+const allocations = allocateProviderCohortTargets(target, definitions.map(({ provider }) => provider));
+const failures = {};
+const providerResults = await Promise.all(allocations.map(async (allocation) => {
+  const providerCandidates = candidatesByProvider.get(allocation.provider) ?? [];
+  const accepted = [];
+  let cursor = 0;
+  async function worker() {
+    while (cursor < providerCandidates.length && accepted.length < allocation.target) {
+      const candidate = providerCandidates[cursor++];
+      try { accepted.push(await verify(candidate.definition, candidate.slug)); }
+      catch (error) { const code = error instanceof Error ? error.message : "UNKNOWN"; failures[code] = (failures[code] ?? 0) + 1; }
+    }
+  }
+  const providerConcurrency = Math.max(1, Math.floor(concurrency / Math.max(1, allocations.length)));
+  await Promise.all(Array.from({ length: providerConcurrency }, () => worker()));
+  return {
+    accepted: accepted.slice(0, allocation.target),
+    overflowAccepted: accepted.slice(allocation.target),
+    remaining: providerCandidates.slice(cursor),
+  };
+}));
 
-const verified = [], failures = {};
-let cursor = 0;
-async function worker() {
-  while (cursor < candidates.length && verified.length < target) {
-    const candidate = candidates[cursor++];
+const verified = providerResults.flatMap(({ accepted }) => accepted);
+verified.push(...providerResults.flatMap(({ overflowAccepted }) => overflowAccepted).slice(0, Math.max(0, target - verified.length)));
+const overflow = providerResults.flatMap(({ remaining }) => remaining);
+let overflowCursor = 0;
+async function overflowWorker() {
+  while (overflowCursor < overflow.length && verified.length < target) {
+    const candidate = overflow[overflowCursor++];
     try { verified.push(await verify(candidate.definition, candidate.slug)); }
     catch (error) { const code = error instanceof Error ? error.message : "UNKNOWN"; failures[code] = (failures[code] ?? 0) + 1; }
   }
 }
-await Promise.all(Array.from({ length: concurrency }, () => worker()));
+if (verified.length < target) await Promise.all(Array.from({ length: concurrency }, () => overflowWorker()));
 
 const cohort = verified.slice(0, target).sort((a, b) => b.activeJobs - a.activeJobs || a.provider.localeCompare(b.provider) || a.slug.localeCompare(b.slug));
 const artifact = {
@@ -86,6 +111,7 @@ const artifact = {
   generatedAt: new Date().toISOString(),
   discoverySource: currentIndex.id,
   target,
+  allocation: Object.fromEntries(allocations.map(({ provider, target: providerTarget }) => [provider, providerTarget])),
   candidateEmployers: candidates.length,
   verifiedEmployers: cohort.length,
   advertisedActiveJobs: cohort.reduce((sum, employer) => sum + employer.activeJobs, 0),

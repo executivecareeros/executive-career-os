@@ -1,5 +1,18 @@
 # Orion Decision Log
 
+## 2026-07-18 — Balance employer discovery across approved provider ecosystems
+
+- **Context:** fixed provider iteration allowed Greenhouse and Ashby candidates to satisfy a cohort target before SmartRecruiters candidates were evaluated, limiting unique employer and geographic coverage despite a certified SmartRecruiters connector.
+- **Options considered:** preserve volume-first ordering; create separate provider-specific factories; reserve deterministic capacity per approved indexed provider and use remaining candidates as overflow.
+- **Chosen option:** allocate each discovery cohort evenly across approved indexed providers before an overflow pass fills unused capacity.
+- **Evidence:** a read-only nine-employer proof found three verified employers per provider and 400 advertised active opportunities across Greenhouse, Ashby, and SmartRecruiters; two invalid candidates were isolated without stopping discovery.
+- **Reasoning:** balanced admission increases provider diversity and reusable employer coverage with no new provider, infrastructure, license, AI token, canonical identity, or lifecycle change.
+- **Trade-offs:** equal reservation is a deterministic starting policy, not a permanent market weighting; durable coverage does not change until an isolated-staging cohort is activated.
+- **Reversibility:** remove the allocation step to restore the prior volume-first order; no canonical data or provider schedules were changed by the proof.
+- **Owner:** CTO / Opportunity Factory.
+- **Affected:** employer-cohort discovery only.
+- **Follow-up:** activate a bounded balanced cohort in isolated staging and measure unique employers, countries, executive relevance, freshness, failures, and cost per employer.
+
 ## 2026-07-17 — Preserve the executive opportunity journey as an append-only workspace
 
 - **Context:** Atlas 1.0 answers the initial review question, but executives need evidence, tasks, questions, stages, and reassessment to remain connected through a final decision.
