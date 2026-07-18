@@ -26,15 +26,15 @@ assert.match(migration,/retention_days integer not null default 90/);
 assert.match(migration,/reject_append_only_mutation/);
 assert.doesNotMatch(migration,/public discovery|service.role|service_role/i);
 
-assert.match(roomsPage,/Open conversations for verified ORENDALIS executives/i);
-assert.match(roomsPage,/Every verified executive can join/i);
-assert.match(roomsPage,/Atlas remains silent unless explicitly asked/i);
+assert.match(roomsPage,/Join open conversations or private rooms shared with you/i);
+assert.match(roomsPage,/Open to every verified executive/i);
+assert.match(roomsPage,/Invitation only/i);
 assert.match(roomPage,/Atlas is not monitoring this room/i);
 assert.match(roomPage,/Sources preserved/);
 assert.match(roomPage,/90-day bounded archive window/);
 assert.match(roomPage,/verified.*executive/i);
 assert.match(actions,/resolveAuthenticatedRepositoryContext/);
-assert.match(actions,/"create_executive_room_v2"/);
+assert.match(actions,/"create_executive_room_v3"/);
 assert.match(actions,/revalidatePath/);
 assert.match(navigation,/label: "Rooms", href: "\/rooms"/);
 

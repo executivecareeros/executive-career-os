@@ -23,8 +23,9 @@ export async function createRoomAction(formData: FormData) {
   const shortPurpose = value(formData, "shortPurpose", 180);
   const language = value(formData, "language", 80);
   const permanenceReason = value(formData, "permanenceReason", 600);
+  const accessMode = value(formData, "accessMode", 20) === "InvitationOnly" ? "InvitationOnly" : "Open";
   const closesAt = value(formData, "closesAt", 40) || null;
-  const roomId = await rpc<string>("create_executive_room_v2", { room_title: title, room_topic: topic, room_short_purpose: shortPurpose, room_language: language, permanence_request_reason: permanenceReason, requested_closes_at: closesAt });
+  const roomId = await rpc<string>("create_executive_room_v3", { room_title: title, room_topic: topic, room_short_purpose: shortPurpose, room_language: language, room_access_mode: accessMode, permanence_request_reason: permanenceReason, requested_closes_at: closesAt });
   revalidatePath("/rooms");
   redirect(`/rooms/${roomId}`);
 }

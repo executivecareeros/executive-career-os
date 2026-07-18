@@ -1,0 +1,6 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export function RoomInvitationJoin(){const router=useRouter();const [error,setError]=useState("");async function join(){const token=location.hash.slice(1);if(!token){setError("This invitation link is incomplete.");return;}const response=await fetch("/api/rooms/join",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({token})});const body=await response.json();if(!response.ok){setError(body.error??"This invitation is not available.");return;}history.replaceState(null,"","/rooms/join");router.replace(`/rooms/${body.roomId}?notice=Invitation%20accepted`);}return <div className="mx-auto max-w-xl px-5 py-20"><div className="rounded-3xl border border-[#dfe5ee] bg-white p-8 shadow-sm"><p className="atlas-kicker">Private Executive Room</p><h1 className="mt-3 text-3xl font-semibold">Join this conversation</h1><p className="mt-3 leading-7 text-[#5f6b7a]">This secure invitation gives your verified ORENDALIS account access to one invitation-only room.</p><button type="button" onClick={join} className="mt-6 rounded-full bg-[#0b1220] px-6 py-3 text-sm font-semibold text-white">Join room</button>{error&&<p role="alert" className="mt-4 text-sm text-[#8b3c34]">{error}</p>}</div></div>}

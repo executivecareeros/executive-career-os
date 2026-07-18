@@ -1,5 +1,14 @@
 # Executive Rooms Specification
 
+## Access modes
+
+- Atlas- and ORENDALIS-managed rooms are always **Open** to every signed-in, verified executive.
+- An executive-created room can be **Open** or **Invitation Only**.
+- Invitation-only rooms are absent from the public room directory until membership is accepted.
+- Owners can create cryptographically random invitation links. Only a SHA-256 digest is stored; the secret is shown once, expires within 30 days, has a bounded use count, and can be revoked.
+- Invitation secrets use the URL fragment so they are not transmitted in the initial page request or ordinary server logs.
+- Access mode and permanence are separate: an invitation-only room is still temporary until the Founder approves permanence.
+
 > Status: Governing product specification with implemented MVP evidence. Rooms are professional knowledge environments, not social media.
 
 ## Principles
