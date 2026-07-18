@@ -16,6 +16,8 @@ The zero-token Opportunity Factory therefore continues to scale through employer
 | Public feed with incompatible use terms | We Work Remotely | Feed exists, but official terms prohibit building a job-search service from the data; ingestion is withheld |
 | No suitable official retrieval interface evidenced | Glassdoor, Wellfound, FlexJobs, Monster, CareerBuilder, XING, InfoJobs, Naukri, Boss Zhipin, 51job, Zhaopin, Wantedly, Computrabajo, OCCMundial, Catho, Bayt, Jobberman, Careers24 | No repeated attempts; revisit only on official access change or targeted provider response |
 
+A non-binding permission inquiry was sent to We Work Remotely from the authorized Orendalis operating mailbox. It asks for an approved feed/API path, attribution rules, limits and commercial or contractual conditions. No source activation, terms acceptance or payment commitment was made.
+
 ## Enterprise coverage strategy
 
 Google, NVIDIA, Apple, Microsoft, Samsung, BYD and other major employers are employer targets, not special provider architectures. Each must enter through a verified public first-party career or ATS source supported by the common engine. Custom or protected career sites remain excluded until a compliant structured interface is evidenced. This preserves canonical identity and avoids duplicating one-off collectors.
