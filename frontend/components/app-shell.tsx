@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ExecutiveCommandBar } from "./executive-command-bar";
 import type { Locale } from "@/lib/locale";
+import { ProductLearningTracker } from "./product-learning-tracker";
 
 export function AppShell({ children, publicExperience = false, locale = "en", signedInName, signedInEmail }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale; signedInName?: string; signedInEmail?: string }>) {
   const menu = useMobileMenu();
@@ -17,6 +18,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
 
   return (
     <div data-executive-shell className="min-h-screen bg-[#f5f7fb] text-[#0b1220] lg:flex">
+      {signedInEmail && <ProductLearningTracker />}
       {!focusMode && <Sidebar locale={locale} />}
 
       <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} locale={locale} signedInName={signedInName} signedInEmail={signedInEmail} />
