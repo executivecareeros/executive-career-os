@@ -10,7 +10,6 @@ export type LiveCompanyRecord = {
   country?: string;
   opportunityCount: number;
   executiveOpportunityCount?: number;
-  opportunityIds: string[];
   sourceNames: string[];
   confidenceScores: number[];
   relevanceScores: number[];

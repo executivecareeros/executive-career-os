@@ -29,15 +29,14 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
   if (!resolved) redirect(`/login?next=${encodeURIComponent(`/companies/${id}`)}`);
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspaceId = resolved.context.workspace!.workspaceId;
-  const [companyResponse, response] = await Promise.all([
-    client.request<CompanyRow[]>(`companies?select=id,name,country,industry,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at,last_verified_at,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null`),
-    client.request<OpportunityRow[]>(`opportunities?select=domain_id,company_id,payload,updated_at&workspace_id=eq.${workspaceId}&archived_at=is.null&order=updated_at.desc`),
-  ]);
-  if (response.error || companyResponse.error) throw new Error("Company evidence could not be loaded safely.");
   const companyName = decodeURIComponent(id);
-  const company = (companyResponse.data ?? []).find((row) => row.name === companyName);
+  const companyResponse = await client.request<CompanyRow[]>(`companies?select=id,name,country,industry,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at,last_verified_at,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null&name=eq.${encodeURIComponent(companyName)}&limit=1`);
+  if (companyResponse.error) throw new Error("Company evidence could not be loaded safely.");
+  const company = companyResponse.data?.[0];
   if (!company) notFound();
-  const linked = (response.data ?? []).filter((row) => row.company_id === company.id);
+  const response = await client.request<OpportunityRow[]>(`opportunities?select=domain_id,company_id,payload,updated_at&workspace_id=eq.${workspaceId}&company_id=eq.${company.id}&archived_at=is.null&order=updated_at.desc&limit=500`);
+  if (response.error) throw new Error("Company opportunity evidence could not be loaded safely.");
+  const linked = response.data ?? [];
   if (!linked.length) notFound();
   const records = linked.map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
   const intelligence = buildCanonicalEmployerIntelligence(company, records);
