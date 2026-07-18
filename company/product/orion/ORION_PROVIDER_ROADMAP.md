@@ -18,6 +18,26 @@ Status is evidence-based. “Production” requires successful scheduled runs an
 | LinkedIn | Blocked for automated collection; user import approved | P1 | Very high; global | Consent-based URL/email observation; resolve employer source | No scraping, account automation, credentials, or cookies; partnership required for broader access | Founder partnership gate | `test:linkedin-bridge` | User import only | High |
 | Manual / URL / PDF | Production product path | P1 | User-supplied | Authorized import into same canonical pipeline | Private/workspace scoped | Luna | import and bridge tests | User triggered | Medium |
 
+## Global marketplace access classification
+
+The provider portfolio is assessed by the access actually offered, not by consumer traffic. A large consumer marketplace is not an inventory source unless its official interface and terms permit Orendalis to retrieve, normalize and display its listings.
+
+| Ecosystem | Official access found | Orendalis decision | Revisit trigger |
+|---|---|---|---|
+| Indeed | Job Sync API for ATS/job-distributor partners to create, update and expire jobs on Indeed | Not an inventory connector | Indeed offers a licensed job-search/inventory feed suitable for Orendalis |
+| LinkedIn | Restricted Talent Solutions partner APIs for posting and apply workflows | User-consented bridge only; partnership application remains the compliant expansion path | Written inventory/data permission from LinkedIn |
+| Glassdoor | No supported official bulk job-inventory retrieval interface evidenced | Do not automate or scrape | Official licensed retrieval program becomes available |
+| Google for Jobs | Search feature plus Indexing API for notifying Google about publisher-owned job pages | SEO distribution channel, not an inventory source | Google publishes an authorized retrieval interface |
+| ZipRecruiter | Partner Jobs API for jobs a partner posts and manages | Not an inventory connector | Licensed search-inventory access is offered |
+| StepStone / Totaljobs | Job-ad feeds and ATS apply integrations that publish customer jobs to StepStone properties | Not an inventory connector | Licensed retrieval/syndication agreement is offered |
+| SEEK | Contractual recruitment-software partner API for mutual advertiser customers | Approval-gated; not autonomous inventory access | SEEK approves Orendalis's retrieval use case and Founder accepts required terms |
+| We Work Remotely | Public RSS exists, but official API terms prohibit using its data to build a job-search service | Do not ingest without written permission | Written permission for the Orendalis use case |
+| Wellfound, FlexJobs, Monster, CareerBuilder, XING, InfoJobs, Naukri, Boss Zhipin, 51job, Zhaopin, Wantedly, Computrabajo, OCCMundial, Catho, Bayt, Jobberman, Careers24 | No supported official bulk inventory interface evidenced in this bounded review | No retries, scraping or protected-page automation | Provider publishes a suitable official interface or responds to a targeted partnership path |
+
+Official evidence: [Indeed Job Sync API](https://docs.indeed.com/job-sync-api), [LinkedIn Talent Solutions APIs](https://learn.microsoft.com/en-us/linkedin/talent/), [Google Indexing API](https://developers.google.com/search/apis/indexing-api/v3/using-api), [Google JobPosting guidance](https://developers.google.com/search/docs/appearance/structured-data/job-posting), [ZipRecruiter Partner Jobs API](https://www.ziprecruiter.com/partner/documentation/job-api/), [StepStone API](https://api.stepstone.com/home/), [SEEK API terms](https://www.seek.com.au/content/terms/new-api-terms-seek-au.pdf), [We Work Remotely feed](https://weworkremotely.com/remote-job-rss-feed), and [We Work Remotely API terms](https://weworkremotely.com/api-terms-and-guidelines).
+
+This classification prevents repeated unsuccessful attempts. Marketplaces in the final row receive one new review only when their official access or partnership conditions materially change.
+
 ## Provider contract
 
 All adapters implement `OpportunityProvider` in `frontend/lib/discovery/types.ts`, declare Provider Manifest v1.0, register through `registry.ts` / `providers/factory.ts`, normalize through `normalizer.ts`, and persist through `OpportunityIngestionPipeline` and `SupabaseOpportunityIngestionSink`. Shared request, retry, pagination, batch, health, scaffold, and certification behavior lives in the Provider SDK. Required outcomes are provenance, canonicalization, deduplication, lifecycle, freshness, durable run health, retry behavior, and workspace isolation. Provider-specific persistence is prohibited.
