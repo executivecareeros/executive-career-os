@@ -20,10 +20,10 @@ export function isSafePublicCareerUrl(url: URL) {
   return true;
 }
 
-type AddressRecord = { address: string; family: number };
-type HostResolver = (hostname: string) => Promise<readonly AddressRecord[]>;
-const defaultResolver: HostResolver = (hostname) => lookup(hostname, { all: true, verbatim: true });
-const publicAddress = ({ address, family }: AddressRecord) => {
+export type AddressRecord = { address: string; family: number };
+export type HostResolver = (hostname: string) => Promise<readonly AddressRecord[]>;
+export const defaultPublicHostResolver: HostResolver = (hostname) => lookup(hostname, { all: true, verbatim: true });
+export const isPublicNetworkAddress = ({ address, family }: AddressRecord) => {
   if (family === 4) {
     const [a, b] = address.split(".").map(Number);
     return !(a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 198 && (b === 18 || b === 19)));
@@ -88,11 +88,11 @@ export class CompanyCareerSiteOpportunityProvider implements OpportunityProvider
   readonly source = { id: this.id, name: "Company Career Site", category: "Corporate Website" as const, description: "Employer-published opportunities expressed as JobPosting structured data on a public career page.", capabilities: ["jobs", "companies"] as const };
   readonly reliability = { type: "Corporate Website" as const, rating: "high" as const, score: 86, rationale: "Collected from explicit JobPosting evidence published on the employer's own public page.", assessedAt: new Date().toISOString() };
 
-  constructor(readonly pageUrl: URL, private readonly fetcher: typeof fetch = fetch, private readonly resolver: HostResolver = defaultResolver) {}
+  constructor(readonly pageUrl: URL, private readonly fetcher: typeof fetch = fetch, private readonly resolver: HostResolver = defaultPublicHostResolver) {}
 
   private async document() {
     const addresses = await this.resolver(this.pageUrl.hostname);
-    if (!addresses.length || addresses.some((address) => !publicAddress(address))) throw Object.assign(new Error("The company career page does not resolve to a public network address."), { code: "PRIVATE_CAREER_PAGE_ADDRESS", retryable: false });
+    if (!addresses.length || addresses.some((address) => !isPublicNetworkAddress(address))) throw Object.assign(new Error("The company career page does not resolve to a public network address."), { code: "PRIVATE_CAREER_PAGE_ADDRESS", retryable: false });
     const response = await this.fetcher(this.pageUrl, { headers: { Accept: "text/html,application/xhtml+xml" }, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(12_000) });
     if (!response.ok) throw Object.assign(new Error(`The company career page returned ${response.status}.`), { code: "CAREER_PAGE_UNAVAILABLE", retryable: response.status >= 500 || response.status === 429 });
     const type = response.headers.get("content-type") ?? "";

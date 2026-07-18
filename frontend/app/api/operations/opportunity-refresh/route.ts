@@ -3,6 +3,7 @@ import { schedulerRequestAuthorized } from "@/lib/discovery/scheduler-auth";
 import { runOpportunityScheduler } from "@/lib/discovery/scheduler-runtime";
 import { createSchedulerSupabaseClient } from "@/lib/supabase/scheduler";
 import type { SupabaseDataClient } from "@/lib/supabase/client";
+import { activateCompanyIntelligence } from "@/lib/company-intelligence/activation";
 
 export const dynamic = "force-dynamic";
 // A full employer cohort can require more than one minute of deterministic,
@@ -35,6 +36,10 @@ export async function GET(request: Request) {
     const summary = await runOpportunityScheduler(client);
     const schedules = await client.request<Array<{ workspace_id: string }>>("opportunity_provider_schedules?select=workspace_id&enabled=eq.true&limit=1");
     const workspaceId = schedules.data?.[0]?.workspace_id;
+    const companyActivationLimit = Math.max(0, Math.min(25, Number(process.env.COMPANY_INTELLIGENCE_ACTIVATION_LIMIT ?? 0) || 0));
+    const companyIntelligenceActivation = workspaceId && companyActivationLimit
+      ? await activateCompanyIntelligence(client, workspaceId, { maximumCompanies: companyActivationLimit })
+      : undefined;
     const employerIntelligence = workspaceId
       ? await client.request<Record<string, unknown>>("rpc/refresh_employer_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
       : undefined;
@@ -64,6 +69,7 @@ export async function GET(request: Request) {
       providers: evidence?.providers ?? [],
       persistence: evidence?.persistence ?? {},
       employerIntelligence: employerIntelligence?.data ?? undefined,
+      companyIntelligenceActivation,
       employerIntelligenceError: employerIntelligence?.error ? { status: employerIntelligence.status, code: employerIntelligence.error.code, message: employerIntelligence.error.message.slice(0, 160) } : undefined,
       coverageError: coverage?.error ? { status: coverage.status, code: coverage.error.code, message: coverage.error.message.slice(0, 160) } : undefined,
     }));
