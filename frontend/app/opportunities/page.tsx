@@ -29,6 +29,12 @@ const opportunityListSelect = [
   "matchingStrengths:payload->matchingStrengths", "riskFlags:payload->riskFlags", "exclusions:payload->exclusions", "completenessScore:payload->>completenessScore",
 ].join(",");
 
+// Keep the authenticated landing request inside the database's indexed active
+// opportunity window. The UI ranks this bounded candidate set for the current
+// executive; detail pages continue to load the complete canonical record.
+const opportunityListLimit = 300;
+const activeOpportunityStatuses = "Discovered,Evaluating,Qualified,Ready to Apply,Applied,Interview";
+
 function listOpportunity(row: OpportunityListRow): Opportunity {
   const number = (value: unknown) => value === null || value === undefined || value === "" ? undefined : Number(value);
   const strings = (value: unknown) => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
@@ -68,9 +74,10 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);
       if ((await searchParams).cv === "complete") confirmedRoleCount = history.data?.length ?? 0;
-      // Encode the PostgREST JSON projection before placing it in the URL. This
-      // keeps long descriptions on the detail route and makes the list fast.
-      const rows = await createServerSupabaseClient(resolved.accessToken).request<OpportunityListRow[]>(`opportunities?select=${encodeURIComponent(opportunityListSelect)}&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&order=updated_at.desc&limit=1000`);
+      // The composite active-opportunity index is ordered by workspace, status,
+      // and recency. Matching that order avoids sorting the complete and growing
+      // Opportunity Universe before the first executive result can be shown.
+      const rows = await createServerSupabaseClient(resolved.accessToken).request<OpportunityListRow[]>(`opportunities?select=${encodeURIComponent(opportunityListSelect)}&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&status=in.(${encodeURIComponent(activeOpportunityStatuses)})&order=status.asc,updated_at.desc&limit=${opportunityListLimit}`);
       if (rows.error) { console.error("Opportunity list query failed", { status: rows.status, code: rows.error.code, message: rows.error.message }); throw new Error(rows.error.message); }
       collected = (rows.data ?? []).filter((row) => row.domain_id.startsWith("discovered-")).map(listOpportunity);
       // Once the live universe contains attributable collected opportunities,
