@@ -1,6 +1,6 @@
 # Executive Rooms MVP Gate
 
-> Status: Founder approved the bounded invite-only MVP on 2026-07-18. Runtime implementation is complete locally and awaiting controlled staging migration/deployment validation. No room or invitation data has been fabricated.
+> Status: Founder approved the bounded invite-only MVP on 2026-07-18. Runtime commit `3974350` is deployed and Ready; the isolated database migration is applied and verified. No room or invitation data has been fabricated.
 
 ## Product promise
 
@@ -67,3 +67,6 @@ Feature flag Rooms off; deny all room access; preserve security/moderation audit
 - Append-only moderation audit with safe metadata only.
 - No public discovery, files, guests, DMs, reactions, feeds or new infrastructure.
 - Contract test, lint, TypeScript and production build pass.
+- Live authenticated `/rooms` validation passes with the correct empty state and creation boundary.
+- Staging database validation confirms 7 room tables, 9 controlled functions and 7 row-level isolation policies.
+- Initial state is clean: zero rooms, memberships, messages and invitations.
