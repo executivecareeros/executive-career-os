@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/page-header";
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { archiveRoomAction, inviteMemberAction, invokeAtlasAction, postRoomMessageAction, toggleBookmarkAction, togglePinAction } from "../actions";
+import { RoomPresenceHeartbeat } from "@/components/rooms/room-presence-heartbeat";
 
 type Room={id:string;title:string;topic:string;status:string;is_temporary:boolean;closes_at?:string;created_at:string};
 type Membership={executive_identity_id:string;display_name:string;role:string};
@@ -28,7 +29,7 @@ export default async function RoomPage({params,searchParams}:{params:Promise<{ro
   const pinned=new Set((pinsResponse.data??[]).map(pin=>pin.message_id)); const bookmarked=new Set((bookmarksResponse.data??[]).map(bookmark=>bookmark.message_id));
   const notice=(await searchParams).notice; const canModerate=myRole==="Owner"||myRole==="Moderator";
 
-  return <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-10"><div className="mb-5"><Link href="/rooms" className="text-sm font-semibold text-[#526a86] hover:underline">← All Executive Rooms</Link></div>
+  return <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-10"><RoomPresenceHeartbeat roomId={room.id}/><div className="mb-5"><Link href="/rooms" className="text-sm font-semibold text-[#526a86] hover:underline">← All Executive Rooms</Link></div>
     <PageHeader eyebrow={`${room.status} · ${myRole ?? "Member"}`} title={room.title} description={room.topic}/>
     {notice&&<p role="status" className="mt-6 rounded-xl border border-[#b9d9c3] bg-[#edf8f0] px-4 py-3 text-sm text-[#285a37]">{notice}</p>}
     <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_19rem]">
