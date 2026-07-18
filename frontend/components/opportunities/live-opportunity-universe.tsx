@@ -11,7 +11,7 @@ import type { Opportunity } from "@/types/opportunity";
 import { toPlainText } from "@/lib/plain-text";
 import { assessOpportunityFreshness, opportunitySourceLabel } from "@/lib/opportunity-universe";
 import { assessOpportunityConfidence, sortOpportunitiesForExecutive, type ExecutiveCareerContext, type ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
-import { EXECUTIVE_SEARCH_REGIONS, matchesExecutiveSearch, searchCity, searchCountry, searchSuggestions, type ExecutiveSearchFilters } from "@/lib/executive-search";
+import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchSuggestions, type ExecutiveSearchFilters } from "@/lib/executive-search";
 import { LiveOpportunityCard } from "./live-opportunity-card";
 import { OpportunityApplicationLink } from "./opportunity-application-link";
 import { resolvePublishedCompensation } from "@/lib/discovery/published-compensation";
@@ -36,7 +36,7 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
 
   const options = useMemo(() => ({
     countries: values(collected.map(searchCountry).filter((value): value is string => Boolean(value))), cities: values(collected.map(searchCity).filter((value): value is string => Boolean(value))),
-    regions: [...EXECUTIVE_SEARCH_REGIONS], industries: values(collected.map((item) => item.industry)),
+    regions: [...EXECUTIVE_SEARCH_REGIONS], industries: [...EXECUTIVE_SEARCH_INDUSTRIES],
     titles: values(collected.map((item) => item.jobTitle)), departments: ["Sales", "Commercial", "Revenue", "Business Development", "Operations", "Finance", "Technology", "Product", "Marketing"],
     seniorities: ["C-suite", "Chief", "Executive", "Vice President", "VP", "Director", "Head"], employmentTypes: values(collected.map((item) => item.employmentType)),
     remoteOptions: values(collected.map((item) => item.workArrangement)), companySizes: values(collected.map((item) => item.companySize)),
@@ -50,7 +50,8 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
       const state = assessOpportunityConfidence(item, geographicProfile, careerContext).eligibility;
       return state === "Eligible" || state === "Probably Eligible";
     });
-    return sort === "newest" ? [...filtered].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt)) : sortOpportunitiesForExecutive(filtered, geographicProfile, careerContext);
+    if (sort === "newest") return [...filtered].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+    return sortOpportunitiesForExecutive(filtered, geographicProfile, careerContext).sort((a, b) => executiveSearchRelevance(b, applied) - executiveSearchRelevance(a, applied));
   }, [applied, careerContext, collected, eligibleOnly, geographicProfile, sort]);
   const activeOpportunities = view === "Recommended" ? rankedOpportunities : searchedOpportunities;
   const pageCount = Math.max(1, Math.ceil(activeOpportunities.length / pageSize));
@@ -76,10 +77,10 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
       <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-semibold text-[#17191c]">Search executive jobs</h2><p className="mt-1 text-sm text-[#6f757b]">Your selections are <Link href="/workspace#preferences" className="font-semibold text-[#3457d5] underline-offset-2 hover:underline">User Preferences</Link>. Open them at any time to change what influences Atlas ranking. Automatic detections remain separate and never overwrite your choices.</p></div><button type="button" onClick={clearFilters} className="text-sm font-semibold text-[#536f80]">Clear all</button></div>
       <div className="relative mt-5"><SearchInput label="Role, skill, company, or keyword" value={draft.query} onChange={(event) => setDraft({ ...draft, query: event.target.value })} placeholder="Chief Revenue Officer, SaaS, enterprise sales…" />{draft.query && suggestions.length > 0 && <div className="mt-2 flex flex-wrap gap-2" aria-label="Search suggestions">{suggestions.map((item) => <button key={item} type="button" onClick={() => setDraft({ ...draft, query: item })} className="rounded-full border border-[#d9dcde] bg-[#fafafa] px-3 py-1.5 text-xs text-[#3f464c] hover:bg-[#f0f2f2]">{item}</button>)}</div>}</div>
       <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <MultiSelect label="Countries" values={draft.countries} options={options.countries} onChange={(value) => setDraft({ ...draft, countries: value })} />
+        <MultiSelect strict label="Countries" values={draft.countries} options={options.countries} onChange={(value) => setDraft({ ...draft, countries: value })} />
         <MultiSelect label="Cities" values={draft.cities} options={options.cities} onChange={(value) => setDraft({ ...draft, cities: value })} />
-        <MultiSelect label="Regions" values={draft.regions} options={options.regions} onChange={(value) => setDraft({ ...draft, regions: value })} />
-        <MultiSelect label="Industries" values={draft.industries} options={options.industries} onChange={(value) => setDraft({ ...draft, industries: value })} />
+        <MultiSelect strict label="Regions" values={draft.regions} options={options.regions} onChange={(value) => setDraft({ ...draft, regions: value })} />
+        <MultiSelect strict label="Industries" values={draft.industries} options={options.industries} onChange={(value) => setDraft({ ...draft, industries: value })} />
         <MultiSelect label="Titles" values={draft.titles} options={options.titles} onChange={(value) => setDraft({ ...draft, titles: value })} />
         <MultiSelect label="Departments" values={draft.departments} options={options.departments} onChange={(value) => setDraft({ ...draft, departments: value })} />
         <MultiSelect label="Seniority" values={draft.seniorities} options={options.seniorities} onChange={(value) => setDraft({ ...draft, seniorities: value })} />
@@ -104,10 +105,10 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
 
 const controlClass = "mt-2 w-full rounded-xl border border-[#d9dcde] bg-white px-4 py-3 text-sm text-[#17191c]";
 function values(items: string[]) { return [...new Set(items.filter((item) => item && item !== "Not specified" && item !== "Unknown"))].sort(); }
-function MultiSelect({ label, values, options, onChange }: { label: string; values: string[]; options: string[]; onChange: (values: string[]) => void }) {
+function MultiSelect({ label, values, options, onChange, strict=false }: { label: string; values: string[]; options: string[]; onChange: (values: string[]) => void; strict?: boolean }) {
   const [entry, setEntry] = useState(""), id = useId();
   const add = () => { const exact = options.find((option) => option.toLowerCase() === entry.trim().toLowerCase()) ?? entry.trim(); if (exact && !values.includes(exact)) onChange([...values, exact]); setEntry(""); };
-  return <fieldset className="rounded-xl border border-[#d9dcde] p-3"><legend className="px-1 text-sm text-[#565c62]">{label}</legend><div className="flex gap-2"><input list={id} value={entry} onChange={(event) => setEntry(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); add(); } }} placeholder={`Add ${label.toLowerCase()}`} className="min-w-0 flex-1 rounded-lg border border-[#d9dcde] px-3 py-2 text-sm"/><datalist id={id}>{options.map((option) => <option key={option} value={option}/>)}</datalist><button type="button" onClick={add} className="rounded-lg border border-[#d9dcde] px-3 text-sm font-semibold">Add</button></div>{values.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{values.map((value) => <button key={value} type="button" onClick={() => onChange(values.filter((item) => item !== value))} className="rounded-full bg-[#edf3f5] px-2.5 py-1 text-xs text-[#36576a]" aria-label={`Remove ${value}`}>{value} ×</button>)}</div>}</fieldset>;
+  return <fieldset className="rounded-xl border border-[#d9dcde] p-3"><legend className="px-1 text-sm text-[#565c62]">{label}</legend><div className="flex gap-2">{strict?<select value={entry} onChange={(event)=>setEntry(event.target.value)} className="min-w-0 flex-1 rounded-lg border border-[#d9dcde] bg-white px-3 py-2 text-sm"><option value="">Choose {label.toLowerCase()}</option>{options.filter(option=>!values.includes(option)).map(option=><option key={option} value={option}>{option}</option>)}</select>:<><input list={id} value={entry} onChange={(event) => setEntry(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); add(); } }} placeholder={`Add ${label.toLowerCase()}`} className="min-w-0 flex-1 rounded-lg border border-[#d9dcde] px-3 py-2 text-sm"/><datalist id={id}>{options.map((option) => <option key={option} value={option}/>)}</datalist></>}<button type="button" disabled={!entry.trim()} onClick={add} className="rounded-lg border border-[#bfc8d0] bg-[#f8fafb] px-3 text-sm font-semibold transition hover:bg-[#edf2f5] active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-45">Add</button></div>{values.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{values.map((value) => <button key={value} type="button" onClick={() => onChange(values.filter((item) => item !== value))} className="rounded-full bg-[#edf3f5] px-2.5 py-1 text-xs text-[#36576a]" aria-label={`Remove ${value}`}>{value} ×</button>)}</div>}</fieldset>;
 }
 
 function CollectedOpportunityCard({ opportunity, geographicProfile, careerContext }: { opportunity: Opportunity; geographicProfile: ExecutiveGeographicProfile; careerContext: ExecutiveCareerContext }) {

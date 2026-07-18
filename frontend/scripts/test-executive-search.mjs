@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { EXECUTIVE_SEARCH_REGIONS, matchesExecutiveSearch, searchCity, searchCountry, searchRegions, searchSuggestions } from "../lib/executive-search.ts";
+import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchIndustries, searchRegions, searchSuggestions } from "../lib/executive-search.ts";
 import { classifyOpportunityIndustry } from "../lib/discovery/industry-classification.ts";
 
 const opportunity = {
@@ -16,9 +16,18 @@ assert.ok(searchSuggestions("reveneu", [opportunity]).includes("Chief Revenue Of
 assert.equal(searchCountry({ country: "VA", location: "Richmond, VA" }), "United States", "US state codes must be grouped under the United States");
 assert.equal(searchCountry({ country: "Unknown", location: "Paris, France" }), "France", "an explicit location country must populate Countries");
 assert.equal(searchCity({ country: "France", location: "Paris, France" }), "Paris", "countries must not appear in Cities");
+assert.equal(searchCountry({ country: "Amsterdam", location: "Amsterdam Remote" }), undefined, "a city must never leak into Countries");
+assert.equal(searchCity({ country: "Unknown", location: "Amsterdam Remote" }), "Amsterdam", "work-model words must not leak into Cities");
 assert.deepEqual(searchRegions({ country: "France", location: "Paris, France", workArrangement: "Hybrid" }), ["EU", "Europe", "EMEA"]);
 assert.ok(EXECUTIVE_SEARCH_REGIONS.includes("North America") && EXECUTIVE_SEARCH_REGIONS.includes("MENA"), "the complete region taxonomy must remain available");
 assert.equal(matchesExecutiveSearch({ ...opportunity, country: "VA", location: "Richmond, VA" }, { ...filters, query: "", countries: ["United States"], cities: [], regions: [], industries: [], departments: [], seniorities: [], employmentTypes: [], remoteOptions: [], companySizes: [], salaryMinimum: "", salaryMaximum: "", salaryCurrency: "" }), true, "country-only search must work");
+const amsterdamRemote = { ...opportunity, location: "Amsterdam Remote", country: "Netherlands", workArrangement: "Remote" };
+const oneFieldSearch = { ...filters, query: "", countries: [], cities: ["Amsterdam Remote"], regions: [], industries: [], titles: [], departments: [], seniorities: [], employmentTypes: [], remoteOptions: [], companySizes: [], salaryMinimum: "", salaryMaximum: "", salaryCurrency: "" };
+assert.equal(matchesExecutiveSearch(amsterdamRemote, oneFieldSearch), true, "a single Amsterdam Remote selection must return matching remote roles");
+assert.equal(matchesExecutiveSearch({ ...amsterdamRemote, workArrangement: "On-site", location: "Amsterdam" }, oneFieldSearch), false, "remote intent must be respected");
+assert.ok(executiveSearchRelevance(amsterdamRemote, oneFieldSearch) > executiveSearchRelevance({ ...amsterdamRemote, location: "Rotterdam Remote" }, oneFieldSearch), "exact location relevance must rank first");
+assert.ok(EXECUTIVE_SEARCH_INDUSTRIES.length >= 25, "executives need a credible controlled industry taxonomy");
+assert.ok(searchIndustries(opportunity).includes("Enterprise Software"), "explicit industry evidence must remain searchable");
 
 const baseJob = { sourceId: "1", source: "greenhouse", title: "VP Sales", company: { sourceId: "acme", name: "Acme" }, description: "Lead revenue for our enterprise SaaS cloud platform.", discoveredAt: "2026-07-18T00:00:00Z", rawMetadata: {} };
 assert.deepEqual(classifyOpportunityIndustry({ ...baseJob, company: { ...baseJob.company, industry: "Cybersecurity" } }).source, "Verified provider metadata");
