@@ -15,8 +15,37 @@ import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-reposit
 import { executiveCareerContextFromRows, unknownGeographicProfile, type ExecutiveCareerContext } from "@/lib/opportunity-geography";
 import { currentSession } from "@/lib/auth/session";
 
-type OpportunityRow = { domain_id: string; payload: Record<string, unknown> };
+type OpportunityListRow = Record<string, unknown> & { domain_id: string };
 type ExperienceRow = { id: string; role_title?: string; notes?: string };
+
+const opportunityListSelect = [
+  "domain_id", "companyName:payload->>companyName", "companyInitials:payload->>companyInitials", "jobTitle:payload->>jobTitle",
+  "location:payload->>location", "country:payload->>country", "workArrangement:payload->>workArrangement", "employmentType:payload->>employmentType",
+  "industry:payload->>industry", "companySize:payload->>companySize", "source:payload->>source", "sourceUrl:payload->>sourceUrl",
+  "lastObservedAt:payload->>lastObservedAt", "publishedAt:payload->>publishedAt", "discoveredAt:payload->>discoveredAt", "salaryMin:payload->>salaryMin",
+  "salaryMax:payload->>salaryMax", "salaryCurrency:payload->>salaryCurrency", "salaryDisclosure:payload->>salaryDisclosure", "executiveFitScore:payload->>executiveFitScore",
+  "strategicOpportunityScore:payload->>strategicOpportunityScore", "overallScore:payload->>overallScore", "confidenceScore:payload->>confidenceScore",
+  "status:payload->>status", "priority:payload->>priority", "travelRequirement:payload->>travelRequirement", "requiredSkills:payload->requiredSkills",
+  "matchingStrengths:payload->matchingStrengths", "riskFlags:payload->riskFlags", "exclusions:payload->exclusions", "completenessScore:payload->>completenessScore",
+].join(",");
+
+function listOpportunity(row: OpportunityListRow): Opportunity {
+  const number = (value: unknown) => value === null || value === undefined || value === "" ? undefined : Number(value);
+  const strings = (value: unknown) => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+  return {
+    ...row, id: row.domain_id, companyName: String(row.companyName ?? "Unknown employer"), companyInitials: String(row.companyInitials ?? "—"),
+    jobTitle: String(row.jobTitle ?? "Untitled opportunity"), location: String(row.location ?? "Location not specified"), country: String(row.country ?? "Unknown"),
+    workArrangement: (row.workArrangement ?? "Unknown") as Opportunity["workArrangement"], employmentType: (row.employmentType ?? "Unknown") as Opportunity["employmentType"],
+    industry: String(row.industry ?? "Unknown"), companySize: String(row.companySize ?? "Unknown"), source: String(row.source ?? "Employer"),
+    publishedAt: String(row.publishedAt ?? row.discoveredAt ?? "1970-01-01T00:00:00.000Z"), discoveredAt: String(row.discoveredAt ?? row.publishedAt ?? "1970-01-01T00:00:00.000Z"),
+    salaryMin: number(row.salaryMin), salaryMax: number(row.salaryMax), executiveFitScore: number(row.executiveFitScore) ?? 0,
+    strategicOpportunityScore: number(row.strategicOpportunityScore) ?? 0, overallScore: number(row.overallScore) ?? 0, confidenceScore: number(row.confidenceScore) ?? 0,
+    completenessScore: number(row.completenessScore), status: (row.status ?? "Discovered") as Opportunity["status"], priority: (row.priority ?? "Low") as Opportunity["priority"],
+    travelRequirement: String(row.travelRequirement ?? "Unknown"), summary: "", keyResponsibilities: [], requiredSkills: strings(row.requiredSkills), preferredSkills: [],
+    matchingStrengths: strings(row.matchingStrengths), missingRequirements: [], riskFlags: strings(row.riskFlags), exclusions: strings(row.exclusions), decisionRationale: "",
+    recommendedCVProfile: "", coverLetterRecommended: false, notes: "",
+  } as Opportunity;
+}
 
 export default async function OpportunitiesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") {
@@ -39,11 +68,11 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);
       if ((await searchParams).cv === "complete") confirmedRoleCount = history.data?.length ?? 0;
-      // Keep the initial response bounded while the global search RPC is being
-      // admitted. Full authoritative payloads preserve ranking correctness.
-      const rows = await createServerSupabaseClient(resolved.accessToken).request<OpportunityRow[]>(`opportunities?select=domain_id,payload&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&order=updated_at.desc&limit=250`);
-      if (rows.error) throw new Error(rows.error.message);
-      collected = (rows.data ?? []).filter((row) => row.domain_id.startsWith("discovered-")).map((row) => ({ ...row.payload, id: row.domain_id }) as Opportunity);
+      // Encode the PostgREST JSON projection before placing it in the URL. This
+      // keeps long descriptions on the detail route and makes the list fast.
+      const rows = await createServerSupabaseClient(resolved.accessToken).request<OpportunityListRow[]>(`opportunities?select=${encodeURIComponent(opportunityListSelect)}&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&order=updated_at.desc&limit=1000`);
+      if (rows.error) { console.error("Opportunity list query failed", { status: rows.status, code: rows.error.code, message: rows.error.message }); throw new Error(rows.error.message); }
+      collected = (rows.data ?? []).filter((row) => row.domain_id.startsWith("discovered-")).map(listOpportunity);
       // Once the live universe contains attributable collected opportunities,
       // keep the earlier acceptance-workflow record in its historical context
       // instead of presenting it as a current market opportunity.

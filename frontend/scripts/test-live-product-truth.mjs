@@ -20,7 +20,7 @@ const checks = {
   company_evidence_is_explicit: companies.includes("Identity confidence") && companies.includes("Average executive relevance") && companies.includes("Company overview is not inferred"),
   applications_use_workspace_records: applications.includes("applications?select=") && applications.includes("application_activities?select=") && applications.includes("application_documents?select="),
   no_invented_application_activity: applications.includes("never invents employer actions") && applications.includes("not an employer application"),
-  opportunity_list_is_bounded: opportunityIndex.includes("select=domain_id,payload&workspace_id") && opportunityIndex.includes("&limit=250"),
+  opportunity_list_uses_encoded_projection: opportunityIndex.includes("encodeURIComponent(opportunityListSelect)") && opportunityIndex.includes("&limit=1000") && !opportunityIndex.includes("select=domain_id,payload&workspace_id"),
 };
 
 const failures = Object.entries(checks).filter(([, passed]) => !passed);
