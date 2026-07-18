@@ -24,7 +24,9 @@ export const EXECUTIVE_SEARCH_INDUSTRIES = [
 ] as const;
 
 const US_STATE_CODES = new Set("AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC".split(" "));
+const SUBNATIONAL_LABELS = new Set(`alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|texas|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming|district of columbia|alberta|british columbia|manitoba|new brunswick|newfoundland and labrador|nova scotia|ontario|prince edward island|quebec|saskatchewan|england|scotland|wales|northern ireland|australian capital territory|new south wales|northern territory|queensland|south australia|tasmania|victoria|western australia`.split("|"));
 const REGION_WORDS = /^(worldwide|global|remote|eu|europe|emea|mena|apac|cis|africa|north america|south america)$/i;
+const normalizedLabel = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
 /** Repairs provider location taxonomy without guessing: explicit countries and US state codes only. */
 export function searchCountry(item: Pick<Opportunity, "country" | "location">) {
@@ -35,12 +37,15 @@ export function searchCountry(item: Pick<Opportunity, "country" | "location">) {
 
 export function searchCity(item: Pick<Opportunity, "country" | "location">) {
   const country = searchCountry(item);
-  const segments = item.location.split(/[,;|/]|·|\s+[–—-]\s+/).map((part) => part.replace(/\b(remote|hybrid|on.?site)\b/ig, "").replace(/[()]/g, "").trim()).filter(Boolean);
-  return segments.find((part) => {
-    if (REGION_WORDS.test(part) || /\bremote\b/i.test(part)) return false;
+  const segments = item.location.split(/[,;|/·–—-]/).map((part) => part.replace(/\b(remote|hybrid|on.?site|office)\b/ig, "").replace(/[()]/g, "").trim()).filter(Boolean);
+  const city = segments.find((part) => {
+    const normalized = normalizedLabel(part);
+    if (REGION_WORDS.test(part) || /\bremote\b/i.test(part) || SUBNATIONAL_LABELS.has(normalized) || /^office\b|^\d+(st|nd|rd|th)?\b/i.test(part)) return false;
     if (canonicalCountry(part) || US_STATE_CODES.has(part.toUpperCase())) return false;
     return part.toLowerCase() !== country?.toLowerCase();
   });
+  if (!city) return undefined;
+  return city === city.toLowerCase() ? city.replace(/\b\w/g, letter => letter.toUpperCase()) : city;
 }
 
 /** Search categories are deterministic navigation aids, not persisted employer facts. */

@@ -18,6 +18,10 @@ assert.equal(searchCountry({ country: "Unknown", location: "Paris, France" }), "
 assert.equal(searchCity({ country: "France", location: "Paris, France" }), "Paris", "countries must not appear in Cities");
 assert.equal(searchCountry({ country: "Amsterdam", location: "Amsterdam Remote" }), undefined, "a city must never leak into Countries");
 assert.equal(searchCity({ country: "Unknown", location: "Amsterdam Remote" }), "Amsterdam", "work-model words must not leak into Cities");
+assert.equal(searchCity({ country: "United States", location: "Arizona" }), undefined, "US states must not appear in Cities");
+assert.equal(searchCity({ country: "Canada", location: "Ontario" }), undefined, "Canadian provinces must not appear in Cities");
+assert.equal(searchCity({ country: "United Kingdom", location: "England" }), undefined, "UK constituent countries must not appear in Cities");
+assert.equal(searchCity({ country: "Belgium", location: "Belgium-Brussels Office" }), "Brussels", "provider country-office labels must resolve to the explicit city");
 assert.deepEqual(searchRegions({ country: "France", location: "Paris, France", workArrangement: "Hybrid" }), ["EU", "Europe", "EMEA"]);
 assert.ok(EXECUTIVE_SEARCH_REGIONS.includes("North America") && EXECUTIVE_SEARCH_REGIONS.includes("MENA"), "the complete region taxonomy must remain available");
 assert.equal(matchesExecutiveSearch({ ...opportunity, country: "VA", location: "Richmond, VA" }, { ...filters, query: "", countries: ["United States"], cities: [], regions: [], industries: [], departments: [], seniorities: [], employmentTypes: [], remoteOptions: [], companySizes: [], salaryMinimum: "", salaryMaximum: "", salaryCurrency: "" }), true, "country-only search must work");
