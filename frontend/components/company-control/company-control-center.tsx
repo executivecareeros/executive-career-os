@@ -23,7 +23,7 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
   const healthCards = [
     ["Overall Company Health", snapshot.health.overallHealth, "Insufficient connected operational data for a reliable aggregate."],
     ["Product Health", snapshot.health.departments.find((item) => item.department === "Product")!.health, "Live activation and retention data are not connected."],
-    ["Infrastructure Health", "Watch", "Exchange is operational; DKIM publication remains under Microsoft investigation."],
+    ["Infrastructure Health", "Watch", "Exchange is operational; Microsoft-managed DKIM selector publication remains unavailable."],
     ["Security Health", "Unknown", "No live security telemetry is connected."],
     ["Financial Health", "Unknown", "Verified cash, burn, revenue, and recurring totals are incomplete."],
     ["Customer Health", "Not Connected", "No customer-success or support platform is connected."],

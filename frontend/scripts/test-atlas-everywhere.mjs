@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { atlasHandoffHref, resolveAtlasHandoffContext, resolveAtlasPageContext } from "../lib/atlas/page-context.ts";
 
 assert.equal(resolveAtlasPageContext("/opportunities").id, "jobs");
@@ -18,5 +19,11 @@ for (const path of ["/", "/opportunities", "/opportunities/abc", "/companies", "
   assert.ok(context.summary.includes("Atlas"));
   assert.ok(context.title.length > 12);
 }
+
+const pageContentSource = readFileSync(new URL("../components/page-content.tsx", import.meta.url), "utf8");
+const atlasEverywhereSource = readFileSync(new URL("../components/atlas/atlas-everywhere.tsx", import.meta.url), "utf8");
+assert.match(pageContentSource, /data-atlas-safe-content/);
+assert.match(pageContentSource, /pb-28 sm:pb-32/);
+assert.match(atlasEverywhereSource, /data-atlas-dock/);
 
 console.log("Atlas Everywhere context and safe handoff contracts passed.");

@@ -15,7 +15,7 @@ Target dates are not inferred. **Founder to Set** means no approved deadline exi
 
 | Item | Owner | Blocker | Next action | Dependency | Target | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| Resolve Microsoft DKIM support case | Founder / Microsoft Administrator | Microsoft backend publication and open case `2607130050001139` | Review Microsoft response; make no DNS change without controlled approval | Microsoft Support | Founder to Set | Open |
+| Resolve Microsoft DKIM support case | Founder / Microsoft Administrator | Both Microsoft-managed selector destinations still returned `NXDOMAIN` on 18 July 2026 despite correct customer-side CNAME records | Ask Microsoft to complete selector publication, then verify a signed outbound message before closing the case; no DNS change is indicated | Microsoft Support | Founder to Set | Open |
 | Prove staging backup and restore | Founder / Database Owner | Healthy migrated database and first provider backup | Perform isolated restore/reset rehearsal and measure recovery | Staging migration completion | Before design partner | Not Started |
 | Establish staging monitoring | Founder / Operations | No monitoring provider selected or configured | Approve minimal provider/manual signals, ownership, retention, and alert path | First deployment | Before design partner | Not Started |
 | Verify GitHub protection and organization security | Founder / Engineering | Repository remains under `executivecareeros`; settings unverified | Review visibility, branch protection, 2FA, owners, Dependabot, secret scanning, GitHub App scope | Founder account access | Before external beta | Open |

@@ -36,3 +36,11 @@ The portal recorded the event at `13.07.2026 12:19:41`.
 ## Change-Control Confirmation
 
 This support submission did not change DNS, Exchange configuration, DKIM, MX, SPF, DMARC, or existing Proton records.
+
+## 18 July 2026 Verification Update
+
+- Microsoft Support advised publishing the tenant DKIM records through Exchange Online PowerShell using `Set-DkimSigningConfig -Identity orendalis.com -PublishTxtRecords`.
+- The Founder subsequently replied that the issue appeared fixed "for now"; this was an operational acknowledgement, not independent proof that DKIM signing was active.
+- A fresh public DNS check at 18:23 TRT confirmed that both customer-side selector CNAME records resolve to the expected Microsoft-managed destinations.
+- Both Microsoft-managed destination hostnames still returned `NXDOMAIN` from public DNS.
+- The case therefore remains **Open**. Closure requires Microsoft-side selector publication followed by verification of a DKIM-signed outbound message. No customer DNS change is indicated by the current evidence.

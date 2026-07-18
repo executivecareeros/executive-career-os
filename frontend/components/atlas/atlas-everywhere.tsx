@@ -13,7 +13,7 @@ export function AtlasEverywhere() {
   const context = resolveAtlasPageContext(pathname);
 
   return (
-    <aside className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 sm:bottom-7 sm:right-7" aria-label="Atlas contextual guidance">
+    <aside data-atlas-dock className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 sm:bottom-7 sm:right-7" aria-label="Atlas contextual guidance">
       {open && (
         <section className="w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-[#dbe2ee] bg-white p-5 text-[#0b1220] shadow-[0_24px_70px_rgba(15,30,60,.18)]" aria-live="polite">
           <div className="flex items-start justify-between gap-4">
