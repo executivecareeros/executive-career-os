@@ -5,6 +5,9 @@ const body = `# ORENDALIS
 ## Public website
 
 - Homepage: https://www.orendalis.com/
+- Executive jobs: https://www.orendalis.com/executive-jobs
+- Executive career intelligence: https://www.orendalis.com/executive-career-intelligence
+- About ORENDALIS: https://www.orendalis.com/about
 - Purpose: executive opportunity discovery and decision support
 - Language: English
 

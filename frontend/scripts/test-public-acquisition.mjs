@@ -8,6 +8,7 @@ const robots = await readFile(new URL("../app/robots.ts", import.meta.url), "utf
 const sitemap = await readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8");
 const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
 const machineSummary = await readFile(new URL("../app/llms.txt/route.ts", import.meta.url), "utf8");
+const shell = await readFile(new URL("../components/app-shell.tsx", import.meta.url), "utf8");
 
 assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/);
 assert.match(layout, /Find your next executive opportunity/);
@@ -31,12 +32,18 @@ assert.match(robots, /sitemap: "https:\/\/www\.orendalis\.com\/sitemap\.xml"/);
 for (const privateRoute of ["/applications", "/company-control", "/import", "/opportunities", "/workspace"]) {
   assert.ok(robots.includes(`"${privateRoute}"`), `Private route must be excluded from indexing: ${privateRoute}`);
 }
-assert.match(sitemap, /url: "https:\/\/www\.orendalis\.com"/);
+assert.match(sitemap, /https:\/\/www\.orendalis\.com/);
+for (const publicRoute of ["/about", "/executive-jobs", "/executive-career-intelligence"]) {
+  assert.ok(sitemap.includes(`"${publicRoute}"`), `Public SEO route missing from sitemap: ${publicRoute}`);
+  assert.ok(proxy.includes(`"${publicRoute}"`), `Public SEO route must bypass authentication: ${publicRoute}`);
+  assert.ok(shell.includes(`"${publicRoute}"`), `Public SEO route must bypass the authenticated shell: ${publicRoute}`);
+}
 assert.doesNotMatch(sitemap, /\?lang=/);
 assert.ok(proxy.includes('"/robots.txt"'), "robots.txt must be reachable without authentication");
 assert.ok(proxy.includes('"/sitemap.xml"'), "sitemap.xml must be reachable without authentication");
 assert.ok(proxy.includes('"/icon.svg"'), "brand icon must be reachable without authentication");
 assert.ok(proxy.includes('"/llms.txt"'), "truthful machine-readable product context must be public");
+assert.ok(proxy.includes('"/brand/"'), "social and brand assets must be reachable without authentication");
 assert.match(machineSummary, /Unknown information remains unknown/);
 assert.match(machineSummary, /Private CV, profile, application, and decision data is never public content/);
 

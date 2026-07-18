@@ -12,6 +12,10 @@ const publicPaths = [
   "/llms.txt",
   "/sitemap.xml",
   "/icon.svg",
+  "/brand/",
+  "/about",
+  "/executive-jobs",
+  "/executive-career-intelligence",
 ];
 
 const serverAuthenticatedPaths = ["/api/operations/opportunity-refresh", "/api/operations/source-discovery"];
