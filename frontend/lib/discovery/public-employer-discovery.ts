@@ -1,15 +1,17 @@
 import type { EmployerSourceInput } from "./employer-source-factory";
 
-type Definition = { provider: "greenhouse" | "ashby" | "smartrecruiters"; indexedHost: string; careers: (slug: string) => string };
+type Definition = { provider: "greenhouse" | "ashby" | "smartrecruiters" | "lever"; indexedHost: string; careers: (slug: string) => string };
 type VerifiedEmployer = EmployerSourceInput & { provider: Definition["provider"]; activeJobs: number };
 
 const definitions: readonly Definition[] = [
   { provider: "greenhouse", indexedHost: "job-boards.greenhouse.io/", careers: slug => `https://job-boards.greenhouse.io/${slug}` },
   { provider: "ashby", indexedHost: "jobs.ashbyhq.com/", careers: slug => `https://jobs.ashbyhq.com/${slug}` },
   { provider: "smartrecruiters", indexedHost: "careers.smartrecruiters.com/", careers: slug => `https://careers.smartrecruiters.com/${slug}` },
+  { provider: "lever", indexedHost: "jobs.lever.co/", careers: slug => `https://jobs.lever.co/${slug}` },
+  { provider: "lever", indexedHost: "jobs.eu.lever.co/", careers: slug => `https://jobs.eu.lever.co/${slug}` },
 ];
 const reserved = new Set(["apply", "jobs", "job", "privacy", "robots.txt", "sitemap.xml"]);
-const atsHosts = new Set(["boards.greenhouse.io", "job-boards.greenhouse.io", "boards.eu.greenhouse.io", "jobs.ashbyhq.com", "careers.smartrecruiters.com", "jobs.smartrecruiters.com"]);
+const atsHosts = new Set(["boards.greenhouse.io", "job-boards.greenhouse.io", "boards.eu.greenhouse.io", "jobs.ashbyhq.com", "careers.smartrecruiters.com", "jobs.smartrecruiters.com", "jobs.lever.co", "jobs.eu.lever.co"]);
 const plainName = (slug: string) => slug.replace(/[-_]+/g, " ").replace(/\b\w/g, value => value.toUpperCase());
 
 async function json(url: string) {
@@ -25,7 +27,7 @@ async function indexedSlugs(definition: Definition, cdxApi: string) {
   url.searchParams.set("output", "json");
   url.searchParams.append("filter", "status:200");
   url.searchParams.set("collapse", "urlkey");
-  const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
+  const response = await fetch(url, { signal: AbortSignal.timeout(30_000) });
   if (!response.ok) throw new Error(`INDEX_HTTP_${response.status}`);
   const body = await response.text();
   const slugs = new Set<string>();
@@ -60,6 +62,13 @@ async function verify(definition: Definition, slug: string): Promise<VerifiedEmp
     if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
     return { provider: definition.provider, employerName: plainName(slug), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
+  if (definition.provider === "lever") {
+    const origin = definition.indexedHost.startsWith("jobs.eu.") ? "https://api.eu.lever.co" : "https://api.lever.co";
+    const listing = await json(`${origin}/v0/postings/${encodeURIComponent(slug)}?mode=json&skip=0&limit=1000`) as unknown as Array<{ hostedUrl?: string }>;
+    const jobs = Array.isArray(listing) ? listing : [];
+    if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
+    return { provider: definition.provider, employerName: plainName(slug), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
+  }
   const listing = await json(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(slug)}/postings?destination=PUBLIC&limit=1&offset=0`);
   const total = Number(listing.totalFound);
   if (!total) throw new Error("NO_ACTIVE_JOBS");
@@ -72,13 +81,18 @@ export async function discoverPublicEmployerSources(input: { existingUrls: reado
   if (!maximumSources) return { sources: [] as VerifiedEmployer[], candidates: 0, attempted: 0, failures: 0, advertisedActiveJobs: 0, aiTokens: 0 };
   const known = new Set(input.existingUrls.map(value => value.replace(/\/+$/, "")));
   const indexes = await json("https://index.commoncrawl.org/collinfo.json") as unknown as Array<{ "cdx-api": string }>;
-  const cdxApi = indexes[0]?.["cdx-api"];
-  if (!cdxApi) throw new Error("PUBLIC_INDEX_UNAVAILABLE");
-  const indexed = await Promise.allSettled(definitions.map(async definition => (await indexedSlugs(definition, cdxApi)).map(slug => ({ definition, slug }))));
-  const indexFailures = indexed.filter(result => result.status === "rejected").length;
-  const candidates = indexed
-    .flatMap(result => result.status === "fulfilled" ? result.value : [])
-    .filter(({ definition, slug }) => !known.has(definition.careers(slug)));
+  const recentIndexes = indexes.slice(0, 3).flatMap(index => index["cdx-api"] ? [index["cdx-api"]] : []);
+  if (!recentIndexes.length) throw new Error("PUBLIC_INDEX_UNAVAILABLE");
+  let indexFailures = 0;
+  let candidates: Array<{ definition: Definition; slug: string }> = [];
+  for (const cdxApi of recentIndexes) {
+    const indexed = await Promise.allSettled(definitions.map(async definition => (await indexedSlugs(definition, cdxApi)).map(slug => ({ definition, slug }))));
+    indexFailures += indexed.filter(result => result.status === "rejected").length;
+    candidates = indexed
+      .flatMap(result => result.status === "fulfilled" ? result.value : [])
+      .filter(({ definition, slug }) => !known.has(definition.careers(slug)));
+    if (candidates.length) break;
+  }
   if (!candidates.length) throw new Error("PUBLIC_EMPLOYER_INDEX_UNAVAILABLE");
   const sampleTarget = Math.min(candidates.length, Math.max(maximumSources * 4, maximumSources));
   const accepted: VerifiedEmployer[] = [];

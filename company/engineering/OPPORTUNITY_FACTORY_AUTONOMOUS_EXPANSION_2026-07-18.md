@@ -2,7 +2,7 @@
 
 ## Outcome
 
-Orion now expands verified public employer coverage during the existing protected scheduler cycle. It discovers publicly indexed Greenhouse, Ashby and SmartRecruiters employers, verifies active jobs through each provider's public endpoint, skips registered sources, prioritizes the highest-yield verified employers, and registers only a bounded cohort through the shared Opportunity Coverage Engine.
+Orion now expands verified public employer coverage during the existing protected scheduler cycle. It discovers publicly indexed Greenhouse, Ashby, SmartRecruiters and Lever employers, verifies active jobs through each provider's public endpoint, skips registered sources, prioritizes the highest-yield verified employers, and registers only a bounded cohort through the shared Opportunity Coverage Engine.
 
 No AI model, embedding service or token-consuming process is used.
 
@@ -29,6 +29,8 @@ The 74,836 figure is provider-advertised source inventory, not yet canonical ORE
 - Maximum 50 new sources per cycle; default 18.
 - Existing careers URLs are skipped before verification.
 - Provider index failures are isolated from healthy providers.
+- Discovery falls back across three recent public indexes when the newest index is unavailable.
+- Global and EU Lever boards use the existing certified public Postings API adapter.
 - Registration remains workspace scoped and replay safe.
 - Public discovery failure cannot interrupt normal opportunity ingestion.
 - No scraping of authenticated pages, credentials, cookies or access controls.
@@ -37,6 +39,7 @@ The 74,836 figure is provider-advertised source inventory, not yet canonical ORE
 ## Validation
 
 - Live public discovery proof: pass.
+- Public-index fallback proof: pass; 8 verified sources and 425 advertised active jobs recovered while four provider-index queries were unavailable.
 - Provider-failure isolation: pass.
 - Scheduler authentication/durability contract: pass.
 - TypeScript: pass.
