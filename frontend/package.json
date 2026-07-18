@@ -39,6 +39,7 @@
     "test:opportunity-intelligence": "node --experimental-transform-types scripts/test-opportunity-intelligence.mjs",
     "test:geographic-confidence": "node --experimental-transform-types scripts/test-geographic-confidence.mjs"
     ,"test:executive-search": "node --experimental-transform-types scripts/test-executive-search.mjs"
+    ,"test:employer-intelligence": "node --experimental-transform-types scripts/test-employer-intelligence.mjs"
     ,"test:founder-product-corrections": "node --experimental-transform-types scripts/test-founder-product-corrections.mjs"
     ,"test:source-expansion": "node --experimental-transform-types scripts/test-source-expansion.mjs"
     ,"test:durable-ingestion": "node --experimental-transform-types scripts/test-durable-ingestion.mjs"

@@ -1,6 +1,7 @@
 import type { SupabaseDataClient } from "@/lib/supabase/client";
 import type { RepositoryContext } from "@/lib/repositories";
 import { founderGeographicProfileFixture, hydrateExecutiveGeographicProfile, unknownGeographicProfile } from "@/lib/opportunity-geography";
+import type { ExecutiveManualPreferences } from "@/lib/opportunity-geography";
 
 type Row = { id: string; payload: Record<string, unknown>; version: number };
 
@@ -21,6 +22,21 @@ export async function confirmFounderGeographicProfile(client: SupabaseDataClient
   const payload = founderGeographicProfileFixture(confirmedAt), row = existing.data?.[0];
   if (row) {
     const updated = await client.request(`executive_geographic_profiles?id=eq.${row.id}&version=eq.${row.version}`, { method: "PATCH", body: JSON.stringify({ payload, version: row.version + 1, updated_at: confirmedAt }) });
+    if (updated.error) throw new Error(updated.error.message);
+  } else {
+    const inserted = await client.request("executive_geographic_profiles", { method: "POST", body: JSON.stringify({ workspace_id: workspaceId, executive_identity_id: executiveId, payload, created_by: executiveId }) });
+    if (inserted.error) throw new Error(inserted.error.message);
+  }
+  return payload;
+}
+
+export async function saveExecutiveManualPreferences(client: SupabaseDataClient, context: RepositoryContext, preferences: ExecutiveManualPreferences) {
+  const workspaceId = context.workspace!.workspaceId, executiveId = context.workspace!.executiveId;
+  const existing = await client.request<Row[]>(`executive_geographic_profiles?select=id,payload,version&workspace_id=eq.${workspaceId}&executive_identity_id=eq.${executiveId}&limit=1`);
+  if (existing.error) throw new Error(existing.error.message);
+  const row = existing.data?.[0], current = hydrateExecutiveGeographicProfile(row?.payload), payload = { ...current, manualPreferences: preferences };
+  if (row) {
+    const updated = await client.request(`executive_geographic_profiles?id=eq.${row.id}&version=eq.${row.version}`, { method: "PATCH", body: JSON.stringify({ payload, version: row.version + 1, updated_at: preferences.updatedAt }) });
     if (updated.error) throw new Error(updated.error.message);
   } else {
     const inserted = await client.request("executive_geographic_profiles", { method: "POST", body: JSON.stringify({ workspace_id: workspaceId, executive_identity_id: executiveId, payload, created_by: executiveId }) });

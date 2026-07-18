@@ -5,22 +5,27 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import type { ExecutiveProfileState } from "@/lib/profile/executive-profile-state";
 import { loadExecutiveProfileState } from "@/lib/profile/executive-profile-state.server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
+import type { ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
+import { ExecutivePreferencesForm } from "@/components/executive-preferences-form";
+import { saveManualPreferencesAction } from "./actions";
 
 type Experience = { id:string; organization_name?:string; role_title?:string; start_date?:string; end_date?:string; is_current?:boolean; notes?:string; created_at?:string };
 
-export default async function WorkspacePage() {
+export default async function WorkspacePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect("/login?next=/workspace");
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspace = resolved.context.workspace!;
-  const [response, profile] = await Promise.all([
+  const [response, profile, preferences] = await Promise.all([
     client.request<Experience[]>(`professional_experiences?select=id,organization_name,role_title,start_date,end_date,is_current,notes,created_at&workspace_id=eq.${workspace.workspaceId}&executive_identity_id=eq.${workspace.executiveId}&archived_at=is.null&order=start_date.desc`),
     loadExecutiveProfileState(client, workspace.workspaceId, workspace.executiveId),
+    loadExecutiveGeographicProfile(client, resolved.context),
   ]);
-  return <LiveWorkspace experiences={response.data ?? []} profile={profile} />;
+  return <LiveWorkspace experiences={response.data ?? []} profile={profile} preferences={preferences} preferencesSaved={(await searchParams).preferences === "saved"} />;
 }
 
-function LiveWorkspace({ experiences, profile }: { experiences:Experience[]; profile:ExecutiveProfileState }) {
+function LiveWorkspace({ experiences, profile, preferences, preferencesSaved }: { experiences:Experience[]; profile:ExecutiveProfileState; preferences: ExecutiveGeographicProfile; preferencesSaved: boolean }) {
   return <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6 lg:px-10">
     <PageHeader eyebrow="Your private career memory" title="Your profile" description="See exactly what Orendalis has saved, edit any confirmed fact, or import an updated CV." actions={<div className="flex flex-wrap gap-3"><Link href="/beta-workflow" className="inline-flex items-center rounded-xl bg-[#17191c] px-5 py-3 text-sm font-semibold text-white">Edit profile fields</Link><Link href="/import" className="inline-flex items-center rounded-xl border border-[#d9dcde] bg-white px-5 py-3 text-sm font-semibold text-[#30343a]">Update or replace CV</Link></div>} />
 
@@ -37,6 +42,7 @@ function LiveWorkspace({ experiences, profile }: { experiences:Experience[]; pro
       </dl>
       <p className="mt-5 text-sm leading-6 text-[#626970]">Your original CV file is not retained. Orendalis stores only the structured career facts you confirmed. You can review and edit those facts below, or import an updated CV at any time.</p>
     </section>
+    <ExecutivePreferencesForm profile={preferences} action={saveManualPreferencesAction} saved={preferencesSaved}/>
 
     {profile.cvVersions.length > 1 && <section className="mt-6 rounded-2xl border border-[#e3e5e6] bg-white p-6 shadow-sm"><h2 className="text-lg font-semibold">CV update history</h2><div className="mt-4 space-y-3">{profile.cvVersions.map(version => <div key={version.key} className="flex flex-wrap items-center justify-between gap-3 border-t border-[#eceeef] pt-3 first:border-0 first:pt-0"><div><p className="font-medium">{version.filename}</p><p className="text-sm text-[#747b82]">Processed {formatDate(version.lastUpdatedAt)}</p></div><span className="text-xs font-semibold uppercase tracking-[.12em] text-[#55705d]">{version.active ? "Active" : "Previous"}</span></div>)}</div></section>}
 
