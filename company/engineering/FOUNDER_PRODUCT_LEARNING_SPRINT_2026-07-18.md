@@ -29,18 +29,21 @@ Governing authority: ODS 4.0, Founder Backlog, and the Founder-approved Real Use
 - ESLint: PASS
 - Production build: PASS
 - Product-learning privacy/access contract test: PASS
-- Migration execution and live Founder/non-Founder authorization: pending controlled application
+- Migration execution: PASS
+- Live Founder aggregate: PASS — one authenticated executive/session recorded; Jobs funnel, Desktop, Chrome, Türkiye and confirmed EU/EMEA context visible
+- Unauthenticated dashboard/API boundary: PASS — both redirect before access
+- Authenticated non-Founder acceptance: pending the first controlled design-partner account
 
 ## Decision
 
-Implementation is complete locally. Activation remains gated on applying the migration and validating the live Founder-only boundary before real design partners are invited.
+Implementation and controlled live activation are complete. Founder review and the first authenticated non-Founder authorization acceptance remain before this capability is marked complete.
 
 ## Founder Backlog Dashboard
 
 | Founder Request | Status | Progress | Priority | Next Action |
 |---|---|---:|---|---|
-| Real executive product learning (FB-040) | In Progress | 70% | Critical | Apply migration and validate Founder-only live aggregates |
-| Founder Control Center (FB-034) | In Progress | 60% | High | Connect live aggregate product-learning source |
+| Real executive product learning (FB-040) | Founder Review Required | 90% | Critical | Review dashboard and validate first controlled non-Founder account |
+| Founder Control Center (FB-034) | In Progress | 65% | High | Reconcile remaining live operational sources |
 | Security and privacy (FB-031) | In Progress | 85% | Critical | Validate database authorization with Founder and non-Founder sessions |
 | Daily executive dashboard (FB-006) | Founder Review Required | 82% | Critical | Measure real return behavior after controlled-beta activation |
 | Public launch readiness (FB-035) | In Progress | 60% | Critical | Complete privacy/legal and real-user acceptance gates |
