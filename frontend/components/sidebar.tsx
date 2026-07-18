@@ -82,7 +82,8 @@ export function Sidebar({ mobile = false, onNavigate, locale: _locale = "en" }: 
       )}
 
       <SectionCard className="mt-6 p-4 sm:p-4">
-        <div className="flex items-center gap-3"><AtlasMark/><p className="text-sm font-medium text-[#0b1220]">Atlas is ready</p></div>
+        <Link href="/assistant" onClick={onNavigate} className="group block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3457d5]" aria-label="Open Atlas">
+        <div className="flex items-center gap-3"><AtlasMark/><p className="text-sm font-medium text-[#0b1220] group-hover:text-[#2545bd]">Atlas is ready</p></div>
         <p className="mt-1 text-xs leading-5 text-[#777f85]">
           Available when you want a second perspective.
         </p>
@@ -93,6 +94,7 @@ export function Sidebar({ mobile = false, onNavigate, locale: _locale = "en" }: 
           />
           Ready when you are
         </div>
+        </Link>
       </SectionCard>
       <form action={logoutAction} className="mt-3">
         <input type="hidden" name="next" value={pathname} />

@@ -5,7 +5,7 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { saveExecutiveManualPreferences } from "@/lib/geographic-profile-repository";
 
-const list = (formData: FormData, key: string) => String(formData.get(key) ?? "").split(/[,\n]/).map((value) => value.trim()).filter(Boolean).slice(0, 50);
+const list = (formData: FormData, key: string) => formData.getAll(key).flatMap(value => String(value).split(/[,\n]/)).map((value) => value.trim()).filter(Boolean).slice(0, 50);
 const money = (formData: FormData, key: string) => { const value = String(formData.get(key) ?? "").trim(); if (!value) return null; const number = Number(value); if (!Number.isFinite(number) || number < 0) throw new Error("Salary values must be positive numbers."); return number; };
 
 export async function saveManualPreferencesAction(formData: FormData) {

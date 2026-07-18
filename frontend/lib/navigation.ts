@@ -29,9 +29,9 @@ export const executiveNavigationItems: readonly NavigationItem[] = [
   { label: "Home", href: "/", marker: "H" },
   { label: "Jobs", href: "/opportunities", marker: "J" },
   { label: "Companies", href: "/companies", marker: "C" },
-  { label: "Rooms", href: "/rooms", marker: "R" },
   { label: "Applications", href: "/applications", marker: "A" },
   { label: "Profile", href: "/workspace", marker: "P" },
+  { label: "Rooms", href: "/rooms", marker: "R" },
 ];
 
 export const executiveUtilityItems: readonly NavigationItem[] = [
