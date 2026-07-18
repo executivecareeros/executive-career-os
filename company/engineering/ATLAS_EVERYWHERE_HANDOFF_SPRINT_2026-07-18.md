@@ -30,6 +30,10 @@ The handoff transmits only a bounded context identifier such as `company` or `op
 
 An authenticated executive must validate the control on desktop and 390px mobile. Durable unified conversation/history remains the next Atlas product gap; the current handoff intentionally does not fabricate a chat session.
 
+## Concurrent Opportunity Factory result
+
+The scheduled Opportunity Factory continued during this product cycle. The latest observed run completed 3/3 jobs with no run failures, changed 247 records, and raised canonical inventory from 29,401 to 29,648. Current telemetry reports 397 active employers, 129 verified countries, 29,643 fresh opportunities and zero AI tokens. The next coverage-quality constraint is normalization of 972 unrecognized location labels; no user-profile preference influences network inventory.
+
 ## Founder Backlog Dashboard
 
 | Founder Request | Status | Progress | Priority | Next Action |
@@ -39,3 +43,4 @@ An authenticated executive must validate the control on desktop and 390px mobile
 | Atlas explainability (FB-012) | 🟠 Founder Review Required | 85% | Critical | Validate confidence and Unknown comprehension with an executive |
 | Opportunity Intelligence (FB-019) | 🟠 Founder Review Required | 80% | Critical | Calibrate live opportunity explanations |
 | Public launch readiness (FB-035) | 🟡 In Progress | 60% | Critical | Complete authenticated executive and recovery acceptance |
+| Global employer expansion (FB-036) | 🟡 Scheduler Healthy | 92% | Critical | Normalize remaining location labels and continue measured source expansion |
