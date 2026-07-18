@@ -3,8 +3,9 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path) => readFile(resolve(root, path), "utf8");
-const [proxy, opportunity, companies, applications, compensation] = await Promise.all([
+const [proxy, opportunityIndex, opportunity, companies, applications, compensation] = await Promise.all([
   read("proxy.ts"),
+  read("app/opportunities/page.tsx"),
   read("app/opportunities/[id]/page.tsx"),
   read("components/companies/live-companies.tsx"),
   read("app/applications/page.tsx"),
@@ -19,6 +20,7 @@ const checks = {
   company_evidence_is_explicit: companies.includes("Identity confidence") && companies.includes("Average executive relevance") && companies.includes("Company overview is not inferred"),
   applications_use_workspace_records: applications.includes("applications?select=") && applications.includes("application_activities?select=") && applications.includes("application_documents?select="),
   no_invented_application_activity: applications.includes("never invents employer actions") && applications.includes("not an employer application"),
+  opportunity_list_uses_bounded_projection: opportunityIndex.includes("opportunityListSelect") && opportunityIndex.includes("&limit=1000") && !opportunityIndex.includes("select=domain_id,payload&workspace_id"),
 };
 
 const failures = Object.entries(checks).filter(([, passed]) => !passed);

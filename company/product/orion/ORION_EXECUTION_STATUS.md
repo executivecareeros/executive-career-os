@@ -8,8 +8,8 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 | Phase | Phase 2 — Opportunity Factory X100 live expansion |
 | Release | Configuration-driven discovery is operating in isolated network staging; transaction-safe bounded persistence, world-country registry, and global coverage telemetry are installed for live scale validation |
 | Current version | Orion M1A–M9 stable; Atlas 2.2A adds an immediate executive briefing, role-first review, confirmed-history matching, and useful confidence separation without changing Orion or Atlas reasoning architecture |
-| Canonical opportunities | 24,014 active at the latest authoritative measured checkpoint; current live count after that checkpoint is Unknown |
-| Active opportunities | 24,014 at the latest authoritative measured checkpoint |
+| Canonical opportunities | 34,444 active at the latest authoritative measured checkpoint; current live count after that checkpoint is Unknown |
+| Active opportunities | 34,444 at the latest authoritative measured checkpoint |
 | Executive opportunities | 1,559 |
 | Commercial opportunities | 1,148 |
 | Remote opportunities | 2,490 |
@@ -27,7 +27,7 @@ Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Fa
 | Employer Intelligence Coverage | Provider-scoped employer and opportunity provenance 100%; official domains remain Unknown unless verified |
 | Latest deployment | Isolated network staging Ready with an authenticated every-minute scheduler and no production domain |
 
-The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTORY_SNAPSHOT_2026-07-18_02.md`. Historical totals elsewhere remain audit evidence, not current counters. The current snapshot records 24,014 active canonical opportunities, 358 employers with active opportunities, 1,168 enabled employer schedules, 23,999 opportunities observed within 48 hours, and SmartRecruiters first-run/replay admission with zero current failures. The latest country-quality checkpoint remains 78 of 249 canonical countries/territories until remeasured.
+The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTORY_SNAPSHOT_2026-07-19.md`. Historical totals elsewhere remain audit evidence, not current counters. The current snapshot records 34,444 active canonical opportunities, 1,201 canonical employers, 490 employers with active opportunities, 1,339 monitored employer sources, and seven certified public provider ecosystems. The latest country-quality checkpoint remains 78 of 249 canonical countries/territories until remeasured.
 
 ## Blockers and priority
 
