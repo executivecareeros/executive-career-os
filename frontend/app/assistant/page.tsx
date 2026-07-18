@@ -16,9 +16,9 @@ import { loadExecutiveProfileState } from "@/lib/profile/executive-profile-state
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { resolveAtlasHandoffContext } from "@/lib/atlas/page-context";
 
-export default async function AssistantPage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
-  const { from } = await searchParams;
-  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <LiveAtlas from={from} />;
+export default async function AssistantPage({ searchParams }: { searchParams: Promise<{ from?: string; prompt?: string }> }) {
+  const { from, prompt } = await searchParams;
+  if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase") return <LiveAtlas from={from} prompt={prompt} />;
   const pending = agentTasks.filter(task => task.state === "pending");
   const completed = agentTasks.filter(task => task.state === "completed");
 
@@ -52,7 +52,7 @@ export default async function AssistantPage({ searchParams }: { searchParams: Pr
   );
 }
 
-async function LiveAtlas({ from }: { from?: string }) {
+async function LiveAtlas({ from, prompt }: { from?: string; prompt?: string }) {
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect("/login?next=/assistant");
 
@@ -61,13 +61,17 @@ async function LiveAtlas({ from }: { from?: string }) {
   const [profile, view, guidanceResponse] = await Promise.all([
     loadExecutiveProfileState(client, workspace.workspaceId, workspace.executiveId),
     new SupabaseBetaWorkflowRepository(client, resolved.context).load().catch(() => undefined),
-    client.request<Array<{ question_id: string; answer: string }>>(
-      `atlas_guidance_responses?workspace_id=eq.${workspace.workspaceId}&executive_identity_id=eq.${workspace.executiveId}&select=question_id,answer`,
+    client.request<Array<{ question_id: string; answer: string; next_review_at: string }>>(
+      `atlas_guidance_responses?workspace_id=eq.${workspace.workspaceId}&executive_identity_id=eq.${workspace.executiveId}&or=(answer.eq.__ATLAS_IRRELEVANT__,next_review_at.gt.now())&select=question_id,answer,next_review_at`,
     ),
   ]);
   const recommendation = view?.reasoning?.output.recommendation;
   const questions = view?.reasoning?.output.questions ?? [];
-  const existingAnswers = new Map((guidanceResponse.data ?? []).map(item => [item.question_id, item.answer]));
+  const responses = new Map((guidanceResponse.data ?? []).map(item => [item.question_id, item]));
+  const openQuestions = questions.filter(question => {
+    const response = responses.get(question.id);
+    return !response;
+  });
   const handoff = resolveAtlasHandoffContext(from);
 
   return (
@@ -79,6 +83,7 @@ async function LiveAtlas({ from }: { from?: string }) {
         actions={<div className="flex flex-wrap gap-3"><Link href="/workspace" className="inline-flex rounded-xl border border-[#d9dcde] bg-white px-5 py-3 text-sm font-semibold text-[#30343a]">Review profile</Link><Link href="/opportunities" className="inline-flex rounded-xl bg-[#17191c] px-5 py-3 text-sm font-semibold text-white">Ranked opportunities</Link></div>}
       />
       {handoff && <section className="mt-6 rounded-2xl border border-[#cad7ee] bg-[#f5f8ff] p-5"><p className="text-xs font-semibold uppercase tracking-[.17em] text-[#3457d5]">Continuing from {handoff.label}</p><h2 className="mt-2 text-xl font-semibold">{handoff.title}</h2><p className="mt-2 text-sm leading-6 text-[#5f6b7a]">{handoff.summary}</p><div className="mt-4 flex flex-wrap gap-2">{handoff.prompts.map(prompt => <span key={prompt} className="rounded-full border border-[#cfdaf0] bg-white px-3 py-2 text-xs font-medium text-[#35445d]">{prompt}</span>)}</div><Link href={handoff.returnHref} className="mt-4 inline-flex text-sm font-semibold text-[#3457d5]">Return to {handoff.label} →</Link></section>}
+      {prompt && <section className="mt-4 rounded-2xl border border-[#cfdaf0] bg-white p-5 shadow-sm"><p className="text-xs font-semibold uppercase tracking-[.17em] text-[#3457d5]">Selected question</p><p className="mt-2 text-base font-semibold text-[#30343a]">{prompt.slice(0, 300)}</p><p className="mt-2 text-sm text-[#626970]">Atlas has carried this question into your evidence review.</p></section>}
       <section className="mt-8 rounded-2xl border border-[#d8ddd9] bg-[#f6f8f6] p-6">
         <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#55705d]">Current context</p>
         <h2 className="mt-3 text-2xl font-semibold">Atlas is {profile.atlasState.toLowerCase()}</h2>
@@ -89,7 +94,7 @@ async function LiveAtlas({ from }: { from?: string }) {
           <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#936b3f]">Latest evidence-based guidance</p>
           <h2 className="mt-3 text-2xl font-semibold">{recommendation.action}</h2>
           <p className="mt-3 text-sm leading-6 text-[#626970]">Confidence: {view?.reasoning?.output.confidence}. This guidance changes when confirmed evidence changes.</p>
-          {questions.length > 0 && <GuidanceQuestionReview questions={questions.slice(0, 3).map(question => ({ id: question.id, question: question.question, improves: question.improves, existingAnswer: existingAnswers.get(question.id) }))} />}
+          {openQuestions.length > 0 && <GuidanceQuestionReview questions={openQuestions.slice(0, 3).map(question => ({ id: question.id, question: question.question, improves: question.improves }))} />}
         </section>
       ) : (
         <section className="mt-6 rounded-2xl border border-dashed border-[#cfc7bc] bg-[#faf8f4] p-8 text-center">

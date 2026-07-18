@@ -22,7 +22,7 @@ export function AtlasEverywhere() {
           </div>
           <h2 className="mt-5 text-xl font-semibold tracking-[-.025em]">{context.title}</h2>
           <p className="mt-2 text-sm leading-6 text-[#5f6b7a]">{context.summary}</p>
-          <div className="mt-4 grid gap-2">{context.prompts.map(prompt => <span key={prompt} className="rounded-xl border border-[#e2e7ef] bg-[#f8faff] px-3 py-2 text-sm text-[#35445d]">{prompt}</span>)}</div>
+          <div className="mt-4 grid gap-2">{context.prompts.map(prompt => <Link key={prompt} href={`${atlasHandoffHref(pathname)}&prompt=${encodeURIComponent(prompt)}`} className="rounded-xl border border-[#e2e7ef] bg-[#f8faff] px-3 py-2 text-left text-sm text-[#35445d] transition hover:border-[#9fb2df] hover:bg-[#f1f5ff] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3457d5]">{prompt}<span aria-hidden="true" className="float-right text-[#3457d5]">→</span></Link>)}</div>
           <Link href={atlasHandoffHref(pathname)} className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-[#17233b] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2446bd] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d8cff]">Continue with Atlas</Link>
         </section>
       )}

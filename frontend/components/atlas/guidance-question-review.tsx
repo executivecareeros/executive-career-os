@@ -23,7 +23,7 @@ export function GuidanceQuestionReview({ questions }: { questions: Question[] })
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="font-semibold">Questions that could change the decision</h3>
-          <p className="mt-1 text-sm text-[#6f757b]">Choose one or several. Atlas will revisit saved answers after 30 days.</p>
+          <p className="mt-1 text-sm text-[#6f757b]">Choose one or several. Answered questions disappear now and Atlas may revisit them after 3 days.</p>
         </div>
         <button type="button" onClick={() => setSelected(allSelected ? [] : questions.map(item => item.id))} className="rounded-full border border-[#cfd5d8] bg-white px-4 py-2 text-sm font-semibold text-[#30343a] hover:border-[#87939a]">
           {allSelected ? "Clear all" : "Select all"}
@@ -44,6 +44,7 @@ export function GuidanceQuestionReview({ questions }: { questions: Question[] })
               </label>
               <input type="hidden" name={`question:${question.id}`} value={question.question} />
               {checked && <textarea name={`answer:${question.id}`} required rows={3} defaultValue={question.existingAnswer ?? ""} className="mt-4 w-full rounded-xl border border-[#cfd5d8] bg-white px-4 py-3 text-sm text-[#30343a] outline-none focus:border-[#3457d5] focus:ring-2 focus:ring-[#3457d5]/15" placeholder="Record your answer or the evidence you still need…" />}
+              {!checked && <button type="submit" name="irrelevantQuestion" value={question.id} formNoValidate className="mt-3 rounded-full border border-[#d8dcdf] bg-white px-3 py-1.5 text-xs font-semibold text-[#626970] hover:border-[#9da7ad] hover:text-[#30343a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3457d5]">Not relevant</button>}
             </div>
           );
         })}

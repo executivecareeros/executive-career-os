@@ -14,7 +14,12 @@ assert.match(component, /name="selectedQuestion"/, "selected questions must be s
 assert.match(component, /textarea/, "selected questions must accept an answer");
 assert.match(action, /resolveAuthenticatedRepositoryContext/, "saving must require an authenticated executive");
 assert.match(action, /workspace_id: workspace\.workspaceId/, "answers must remain workspace scoped");
-assert.match(action, /30 \* 24 \* 60 \* 60 \* 1000/, "guidance must be scheduled for a 30-day review");
+assert.match(component, /Not relevant/, "an executive must be able to dismiss an irrelevant question");
+assert.match(action, /__ATLAS_IRRELEVANT__/, "irrelevant questions must be recorded without inventing an answer");
+assert.match(action, /3 \* 24 \* 60 \* 60 \* 1000/, "guidance must be scheduled for a 3-day review");
+assert.match(page, /next_review_at/, "answered questions must remain hidden until their review date");
+assert.match(page, /openQuestions/, "the next unanswered question must replace a completed question");
+assert.match(page, /Selected question/, "a question chosen from Ask Atlas must remain visible after navigation");
 assert.match(migration, /unique\(workspace_id,executive_identity_id,question_id\)/, "repeated answers must update instead of duplicate");
 assert.match(migration, /enable row level security/, "guidance answers must use RLS");
 assert.match(migration, /is_active_workspace_member\(workspace_id\)/, "RLS must enforce workspace access");
