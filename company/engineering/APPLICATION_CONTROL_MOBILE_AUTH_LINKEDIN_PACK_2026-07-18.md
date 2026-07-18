@@ -7,13 +7,14 @@ Application records can be removed from the active Applications surface without 
 The apparent application was an immutable Pursue decision projection, while refresh logic silently converted non-remembered sessions into persistent sessions. Correcting the product boundary and session contract created more trust than adding another application feature.
 
 ## 3. Founder Value Delivered
-The Founder can remove the visible record directly beside Prepare next step, review a clearer 390px arrival header, and use a ten-page ready-to-publish LinkedIn launch package.
+The Founder can remove the visible record directly beside Prepare next step, review a clearer 390px arrival header with a compact non-obstructive Atlas control, and use a ten-page ready-to-publish LinkedIn launch package.
 
 ## 4. Implementation
 - Added workspace-scoped hiding of a finalized Pursue record from active Applications.
 - Preserved Career Ledger, reasoning snapshot, and audit evidence.
 - Preserved the original Remember me choice through token refresh.
 - Kept the mobile Sign in action at a 44px minimum target and hid the competing header registration CTA below `sm`.
+- Reduced the mobile Atlas dock to a compact, accessible icon control so it no longer competes with bottom-page actions.
 
 ## 5. User-Facing Changes
 Delete record now appears beside Prepare next step. Confirmation copy states exactly what was removed and what remains protected.

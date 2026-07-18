@@ -26,8 +26,8 @@ export function AtlasEverywhere() {
           <Link href={atlasHandoffHref(pathname)} className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-[#17233b] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#2446bd] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d8cff]">Continue with Atlas</Link>
         </section>
       )}
-      <button type="button" onClick={() => setOpen(value => !value)} aria-expanded={open} className="group inline-flex items-center gap-3 rounded-full border border-[#d7dfec] bg-white px-4 py-3 text-sm font-semibold text-[#17233b] shadow-[0_12px_36px_rgba(15,30,60,.16)] transition hover:-translate-y-0.5 hover:border-[#aebfe5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3457d5]">
-        <AtlasMark size={30}/><span>{open ? "Close Atlas" : "Ask Atlas"}</span><span className="size-2 rounded-full bg-emerald-500" aria-label="Atlas ready"/>
+      <button type="button" onClick={() => setOpen(value => !value)} aria-expanded={open} className="group relative inline-flex size-14 items-center justify-center rounded-full border border-[#d7dfec] bg-white text-sm font-semibold text-[#17233b] shadow-[0_12px_36px_rgba(15,30,60,.16)] transition hover:-translate-y-0.5 hover:border-[#aebfe5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3457d5] sm:h-auto sm:w-auto sm:gap-3 sm:px-4 sm:py-3">
+        <AtlasMark size={30}/><span className="sr-only sm:not-sr-only">{open ? "Close Atlas" : "Ask Atlas"}</span><span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-emerald-500 sm:static" aria-label="Atlas ready"/>
       </button>
     </aside>
   );
