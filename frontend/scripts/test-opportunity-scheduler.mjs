@@ -25,11 +25,13 @@ assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 12/, "The Opportunity F
 assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs\)/, "The bounded bulk limit must reach the scheduler runtime");
 assert.match(route, /discoverPublicEmployerSources/, "The scheduler must continuously expand verified public employer coverage");
 assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT/, "Employer expansion must remain bounded by configuration");
-assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT \?\? 50/, "The Opportunity Factory must qualify up to fifty verified public employer sources per cycle");
+assert.match(route, /OPPORTUNITY_SOURCE_EXPANSION_LIMIT \?\? 14/, "The Opportunity Factory must use the measured healthy source cohort by default");
 assert.match(route, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
 assert.match(route, /sourceExpansion/, "Employer expansion must expose aggregate operational evidence");
 assert.match(route, /OPPORTUNITY_SCHEDULER_FAILURE/, "Scheduler failures must emit sanitized operational evidence instead of being silently suppressed");
 assert.match(route, /discoveryCursor/, "Every scheduler window must advance public employer discovery");
+assert.match(route, /timeBudgetMs:\s*45_000/, "Public discovery must leave headroom inside the Vercel execution ceiling");
+assert.match(route, /Math\.min\(20/, "Each cycle must cap newly registered sources to a healthy bounded cohort");
 assert.match(publicDiscovery, /cursorWindow \* sampleTarget/, "Public discovery must rotate across the indexed employer universe instead of replaying its alphabetical prefix");
 assert.match(publicDiscovery, /interleaveCandidates/, "Public discovery must distribute verification attempts across provider ecosystems");
 assert.match(publicDiscovery, /selectDiverseSources/, "A successful discovery window must activate healthy sources across provider ecosystems before filling by volume");

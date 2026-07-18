@@ -39,12 +39,12 @@ export async function GET(request: Request) {
     const summary = await runOpportunityScheduler(client, undefined, maximumJobs);
     const schedules = await client.request<Array<{ workspace_id: string; created_by: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,locator&enabled=eq.true&order=created_at.desc&limit=1000");
     const workspaceId = schedules.data?.[0]?.workspace_id;
-    const sourceExpansionLimit = Math.max(0, Math.min(50, Number(process.env.OPPORTUNITY_SOURCE_EXPANSION_LIMIT ?? 50) || 50));
+    const sourceExpansionLimit = Math.max(0, Math.min(20, Number(process.env.OPPORTUNITY_SOURCE_EXPANSION_LIMIT ?? 14) || 14));
     let sourceExpansion: Record<string, unknown> | undefined;
     if (workspaceId && schedules.data?.[0]?.created_by && sourceExpansionLimit) {
       try {
         const discoveryCursor = Math.floor(Date.now() / (15 * 60_000));
-        const discovery = await discoverPublicEmployerSources({ existingUrls: (schedules.data ?? []).flatMap(item => item.locator?.url ? [item.locator.url] : []), maximumSources: sourceExpansionLimit, concurrency: 12, discoveryCursor });
+        const discovery = await discoverPublicEmployerSources({ existingUrls: (schedules.data ?? []).flatMap(item => item.locator?.url ? [item.locator.url] : []), maximumSources: sourceExpansionLimit, concurrency: 12, discoveryCursor, timeBudgetMs: 45_000 });
         const prepared = prepareEmployerSourceBatch(discovery.sources);
         const connected = prepared.prepared.map(source => ({ ...source, healthStatus: "connected" as const, healthMessage: "Verified through the provider's public active-job endpoint." }));
         const registration = await registerEmployerSourceBatch(client, { workspaceId, actorId: schedules.data[0].created_by, sources: connected });

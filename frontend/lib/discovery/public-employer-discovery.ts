@@ -68,19 +68,23 @@ function selectDiverseSources(accepted: VerifiedEmployer[], maximumSources: numb
   return selected;
 }
 
-async function json(url: string) {
-  const response = await fetch(url, { headers: { "user-agent": "Orendalis-Opportunity-Factory/1.0" }, signal: AbortSignal.timeout(12_000) });
+const remainingTimeout = (deadlineAt: number | undefined, maximum: number) => deadlineAt
+  ? Math.max(250, Math.min(maximum, deadlineAt - Date.now()))
+  : maximum;
+
+async function json(url: string, deadlineAt?: number) {
+  const response = await fetch(url, { headers: { "user-agent": "Orendalis-Opportunity-Factory/1.0" }, signal: AbortSignal.timeout(remainingTimeout(deadlineAt, 12_000)) });
   if (!response.ok) throw new Error(`HTTP_${response.status}`);
   return response.json() as Promise<Record<string, unknown>>;
 }
 
-async function textResponse(url: string, accept: string) {
-  const response = await fetch(url, { headers: { accept, "user-agent": "Orendalis-Opportunity-Factory/1.0 (+https://www.orendalis.com)" }, signal: AbortSignal.timeout(12_000) });
+async function textResponse(url: string, accept: string, deadlineAt?: number) {
+  const response = await fetch(url, { headers: { accept, "user-agent": "Orendalis-Opportunity-Factory/1.0 (+https://www.orendalis.com)" }, signal: AbortSignal.timeout(remainingTimeout(deadlineAt, 12_000)) });
   if (!response.ok) throw new Error(`HTTP_${response.status}`);
   return response.text();
 }
 
-async function indexedSlugs(definition: Definition, cdxApi: string, discoveryCursor: number) {
+async function indexedSlugs(definition: Definition, cdxApi: string, discoveryCursor: number, deadlineAt?: number) {
   const url = new URL(cdxApi);
   url.searchParams.set("url", definition.indexedPattern);
   if (!definition.rotatingPages) url.searchParams.set("matchType", "prefix");
@@ -92,13 +96,13 @@ async function indexedSlugs(definition: Definition, cdxApi: string, discoveryCur
     pagesUrl.searchParams.delete("output");
     pagesUrl.searchParams.set("showNumPages", "true");
     pagesUrl.searchParams.set("pageSize", "1");
-    const pagesResponse = await fetch(pagesUrl, { headers: { "user-agent": "Orendalis-Opportunity-Factory/1.0 (+https://www.orendalis.com)" }, signal: AbortSignal.timeout(30_000) });
+    const pagesResponse = await fetch(pagesUrl, { headers: { "user-agent": "Orendalis-Opportunity-Factory/1.0 (+https://www.orendalis.com)" }, signal: AbortSignal.timeout(remainingTimeout(deadlineAt, 30_000)) });
     if (!pagesResponse.ok) throw new Error(`INDEX_HTTP_${pagesResponse.status}`);
     const pages = Number((await pagesResponse.json() as { pages?: number }).pages ?? 1);
     url.searchParams.set("pageSize", "1");
     url.searchParams.set("page", String(Math.max(0, discoveryCursor) % Math.max(1, pages)));
   }
-  const response = await fetch(url, { headers: { "user-agent": "Orendalis-Opportunity-Factory/1.0 (+https://www.orendalis.com)" }, signal: AbortSignal.timeout(30_000) });
+  const response = await fetch(url, { headers: { "user-agent": "Orendalis-Opportunity-Factory/1.0 (+https://www.orendalis.com)" }, signal: AbortSignal.timeout(remainingTimeout(deadlineAt, 30_000)) });
   if (!response.ok) throw new Error(`INDEX_HTTP_${response.status}`);
   const body = await response.text();
   const slugs = new Set<string>();
@@ -114,12 +118,12 @@ async function indexedSlugs(definition: Definition, cdxApi: string, discoveryCur
   return [...slugs].sort((a, b) => a.localeCompare(b));
 }
 
-async function verify(definition: Definition, slug: string): Promise<VerifiedEmployer> {
+async function verify(definition: Definition, slug: string, deadlineAt?: number): Promise<VerifiedEmployer> {
   if (definition.provider === "greenhouse") {
     const token = encodeURIComponent(slug);
     const [board, listing] = await Promise.all([
-      json(`https://boards-api.greenhouse.io/v1/boards/${token}`),
-      json(`https://boards-api.greenhouse.io/v1/boards/${token}/jobs?content=false`),
+      json(`https://boards-api.greenhouse.io/v1/boards/${token}`, deadlineAt),
+      json(`https://boards-api.greenhouse.io/v1/boards/${token}/jobs?content=false`, deadlineAt),
     ]);
     const jobs = Array.isArray(listing.jobs) ? listing.jobs as Array<{ absolute_url?: string }> : [];
     if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
@@ -128,51 +132,52 @@ async function verify(definition: Definition, slug: string): Promise<VerifiedEmp
     return { provider: definition.provider, employerName: String(board.name || plainName(slug)).trim(), employerDomain: officialDomain, careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
   if (definition.provider === "ashby") {
-    const listing = await json(`https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(slug)}`);
+    const listing = await json(`https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(slug)}`, deadlineAt);
     const jobs = Array.isArray(listing.jobs) ? (listing.jobs as Array<{ isListed?: boolean }>).filter(job => job.isListed !== false) : [];
     if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
     return { provider: definition.provider, employerName: plainName(slug), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
   if (definition.provider === "lever") {
     const origin = definition.indexedPattern.startsWith("jobs.eu.") ? "https://api.eu.lever.co" : "https://api.lever.co";
-    const listing = await json(`${origin}/v0/postings/${encodeURIComponent(slug)}?mode=json&skip=0&limit=1000`) as unknown as Array<{ hostedUrl?: string }>;
+    const listing = await json(`${origin}/v0/postings/${encodeURIComponent(slug)}?mode=json&skip=0&limit=1000`, deadlineAt) as unknown as Array<{ hostedUrl?: string }>;
     const jobs = Array.isArray(listing) ? listing : [];
     if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
     return { provider: definition.provider, employerName: plainName(slug), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
   if (definition.provider === "workable") {
-    const listing = await json(`https://www.workable.com/api/accounts/${encodeURIComponent(slug)}?details=true`);
+    const listing = await json(`https://www.workable.com/api/accounts/${encodeURIComponent(slug)}?details=true`, deadlineAt);
     const jobs = Array.isArray(listing.jobs) ? listing.jobs as Array<{ url?: string; shortlink?: string }> : [];
     if (!jobs.length) throw new Error("NO_ACTIVE_JOBS");
     return { provider: definition.provider, employerName: String(listing.name || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: jobs.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
   if (definition.provider === "recruitee") {
-    const listing = await json(`https://${encodeURIComponent(slug)}.recruitee.com/api/offers/`);
+    const listing = await json(`https://${encodeURIComponent(slug)}.recruitee.com/api/offers/`, deadlineAt);
     const offers = Array.isArray(listing.offers) ? listing.offers as Array<{ company_name?: string }> : [];
     if (!offers.length) throw new Error("NO_ACTIVE_JOBS");
     return { provider: definition.provider, employerName: String(offers[0]?.company_name || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: offers.length, maximumResults: 1_000, refreshMinutes: 720 };
   }
   if (definition.provider === "personio") {
     const [account] = slug.split(":");
-    const xml = await textResponse(`${definition.careers(slug)}/xml?language=en`, "application/xml,text/xml");
+    const xml = await textResponse(`${definition.careers(slug)}/xml?language=en`, "application/xml,text/xml", deadlineAt);
     const positions = xmlElements(xml, "position");
     const activeJobs = positions.length;
     if (!activeJobs) throw new Error("NO_ACTIVE_JOBS");
     const subcompany = xmlValue(positions[0] ?? "", "subcompany");
     return { provider: definition.provider, employerName: subcompany || plainName(account), careersUrl: definition.careers(slug), activeJobs, maximumResults: 1_000, refreshMinutes: 720 };
   }
-  const listing = await json(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(slug)}/postings?destination=PUBLIC&limit=1&offset=0`);
+  const listing = await json(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(slug)}/postings?destination=PUBLIC&limit=1&offset=0`, deadlineAt);
   const total = Number(listing.totalFound);
   if (!total) throw new Error("NO_ACTIVE_JOBS");
   const content = Array.isArray(listing.content) ? listing.content as Array<{ company?: { name?: string } }> : [];
   return { provider: definition.provider, employerName: String(content[0]?.company?.name || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: total, maximumResults: 1_000, refreshMinutes: 720 };
 }
 
-export async function discoverPublicEmployerSources(input: { existingUrls: readonly string[]; maximumSources?: number; concurrency?: number; discoveryCursor?: number }) {
+export async function discoverPublicEmployerSources(input: { existingUrls: readonly string[]; maximumSources?: number; concurrency?: number; discoveryCursor?: number; timeBudgetMs?: number }) {
+  const deadlineAt = input.timeBudgetMs ? Date.now() + Math.max(1_000, input.timeBudgetMs) : undefined;
   const maximumSources = Math.max(0, Math.min(50, Math.trunc(input.maximumSources ?? 18)));
   if (!maximumSources) return { sources: [] as VerifiedEmployer[], candidates: 0, attempted: 0, failures: 0, advertisedActiveJobs: 0, aiTokens: 0 };
   const known = new Set(input.existingUrls.map(value => value.replace(/\/+$/, "")));
-  const indexes = await json("https://index.commoncrawl.org/collinfo.json") as unknown as Array<{ "cdx-api": string }>;
+  const indexes = await json("https://index.commoncrawl.org/collinfo.json", deadlineAt) as unknown as Array<{ "cdx-api": string }>;
   const recentIndexes = indexes.slice(0, 3).flatMap(index => index["cdx-api"] ? [index["cdx-api"]] : []);
   if (!recentIndexes.length) throw new Error("PUBLIC_INDEX_UNAVAILABLE");
   let indexFailures = 0;
@@ -180,7 +185,8 @@ export async function discoverPublicEmployerSources(input: { existingUrls: reado
   for (const cdxApi of recentIndexes) {
     const indexed: Array<Array<{ definition: Definition; slug: string }>> = [];
     for (const [index, definition] of definitions.entries()) {
-      try { indexed.push((await indexedSlugs(definition, cdxApi, Math.max(0, Math.trunc(input.discoveryCursor ?? 0)))).map(slug => ({ definition, slug }))); }
+      if (deadlineAt && deadlineAt - Date.now() < 1_000) { indexFailures += definitions.length - index; break; }
+      try { indexed.push((await indexedSlugs(definition, cdxApi, Math.max(0, Math.trunc(input.discoveryCursor ?? 0)), deadlineAt)).map(slug => ({ definition, slug }))); }
       catch { indexFailures += 1; indexed.push([]); }
       if (index < definitions.length - 1) await pause(150);
     }
@@ -195,10 +201,10 @@ export async function discoverPublicEmployerSources(input: { existingUrls: reado
   const accepted: VerifiedEmployer[] = [];
   let cursor = 0, attempted = 0, failures = 0;
   async function worker() {
-    while (cursor < candidates.length && attempted < sampleTarget) {
+    while (cursor < candidates.length && attempted < sampleTarget && (!deadlineAt || Date.now() < deadlineAt)) {
       const candidate = candidates[cursor++];
       attempted += 1;
-      try { accepted.push(await verify(candidate.definition, candidate.slug)); }
+      try { accepted.push(await verify(candidate.definition, candidate.slug, deadlineAt)); }
       catch { failures += 1; }
     }
   }
