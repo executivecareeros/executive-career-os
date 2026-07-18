@@ -139,7 +139,7 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
     visibility: "Private",
     verificationStatus: existing.verificationStatus === "Employer source matched" || incoming.verificationStatus === "Employer source matched" ? "Employer source matched" : existing.verificationStatus ?? incoming.verificationStatus,
     sources,
-    source: sources.map(source => source.name).join(" · ") || strongest.source,
+    source: opportunitySourceLabel({ ...strongest, sources }),
     sourceUrl: strongest.sourceUrl ?? existing.sourceUrl,
     salaryMin: compensation.salaryMin,
     salaryMax: compensation.salaryMax,
@@ -159,6 +159,16 @@ export function mergeOpportunityObservations(existing: Opportunity, incoming: Op
       { status: mergedStatus, occurredAt: observedAt, reason: reactivated ? "Active source observation restored" : sources.length > (existing.sources?.length ?? 0) ? "Additional source observation merged" : "Source observation refreshed", source: "System" },
     ],
   };
+}
+
+export function opportunitySourceNames(opportunity: Pick<Opportunity, "source" | "sources">) {
+  const structured = opportunity.sources?.map((source) => source.name.trim()).filter(Boolean) ?? [];
+  const legacy = opportunity.source.split("·").map((source) => source.trim()).filter(Boolean);
+  return [...new Set((structured.length ? structured : legacy).map((name) => name.toLowerCase() === "greenhouse" ? "Greenhouse" : name))];
+}
+
+export function opportunitySourceLabel(opportunity: Pick<Opportunity, "source" | "sources">) {
+  return opportunitySourceNames(opportunity).join(" · ") || "Source not confirmed";
 }
 
 export function activeCanonicalOpportunities(opportunities: readonly Opportunity[]) {

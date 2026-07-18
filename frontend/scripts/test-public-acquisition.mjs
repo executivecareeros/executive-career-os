@@ -7,6 +7,7 @@ const locale = await readFile(new URL("../lib/locale.ts", import.meta.url), "utf
 const robots = await readFile(new URL("../app/robots.ts", import.meta.url), "utf8");
 const sitemap = await readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8");
 const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
+const machineSummary = await readFile(new URL("../app/llms.txt/route.ts", import.meta.url), "utf8");
 
 assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/);
 assert.match(layout, /Find your next executive opportunity/);
@@ -15,6 +16,9 @@ assert.doesNotMatch(layout, /\?lang=tr/);
 assert.match(layout, /card: "summary_large_image"/);
 assert.match(layout, /orendalis-social-preview\.png/);
 assert.match(layout, /icon: "\/icon\.svg"/);
+assert.match(layout, /"@type": "Organization"/);
+assert.match(layout, /"@type": "WebSite"/);
+assert.match(layout, /"@type": "SoftwareApplication"/);
 await access(new URL("../public/brand/orendalis-social-preview.png", import.meta.url));
 await access(new URL("../app/icon.svg", import.meta.url));
 
@@ -32,5 +36,8 @@ assert.doesNotMatch(sitemap, /\?lang=/);
 assert.ok(proxy.includes('"/robots.txt"'), "robots.txt must be reachable without authentication");
 assert.ok(proxy.includes('"/sitemap.xml"'), "sitemap.xml must be reachable without authentication");
 assert.ok(proxy.includes('"/icon.svg"'), "brand icon must be reachable without authentication");
+assert.ok(proxy.includes('"/llms.txt"'), "truthful machine-readable product context must be public");
+assert.match(machineSummary, /Unknown information remains unknown/);
+assert.match(machineSummary, /Private CV, profile, application, and decision data is never public content/);
 
 console.log("Public acquisition checks passed.");

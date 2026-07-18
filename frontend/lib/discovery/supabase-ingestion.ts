@@ -141,7 +141,7 @@ export class SupabaseOpportunityIngestionSink implements OpportunityIngestionSin
         const other = { ...row.payload, id: row.domain_id } as Opportunity;
         const sources = (other.sources ?? []).filter((source) => !incomingSources.has(`${source.id}|${source.originalId ?? ""}`));
         if (sources.length === (other.sources ?? []).length) continue;
-        const payload = { ...row.payload, sources, source: sources.map((source) => source.name).join(" · ") || other.source };
+        const payload = { ...row.payload, sources, source: [...new Set(sources.map((source) => source.name.trim()).filter(Boolean))].join(" · ") || other.source };
         const patched = await this.client.request<Row[]>(`opportunities?id=eq.${row.id}&workspace_id=eq.${this.workspace.workspaceId}`, { method: "PATCH", body: JSON.stringify({ payload, updated_at: new Date().toISOString() }) });
         if (patched.error) throw new Error(patched.error.message);
         row.payload = payload;

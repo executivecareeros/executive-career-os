@@ -9,6 +9,7 @@ const publicPaths = [
   "/verify-email",
   "/auth/confirm",
   "/robots.txt",
+  "/llms.txt",
   "/sitemap.xml",
   "/icon.svg",
 ];

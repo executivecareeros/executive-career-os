@@ -61,7 +61,14 @@ export function opportunityIntelligenceBlueprint(payload?: Record<string, unknow
 }
 
 function sourceEvidence(opportunity: Opportunity): OpportunitySource[] {
-  return opportunity.sources?.length ? [...opportunity.sources] : [{ id: opportunity.source, name: opportunity.source, kind: "Employer", originalUrl: opportunity.sourceUrl, collectedAt: opportunity.lastObservedAt ?? opportunity.discoveredAt, confidence: opportunity.confidenceScore >= 75 ? "High" : opportunity.confidenceScore >= 50 ? "Medium" : "Low" }];
+  if (!opportunity.sources?.length) return [{ id: opportunity.source, name: opportunity.source, kind: "Employer", originalUrl: opportunity.sourceUrl, collectedAt: opportunity.lastObservedAt ?? opportunity.discoveredAt, confidence: opportunity.confidenceScore >= 75 ? "High" : opportunity.confidenceScore >= 50 ? "Medium" : "Low" }];
+  const byProvider = new Map<string, OpportunitySource>();
+  for (const source of opportunity.sources) {
+    const key = `${source.id}|${source.name.trim().toLowerCase()}`;
+    const prior = byProvider.get(key);
+    if (!prior || (source.lastSeenAt ?? source.collectedAt) > (prior.lastSeenAt ?? prior.collectedAt)) byProvider.set(key, source);
+  }
+  return [...byProvider.values()];
 }
 
 function relation(candidate: Opportunity, current: Opportunity): OpportunityRelation | undefined {

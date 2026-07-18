@@ -45,6 +45,15 @@ export const metadata: Metadata = {
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
 };
 
+const publicStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": "https://www.orendalis.com/#organization", name: "ORENDALIS", url: "https://www.orendalis.com", logo: "https://www.orendalis.com/icon.svg" },
+    { "@type": "WebSite", "@id": "https://www.orendalis.com/#website", name: "ORENDALIS", url: "https://www.orendalis.com", inLanguage: "en", publisher: { "@id": "https://www.orendalis.com/#organization" } },
+    { "@type": "SoftwareApplication", name: "ORENDALIS", url: "https://www.orendalis.com", applicationCategory: "BusinessApplication", operatingSystem: "Web", description: "A private executive career platform for searching opportunities and reviewing evidence-backed Atlas guidance.", offers: { "@type": "Offer", availability: "https://schema.org/OnlineOnly" }, provider: { "@id": "https://www.orendalis.com/#organization" } },
+  ],
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -62,6 +71,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#f5f7fb]">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(publicStructuredData).replace(/</g, "\\u003c") }} />
         <AppShell publicExperience={publicExperience} locale={locale} signedInName={signedInName} signedInEmail={session?.user.email}>{children}</AppShell>
       </body>
     </html>

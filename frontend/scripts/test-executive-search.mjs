@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { matchesExecutiveSearch, searchSuggestions } from "../lib/executive-search.ts";
+import { EXECUTIVE_SEARCH_REGIONS, matchesExecutiveSearch, searchCity, searchCountry, searchRegions, searchSuggestions } from "../lib/executive-search.ts";
 import { classifyOpportunityIndustry } from "../lib/discovery/industry-classification.ts";
 
 const opportunity = {
@@ -13,6 +13,12 @@ assert.equal(matchesExecutiveSearch(opportunity, filters), true, "aliases and mu
 assert.equal(matchesExecutiveSearch(opportunity, { ...filters, countries: ["United States"] }), false, "country preference must be respected");
 assert.ok(searchSuggestions("cro", [opportunity]).includes("cro"), "aliases should be suggested");
 assert.ok(searchSuggestions("reveneu", [opportunity]).includes("Chief Revenue Officer"), "common misspellings should suggest the intended role");
+assert.equal(searchCountry({ country: "VA", location: "Richmond, VA" }), "United States", "US state codes must be grouped under the United States");
+assert.equal(searchCountry({ country: "Unknown", location: "Paris, France" }), "France", "an explicit location country must populate Countries");
+assert.equal(searchCity({ country: "France", location: "Paris, France" }), "Paris", "countries must not appear in Cities");
+assert.deepEqual(searchRegions({ country: "France", location: "Paris, France", workArrangement: "Hybrid" }), ["EU", "Europe", "EMEA"]);
+assert.ok(EXECUTIVE_SEARCH_REGIONS.includes("North America") && EXECUTIVE_SEARCH_REGIONS.includes("MENA"), "the complete region taxonomy must remain available");
+assert.equal(matchesExecutiveSearch({ ...opportunity, country: "VA", location: "Richmond, VA" }, { ...filters, query: "", countries: ["United States"], cities: [], regions: [], industries: [], departments: [], seniorities: [], employmentTypes: [], remoteOptions: [], companySizes: [], salaryMinimum: "", salaryMaximum: "", salaryCurrency: "" }), true, "country-only search must work");
 
 const baseJob = { sourceId: "1", source: "greenhouse", title: "VP Sales", company: { sourceId: "acme", name: "Acme" }, description: "Lead revenue for our enterprise SaaS cloud platform.", discoveredAt: "2026-07-18T00:00:00Z", rawMetadata: {} };
 assert.deepEqual(classifyOpportunityIndustry({ ...baseJob, company: { ...baseJob.company, industry: "Cybersecurity" } }).source, "Verified provider metadata");
@@ -23,4 +29,6 @@ assert.equal(classifyOpportunityIndustry({ ...baseJob, description: "Executive l
 const liveUniverseSource = readFileSync(new URL("../components/opportunities/live-opportunity-universe.tsx", import.meta.url), "utf8");
 assert.match(liveUniverseSource, /hasIndustryEvidence/);
 assert.match(liveUniverseSource, /!\["Not specified", "Unknown"\]\.includes/);
+assert.match(liveUniverseSource, /Search applied\./, "search must provide visible feedback");
+assert.match(liveUniverseSource, /opportunitySourceLabel\(opportunity\)/, "source labels must be deduplicated");
 console.log("Executive search and industry classification tests passed.");
