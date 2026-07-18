@@ -3,6 +3,7 @@ import { extractHistory } from "../lib/import/extraction.ts";
 import { detectHistoryConflicts } from "../lib/import/conflicts.ts";
 import { createFirstExecutiveBrief } from "../lib/import/brief.ts";
 import { detectHistoryDrafts } from "../lib/import/history-drafts.ts";
+import { parseStructuredResume } from "../lib/import/structured-resume.ts";
 import { existsSync, readFileSync } from "node:fs";
 
 const provenance={source:"CSV",filename:"fictional.csv",importedAt:"2026-01-01T00:00:00Z",importVersion:"1.0",evidence:[]};
@@ -19,6 +20,36 @@ const brief=createFirstExecutiveBrief(result.experiences,[]);
 if(!brief.facts[0].startsWith("1 confirmed"))throw Error("Review rejection ignored");
 const resumeDrafts=detectHistoryDrafts("Chief Strategy Officer\nAurora Meridian Group\nMarch 2022 - Present");
 if(resumeDrafts.length!==1||resumeDrafts[0].roleTitle!=="Chief Strategy Officer"||resumeDrafts[0].organizationName!=="Aurora Meridian Group"||resumeDrafts[0].startDate!=="2022-03"||!resumeDrafts[0].isCurrent)throw Error("Resume history extraction failed");
+const multiLayout=`KEY BUSINESS COMPETENCIES
+JANE EXAMPLE
+Strategic Business Planning Business Development Organizational Leadership
+PROFESSIONAL EXPERIENCE
+Northstar Enterprise Company London, United Kingdom
+Public Cloud Sales Manager July 2025
+• Led enterprise cloud adoption.
+Signal Systems Inc. Paris, France
+Sales Director Dec 2023 / Apr 2025
+• Signal Systems is a technology company serving enterprise clients.
+• Managed strategic accounts.
+• Increased revenue by 25%.
+Global Mobile Inc. Berlin, Germany
+Senior Trade Marketing Executive July 2009 / Jun 2011
+• Led channel programs.
+Regional Manager Jan 2008 / July 2009
+• Managed a team of four.
+Key Account Manager Mar 2007 / Jan 2008
+• Developed major accounts.
+EDUCATION
+Example University Amsterdam, Netherlands
+International Business 2001-2005`;
+const multiDrafts=detectHistoryDrafts(multiLayout);
+if(multiDrafts.length!==5)throw Error(`Multi-layout CV expected 5 roles, found ${multiDrafts.length}`);
+if(multiDrafts[0].organizationName!=="Northstar Enterprise Company"||multiDrafts[0].location!=="London, United Kingdom"||!multiDrafts[0].isCurrent)throw Error("Current role/company/location extraction failed");
+if(multiDrafts.filter(item=>item.organizationName==="Global Mobile Inc.").length!==3)throw Error("Promotion history extraction failed");
+if(multiDrafts.some(item=>/COMPETENC|EDUCATION/i.test(`${item.roleDescription??""} ${(item.responsibilities??[]).join(" ")}`)))throw Error("Non-role sections leaked into employment history");
+if(multiDrafts[0].roleDescription!==undefined)throw Error("Unknown role description was guessed");
+const multiStructured=parseStructuredResume(multiLayout);
+if(multiStructured.profile.fullName!=="JANE EXAMPLE"||multiStructured.education.length!==1||multiStructured.skills.length<2)throw Error("Structured CV sections were not extracted safely");
 const workspace=readFileSync(new URL("../components/import/import-workspace.tsx",import.meta.url),"utf8");
 for(const required of ['accept=".pdf,.docx,.txt,.md,.csv,.json"','/api/import/extract','raw file is not retained','Ham dosya saklanmaz','Save my experience and see jobs'])if(!workspace.includes(required))throw Error(`Secure CV flow is missing: ${required}`);
 for(const forbidden of ['demoRecords','Career Passport','preview-only','Architecture placeholder'])if(workspace.includes(forbidden))throw Error(`Legacy import language remains: ${forbidden}`);
