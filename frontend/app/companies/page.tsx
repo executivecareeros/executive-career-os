@@ -6,8 +6,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 type CompanyRow = { id: string; name: string; country?: string; official_domain?: string; careers_url?: string; ats_provider?: string; identity_confidence: number; last_observed_at?: string; payload?: Record<string, unknown> };
-type OrionEvidence = { metrics?: { employers?: number; employersWithActiveOpportunities?: number; verifiedEmployers?: number } };
-type CoverageEvidence = { providers?: { employers?: number }[] };
+type DirectoryMetrics = { canonicalEmployers?: number; verifiedEmployers?: number; hiringEmployers?: number; monitoredEmployerSources?: number };
 
 function intelligenceNumber(payload: Record<string, unknown> | undefined, field: string) {
   const intelligence = payload?.intelligence;
@@ -22,10 +21,9 @@ export default async function CompaniesPage() {
   if (!resolved) redirect("/login?next=/companies");
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspaceId = resolved.context.workspace!.workspaceId;
-  const [companyResponse, networkResponse, coverageResponse] = await Promise.all([
+  const [companyResponse, metricsResponse] = await Promise.all([
     client.request<CompanyRow[]>(`companies?select=id,name,country,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null&order=name.asc&limit=1000`),
-    client.request<OrionEvidence>("rpc/get_orion_network_evidence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) }),
-    client.request<CoverageEvidence>("rpc/get_global_coverage_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) }),
+    client.request<DirectoryMetrics>("rpc/get_company_directory_metrics", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) }),
   ]);
   if (companyResponse.error) throw new Error("Canonical company evidence could not be loaded safely.");
   const live: LiveCompanyRecord[] = (companyResponse.data ?? []).map((company) => {
@@ -43,6 +41,5 @@ export default async function CompaniesPage() {
       lastObservedAt: company.last_observed_at,
     };
   }).filter((company) => company.opportunityCount > 0);
-  const monitoredSources = coverageResponse.error ? undefined : coverageResponse.data?.providers?.reduce((total, provider) => total + (provider.employers ?? 0), 0);
-  return <LiveCompanies companies={live} canonicalEmployers={networkResponse.data?.metrics?.employers} verifiedEmployers={networkResponse.data?.metrics?.verifiedEmployers} monitoredSources={monitoredSources}/>;
+  return <LiveCompanies companies={live} canonicalEmployers={metricsResponse.data?.canonicalEmployers} verifiedEmployers={metricsResponse.data?.verifiedEmployers} monitoredSources={metricsResponse.data?.monitoredEmployerSources}/>;
 }
