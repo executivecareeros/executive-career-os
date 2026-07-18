@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { matchesExecutiveSearch, searchSuggestions } from "../lib/executive-search.ts";
 import { classifyOpportunityIndustry } from "../lib/discovery/industry-classification.ts";
 
@@ -19,4 +20,7 @@ assert.equal(classifyOpportunityIndustry(baseJob).value, "Not specified", "role 
 assert.equal(classifyOpportunityIndustry({ ...baseJob, rawMetadata: { industry: "Enterprise Software" } }).value, "Enterprise Software", "explicit provider industry metadata remains valid evidence");
 assert.equal(classifyOpportunityIndustry({ ...baseJob, description: "Build an AI-first commerce platform." }).value, "Not specified", "technology mentioned in a role must not be presented as employer industry evidence");
 assert.equal(classifyOpportunityIndustry({ ...baseJob, description: "Executive leadership role." }).value, "Not specified", "unknown must remain unknown");
+const liveUniverseSource = readFileSync(new URL("../components/opportunities/live-opportunity-universe.tsx", import.meta.url), "utf8");
+assert.match(liveUniverseSource, /hasIndustryEvidence/);
+assert.match(liveUniverseSource, /!\["Not specified", "Unknown"\]\.includes/);
 console.log("Executive search and industry classification tests passed.");
