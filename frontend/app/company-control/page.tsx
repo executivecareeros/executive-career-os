@@ -5,6 +5,7 @@ import { isSupabaseMode } from "@/lib/auth/configuration";
 import { createCompanySnapshot } from "@/lib/company-intelligence";
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createSchedulerSupabaseClient } from "@/lib/supabase/scheduler";
 import { resolveFounderAccess } from "@/lib/auth/founder-access";
 import { currentSession } from "@/lib/auth/session";
 import { founderBootstrapStatus } from "@/lib/auth/founder-bootstrap";
@@ -24,12 +25,16 @@ export default async function CompanyControlPage() {
     if (!resolved) notFound();
     if(resolved){
       const client=createServerSupabaseClient(resolved.accessToken);
-      const workspaceId=resolved.context.workspace!.workspaceId;
+      const networkClient=createSchedulerSupabaseClient();
+      const schedules=await networkClient.request<Array<{workspace_id:string}>>("opportunity_provider_schedules?select=workspace_id&enabled=eq.true&order=created_at.desc&limit=1");
+      const networkWorkspaceId=schedules.data?.[0]?.workspace_id;
       const [triage,bootstrap,requests,coverage,learning]=await Promise.all([
         new SupabaseBetaWorkflowRepository(client,resolved.context).founderTriage(),
         founderBootstrapStatus(resolved.accessToken),
         client.request<typeof roomPermanenceRequests>("rpc/get_founder_room_permanence_requests",{method:"POST",body:"{}"}),
-        client.request<Record<string,unknown>>("rpc/get_operational_coverage_summary",{method:"POST",body:JSON.stringify({target_workspace:workspaceId})}),
+        networkWorkspaceId
+          ? networkClient.request<Record<string,unknown>>("rpc/get_operational_coverage_summary",{method:"POST",body:JSON.stringify({target_workspace:networkWorkspaceId})})
+          : Promise.resolve({data:undefined,error:{message:"No enabled Opportunity Network schedule is configured."}}),
         client.request<ProductLearningDashboard>("rpc/get_founder_product_learning_dashboard",{method:"POST",body:JSON.stringify({window_days:30})}),
       ]);
       betaTriage=triage; founderBootstrapComplete=bootstrap.status==="COMPLETE"; roomPermanenceRequests=requests.data??[];

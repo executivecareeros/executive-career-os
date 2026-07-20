@@ -38,6 +38,7 @@ const boundedIntelligence = await readFile(resolve(root, "supabase/migrations/20
 const operationalSummary = await readFile(resolve(root, "supabase/migrations/202607180016_operational_coverage_summary.sql"), "utf8");
 const countryNormalization = await readFile(resolve(root, "supabase/migrations/202607180017_country_alias_normalization.sql"), "utf8");
 const schedulerRoute = await readFile(resolve(root, "frontend/app/api/operations/opportunity-refresh/route.ts"), "utf8");
+const companyControlPage = await readFile(resolve(root, "frontend/app/company-control/page.tsx"), "utf8");
 assert.match(migration, /^begin;/);
 assert.match(migration, /record_count between 1 and 250/, "Database batch size must be bounded");
 assert.match(migration, /unique\(workspace_id,batch_id\)/, "Retry identity must be durable and workspace scoped");
@@ -68,5 +69,9 @@ assert.match(schedulerRoute, /countriesRepresented/);
 assert.match(schedulerRoute, /unrecognizedLocationLabels/);
 assert.doesNotMatch(schedulerRoute, /rpc\/get_global_coverage_intelligence/);
 assert.match(schedulerRoute, /ODS3_OPERATIONAL_TELEMETRY/);
+assert.match(companyControlPage, /createSchedulerSupabaseClient/);
+assert.match(companyControlPage, /opportunity_provider_schedules\?select=workspace_id/);
+assert.match(companyControlPage, /target_workspace:networkWorkspaceId/);
+assert.doesNotMatch(companyControlPage, /target_workspace:workspaceId/);
 
 console.log("Transaction-safe batch persistence and global coverage intelligence checks passed.");
