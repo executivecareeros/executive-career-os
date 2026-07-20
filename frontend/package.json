@@ -23,6 +23,7 @@
     "test:email-verification": "node scripts/test-email-verification.mjs",
     "test:beta-discoverability": "node scripts/test-beta-discoverability.mjs",
     "test:founder-bootstrap": "node scripts/test-founder-bootstrap.mjs",
+    "test:founder-access": "node scripts/test-founder-access.mjs",
     "test:release-evidence": "node --experimental-transform-types scripts/test-release-evidence.mjs",
     "test:opportunity-universe": "node --experimental-transform-types scripts/test-opportunity-universe.mjs",
     "test:discovery-pipeline": "node --experimental-transform-types scripts/test-discovery-pipeline.mjs",
