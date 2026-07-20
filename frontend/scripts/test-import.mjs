@@ -79,6 +79,60 @@ if(inlineDrafts[0].organizationName!=="ORENDALIS"||inlineDrafts[0].roleTitle!=="
 if(inlineDrafts.some(item=>item.roleDescription!==undefined))throw Error("Unknown inline role descriptions must remain blank");
 const inlineStructured=parseStructuredResume(executiveInlineLayout);
 if(inlineStructured.profile.citizenship!=="EU & Turkish citizen"||inlineStructured.languages.length!==3||inlineStructured.education.length!==1||inlineStructured.skills.length!==4||inlineStructured.highlights.length!==1)throw Error("Inline executive profile sections were not extracted completely");
+const linkedInPdfLayout=`Contact
+executive@example.invalid
+www.linkedin.com/in/example
+Top Skills
+Enterprise Sales
+Strategic Partnerships
+Languages
+Turkish (Native or Bilingual)
+English (Full Professional)
+Certifications
+Sales Leadership
+JANE EXAMPLE
+International Business Development Executive | EMEA Growth | EU & Turkish Citizen
+Netherlands
+Summary
+International commercial executive with evidence-backed experience.
+Experience
+Example Studio
+International Business Development Consultant
+June 2026 - Present (2 months)
+Istanbul, Türkiye
+AI-native creative production studio supporting global brands.
+Spearheading international expansion.
+ORENDALIS
+Founder
+January 2026 - Present (7 months)
+Istanbul, Türkiye
+• Built the executive platform.
+Example Technology
+Director of Sales And Business Development
+December 2020 - September 2025 (4 years 10 months)
+İzmir, Turkey
+Example Technology is an international technology company.
+Türk Telekom
+2 years 3 months
+Regional Sales Manager
+July 2008 - September 2010 (2 years 3 months)
+Responsible for international data sales.
+Expert
+July 2008 - July 2009 (1 year 1 month)
+Education
+Example University
+BS, International Business · (2001 - 2006)
+Page 5 of 5`;
+const linkedInDrafts=detectHistoryDrafts(linkedInPdfLayout);
+if(linkedInDrafts.length!==5)throw Error(`LinkedIn profile PDF expected 5 roles, found ${linkedInDrafts.length}`);
+if(linkedInDrafts[0].organizationName!=="Example Studio"||linkedInDrafts[0].location!=="Istanbul, Türkiye"||linkedInDrafts[0].companyDescription!==undefined)throw Error("LinkedIn profile role, location, or unknown company description was mapped incorrectly");
+if(linkedInDrafts[1].organizationName!=="ORENDALIS"||linkedInDrafts[1].responsibilities?.[0]!=="Built the executive platform.")throw Error("LinkedIn profile bullet responsibility was not preserved");
+if(linkedInDrafts[2].companyDescription!=="Example Technology is an international technology company.")throw Error("Explicit LinkedIn company description was not preserved");
+if(linkedInDrafts.filter(item=>item.organizationName==="Türk Telekom").length!==2)throw Error("LinkedIn promotion history did not retain the employer");
+if(linkedInDrafts.some(item=>/Page \d+ of \d+|EDUCATION|LANGUAGES/i.test(item.evidence)))throw Error("LinkedIn page or section metadata leaked into experience");
+const linkedInStructured=parseStructuredResume(linkedInPdfLayout);
+if(linkedInStructured.profile.fullName!=="JANE EXAMPLE"||linkedInStructured.profile.citizenship!=="EU & Turkish Citizen"||linkedInStructured.languages.length!==2||linkedInStructured.skills.length!==2||linkedInStructured.certifications.length!==1)throw Error("LinkedIn profile PDF sections were not mapped correctly");
+if(linkedInStructured.education[0]?.qualification!=="BS, International Business")throw Error("LinkedIn education punctuation was not normalized");
 const workspace=readFileSync(new URL("../components/import/import-workspace.tsx",import.meta.url),"utf8");
 for(const required of ['accept=".pdf,.docx,.txt,.md,.csv,.json"','/api/import/extract','raw file is not retained','Ham dosya saklanmaz','Save my experience and see jobs'])if(!workspace.includes(required))throw Error(`Secure CV flow is missing: ${required}`);
 for(const forbidden of ['demoRecords','Career Passport','preview-only','Architecture placeholder'])if(workspace.includes(forbidden))throw Error(`Legacy import language remains: ${forbidden}`);

@@ -130,8 +130,88 @@ function bulletGroups(rawLines:string[],start:number,end:number){
 
 function highConfidenceAchievement(value:string){return /^(?:achieved|exceeded|surpassed|selected|awarded|ranked|increased|improved)\b/i.test(value)||/\b(?:over|by)\s+\d+(?:\.\d+)?%\b/i.test(value);}
 function explicitCompanyDescription(value:string,organization:string){
-  const lead=organization.split(/[,&-]/)[0].trim();
-  return new RegExp(`^(?:${lead.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}\\s+)?(?:is|was)\\s+(?:a|an)\\b`,"i").test(value)||/^(?:worked at\s+.+?,\s+)?a leading\b/i.test(value);
+  const lead=organization.split(/[,&\s-]/)[0].trim();
+  const escape=(candidate:string)=>candidate.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  return new RegExp(`^(?:${escape(organization)}|${escape(lead)}(?:©)?)\\s+(?:is|was|started|offers|provides|develops)\\b`,"i").test(value)||/^(?:worked at\s+.+?,\s+)?a leading\b/i.test(value);
+}
+
+const linkedInPageMarker=/^Page \d+ of \d+$/i;
+const linkedInDuration=/^\d+\s+(?:years?|months?)(?:\s+\d+\s+months?)?$/i;
+
+function isLinkedInProfileExport(input:string){
+  return /(?:^|\n)Contact\s*(?:\n|$)/i.test(input)&&/(?:^|\n)Experience\s*(?:\n|$)/i.test(input)&&/Page \d+ of \d+/i.test(input);
+}
+
+function linkedInDateHeader(line:string){
+  const match=line.match(dateRange);
+  if(!match||match.index!==0)return undefined;
+  const remainder=line.slice(match[0].length).trim();
+  if(remainder&&!/^\([^)]*\)$/.test(remainder))return undefined;
+  return{startDate:normalizeDate(match[1]),endDate:/present|current/i.test(match[2])?undefined:normalizeDate(match[2]),isCurrent:/present|current/i.test(match[2])};
+}
+
+function likelyLinkedInCompany(line:string){
+  if(!line||line.length>100||/[.!?]$/.test(line)||linkedInDuration.test(line)||linkedInDateHeader(line)||locationOnly.test(line))return false;
+  return line.split(/\s+/).length<=10;
+}
+
+function paragraphGroups(lines:string[]){
+  const groups:string[]=[];let current="";
+  for(const raw of lines){
+    const value=cleanLine(raw);
+    if(!value||linkedInPageMarker.test(value))continue;
+    current=`${current} ${value}`.trim().replace(/-\s+/g,"-");
+    if(/[.!?][”"']?$/.test(value)){groups.push(current);current="";}
+  }
+  if(current)groups.push(current);
+  return groups;
+}
+
+function detectLinkedInEmploymentDrafts(input:string){
+  if(!isLinkedInProfileExport(input))return[];
+  const rawLines=input.split(/\r?\n/).map(line=>line.replace(/\u0000/g,"").trim()).filter(Boolean).filter(line=>!linkedInPageMarker.test(cleanLine(line))).slice(0,2_000);
+  const lines=rawLines.map(cleanLine);
+  const startIndex=lines.findIndex(line=>/^EXPERIENCE$/i.test(line));
+  if(startIndex<0)return[];
+  const endOffset=lines.slice(startIndex+1).findIndex(line=>/^EDUCATION$/i.test(line));
+  const endIndex=endOffset<0?lines.length:startIndex+1+endOffset;
+  const headers:Array<{organizationName:string;roleTitle:string;startDate?:string;endDate?:string;isCurrent:boolean;location?:string;headerStart:number;dateIndex:number}>=[];
+  let currentOrganization="";
+  for(let index=startIndex+1;index<endIndex;index++){
+    const date=linkedInDateHeader(lines[index]);
+    if(!date)continue;
+    const roleIndex=index-1;
+    const roleTitle=lines[roleIndex];
+    if(!roleTitle||roleTitle.length>140||linkedInDuration.test(roleTitle)||/[.!?]$/.test(roleTitle))continue;
+    let companyIndex=roleIndex-1;
+    if(linkedInDuration.test(lines[companyIndex]??""))companyIndex--;
+    const companyCandidate=lines[companyIndex]??"";
+    const hasNewCompany=likelyLinkedInCompany(companyCandidate);
+    if(hasNewCompany)currentOrganization=companyCandidate;
+    if(!currentOrganization)continue;
+    headers.push({organizationName:currentOrganization,roleTitle,...date,headerStart:hasNewCompany?companyIndex:roleIndex,dateIndex:index});
+  }
+  return headers.map((header,index)=>{
+    const next=headers[index+1]?.headerStart??endIndex;
+    const contentStart=header.dateIndex+1;
+    const possibleLocation=lines[contentStart];
+    const location=locationOnly.test(possibleLocation??"")?possibleLocation:undefined;
+    const detailStart=contentStart+(location?1:0);
+    const rawDetails=rawLines.slice(detailStart,next);
+    const bullets=bulletGroups(rawLines,detailStart,next);
+    const firstBullet=rawDetails.findIndex(line=>bulletLead.test(line));
+    const narrativeRaw=firstBullet>=0?rawDetails.slice(0,firstBullet):rawDetails;
+    const paragraphs=paragraphGroups(narrativeRaw);
+    const companyDescription=paragraphs.length&&explicitCompanyDescription(paragraphs[0],header.organizationName)?paragraphs.join(" "):undefined;
+    const roleNarrative=companyDescription?[]:paragraphs;
+    const responsibilities=bullets.length?bullets:[];
+    const roleDescription=roleNarrative.filter(value=>!responsibilities.includes(value)).join(" ")||undefined;
+    const achievements=responsibilities.filter(highConfidenceAchievement);
+    const roleResponsibilities=responsibilities.filter(value=>!highConfidenceAchievement(value));
+    const leadershipScope=[...roleResponsibilities,...roleNarrative].find(value=>/\b(?:reported directly|managed|led|team of|leadership|spearheading|directing)\b/i.test(value));
+    const teamSize=[...roleResponsibilities,...roleNarrative].map(value=>value.match(/\bteam of\s+([^,.]+)/i)?.[1]).find(Boolean);
+    return{id:crypto.randomUUID(),organizationName:header.organizationName,roleTitle:header.roleTitle,startDate:header.startDate,endDate:header.endDate,isCurrent:header.isCurrent,location,companyDescription,roleDescription,responsibilities:roleResponsibilities,achievements,leadershipScope,teamSize,confidence:"High" as const,confidenceByField:{organizationName:"High" as const,roleTitle:"High" as const,startDate:header.startDate?"High" as const:"Unknown" as const,endDate:header.isCurrent||header.endDate?"High" as const:"Unknown" as const,location:location?"High" as const:"Unknown" as const,companyDescription:companyDescription?"High" as const:"Unknown" as const,roleDescription:roleDescription?"High" as const:"Unknown" as const,leadershipScope:leadershipScope?"Medium" as const:"Unknown" as const,teamSize:teamSize?"Medium" as const:"Unknown" as const},evidence:[header.organizationName,header.roleTitle,lines[header.dateIndex],location,...paragraphs,...bullets].filter(Boolean).join(" · ")};
+  });
 }
 
 function detectFlexibleEmploymentDrafts(input:string){
@@ -182,6 +262,8 @@ function detectInlineEmploymentDrafts(input:string){
 
 export function detectHistoryDrafts(input:string):HistoryDocumentDraft[]{
   const lines=input.split(/\r?\n/).map(cleanLine).filter(Boolean).slice(0,2_000),drafts:HistoryDocumentDraft[]=[];
+  const linkedIn=detectLinkedInEmploymentDrafts(input);
+  if(linkedIn.length)return linkedIn;
   const inline=detectInlineEmploymentDrafts(input);
   if(inline.length)return inline;
   const knownEmployers=["PRISM AI","Vitpepper Studios","Zero Density","Calpeia","PROFEN Group","Canovate Group","Interoute Turkey","Türk Telekom"];
