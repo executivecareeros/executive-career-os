@@ -11,6 +11,11 @@ export const dynamic = "force-dynamic";
 // lease so an interrupted invocation remains safely reclaimable.
 export const maxDuration = 240;
 
+export function shouldRefreshEmployerIntelligence(iso: string) {
+  const current = new Date(iso);
+  return current.getUTCHours() === 2 && current.getUTCMinutes() < 15;
+}
+
 export async function GET(request: Request) {
   if (!schedulerRequestAuthorized(request.headers.get("authorization"), process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -33,7 +38,7 @@ export async function GET(request: Request) {
       },
       health: () => rawClient.health(),
     };
-    const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 6) || 6));
+    const maximumJobs = Math.max(1, Math.min(12, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 12) || 12));
     const summary = await runOpportunityScheduler(client, undefined, maximumJobs);
     const schedules = await client.request<Array<{ workspace_id: string; created_by: string }>>("opportunity_provider_schedules?select=workspace_id,created_by&enabled=eq.true&order=created_at.desc&limit=1");
     const workspaceId = schedules.data?.[0]?.workspace_id;
@@ -42,7 +47,10 @@ export async function GET(request: Request) {
     const companyIntelligenceActivation = workspaceId && companyActivationLimit && companyActivationDomains.length
       ? await activateCompanyIntelligence(client, workspaceId, { maximumCompanies: companyActivationLimit, approvedDomains: companyActivationDomains })
       : undefined;
-    const employerIntelligence = workspaceId
+    // Employer intelligence is derived maintenance, not part of the ingestion
+    // critical path. Run it once per UTC day instead of allowing a known slow
+    // refresh to consume most of every fifteen-minute collection window.
+    const employerIntelligence = workspaceId && shouldRefreshEmployerIntelligence(startedAt)
       ? await client.request<Record<string, unknown>>("rpc/refresh_employer_intelligence", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) })
       : undefined;
     const coverage = workspaceId

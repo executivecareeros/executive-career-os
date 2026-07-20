@@ -9,6 +9,7 @@ import { HealthCard } from "./health-card";
 import type { FounderBetaTriage } from "@/lib/beta/types";
 import Link from "next/link";
 import { decideRoomPermanenceAction } from "@/app/rooms/actions";
+import type { ProductLearningDashboard } from "@/lib/product-learning";
 
 function metricDisplay(metric: CompanyMetric) {
   const { observation } = metric;
@@ -17,8 +18,12 @@ function metricDisplay(metric: CompanyMetric) {
 }
 
 type RoomPermanenceRequest={room_id:string;title:string;short_purpose:string;language_name:string;permanence_reason:string;creator_name:string;requested_at:string;closes_at:string};
+type LiveOperations={coverage?:Record<string,unknown>;coverageError?:string;learning?:ProductLearningDashboard;learningError?:string;feedbackWaiting:number;roomDecisions:number};
 
-export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapComplete=false, roomPermanenceRequests=[] }: { snapshot: CompanySnapshot; betaTriage?: FounderBetaTriage; founderBootstrapComplete?: boolean; roomPermanenceRequests?:RoomPermanenceRequest[] }) {
+const numeric=(source:Record<string,unknown>|undefined,key:string)=>typeof source?.[key]==="number"?source[key] as number:undefined;
+const totalProvider=(source:Record<string,unknown>|undefined,key:"successes"|"failures")=>Array.isArray(source?.providers)?source.providers.reduce((total,item)=>total+(typeof (item as Record<string,unknown>)[key]==="number"?(item as Record<string,number>)[key]:0),0):undefined;
+
+export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapComplete=false, roomPermanenceRequests=[], operations }: { snapshot: CompanySnapshot; betaTriage?: FounderBetaTriage; founderBootstrapComplete?: boolean; roomPermanenceRequests?:RoomPermanenceRequest[]; operations?:LiveOperations }) {
   const metric = (id: string) => snapshot.health.metrics.find((item) => item.definition.id === id)!;
   const healthCards = [
     ["Overall Company Health", snapshot.health.overallHealth, "Insufficient connected operational data for a reliable aggregate."],
@@ -32,6 +37,19 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
   ] as const;
 
   const snapshotMetrics = [metric("registered-accounts"), metric("activated-users"), metric("weekly-active-users"), metric("beta-participants"), metric("support-cases"), metric("repository-commits"), metric("application-routes"), metric("monthly-spending"), metric("annual-commitments"), metric("revenue"), metric("runway")];
+  const liveMetrics=[
+    ["Active opportunities",numeric(operations?.coverage,"canonicalOpportunities")],
+    ["Fresh opportunities · 48h",numeric(operations?.coverage,"freshOpportunities")],
+    ["Employers represented",numeric(operations?.coverage,"employers")],
+    ["Countries represented",numeric(operations?.coverage,"countriesRepresented")],
+    ["Provider successes · 24h",totalProvider(operations?.coverage,"successes")],
+    ["Provider failures · 24h",totalProvider(operations?.coverage,"failures")],
+    ["Executives · 30d",operations?.learning?.executives],
+    ["Sessions · 30d",operations?.learning?.sessions],
+    ["Returning executives",operations?.learning?.returningExecutives],
+    ["Feedback waiting",operations?.feedbackWaiting],
+    ["Room decisions",operations?.roomDecisions],
+  ] as const;
 
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
@@ -59,7 +77,7 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
       <SectionCard className="mt-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Controlled-beta learning</p><h2 className="mt-2 text-xl font-semibold">Real Executive Product Learning</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">See aggregate activation, return behavior, feature use, session duration, device mix and voluntarily confirmed profile segments. Raw activity and sensitive attributes remain inaccessible.</p></div><Link href="/company-control/product-learning" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Open Product Learning</Link></div></SectionCard>
 
       <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Current environment</p><h2 className="mt-2 text-xl font-semibold">Staging Operational Record</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">The isolated Vercel and Supabase staging environment is deployed, founder acceptance has passed, and production remains absent.</p></div><StatusBadge tone="success">Active · Staging Only</StatusBadge></div>
+        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Current environment</p><h2 className="mt-2 text-xl font-semibold">Live Operational Record</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">ORENDALIS is live on its production domain. The isolated network scheduler continues zero-token opportunity collection with measured provider telemetry.</p></div><StatusBadge tone="success">Live · Production</StatusBadge></div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             ["Current Decision", "Operational Readiness Passed", "Reporting, release attribution, and readiness evidence are reconciled. Design-partner activation remains a separate gate."],
@@ -115,7 +133,7 @@ export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapCom
         <SectionCard><p className="atlas-kicker">Deadlines</p><h2 className="mt-2 text-xl font-semibold">Next Seven Days</h2><div className="mt-5 space-y-4">{snapshot.deadlines.map((deadline) => <article key={deadline.id} className="border-l border-blue-400/40 pl-4"><p className="text-xs text-blue-300">{new Date(deadline.dueAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Istanbul" })}</p><h3 className="mt-1 text-sm font-medium text-white">{deadline.title}</h3><p className="mt-1 text-xs text-slate-500">{deadline.department} · {deadline.type}</p></article>)}</div></SectionCard>
       </div>
 
-      <SectionCard className="mt-8"><p className="atlas-kicker">Company snapshot</p><h2 className="mt-2 text-xl font-semibold">Measured, unavailable, or not connected</h2><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">{snapshotMetrics.map((item) => <article key={item.definition.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{item.definition.name}</p><p className="mt-2 break-words text-lg font-semibold text-white">{metricDisplay(item)}</p><p className="mt-2 text-[11px] text-slate-600">{item.observation.valueKind} · {item.observation.freshness.state}</p></article>)}</div><p className="mt-5 text-xs text-slate-600">Revenue and runway are not treated as zero. Runway cannot be calculated until verified cash and burn inputs exist.</p></SectionCard>
+      <SectionCard className="mt-8"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Company snapshot</p><h2 className="mt-2 text-xl font-semibold">Live operating position</h2><p className="mt-2 text-sm text-slate-400">Current network, executive activity, feedback and governance signals from connected ORENDALIS systems.</p></div><StatusBadge tone={operations?.coverage&&operations?.learning?"success":"warning"}>{operations?.coverage&&operations?.learning?"Live · Connected":"Partially connected"}</StatusBadge></div><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">{liveMetrics.map(([label,value])=><article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{label}</p><p className="mt-2 break-words text-lg font-semibold text-white">{value===undefined?"Unavailable":value.toLocaleString("en-GB")}</p><p className="mt-2 text-[11px] text-slate-600">{value===undefined?"Source unavailable":"Measured live"}</p></article>)}</div>{(operations?.coverageError||operations?.learningError)&&<p className="mt-4 text-xs text-amber-300">One connected source could not be measured during this request. Existing values were not guessed.</p>}<div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-white">Financial and corporate records</p><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{snapshotMetrics.filter(item=>["repository-commits","application-routes","monthly-spending","annual-commitments","revenue","runway"].includes(item.definition.id)).map((item)=><article key={item.definition.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{item.definition.name}</p><p className="mt-2 break-words text-base font-semibold text-white">{metricDisplay(item)}</p><p className="mt-2 text-[11px] text-slate-600">{item.observation.valueKind} · {item.observation.freshness.state}</p></article>)}</div></div><p className="mt-5 text-xs text-slate-600">Unavailable financial values remain explicit; revenue and runway are never represented as zero without verified inputs.</p></SectionCard>
 
       <SectionCard className="mt-8"><p className="atlas-kicker">Department overview</p><h2 className="mt-2 text-xl font-semibold">Accountability and connection health</h2><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{snapshot.health.departments.map((department) => <DepartmentCard key={department.department} department={department}/>)}</div></SectionCard>
 

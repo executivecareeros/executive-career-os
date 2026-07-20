@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const actorId = schedules.data?.[0]?.created_by;
     if (!workspaceId || !actorId) return NextResponse.json({ status: "no-active-workspace", aiTokens: 0 });
 
-    const maximumSources = Math.max(0, Math.min(50, Number(process.env.OPPORTUNITY_SOURCE_DISCOVERY_LIMIT ?? 40) || 40));
+    const maximumSources = Math.max(0, Math.min(50, Number(process.env.OPPORTUNITY_SOURCE_DISCOVERY_LIMIT ?? 50) || 50));
     const discoveryCursor = Math.floor(Date.now() / (30 * 60_000));
     const discovery = await discoverPublicEmployerSources({
       existingUrls: (schedules.data ?? []).flatMap(item => item.locator?.url ? [item.locator.url] : []),
