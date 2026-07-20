@@ -27,5 +27,9 @@ assert.match(liveAnalyticsMigration, /currentTitles/);
 assert.doesNotMatch(liveAnalyticsMigration, /email|ip_address|gender|date_of_birth/i);
 assert.match(controlCenter, /Current professional titles/);
 assert.match(controlCenter, /text-\[#182234\]/, "Live values must remain visible on the light Company Control surface");
+assert.doesNotMatch(controlCenter, /Design Partner Readiness|Release 0\.9|Demonstration|Beta Readiness|Private beta access|Staging Active|Activation Gated/);
+assert.match(controlCenter, /Live · Production/);
+assert.match(controlCenter, /Provider operations/);
+assert.match(controlCenter, /Feedback and data rights/);
 
 console.log("Founder product-learning privacy, access, and aggregation checks passed.");

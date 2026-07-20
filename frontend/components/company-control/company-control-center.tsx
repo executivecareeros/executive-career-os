@@ -1,152 +1,94 @@
+import Link from "next/link";
+import { decideRoomPermanenceAction } from "@/app/rooms/actions";
 import { PageHeader } from "@/components/page-header";
 import { SectionCard } from "@/components/section-card";
 import { StatusBadge } from "@/components/status-badge";
-import { companyDataSources, type CompanyMetric, type CompanySnapshot } from "@/lib/company-intelligence";
-import { DailyBriefing } from "./daily-briefing";
-import { DepartmentCard } from "./department-card";
-import { FounderActionCard } from "./founder-action-card";
-import { HealthCard } from "./health-card";
 import type { FounderBetaTriage } from "@/lib/beta/types";
-import Link from "next/link";
-import { decideRoomPermanenceAction } from "@/app/rooms/actions";
+import type { CompanySnapshot } from "@/lib/company-intelligence";
 import type { ProductLearningDashboard } from "@/lib/product-learning";
-
-function metricDisplay(metric: CompanyMetric) {
-  const { observation } = metric;
-  if (observation.valueKind === "Unavailable") return observation.notes?.startsWith("Cannot Calculate") ? "Founder Input Required" : observation.status;
-  return String(observation.value);
-}
 
 type RoomPermanenceRequest={room_id:string;title:string;short_purpose:string;language_name:string;permanence_reason:string;creator_name:string;requested_at:string;closes_at:string};
 type LiveOperations={coverage?:Record<string,unknown>;coverageError?:string;learning?:ProductLearningDashboard;learningError?:string;feedbackWaiting:number;roomDecisions:number};
+type ProviderMetric={provider_id?:string;attempts?:number;successes?:number;failures?:number;last_success?:string};
 
 const numeric=(source:Record<string,unknown>|undefined,key:string)=>typeof source?.[key]==="number"?source[key] as number:undefined;
-const totalProvider=(source:Record<string,unknown>|undefined,key:"successes"|"failures")=>Array.isArray(source?.providers)?source.providers.reduce((total,item)=>total+(typeof (item as Record<string,unknown>)[key]==="number"?(item as Record<string,number>)[key]:0),0):undefined;
-const formatDuration=(seconds:number|undefined)=>seconds===undefined?undefined:seconds<60?`${seconds}s`:`${Math.floor(seconds/60)}m ${seconds%60}s`;
+const providers=(source:Record<string,unknown>|undefined)=>Array.isArray(source?.providers)?source.providers as ProviderMetric[]:[];
+const totalProvider=(source:Record<string,unknown>|undefined,key:"successes"|"failures")=>providers(source).reduce((total,item)=>total+(item[key]??0),0);
+const formatDuration=(seconds:number|undefined)=>seconds===undefined?"Awaiting activity":seconds<60?`${seconds}s`:`${Math.floor(seconds/60)}m ${seconds%60}s`;
+const formatNumber=(value:number|undefined)=>value===undefined?"Awaiting measurement":value.toLocaleString("en-GB");
+const titleCase=(value:string)=>value.replace(/_/g," ").replace(/\b\w/g,letter=>letter.toUpperCase());
 
-export function CompanyControlCenter({ snapshot, betaTriage, founderBootstrapComplete=false, roomPermanenceRequests=[], operations }: { snapshot: CompanySnapshot; betaTriage?: FounderBetaTriage; founderBootstrapComplete?: boolean; roomPermanenceRequests?:RoomPermanenceRequest[]; operations?:LiveOperations }) {
-  const metric = (id: string) => snapshot.health.metrics.find((item) => item.definition.id === id)!;
-  const healthCards = [
-    ["Overall Company Health", snapshot.health.overallHealth, "Insufficient connected operational data for a reliable aggregate."],
-    ["Product Health", snapshot.health.departments.find((item) => item.department === "Product")!.health, "Live activation and retention data are not connected."],
-    ["Infrastructure Health", "Watch", "Exchange is operational; Microsoft-managed DKIM selector publication remains unavailable."],
-    ["Security Health", "Unknown", "No live security telemetry is connected."],
-    ["Financial Health", "Unknown", "Verified cash, burn, revenue, and recurring totals are incomplete."],
-    ["Customer Health", "Not Connected", "No customer-success or support platform is connected."],
-    ["Beta Readiness", "At Risk", "Authoritative readiness gates remain unchecked."],
-    ["Founder Capacity", "Unknown", "Verified founder-time and capacity data are unavailable."],
-  ] as const;
+function MetricCard({label,value,detail="Measured live"}:{label:string;value:string|number|undefined;detail?:string}){
+  const display=typeof value==="number"?value.toLocaleString("en-GB"):value??"Awaiting measurement";
+  return <article className="rounded-xl border border-[#dce3ec] bg-[#f8fafc] p-4"><p className="text-xs leading-5 text-[#657184]">{label}</p><p className="mt-2 break-words text-xl font-semibold text-[#182234]">{display}</p><p className="mt-2 text-[11px] text-[#7a8798]">{detail}</p></article>;
+}
 
-  const snapshotMetrics = [metric("registered-accounts"), metric("activated-users"), metric("weekly-active-users"), metric("beta-participants"), metric("support-cases"), metric("repository-commits"), metric("application-routes"), metric("monthly-spending"), metric("annual-commitments"), metric("revenue"), metric("runway")];
+function Distribution({title,items}:{title:string;items:Array<{name:string;executives:number}>}){
+  return <article className="rounded-xl border border-[#dce3ec] bg-white p-4"><h3 className="text-sm font-semibold text-[#182234]">{title}</h3><div className="mt-3 space-y-2">{items.slice(0,7).map(item=><div key={item.name} className="flex items-center justify-between gap-3 text-sm"><span className="truncate text-[#657184]">{titleCase(item.name)}</span><span className="font-semibold text-[#182234]">{item.executives.toLocaleString("en-GB")}</span></div>)}{!items.length&&<p className="text-sm text-[#7a8798]">No confirmed activity yet.</p>}</div></article>;
+}
+
+export function CompanyControlCenter({snapshot,betaTriage,founderBootstrapComplete=false,roomPermanenceRequests=[],operations}:{snapshot:CompanySnapshot;betaTriage?:FounderBetaTriage;founderBootstrapComplete?:boolean;roomPermanenceRequests?:RoomPermanenceRequest[];operations?:LiveOperations}){
+  const coverage=operations?.coverage;
+  const learning=operations?.learning;
+  const providerMetrics=providers(coverage);
+  const queue=coverage?.queue&&typeof coverage.queue==="object"?coverage.queue as Record<string,number>:{};
+  const persistence=coverage?.persistence&&typeof coverage.persistence==="object"?coverage.persistence as Record<string,number>:{};
   const liveMetrics=[
-    ["Active opportunities",numeric(operations?.coverage,"canonicalOpportunities")],
-    ["Fresh opportunities · 48h",numeric(operations?.coverage,"freshOpportunities")],
-    ["Employers represented",numeric(operations?.coverage,"employers")],
-    ["Countries represented",numeric(operations?.coverage,"countriesRepresented")],
-    ["Provider successes · 24h",totalProvider(operations?.coverage,"successes")],
-    ["Provider failures · 24h",totalProvider(operations?.coverage,"failures")],
-    ["Registered executives",operations?.learning?.registeredExecutives],
-    ["Active now · 15m",operations?.learning?.activeNow],
-    ["Active executives · 30d",operations?.learning?.executives],
-    ["Sessions · 30d",operations?.learning?.sessions],
-    ["Returning executives",operations?.learning?.returningExecutives],
-    ["Average session",formatDuration(operations?.learning?.averageSessionSeconds)],
+    ["Active opportunities",numeric(coverage,"canonicalOpportunities")],
+    ["Fresh opportunities · 48h",numeric(coverage,"freshOpportunities")],
+    ["Employers represented",numeric(coverage,"employers")],
+    ["Countries represented",numeric(coverage,"countriesRepresented")],
+    ["Provider successes · 24h",coverage?totalProvider(coverage,"successes"):undefined],
+    ["Provider failures · 24h",coverage?totalProvider(coverage,"failures"):undefined],
+    ["Registered executives",learning?.registeredExecutives],
+    ["Active now · 15m",learning?.activeNow],
+    ["Active executives · 30d",learning?.executives],
+    ["Sessions · 30d",learning?.sessions],
+    ["Returning executives",learning?.returningExecutives],
+    ["Average session",formatDuration(learning?.averageSessionSeconds)],
     ["Feedback waiting",operations?.feedbackWaiting],
     ["Room decisions",operations?.roomDecisions],
   ] as const;
+  const connected=Boolean(coverage&&learning&&!operations?.coverageError&&!operations?.learningError);
 
-  return (
-    <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
-      <PageHeader eyebrow="Internal — Founder Access" title="ORENDALIS Company Control Center" description="Decision and exception management across company operations. Staging is active; unavailable telemetry remains identified by source and freshness." />
+  return <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
+    <PageHeader eyebrow="Founder access" title="ORENDALIS Company Control" description="Live company performance, executive activity, opportunity coverage and decisions requiring Founder attention."/>
 
-      <section aria-label="Control center context" className="mt-6 grid gap-3 rounded-2xl border border-blue-400/15 bg-blue-400/[.06] p-4 text-sm sm:grid-cols-2 xl:grid-cols-6">
-        <div><p className="text-xs text-slate-500">Date</p><p className="mt-1 text-slate-200">{new Date(snapshot.generatedAt).toLocaleDateString("en-GB", { dateStyle: "long", timeZone: "Europe/Istanbul" })}</p></div>
-        <div><p className="text-xs text-slate-500">Company</p><p className="mt-1 text-slate-200">ORENDALIS</p></div>
-        <div><p className="text-xs text-slate-500">Environment</p><p className="mt-1 text-slate-200">{snapshot.environment}</p></div>
-        <div><p className="text-xs text-slate-500">Stage</p><p className="mt-1 text-slate-200">{snapshot.betaStage}</p></div>
-        <div><p className="text-xs text-slate-500">Data freshness</p><p className="mt-1 text-slate-200">Partial · Manual</p></div>
-        <div><p className="text-xs text-slate-500">Atlas briefing</p><p className="mt-1 text-amber-200">Demonstration</p></div>
-      </section>
+    <section aria-label="Live company status" className="mt-6 grid gap-3 rounded-2xl border border-[#dce3ec] bg-white p-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
+      <div><p className="text-xs text-[#657184]">Company</p><p className="mt-1 font-semibold text-[#182234]">ORENDALIS</p></div>
+      <div><p className="text-xs text-[#657184]">Operating status</p><p className="mt-1 font-semibold text-emerald-700">Live · Production</p></div>
+      <div><p className="text-xs text-[#657184]">Founder access</p><p className="mt-1 font-semibold text-[#182234]">{founderBootstrapComplete?"Verified · Protected":"Access review required"}</p></div>
+      <div><p className="text-xs text-[#657184]">Measured</p><p className="mt-1 font-semibold text-[#182234]">{new Date(snapshot.generatedAt).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:"Europe/Istanbul"})}</p></div>
+    </section>
 
-      <section aria-labelledby="health-title" className="mt-8"><div className="mb-4"><p className="atlas-kicker">Company health</p><h2 id="health-title" className="mt-2 text-xl font-semibold">Evidence before status</h2></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{healthCards.map(([label, status, detail]) => <HealthCard key={label} label={label} status={status} detail={detail}/>)}</div></section>
+    <SectionCard className="mt-8"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Company snapshot</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Live operating position</h2><p className="mt-2 text-sm text-[#657184]">Current network scale, executive activity, feedback and governance from connected ORENDALIS systems.</p></div><StatusBadge tone={connected?"success":"warning"}>{connected?"Live · Connected":"Connection needs attention"}</StatusBadge></div>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">{liveMetrics.map(([label,value])=><MetricCard key={label} label={label} value={value}/>)}</div>
+      {(operations?.coverageError||operations?.learningError)&&<p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">A live source failed during this request. No value was guessed. Refresh once; if it persists, inspect provider operations.</p>}
+      {learning&&<div className="mt-6 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <Distribution title="Countries" items={learning.profileDimensions.countries??[]}/>
+        <Distribution title="Current professional titles" items={learning.profileDimensions.currentTitles??[]}/>
+        <Distribution title="Preferred industries" items={learning.profileDimensions.preferredIndustries??[]}/>
+        <Distribution title="Most-used areas" items={learning.features.map(item=>({name:item.name,executives:item.executives}))}/>
+        <Distribution title="Devices" items={learning.devices.map(item=>({name:item.name,executives:item.sessions}))}/>
+        <Distribution title="Browsers" items={learning.browsers.map(item=>({name:item.name,executives:item.sessions}))}/>
+      </div>}
+      <div className="mt-6 flex flex-wrap gap-3 border-t border-[#dce3ec] pt-5"><Link href="/company-control/product-learning" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#182234] px-5 py-3 text-sm font-semibold text-white">Open executive analytics</Link><Link href="/opportunities" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#cbd5e1] px-5 py-3 text-sm font-semibold text-[#182234]">Review opportunity experience</Link></div>
+    </SectionCard>
 
-      <div className="mt-8"><DailyBriefing brief={snapshot.brief}/></div>
-
-      <SectionCard className={`mt-8 ${roomPermanenceRequests.length ? "border-violet-400/40 bg-violet-400/[.06]" : ""}`}><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Executive Rooms governance</p><h2 className="mt-2 text-xl font-semibold">Room Permanence Decisions</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">Every executive-created room remains temporary until you review its purpose and permanence reason.</p></div><StatusBadge tone={roomPermanenceRequests.length?"warning":"success"}>{roomPermanenceRequests.length ? `${roomPermanenceRequests.length} Founder decision${roomPermanenceRequests.length===1?"":"s"}` : "No decisions waiting"}</StatusBadge></div>{roomPermanenceRequests.length>0&&<div className="mt-6 space-y-4">{roomPermanenceRequests.map(request=><article key={request.room_id} className="rounded-xl border border-violet-300/20 bg-slate-950/45 p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold text-white">{request.title}</h3><p className="mt-1 text-xs text-violet-200">{request.language_name} · Created by {request.creator_name}</p></div><Link href={`/rooms/${request.room_id}`} className="text-sm font-semibold text-blue-300 hover:text-blue-200">Review room</Link></div><p className="mt-4 text-sm text-slate-300"><strong>Purpose:</strong> {request.short_purpose}</p><p className="mt-2 text-sm text-slate-300"><strong>Reason for permanence:</strong> {request.permanence_reason}</p><p className="mt-3 text-xs text-slate-500">Requested {new Date(request.requested_at).toLocaleString("en-GB")} · Temporary until {new Date(request.closes_at).toLocaleString("en-GB")}</p><form action={decideRoomPermanenceAction} className="mt-4 flex flex-col gap-3 sm:flex-row"><input type="hidden" name="roomId" value={request.room_id}/><label className="sr-only" htmlFor={`decision-${request.room_id}`}>Founder decision note</label><input id={`decision-${request.room_id}`} name="decisionNote" required minLength={3} maxLength={600} className="min-w-0 flex-1 rounded-xl border border-white/15 bg-slate-950 px-4 py-2.5 text-sm text-white" placeholder="Record the reason for your decision"/><button name="decision" value="approve" className="rounded-xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950">Make permanent</button><button name="decision" value="reject" className="rounded-xl border border-rose-300/40 px-4 py-2.5 text-sm font-semibold text-rose-200">Keep temporary</button></form></article>)}</div>}</SectionCard>
-
-      <SectionCard className="mt-8"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Identity control plane</p><h2 className="mt-2 text-xl font-semibold">Founder Bootstrap</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">The one-time founding identity boundary is derived from the authenticated, verified account and protected database configuration.</p></div><StatusBadge tone={founderBootstrapComplete?"success":"warning"}>{founderBootstrapComplete?"Complete · Permanently Closed":"Failed · Status Unverified"}</StatusBadge></div><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[["Founder Auth Account","Complete"],["Email Verified","Complete"],["Founder Bootstrap","Complete"],["Executive Identity","Complete"],["Workspace","Complete"],["Owner Membership","Complete"],["Bootstrap Audit","Complete"],["Invitation System Ready","Ready"]].map(([label,value])=><article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{founderBootstrapComplete?value:"Failed"}</p></article>)}</div></SectionCard>
-
-      <SectionCard className="mt-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Private beta access</p><h2 className="mt-2 text-xl font-semibold">Founder Invitation Management</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">Create, review, and revoke secure executive invitations without database access.</p></div><Link href="/company-control/invitations" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Manage Invitations</Link></div></SectionCard>
-
-      <SectionCard className="mt-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="atlas-kicker">Controlled-beta learning</p><h2 className="mt-2 text-xl font-semibold">Real Executive Product Learning</h2><p className="mt-2 max-w-3xl text-sm text-slate-400">See aggregate activation, return behavior, feature use, session duration, device mix and voluntarily confirmed profile segments. Raw activity and sensitive attributes remain inaccessible.</p></div><Link href="/company-control/product-learning" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">Open Product Learning</Link></div></SectionCard>
-
-      <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Current environment</p><h2 className="mt-2 text-xl font-semibold">Live Operational Record</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">ORENDALIS is live on its production domain. The isolated network scheduler continues zero-token opportunity collection with measured provider telemetry.</p></div><StatusBadge tone="success">Live · Production</StatusBadge></div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            ["Current Decision", "Operational Readiness Passed", "Reporting, release attribution, and readiness evidence are reconciled. Design-partner activation remains a separate gate."],
-            ["Recommended Providers", "Vercel Pro · Supabase Pro", "Published base commitment is USD 45/month before tax, exchange rate, add-ons, and usage."],
-            ["Supabase Region", "Central EU (Frankfurt)", "Recommended for current European operating context; founder approval is required because region change requires migration."],
-            ["Security Gate", "Partially Verified", "Workspace isolation and founder authorization passed; provider recovery evidence and restore rehearsal remain open."],
-            ["Acceptance", "Founder Journey Passed", "Authentication, onboarding, decision workflow, persistence, isolation, and return behavior passed in staging."],
-            ["Residual Risk", "Activation Blocked", "Unassisted email delivery, recovery rehearsal, monitoring, and legal/privacy gates remain open."],
-          ].map(([label, value, detail]) => <article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></article>)}
-        </div>
-        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: company/operations/access-and-environments/ENVIRONMENT_REGISTER.md and company/founder-acceptance/FOUNDER_ACCEPTANCE_RERUN.md</p><p className="mt-2 text-xs text-slate-600">Operational readiness does not authorize design-partner invitations, production deployment, or public access.</p></div>
+    <section className="mt-8 grid gap-6 xl:grid-cols-2">
+      <SectionCard><div className="flex items-start justify-between gap-4"><div><p className="atlas-kicker">Opportunity Network</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Provider operations</h2></div><StatusBadge tone={providerMetrics.some(item=>(item.failures??0)>0)?"warning":"success"}>{providerMetrics.length} active provider{providerMetrics.length===1?"":"s"}</StatusBadge></div>
+        <div className="mt-5 space-y-3">{providerMetrics.map(provider=><article key={provider.provider_id} className="rounded-xl border border-[#dce3ec] bg-[#f8fafc] p-4"><div className="flex flex-wrap items-center justify-between gap-3"><h3 className="font-semibold text-[#182234]">{titleCase(provider.provider_id??"Provider")}</h3><span className="text-xs text-[#657184]">Last success {provider.last_success?new Date(provider.last_success).toLocaleString("en-GB"):"not recorded"}</span></div><div className="mt-3 grid grid-cols-3 gap-3 text-sm"><div><p className="text-xs text-[#7a8798]">Attempts</p><p className="font-semibold text-[#182234]">{formatNumber(provider.attempts)}</p></div><div><p className="text-xs text-[#7a8798]">Succeeded</p><p className="font-semibold text-emerald-700">{formatNumber(provider.successes)}</p></div><div><p className="text-xs text-[#7a8798]">Failed</p><p className={`font-semibold ${(provider.failures??0)>0?"text-rose-700":"text-[#182234]"}`}>{formatNumber(provider.failures)}</p></div></div></article>)}{!providerMetrics.length&&<p className="text-sm text-[#657184]">No provider run was recorded in the last 24 hours.</p>}</div>
       </SectionCard>
+      <SectionCard><p className="atlas-kicker">Factory throughput</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Queue and persistence · 24h</h2><div className="mt-5 grid gap-3 sm:grid-cols-2">{Object.entries(queue).map(([status,value])=><MetricCard key={status} label={`${titleCase(status)} jobs`} value={value}/>) }<MetricCard label="Persistence batches" value={persistence.batches}/><MetricCard label="Records processed" value={persistence.records}/><MetricCard label="New canonical records" value={persistence.inserted}/><MetricCard label="Updated records" value={persistence.updated}/></div></SectionCard>
+    </section>
 
-      <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Operating discipline</p><h2 className="mt-2 text-xl font-semibold">Operations Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">Reporting consistency, release attribution, operating records, and release gates are reconciled. Recovery and monitoring exercises remain explicit activation prerequisites.</p></div><StatusBadge tone="success">PASS · Activation Gated</StatusBadge></div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            ["Runbooks", "8 Documented", "Staging, production, rollback, database, authentication, Supabase, Vercel, and Microsoft procedures."],
-            ["Recovery Readiness", "Planned", "Recovery paths are defined; cloud restore, backup authority, and provider account recovery are unverified."],
-            ["Incident Readiness", "Severity Model Ready", "Severity 1–4, response targets, notifications, closure, and postmortem rules are documented but unexercised."],
-            ["Release Readiness", "Calendar Prepared", "Freeze, candidate, staging, production, observation, and hotfix gates are defined; no live release is scheduled."],
-            ["Business Continuity", "Plan Documented", "Single-founder, device, Internet, billing, domain, Microsoft, Supabase, Vercel, and GitHub scenarios are covered; exercises remain open."],
-            ["Provider Health", "Staging Active · Manual", "Vercel and Supabase staging are active; Microsoft delivery, recovery, and monitoring controls remain under review."],
-          ].map(([label, value, detail]) => <article key={label} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-2 font-semibold text-white">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></article>)}
-        </div>
-        <div className="mt-6 border-t border-white/10 pt-5"><p className="text-sm font-medium text-blue-300">Sources: company/operations/runbooks/ and company/operations/BUSINESS_CONTINUITY_PLAN.md</p><p className="mt-2 text-xs text-slate-600">Documentation is not proof of recovery. Readiness advances only after controlled exercises in an approved staging environment.</p></div>
-      </SectionCard>
+    <SectionCard className={`mt-8 ${roomPermanenceRequests.length?"border-violet-300 bg-violet-50":""}`}><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Executive Rooms governance</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Room permanence decisions</h2><p className="mt-2 max-w-3xl text-sm text-[#657184]">Executive-created rooms remain temporary until their purpose and permanence reason are reviewed.</p></div><StatusBadge tone={roomPermanenceRequests.length?"warning":"success"}>{roomPermanenceRequests.length?`${roomPermanenceRequests.length} decision${roomPermanenceRequests.length===1?"":"s"} waiting`:"No decisions waiting"}</StatusBadge></div>{roomPermanenceRequests.length>0&&<div className="mt-6 space-y-4">{roomPermanenceRequests.map(request=><article key={request.room_id} className="rounded-xl border border-violet-200 bg-white p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold text-[#182234]">{request.title}</h3><p className="mt-1 text-xs text-violet-700">{request.language_name} · Created by {request.creator_name}</p></div><Link href={`/rooms/${request.room_id}`} className="text-sm font-semibold text-blue-700">Review room</Link></div><p className="mt-4 text-sm text-[#354052]"><strong>Purpose:</strong> {request.short_purpose}</p><p className="mt-2 text-sm text-[#354052]"><strong>Reason:</strong> {request.permanence_reason}</p><form action={decideRoomPermanenceAction} className="mt-4 flex flex-col gap-3 sm:flex-row"><input type="hidden" name="roomId" value={request.room_id}/><label className="sr-only" htmlFor={`decision-${request.room_id}`}>Founder decision note</label><input id={`decision-${request.room_id}`} name="decisionNote" required minLength={3} maxLength={600} className="min-w-0 flex-1 rounded-xl border border-[#cbd5e1] bg-white px-4 py-2.5 text-sm text-[#182234]" placeholder="Record the reason for your decision"/><button name="decision" value="approve" className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white">Make permanent</button><button name="decision" value="reject" className="rounded-xl border border-rose-300 px-4 py-2.5 text-sm font-semibold text-rose-700">Keep temporary</button></form></article>)}</div>}</SectionCard>
 
-      <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Release 0.9</p><h2 className="mt-2 text-xl font-semibold">Design Partner Readiness</h2><p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">{snapshot.beta.summary}</p></div><StatusBadge tone="warning">Activation Gated · {snapshot.beta.betaHealth}</StatusBadge></div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-          {[
-            ["Staging readiness", snapshot.beta.stagingReadiness], ["Production readiness", snapshot.beta.productionReadiness],
-            ["Active design partners", snapshot.beta.activeDesignPartners], ["Invitations sent", snapshot.beta.invitationsSent],
-            ["Invitations accepted", snapshot.beta.invitationsAccepted], ["Onboarding completed", snapshot.beta.onboardingCompleted],
-            ["Assessments completed", snapshot.beta.assessmentsCompleted], ["Feedback waiting", snapshot.beta.feedbackWaiting],
-            ["Critical bugs", snapshot.beta.criticalBugs], ["Privacy requests", snapshot.beta.privacyRequests], ["Support cases", snapshot.beta.supportCases],
-          ].map(([label, value]) => <article key={String(label)} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-xs leading-5 text-slate-500">{label}</p><p className="mt-2 text-base font-semibold text-white">{value === undefined ? "Not Connected" : String(value)}</p><p className="mt-2 text-[11px] text-slate-600">{value === undefined ? "No operational source" : "Factual record"}</p></article>)}
-        </div>
-        <p className="mt-5 text-xs text-slate-600">Source: {snapshot.beta.sourceReference}. Missing participant activity is not represented as zero.</p>
-        <div className="mt-6 border-t border-white/10 pt-5"><h3 className="font-medium text-white">Workflow gates</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{Object.entries(snapshot.beta.workflowGates).map(([gate,status])=><article key={gate} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-950/35 p-4"><p className="text-sm text-slate-300">{gate}</p><StatusBadge tone={status==="Complete"?"success":status==="Blocked"?"warning":"neutral"}>{status}</StatusBadge></article>)}</div></div>
-      </SectionCard>
+    <section className="mt-8 grid gap-6 xl:grid-cols-2">
+      <SectionCard><p className="atlas-kicker">Executive access</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Invitation management</h2><p className="mt-2 text-sm text-[#657184]">Create, review and revoke secure executive invitations.</p><Link href="/company-control/invitations" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#182234] px-5 py-3 text-sm font-semibold text-white">Manage invitations</Link></SectionCard>
+      <SectionCard><div className="flex items-start justify-between gap-4"><div><p className="atlas-kicker">Executive requests</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Feedback and data rights</h2></div><StatusBadge tone={(betaTriage?.feedback.length??0)+(betaTriage?.lifecycle.length??0)>0?"info":"success"}>{(betaTriage?.feedback.length??0)+(betaTriage?.lifecycle.length??0)} recorded</StatusBadge></div><div className="mt-5 grid gap-3 sm:grid-cols-2"><MetricCard label="Feedback records" value={betaTriage?.feedback.length??0}/><MetricCard label="Lifecycle requests" value={betaTriage?.lifecycle.length??0}/></div></SectionCard>
+    </section>
 
-      <SectionCard className="mt-8">
-        <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Founder-only triage</p><h2 className="mt-2 text-xl font-semibold">Beta Feedback and Lifecycle Requests</h2><p className="mt-2 text-sm text-slate-400">Workspace isolation is enforced by RLS. Descriptions are visible only to the submitting executive and the Workspace founder.</p></div><StatusBadge tone={betaTriage?"info":"neutral"}>{betaTriage?"Connected":"Not Connected"}</StatusBadge></div>
-        {betaTriage?<div className="mt-6 grid gap-6 xl:grid-cols-2"><div><h3 className="font-medium text-white">Feedback · {betaTriage.feedback.length}</h3><div className="mt-3 space-y-3">{betaTriage.feedback.length?betaTriage.feedback.map(item=><article key={item.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><div className="flex flex-wrap gap-2"><StatusBadge tone={item.severity==="Critical"?"warning":"neutral"}>{item.severity}</StatusBadge><StatusBadge>{item.status}</StatusBadge><span className="text-xs text-slate-500">{item.category} · {item.workflowStep}</span></div><p className="mt-3 text-sm text-slate-300">{item.description}</p><p className="mt-3 text-xs text-slate-600">Follow-up consent: {item.consentToFollowUp?"Yes":"No"} · {item.createdAt}</p></article>):<p className="text-sm text-slate-500">No feedback submitted.</p>}</div></div><div><h3 className="font-medium text-white">Lifecycle requests · {betaTriage.lifecycle.length}</h3><div className="mt-3 space-y-3">{betaTriage.lifecycle.length?betaTriage.lifecycle.map(item=><article key={item.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><div className="flex flex-wrap items-center justify-between gap-2"><p className="font-medium text-white">{item.requestType}</p><StatusBadge>{item.status}</StatusBadge></div><p className="mt-2 text-sm text-slate-400">{item.retentionStatus}</p><p className="mt-3 text-xs text-slate-600">{item.submittedAt}</p></article>):<p className="text-sm text-slate-500">No lifecycle requests submitted.</p>}</div></div></div>:<p className="mt-6 rounded-xl border border-white/10 bg-slate-950/35 p-4 text-sm text-slate-500">Operational beta data is unavailable outside authenticated Supabase mode.</p>}
-      </SectionCard>
-
-      <SectionCard className="mt-8"><div><p className="atlas-kicker">Founder action center</p><h2 className="mt-2 text-xl font-semibold">Today&apos;s Founder Priorities</h2><p className="mt-2 text-sm text-slate-400">Deterministically ordered by urgency, importance, deadline, and blocker state.</p></div><div className="mt-6 grid gap-4 xl:grid-cols-3">{snapshot.actions.slice(0, 7).map((action, index) => <FounderActionCard key={action.id} action={action} rank={index + 1}/>)}</div></SectionCard>
-
-      <div className="mt-8 grid gap-6 xl:grid-cols-[1.4fr_.6fr]">
-        <SectionCard><p className="atlas-kicker">Exceptions only</p><h2 className="mt-2 text-xl font-semibold">Alerts and Exceptions</h2><div className="mt-5 space-y-3">{snapshot.alerts.map((alert) => <article key={alert.id} className="rounded-xl border border-amber-400/15 bg-amber-400/[.05] p-4"><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-medium text-white">{alert.title}</h3><StatusBadge tone="warning">{alert.severity}</StatusBadge></div><p className="mt-2 text-sm text-slate-400">{alert.evidence.join(" ")}</p><p className="mt-3 text-xs text-slate-600">{alert.sourceReference}</p></article>)}</div></SectionCard>
-        <SectionCard><p className="atlas-kicker">Deadlines</p><h2 className="mt-2 text-xl font-semibold">Next Seven Days</h2><div className="mt-5 space-y-4">{snapshot.deadlines.map((deadline) => <article key={deadline.id} className="border-l border-blue-400/40 pl-4"><p className="text-xs text-blue-300">{new Date(deadline.dueAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Istanbul" })}</p><h3 className="mt-1 text-sm font-medium text-white">{deadline.title}</h3><p className="mt-1 text-xs text-slate-500">{deadline.department} · {deadline.type}</p></article>)}</div></SectionCard>
-      </div>
-
-      <SectionCard className="mt-8"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="atlas-kicker">Company snapshot</p><h2 className="mt-2 text-xl font-semibold text-[#182234]">Live operating position</h2><p className="mt-2 text-sm text-[#657184]">Current network, executive activity, feedback and governance signals from connected ORENDALIS systems.</p></div><StatusBadge tone={operations?.coverage&&operations?.learning?"success":"warning"}>{operations?.coverage&&operations?.learning?"Live · Connected":"Partially connected"}</StatusBadge></div><div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">{liveMetrics.map(([label,value])=><article key={label} className="rounded-xl border border-[#dce3ec] bg-[#f8fafc] p-4"><p className="text-xs leading-5 text-[#657184]">{label}</p><p className="mt-2 break-words text-lg font-semibold text-[#182234]">{value===undefined?"Unavailable":typeof value==="number"?value.toLocaleString("en-GB"):value}</p><p className="mt-2 text-[11px] text-[#7a8798]">{value===undefined?"Source unavailable":"Measured live"}</p></article>)}</div>{operations?.learning&&<div className="mt-6 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">{[["Countries",operations.learning.profileDimensions.countries??[]],["Current professional titles",operations.learning.profileDimensions.currentTitles??[]],["Preferred industries",operations.learning.profileDimensions.preferredIndustries??[]],["Most-used areas",operations.learning.features.map(item=>({name:item.name,executives:item.executives}))],["Devices",operations.learning.devices.map(item=>({name:item.name,executives:item.sessions}))],["Browsers",operations.learning.browsers.map(item=>({name:item.name,executives:item.sessions}))]] .map(([title,items])=><article key={title as string} className="rounded-xl border border-[#dce3ec] bg-white p-4"><h3 className="text-sm font-semibold text-[#182234]">{title as string}</h3><div className="mt-3 space-y-2">{(items as Array<{name:string;executives:number}>).slice(0,6).map(item=><div key={item.name} className="flex items-center justify-between gap-3 text-sm"><span className="truncate text-[#657184]">{item.name.replace(/_/g," ")}</span><span className="font-semibold text-[#182234]">{item.executives.toLocaleString("en-GB")}</span></div>)}{!(items as Array<unknown>).length&&<p className="text-sm text-[#7a8798]">No confirmed aggregate yet.</p>}</div></article>)}</div>}{(operations?.coverageError||operations?.learningError)&&<p className="mt-4 text-xs text-amber-700">One connected source could not be measured during this request. Existing values were not guessed.</p>}<div className="mt-6 border-t border-[#dce3ec] pt-5"><p className="text-sm font-medium text-[#182234]">Financial and corporate records</p><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{snapshotMetrics.filter(item=>["repository-commits","application-routes","monthly-spending","annual-commitments","revenue","runway"].includes(item.definition.id)).map((item)=><article key={item.definition.id} className="rounded-xl border border-[#dce3ec] bg-[#f8fafc] p-4"><p className="text-xs leading-5 text-[#657184]">{item.definition.name}</p><p className="mt-2 break-words text-base font-semibold text-[#182234]">{metricDisplay(item)}</p><p className="mt-2 text-[11px] text-[#7a8798]">{item.observation.valueKind} · {item.observation.freshness.state}</p></article>)}</div></div><p className="mt-5 text-xs text-[#7a8798]">Unavailable financial values remain explicit; revenue and runway are never represented as zero without verified inputs.</p></SectionCard>
-
-      <SectionCard className="mt-8"><p className="atlas-kicker">Department overview</p><h2 className="mt-2 text-xl font-semibold">Accountability and connection health</h2><div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{snapshot.health.departments.map((department) => <DepartmentCard key={department.department} department={department}/>)}</div></SectionCard>
-
-      <div className="mt-8 grid gap-6 xl:grid-cols-2">
-        <SectionCard><p className="atlas-kicker">Support</p><h2 className="mt-2 text-xl font-semibold">Microsoft Support</h2>{snapshot.supportCases.map((item) => <article key={item.id} className="mt-5 rounded-xl border border-white/10 bg-slate-950/35 p-5"><div className="flex flex-wrap items-center justify-between gap-3"><p className="font-mono text-sm text-blue-300">{item.id}</p><StatusBadge tone="warning">{item.status}</StatusBadge></div><h3 className="mt-3 font-medium text-white">{item.subject}</h3><dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="text-xs text-slate-600">Next action</dt><dd className="mt-1 text-slate-300">{item.nextAction}</dd></div><div><dt className="text-xs text-slate-600">Blocker</dt><dd className="mt-1 text-slate-300">{item.blocker}</dd></div><div><dt className="text-xs text-slate-600">Owner</dt><dd className="mt-1 text-slate-300">{item.owner}</dd></div><div><dt className="text-xs text-slate-600">Escalation</dt><dd className="mt-1 text-slate-300">{item.escalationState}</dd></div></dl><p className="mt-4 text-xs text-slate-600">{item.sourceReference}</p></article>)}</SectionCard>
-        <SectionCard><p className="atlas-kicker">Infrastructure and vendors</p><h2 className="mt-2 text-xl font-semibold">Provider Health</h2><div className="mt-5 space-y-3">{snapshot.vendors.map((vendor) => <article key={vendor.id} className="rounded-xl border border-white/10 bg-slate-950/35 p-4"><div className="flex items-center justify-between gap-3"><h3 className="font-medium text-white">{vendor.provider}</h3><StatusBadge tone={vendor.status === "Watch" ? "warning" : "neutral"}>{vendor.status}</StatusBadge></div><p className="mt-2 text-sm text-slate-400">{vendor.openIssue ?? vendor.nextAction}</p><p className="mt-3 text-xs text-slate-600">Recovery: {vendor.recoveryReadiness} · Last verified: {vendor.lastVerified ?? "Unknown"}</p></article>)}</div></SectionCard>
-      </div>
-
-      <SectionCard id="sources" className="mt-8"><p className="atlas-kicker">Data source registry</p><h2 className="mt-2 text-xl font-semibold">Connection and authorization boundaries</h2><div className="mt-6 overflow-x-auto"><table className="w-full min-w-[820px] text-left text-sm"><caption className="sr-only">Company data source registry</caption><thead className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500"><tr>{["Source", "Provider", "Connection", "Authorization", "Freshness", "Scope", "Next update"].map((heading) => <th key={heading} scope="col" className="px-3 py-3 font-medium">{heading}</th>)}</tr></thead><tbody className="divide-y divide-white/5">{companyDataSources.map((source) => <tr key={source.id}><th scope="row" className="px-3 py-4 font-medium text-white">{source.name}</th><td className="px-3 py-4 text-slate-400">{source.provider}</td><td className="px-3 py-4 text-slate-400">{source.connectionState}</td><td className="px-3 py-4 text-slate-400">{source.authorizationState}</td><td className="px-3 py-4 text-slate-400">{source.freshness.state}</td><td className="px-3 py-4 text-slate-400">{source.scopes.join(", ") || "None"}</td><td className="px-3 py-4 text-slate-400">{source.nextScheduledUpdate ?? "Manual"}</td></tr>)}</tbody></table></div></SectionCard>
-    </div>
-  );
+    <p className="mt-8 text-xs leading-5 text-[#7a8798]">Founder-only aggregates exclude age, gender, exact location, email addresses, CV content, passwords, IP addresses and private Atlas conversations. Missing facts are not inferred.</p>
+  </div>;
 }
