@@ -35,6 +35,7 @@ assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_LIMIT/, "Employer exp
 assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_LIMIT \?\? 50/, "The dedicated cycle must use the bounded fifty-source default");
 assert.match(discoveryRoute, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
 assert.match(discoveryRoute, /discoveryCursor/, "Every source cycle must advance public employer discovery");
+assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_INTERVAL_MINUTES/, "Discovery cadence and candidate rotation must remain aligned");
 assert.match(discoveryRoute, /timeBudgetMs:\s*150_000/, "Source discovery must retain a hard execution budget");
 assert.match(discoveryRoute, /Math\.min\(50/, "Each source cycle must cap newly registered sources");
 assert.match(discoveryRoute, /ZERO_TOKEN_SOURCE_DISCOVERY/, "Source discovery must expose aggregate operational evidence");
@@ -66,7 +67,7 @@ assert.match(persistenceScopeMigration, /jsonb_array_elements\(items\)/i, "The p
 assert.doesNotMatch(persistenceScopeMigration, /drop\s+(table|function)/i, "The throughput repair must preserve canonical inventory and ingestion contracts");
 assert.deepEqual(vercel.crons, [
   { path: "/api/operations/opportunity-refresh", schedule: "*/3 * * * *" },
-  { path: "/api/operations/source-discovery", schedule: "7,37 * * * *" },
+  { path: "/api/operations/source-discovery", schedule: "*/10 * * * *" },
 ]);
 assert.deepEqual(networkStaging.crons, [
   { path: "/api/operations/opportunity-refresh", schedule: "* * * * *" },
