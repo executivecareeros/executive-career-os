@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
   const authorize = new URL("/auth/v1/user/identities/authorize", url);
   authorize.searchParams.set("provider", "linkedin_oidc");
   authorize.searchParams.set("redirect_to", callback.toString());
+  authorize.searchParams.set("skip_http_redirect", "true");
 
   const response = await fetch(authorize, {
     headers: { apikey: key, authorization: `Bearer ${session.accessToken}` },
