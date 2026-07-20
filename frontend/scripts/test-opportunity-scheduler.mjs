@@ -22,13 +22,13 @@ const networkStaging = JSON.parse(await readFile(resolve(root, "frontend/vercel.
 assert.match(route, /schedulerRequestAuthorized/);
 assert.match(route, /Unauthorized/);
 assert.match(route, /maxDuration = 240/, "A full provider cohort must have enough runtime to finish before its queue lease expires");
-assert.match(route, /Math\.max\(1, Math\.min\(18,/, "Bulk execution must retain a hard per-invocation safety ceiling");
-assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 18/, "The Opportunity Factory must use the bounded eighteen-job production default");
+assert.match(route, /Math\.max\(1, Math\.min\(20,/, "Bulk execution must retain a hard per-invocation safety ceiling");
+assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 20/, "The Opportunity Factory must use the bounded twenty-job production default");
 assert.match(route, /OPPORTUNITY_SCHEDULER_WORKERS \?\? 2/, "The Opportunity Factory must use two bounded workers by default");
 assert.match(route, /Math\.min\(2,/, "Worker concurrency must remain hard-capped");
 assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs, workerCount\)/, "The bounded bulk and worker limits must reach the scheduler runtime");
 assert.match(runtime, /Promise\.all\(batch\.map/, "Provider waits must execute through a bounded concurrent batch");
-assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 18/, "The safe eighteen-job ceiling must be the default throughput");
+assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 20/, "The safe twenty-job ceiling must be the default throughput");
 assert.match(route, /shouldRefreshEmployerIntelligence\(startedAt\)/, "Derived employer intelligence must not block every ingestion cycle");
 assert.doesNotMatch(route, /discoverPublicEmployerSources/, "Public-index latency must not consume the canonical ingestion execution window");
 assert.match(route, /OPPORTUNITY_SCHEDULER_FAILURE/, "Scheduler failures must emit sanitized operational evidence instead of being silently suppressed");
@@ -52,7 +52,7 @@ assert.match(publicDiscovery, /knownSourceKeys\.has\(publicEmployerScheduleKey/,
 assert.doesNotMatch(publicDiscovery, /Promise\.allSettled\(definitions/, "Common Crawl provider indexes must not be queried in a rate-limit-hostile parallel burst");
 assert.match(publicDiscovery, /await pause\(150\)/, "Public index requests must be politely spaced");
 assert.doesNotMatch(route + discoveryRoute, /OpenAI|anthropic|completion|embedding/i, "Source expansion must remain zero-token");
-assert.match(runtime, /maximumJobs = 18/, "The scheduler runtime must share the eighteen-job safe default");
+assert.match(runtime, /maximumJobs = 20/, "The scheduler runtime must share the twenty-job safe default");
 assert.match(proxy, /serverAuthenticatedPaths/);
 assert.match(proxy, /\/api\/operations\/opportunity-refresh/);
 assert.match(proxy, /\/api\/operations\/source-discovery/);
@@ -73,7 +73,7 @@ assert.match(persistenceScopeMigration, /opportunity\.company_id in/i, "Source r
 assert.match(persistenceScopeMigration, /jsonb_array_elements\(items\)/i, "The persistence scope must derive only from the incoming provider batch");
 assert.doesNotMatch(persistenceScopeMigration, /drop\s+(table|function)/i, "The throughput repair must preserve canonical inventory and ingestion contracts");
 assert.deepEqual(vercel.crons, [
-  { path: "/api/operations/opportunity-refresh", schedule: "*/3 * * * *" },
+  { path: "/api/operations/opportunity-refresh", schedule: "*/2 * * * *" },
   { path: "/api/operations/source-discovery", schedule: "*/10 * * * *" },
 ]);
 assert.deepEqual(networkStaging.crons, [
