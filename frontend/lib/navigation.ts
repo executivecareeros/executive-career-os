@@ -35,6 +35,7 @@ export const executiveNavigationItems: readonly NavigationItem[] = [
 ];
 
 export const executiveUtilityItems: readonly NavigationItem[] = [
+  { label: "Invite an executive", href: "/invite", marker: "I" },
   { label: "Settings", href: "/settings", marker: "S" },
   { label: "Founder Controls", href: "/company-control", marker: "F" },
 ];

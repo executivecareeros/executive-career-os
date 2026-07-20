@@ -24,6 +24,7 @@ export function ImportWorkspace({ locale = "en" }: { locale?: Locale }) {
   const [skills, setSkills] = useState<NonNullable<Extraction["skills"]>>([]);
   const [certifications, setCertifications] = useState<NonNullable<Extraction["certifications"]>>([]);
   const [customSections, setCustomSections] = useState<string[]>([]);
+  const [sourceMode, setSourceMode] = useState<"cv" | "linkedin" | "manual">("cv");
 
   async function extract(file?: File) {
     if (!file) return;
@@ -40,6 +41,12 @@ export function ImportWorkspace({ locale = "en" }: { locale?: Locale }) {
 
   function update(id: string, change: Partial<HistoryDocumentDraft>) { setDrafts(items => items.map(item => item.id === id ? { ...item, ...change } : item)); }
   function addRole() { setDrafts(items => [...items, { id: crypto.randomUUID(), organizationName: "", roleTitle: "", isCurrent: false, confidence: "Low", evidence: "Added by executive during review" }]); }
+  function startManual() {
+    setSourceMode("manual");
+    const role = { id: crypto.randomUUID(), organizationName: "", roleTitle: "", isCurrent: false, confidence: "Low" as const, evidence: "Entered and confirmed by executive" };
+    setExtraction({ filename: "Manual profile", format: "Manual", drafts: [role], warnings: [] });
+    setDrafts([role]); setProfile({}); setHighlights([]); setEducation([]); setLanguages([]); setSkills([]); setCertifications([]); setCustomSections([]); setConsent(false); setError(undefined);
+  }
   const ready = Boolean(extraction && consent && drafts.length && drafts.every(item => item.organizationName.trim() && item.roleTitle.trim()));
 
   return <main className="mx-auto max-w-5xl px-5 py-8 text-[#17191c] sm:px-8">
@@ -47,16 +54,23 @@ export function ImportWorkspace({ locale = "en" }: { locale?: Locale }) {
     <h1 className="mt-3 text-3xl font-semibold tracking-[-.03em] sm:text-4xl">{tr ? "CV'ni yükle. Temel bilgileri birlikte doğrulayalım." : "Upload your CV. Then confirm the essentials."}</h1>
     <p className="mt-4 max-w-3xl leading-7 text-[#626970]">{tr ? "Atlas deneyimini özel çalışma alanında düzenlemek için rol ve şirket bilgilerini çıkarır. Eksik ayrıntılar iş aramana engel olmaz." : "Atlas extracts roles and employers so your experience can be organized privately. Missing details will not block your job search."}</p>
 
-    <section className="mt-8 rounded-2xl border border-[#e3e5e6] bg-white p-5 shadow-sm sm:p-7">
+    <section className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Career information source">
+      <SourceChoice active={sourceMode === "cv"} title="Upload a CV" detail="PDF, DOCX, or another supported resume file" onClick={() => setSourceMode("cv")}/>
+      <SourceChoice active={sourceMode === "linkedin"} title="Import LinkedIn information" detail="Use your LinkedIn profile PDF or exported CSV file" onClick={() => setSourceMode("linkedin")}/>
+      <SourceChoice active={sourceMode === "manual"} title="Enter manually" detail="Build and edit your profile one field at a time" onClick={startManual}/>
+    </section>
+
+    {sourceMode !== "manual" && <section className="mt-5 rounded-2xl border border-[#e3e5e6] bg-white p-5 shadow-sm sm:p-7">
       <label className="block cursor-pointer rounded-2xl border border-dashed border-[#d8d0c5] bg-[#faf6ef] p-8 text-center focus-within:ring-2 focus-within:ring-[#936b3f]">
-        <span className="block text-lg font-semibold">{busy ? (tr ? "CV okunuyor…" : "Reading your CV…") : (tr ? "CV veya özgeçmiş seç" : "Choose your CV or resume")}</span>
-        <span className="mt-2 block text-sm text-[#747b82]">{tr ? "PDF, DOCX, TXT, Markdown, CSV veya JSON · en fazla 5 MB" : "PDF, DOCX, TXT, Markdown, CSV or JSON · up to 5 MB"}</span>
+        <span className="block text-lg font-semibold">{busy ? "Reading your information…" : sourceMode === "linkedin" ? "Choose your LinkedIn export" : "Choose your CV or resume"}</span>
+        <span className="mt-2 block text-sm text-[#747b82]">{sourceMode === "linkedin" ? "Upload the profile PDF or a relevant CSV from LinkedIn's Download your data export." : "PDF, DOCX, TXT, Markdown, CSV or JSON · up to 5 MB"}</span>
         <span className="mt-5 inline-flex items-center rounded-xl bg-[#17191c] px-4 py-2.5 text-sm font-semibold shadow-sm" style={{ color: "#ffffff" }}>{busy ? "Reading…" : "Choose a file"}</span>
-        <input aria-label="Choose a CV or resume file" disabled={busy} type="file" accept=".pdf,.docx,.txt,.md,.csv,.json" onChange={event => extract(event.target.files?.[0])} style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }} />
+        {sourceMode === "linkedin" ? <input aria-label="Choose a LinkedIn profile export" disabled={busy} type="file" accept=".pdf,.csv" onChange={event => extract(event.target.files?.[0])} style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }} /> : <input aria-label="Choose a CV or resume file" disabled={busy} type="file" accept=".pdf,.docx,.txt,.md,.csv,.json" onChange={event => extract(event.target.files?.[0])} style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }} />}
       </label>
       <div className="mt-5 rounded-xl bg-[#f3f5f5] p-4 text-sm leading-6 text-[#626970]"><strong className="text-[#30343a]">{tr ? "Gizlilik:" : "Privacy:"}</strong> {tr ? "Dosyan yalnızca inceleme taslağı oluşturmak için okunur. Ham dosya saklanmaz; yalnızca onayladığın yapılandırılmış bilgiler kaydedilir." : "Your file is read only to create a review draft. The raw file is not retained; only the structured facts you confirm are saved."}</div>
       {error && <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{error}</p>}
-    </section>
+      {sourceMode === "linkedin" && <p className="mt-4 text-xs leading-5 text-[#747b82]">ORENDALIS reads only the file you select. It does not scrape LinkedIn, use your LinkedIn password, or overwrite information you have already confirmed.</p>}
+    </section>}
 
     {extraction && <form action={confirmCvHistory} className="mt-7">
       <input type="hidden" name="filename" value={extraction.filename}/>
@@ -72,6 +86,10 @@ export function ImportWorkspace({ locale = "en" }: { locale?: Locale }) {
       </section>
     </form>}
   </main>;
+}
+
+function SourceChoice({ active, title, detail, onClick }: { active: boolean; title: string; detail: string; onClick: () => void }) {
+  return <button type="button" aria-pressed={active} onClick={onClick} className={`rounded-2xl border p-5 text-left transition ${active ? "border-[#3457d5] bg-[#eef3ff] shadow-sm" : "border-[#dfe5ee] bg-white hover:-translate-y-0.5 hover:shadow-sm"}`}><span className="block font-semibold text-[#0b1220]">{title}</span><span className="mt-2 block text-sm leading-6 text-[#657184]">{detail}</span></button>;
 }
 
 function Field({ label, value, onChange, type = "text", disabled = false, required = false }: { label: string; value: string; onChange: (value: string) => void; type?: string; disabled?: boolean; required?: boolean }) { return <label className="text-sm font-medium text-[#30343a]">{label}<input required={required} disabled={disabled} type={type} value={value} onChange={event => onChange(event.target.value)} className="mt-2 w-full rounded-xl border border-[#d9dcde] bg-white px-4 py-3 text-sm disabled:bg-[#eceeef]"/></label>; }

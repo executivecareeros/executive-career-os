@@ -15,7 +15,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
   const menu = useMobileMenu();
   const pathname = usePathname();
   const [focusMode, setFocusMode] = useState(false);
-  if ((pathname === "/" && publicExperience) || ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/welcome", "/onboarding", "/about", "/executive-jobs", "/executive-career-intelligence"].some((path) => pathname.startsWith(path))) return <>{children}</>;
+  if ((pathname === "/" && publicExperience) || ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/auth/confirm", "/auth/linkedin", "/welcome", "/onboarding", "/about", "/executive-jobs", "/executive-career-intelligence"].some((path) => pathname.startsWith(path))) return <>{children}</>;
 
   return (
     <div data-executive-shell className="min-h-screen bg-[#f5f7fb] text-[#0b1220] lg:flex">

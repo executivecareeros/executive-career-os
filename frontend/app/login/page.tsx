@@ -72,6 +72,7 @@ export default async function Login({
         </div>
         <SubmitButton>{locale === "tr" ? "Giriş yap" : "Sign in"}</SubmitButton>
       </form>
+      {process.env.LINKEDIN_SIGN_IN_ENABLED === "true" && <><div className="my-6 flex items-center gap-3 text-xs uppercase tracking-[.15em] text-[#8c98aa]"><span className="h-px flex-1 bg-[#dfe5ee]"/><span>or</span><span className="h-px flex-1 bg-[#dfe5ee]"/></div><Link href={`/auth/linkedin?next=${encodeURIComponent(q.next ?? "/")}`} className="flex w-full items-center justify-center rounded-xl border border-[#b9c5d8] bg-white px-4 py-3 text-sm font-semibold text-[#183153] transition hover:bg-[#f6f8fb]">Continue with LinkedIn</Link><p className="mt-3 text-center text-xs leading-5 text-[#7a8592]">For existing ORENDALIS executives. We request only verified identity information.</p></>}
     </AuthFrame>
   );
 }
