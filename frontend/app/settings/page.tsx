@@ -1,10 +1,11 @@
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { PageHeader } from "@/components/page-header";
 import { SectionCard } from "@/components/section-card";
 import { getLocale } from "@/lib/locale";
 import { saveNotificationPreferences } from "./actions";
 
-export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string; linkedin?: string }> }) {
   const [locale, cookieStore, query] = await Promise.all([getLocale(), cookies(), searchParams]);
   const tr = locale === "tr";
   const enabled = cookieStore.get("orendalis-daily-summary")?.value === "enabled";
@@ -13,6 +14,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     <div className="mt-8 grid gap-5 md:grid-cols-2">
       <SectionCard><h2 className="text-lg font-semibold">Language</h2><p className="mt-2 text-sm leading-6 text-[#6f757b]">ORENDALIS is currently available in English. Additional languages remain supported by the localization architecture and will be enabled deliberately in a future release.</p></SectionCard>
       <SectionCard><h2 className="text-lg font-semibold">{tr ? "Gizlilik ve erişim" : "Privacy and access"}</h2><p className="mt-2 text-sm leading-6 text-[#6f757b]">{tr ? "Kariyer kayıtların hesabına özeldir. Sen istemeden hiçbir fırsata başvuru yapılmaz." : "Your career records remain private to your account. Nothing is submitted without your action."}</p></SectionCard>
+      <SectionCard className="md:col-span-2"><h2 className="text-lg font-semibold">LinkedIn sign-in</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f757b]">Connect your verified LinkedIn identity to this signed-in ORENDALIS account. This is required when LinkedIn and ORENDALIS use different email addresses. ORENDALIS never receives your LinkedIn password or connections.</p>{query.linkedin === "connected" && <p className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">LinkedIn is connected. You may now use LinkedIn to sign in.</p>}{query.linkedin === "link-failed" && <p className="mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-800" role="alert">LinkedIn could not be connected. The identity may already belong to another account.</p>}<Link href="/auth/linkedin/link?next=%2Fsettings%3Flinkedin%3Dconnected" className="mt-5 inline-flex rounded-xl border border-[#b9c5d8] bg-white px-5 py-3 text-sm font-semibold text-[#183153] transition hover:bg-[#f6f8fb]">Connect LinkedIn securely</Link></SectionCard>
       <SectionCard className="md:col-span-2"><h2 className="text-lg font-semibold">{tr ? "Atlas bildirimleri" : "Atlas notifications"}</h2><p className="mt-2 text-sm leading-6 text-[#6f757b]">{tr ? "Gelecekte yeni fırsat özetleri almak isteyip istemediğini seç. Bu ayar bugün e-posta göndermez." : "Choose whether you want future summaries of new opportunities. This setting does not send email today."}</p>{query.saved === "1" && <p className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">{tr ? "Tercihin kaydedildi." : "Your preference was saved."}</p>}<form action={saveNotificationPreferences} className="mt-5"><label className="flex items-start gap-3"><input type="checkbox" name="dailySummary" defaultChecked={enabled} className="mt-1 size-4 accent-[#55778a]"/><span><strong className="block text-sm">{tr ? "Yeni fırsatlar için isteğe bağlı özet" : "Optional summary of new opportunities"}</strong><span className="mt-1 block text-xs leading-5 text-[#747a80]">{tr ? "Bildirim gönderimi başlatılmadan önce ayrıca doğrulanacaktır." : "Delivery will be verified separately before any notification is sent."}</span></span></label><button className="mt-5 rounded-xl bg-[#17191c] px-5 py-3 text-sm font-semibold text-white">{tr ? "Tercihi kaydet" : "Save preference"}</button></form></SectionCard>
     </div>
   </div>;
