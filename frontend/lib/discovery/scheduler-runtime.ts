@@ -65,7 +65,7 @@ async function executeClaim(client: SupabaseDataClient, schedule: ScheduleRow, c
   return outcome;
 }
 
-export async function runOpportunityScheduler(client: SupabaseDataClient, now = new Date().toISOString(), maximumJobs = 12): Promise<SchedulerSummary> {
+export async function runOpportunityScheduler(client: SupabaseDataClient, now = new Date().toISOString(), maximumJobs = 18): Promise<SchedulerSummary> {
   const correlationId = randomUUID();
   const dueBefore = encodeURIComponent(now);
   const configured = await client.request<ScheduleRow[]>(`opportunity_provider_schedules?select=*&enabled=eq.true&next_run_at=lte.${dueBefore}&order=priority.asc,next_run_at.asc&limit=${maximumJobs}`);

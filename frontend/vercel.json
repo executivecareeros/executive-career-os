@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/operations/opportunity-refresh",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/3 * * * *"
     },
     {
       "path": "/api/operations/source-discovery",
