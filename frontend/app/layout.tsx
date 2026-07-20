@@ -6,6 +6,7 @@ import "./globals.css";
 import { getLocale } from "@/lib/locale";
 import { currentSession } from "@/lib/auth/session";
 import { resolveExecutiveDisplayName } from "@/lib/auth/executive-display-name";
+import { resolveFounderAccess } from "@/lib/auth/founder-access";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,7 +65,10 @@ export default async function RootLayout({
   const hasSession = cookieStore.has("ecos-access-token") || cookieStore.has("ecos-refresh-token");
   const publicExperience = process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase" && !hasSession;
   const session = hasSession ? await currentSession().catch(() => undefined) : undefined;
-  const signedInName = session ? await resolveExecutiveDisplayName(session).catch(() => undefined) : undefined;
+  const [signedInName, founderAccess] = session ? await Promise.all([
+    resolveExecutiveDisplayName(session).catch(() => undefined),
+    resolveFounderAccess().then(Boolean).catch(() => false),
+  ]) : [undefined, false];
   return (
     <html
       lang={locale}
@@ -72,7 +76,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full bg-[#f5f7fb]">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(publicStructuredData).replace(/</g, "\\u003c") }} />
-        <AppShell publicExperience={publicExperience} locale={locale} signedInName={signedInName} signedInEmail={session?.user.email}>{children}</AppShell>
+        <AppShell publicExperience={publicExperience} locale={locale} signedInName={signedInName} signedInEmail={session?.user.email} founderAccess={founderAccess}>{children}</AppShell>
       </body>
     </html>
   );

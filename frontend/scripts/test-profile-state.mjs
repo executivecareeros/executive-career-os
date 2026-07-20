@@ -4,4 +4,10 @@ const sessions=[{id:"1",source_filename:"Executive-CV.pdf",status:"Completed",st
 const state=deriveExecutiveProfileState(sessions,[{id:"role-1",confidence:"User Confirmed",created_at:"2026-07-17T10:00:10Z"}]);
 assert.equal(state.hasCv,true);assert.equal(state.cvVersions.length,1,"One upload must not appear as multiple CVs when each confirmed role has its own import session");assert.equal(state.activeCv?.filename,"Executive-CV.pdf");assert.equal(state.activeCv?.rawFileRetained,false);assert.equal(state.atlasState,"Ready");assert.equal(state.confirmedRoleCount,1);
 const empty=deriveExecutiveProfileState([],[]);assert.equal(empty.hasCv,false);assert.equal(empty.atlasState,"Needs CV");
+const structuredWithoutSession=deriveExecutiveProfileState([],[{id:"role-2",confidence:"User Confirmed",created_at:"2026-07-18T09:00:00Z"}]);
+assert.equal(structuredWithoutSession.hasCv,false,"Raw CV retention state must remain truthful");
+assert.equal(structuredWithoutSession.hasStructuredProfile,true);
+assert.equal(structuredWithoutSession.atlasState,"Ready","Stored career facts must not trigger another CV request");
+assert.equal(structuredWithoutSession.atlasHasEnoughContext,true);
+assert.equal(structuredWithoutSession.lastSuccessfulUpdate,"2026-07-18T09:00:00Z");
 console.log("Canonical executive profile state checks passed.");

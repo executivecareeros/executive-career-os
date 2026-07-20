@@ -11,7 +11,7 @@ import type { Locale } from "@/lib/locale";
 import { ProductLearningTracker } from "./product-learning-tracker";
 import { AtlasEverywhere } from "./atlas/atlas-everywhere";
 
-export function AppShell({ children, publicExperience = false, locale = "en", signedInName, signedInEmail }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale; signedInName?: string; signedInEmail?: string }>) {
+export function AppShell({ children, publicExperience = false, locale = "en", signedInName, signedInEmail, founderAccess = false }: Readonly<{ children: React.ReactNode; publicExperience?: boolean; locale?: Locale; signedInName?: string; signedInEmail?: string; founderAccess?: boolean }>) {
   const menu = useMobileMenu();
   const pathname = usePathname();
   const [focusMode, setFocusMode] = useState(false);
@@ -20,7 +20,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
   return (
     <div data-executive-shell className="min-h-screen bg-[#f5f7fb] text-[#0b1220] lg:flex">
       {signedInEmail && <ProductLearningTracker />}
-      {!focusMode && <Sidebar locale={locale} />}
+      {!focusMode && <Sidebar locale={locale} founderAccess={founderAccess} />}
 
       <TopBar onOpenMenu={menu.open} menuOpen={menu.isOpen} locale={locale} signedInName={signedInName} signedInEmail={signedInEmail} />
 
@@ -33,7 +33,7 @@ export function AppShell({ children, publicExperience = false, locale = "en", si
             aria-label={locale === "tr" ? "Gezinme menüsünü kapat" : "Close navigation menu"}
           />
           <div className="relative h-full w-72 max-w-[85vw] shadow-2xl">
-            <Sidebar mobile onNavigate={menu.close} locale={locale} />
+            <Sidebar mobile onNavigate={menu.close} locale={locale} founderAccess={founderAccess} />
             <button
               type="button"
               onClick={menu.close}

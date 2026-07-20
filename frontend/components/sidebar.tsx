@@ -13,9 +13,10 @@ type SidebarProps = {
   mobile?: boolean;
   onNavigate?: () => void;
   locale?: Locale;
+  founderAccess?: boolean;
 };
 
-export function Sidebar({ mobile = false, onNavigate, locale: _locale = "en" }: SidebarProps) {
+export function Sidebar({ mobile = false, onNavigate, locale: _locale = "en", founderAccess = false }: SidebarProps) {
   void _locale;
   const pathname = usePathname();
   const liveMode = process.env.NEXT_PUBLIC_DATA_ACCESS_MODE === "supabase";
@@ -68,7 +69,7 @@ export function Sidebar({ mobile = false, onNavigate, locale: _locale = "en" }: 
         <nav className="mt-7 border-t border-[#dfe5ee] pt-5" aria-label="Workspace navigation">
           <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-[#788396]">Your private record</p>
           <div className="space-y-1">
-            {executiveUtilityItems.map((item) => {
+            {executiveUtilityItems.filter(item => item.href !== "/company-control" || founderAccess).map((item) => {
               const isActive = isNavigationItemActive(pathname, item.href);
               return (
                 <Link key={item.href} href={item.href} onClick={onNavigate} aria-current={isActive ? "page" : undefined} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3457d5] ${isActive ? "bg-[#e9efff] font-semibold text-[#2545bd]" : "text-[#5f6b7a] hover:bg-[#f3f6fb] hover:text-[#0b1220]"}`}>

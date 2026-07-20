@@ -69,6 +69,7 @@
     "test:bilingual-experience": "node scripts/test-bilingual-experience.mjs",
     "test:public-acquisition": "node scripts/test-public-acquisition.mjs",
     "test:profile-state": "node --experimental-transform-types scripts/test-profile-state.mjs",
+    "test:live-executive-access": "node scripts/test-live-executive-access.mjs",
     "test:production-truth-cleanup": "node scripts/test-production-truth-cleanup.mjs",
     "test:executive-briefing": "node scripts/test-executive-briefing.mjs",
     "test:live-product-truth": "node scripts/test-live-product-truth.mjs",

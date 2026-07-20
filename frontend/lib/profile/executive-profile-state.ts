@@ -14,5 +14,6 @@ export function deriveExecutiveProfileState(sessions:CvImportSession[],experienc
   const cvVersions=[...groups.entries()].map(([key,grouped])=>{const uploadedAt=grouped.map(item=>item.created_at).sort()[0];const lastUpdatedAt=grouped.map(item=>item.completed_at??item.created_at).sort().at(-1)??uploadedAt;return{key,filename:filename(grouped[0]),uploadedAt,lastUpdatedAt,parseStatus:"Complete" as const,extractionConfidence:confirmed?"Confirmed" as const:"Unknown" as const,active:false,rawFileRetained:grouped.some(item=>item.summary?.rawSourceRetained===true)};}).sort((left,right)=>Date.parse(right.lastUpdatedAt)-Date.parse(left.lastUpdatedAt));
   if(cvVersions[0])cvVersions[0]={...cvVersions[0],active:true};
   const activeCv=cvVersions[0],hasStructuredProfile=experiences.length>0;
-  return{hasCv:Boolean(activeCv),hasStructuredProfile,activeCv,cvVersions,confirmedRoleCount:experiences.length,atlasState:activeCv&&hasStructuredProfile?"Ready":activeCv?"Learning":"Needs CV",atlasHasEnoughContext:Boolean(activeCv&&hasStructuredProfile),lastSuccessfulUpdate:activeCv?.lastUpdatedAt};
+  const latestExperience=experiences.map(experience=>experience.created_at).sort().at(-1);
+  return{hasCv:Boolean(activeCv),hasStructuredProfile,activeCv,cvVersions,confirmedRoleCount:experiences.length,atlasState:hasStructuredProfile?"Ready":activeCv?"Learning":"Needs CV",atlasHasEnoughContext:hasStructuredProfile,lastSuccessfulUpdate:activeCv?.lastUpdatedAt??latestExperience};
 }

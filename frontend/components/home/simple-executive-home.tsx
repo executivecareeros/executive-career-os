@@ -19,16 +19,13 @@ export async function SimpleExecutiveHome({ resolved, locale }: { resolved: Reso
   let opportunityId = "";
   let decisionAction = "";
   let unansweredQuestions = 0;
-  let profileState: ExecutiveProfileState | undefined;
-
+  const client = createServerSupabaseClient(resolved.accessToken);
+  const profileState: ExecutiveProfileState | undefined = await loadExecutiveProfileState(client, resolved.context.workspace!.workspaceId, resolved.context.workspace!.executiveId).catch(() => undefined);
   try {
-    const client = createServerSupabaseClient(resolved.accessToken);
-    const [view, decision, profile] = await Promise.all([
+    const [view, decision] = await Promise.all([
       new SupabaseBetaWorkflowRepository(client, resolved.context).load(),
       loadLatestCollectedDecision(client, resolved.context.workspace!.workspaceId),
-      loadExecutiveProfileState(client, resolved.context.workspace!.workspaceId, resolved.context.workspace!.executiveId),
     ]);
-    profileState = profile;
     opportunityTitle = decision?.title ?? safeText(view.opportunity?.title);
     companyName = decision?.companyName ?? safeText(view.opportunity?.companyName);
     opportunityId = decision?.opportunityId ?? "";
