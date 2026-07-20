@@ -15,6 +15,7 @@ const runtime = await readFile(resolve(root, "frontend/lib/discovery/scheduler-r
 const publicDiscovery = await readFile(resolve(root, "frontend/lib/discovery/public-employer-discovery.ts"), "utf8");
 const proxy = await readFile(resolve(root, "frontend/proxy.ts"), "utf8");
 const migration = await readFile(resolve(root, "supabase/migrations/202607170003_provider_schedule_concurrency.sql"), "utf8");
+const persistenceScopeMigration = await readFile(resolve(root, "supabase/migrations/202607200002_scope_opportunity_source_reconciliation.sql"), "utf8");
 const vercel = JSON.parse(await readFile(resolve(root, "frontend/vercel.json"), "utf8"));
 const networkStaging = JSON.parse(await readFile(resolve(root, "frontend/vercel.network-staging.json"), "utf8"));
 
@@ -59,6 +60,10 @@ assert.match(runtime, /lease_seconds: 300/);
 assert.match(runtime, /"retrying"/);
 assert.match(runtime, /"failed"/);
 assert.match(migration, /unique index opportunity_provider_jobs_one_active_schedule_idx/i);
+assert.match(persistenceScopeMigration, /opportunities_workspace_company_active_idx/i, "Canonical persistence must index its bounded employer scope");
+assert.match(persistenceScopeMigration, /opportunity\.company_id in/i, "Source reconciliation must not scan every opportunity in the workspace for every provider batch");
+assert.match(persistenceScopeMigration, /jsonb_array_elements\(items\)/i, "The persistence scope must derive only from the incoming provider batch");
+assert.doesNotMatch(persistenceScopeMigration, /drop\s+(table|function)/i, "The throughput repair must preserve canonical inventory and ingestion contracts");
 assert.deepEqual(vercel.crons, [
   { path: "/api/operations/opportunity-refresh", schedule: "*/15 * * * *" },
   { path: "/api/operations/source-discovery", schedule: "7,37 * * * *" },
