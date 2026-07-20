@@ -22,6 +22,7 @@ assert.match(identityLink, /user\/identities\/authorize/);
 assert.match(identityLink, /authorization: `Bearer \$\{session\.accessToken\}`/);
 assert.match(identityLink, /provider", "linkedin_oidc"/);
 assert.match(identityLink, /skip_http_redirect", "true"/);
+assert.match(identityLink, /identities\?\.some/);
 assert.match(settings, /Connect LinkedIn securely/);
 assert.match(settings, /different email addresses/);
 assert.match(login, /LINKEDIN_SIGN_IN_ENABLED/);

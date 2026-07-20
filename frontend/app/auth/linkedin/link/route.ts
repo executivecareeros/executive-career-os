@@ -19,6 +19,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(returnTo)}`, origin));
   }
 
+  if (session.user.identities?.some((identity) => identity.provider === "linkedin_oidc")) {
+    return NextResponse.redirect(new URL(next, origin));
+  }
+
   const { url, key } = authConfiguration();
   const callback = new URL("/auth/linkedin/callback", origin);
   callback.searchParams.set("next", next);
