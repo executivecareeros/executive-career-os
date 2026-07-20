@@ -65,7 +65,7 @@ assert.match(persistenceScopeMigration, /opportunity\.company_id in/i, "Source r
 assert.match(persistenceScopeMigration, /jsonb_array_elements\(items\)/i, "The persistence scope must derive only from the incoming provider batch");
 assert.doesNotMatch(persistenceScopeMigration, /drop\s+(table|function)/i, "The throughput repair must preserve canonical inventory and ingestion contracts");
 assert.deepEqual(vercel.crons, [
-  { path: "/api/operations/opportunity-refresh", schedule: "*/15 * * * *" },
+  { path: "/api/operations/opportunity-refresh", schedule: "*/5 * * * *" },
   { path: "/api/operations/source-discovery", schedule: "7,37 * * * *" },
 ]);
 assert.deepEqual(networkStaging.crons, [
