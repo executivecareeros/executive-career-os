@@ -37,6 +37,8 @@ assert.match(discoveryRoute, /registerEmployerSourceBatch/, "Verified employer s
 assert.match(discoveryRoute, /discoveryCursor/, "Every source cycle must advance public employer discovery");
 assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_INTERVAL_MINUTES/, "Discovery cadence and candidate rotation must remain aligned");
 assert.match(discoveryRoute, /existingSourceKeys/, "Discovery must exclude canonical provider keys before spending verification capacity");
+assert.match(discoveryRoute, /offset=\$\{offset\}/, "Discovery must page through the complete canonical source registry instead of relying on the API row ceiling");
+assert.match(discoveryRoute, /offset < 100_000/, "Registry pagination must stay bounded at the approved employer milestone");
 assert.match(discoveryRoute, /timeBudgetMs:\s*150_000/, "Source discovery must retain a hard execution budget");
 assert.match(discoveryRoute, /Math\.min\(50/, "Each source cycle must cap newly registered sources");
 assert.match(discoveryRoute, /ZERO_TOKEN_SOURCE_DISCOVERY/, "Source discovery must expose aggregate operational evidence");

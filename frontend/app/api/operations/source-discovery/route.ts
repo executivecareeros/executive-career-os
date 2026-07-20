@@ -13,10 +13,18 @@ export async function GET(request: Request) {
   }
   try {
     const client = createSchedulerSupabaseClient();
-    const schedules = await client.request<Array<{ workspace_id: string; created_by: string; source_key: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,source_key,locator&enabled=eq.true&order=created_at.desc&limit=5000");
-    if (schedules.error) throw new Error(schedules.error.message);
-    const workspaceId = schedules.data?.[0]?.workspace_id;
-    const actorId = schedules.data?.[0]?.created_by;
+    type SourceSchedule = { workspace_id: string; created_by: string; source_key: string; locator?: { url?: string } };
+    const schedulePageSize = 1_000;
+    const scheduleRegistry: SourceSchedule[] = [];
+    for (let offset = 0; offset < 100_000; offset += schedulePageSize) {
+      const page = await client.request<SourceSchedule[]>(`opportunity_provider_schedules?select=workspace_id,created_by,source_key,locator&enabled=eq.true&order=created_at.desc&limit=${schedulePageSize}&offset=${offset}`);
+      if (page.error) throw new Error(page.error.message);
+      const rows = page.data ?? [];
+      scheduleRegistry.push(...rows);
+      if (rows.length < schedulePageSize) break;
+    }
+    const workspaceId = scheduleRegistry[0]?.workspace_id;
+    const actorId = scheduleRegistry[0]?.created_by;
     if (!workspaceId || !actorId) return NextResponse.json({ status: "no-active-workspace", aiTokens: 0 });
 
     const maximumSources = Math.max(0, Math.min(50, Number(process.env.OPPORTUNITY_SOURCE_DISCOVERY_LIMIT ?? 50) || 50));
@@ -25,8 +33,8 @@ export async function GET(request: Request) {
     const discoveryIntervalMinutes = Math.max(5, Math.min(60, Number(process.env.OPPORTUNITY_SOURCE_DISCOVERY_INTERVAL_MINUTES ?? 10) || 10));
     const discoveryCursor = Math.floor(Date.now() / (discoveryIntervalMinutes * 60_000));
     const discovery = await discoverPublicEmployerSources({
-      existingUrls: (schedules.data ?? []).flatMap(item => item.locator?.url ? [item.locator.url] : []),
-      existingSourceKeys: (schedules.data ?? []).map(item => item.source_key),
+      existingUrls: scheduleRegistry.flatMap(item => item.locator?.url ? [item.locator.url] : []),
+      existingSourceKeys: scheduleRegistry.map(item => item.source_key),
       maximumSources,
       concurrency: 16,
       discoveryCursor,
