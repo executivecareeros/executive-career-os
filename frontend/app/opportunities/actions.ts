@@ -15,9 +15,9 @@ import { appendAtlasDecisionWorkspace, loadAtlasDecisionWorkspace } from "@/lib/
 import { buildProductOpportunityAssessment } from "@/lib/discovery/atlas-product-integration";
 import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-review";
 import { addDecisionNote, addWorkspaceEvidence, addWorkspaceQuestion, addWorkspaceTask, changeDecisionStage, changeWorkspaceTask, completeWorkspaceQuestion, createAtlasDecisionWorkspace, decisionJourneyStages, reassessAtlasOpportunity, recordWorkspaceDecision, reviewWorkspaceEvidence, type AtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
+import { loadNetworkOpportunities, materializeNetworkOpportunity } from "@/lib/opportunity-network";
 
 type DecisionAction = "Pursue" | "Watch" | "Skip";
-type OpportunityDecisionRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
 type BlueprintDecisionRow = { id: string; payload: Record<string, unknown> };
 
 const decisionActions = new Set<DecisionAction>(["Pursue", "Watch", "Skip"]);
@@ -32,16 +32,16 @@ async function decisionContext(canonicalId: string) {
   if (!resolved) redirect(`/login?next=${encodeURIComponent(`/opportunities/${canonicalId}`)}`);
   if (!canonicalId.startsWith("discovered-")) throw new Error("Only collected canonical opportunities use this decision flow.");
   const client = createServerSupabaseClient(resolved.accessToken), workspaceId = resolved.context.workspace!.workspaceId;
-  const [record, universe, blueprint] = await Promise.all([
-    client.request<OpportunityDecisionRow[]>(`opportunities?select=id,domain_id,version,payload&workspace_id=eq.${workspaceId}&domain_id=eq.${encodeURIComponent(canonicalId)}&archived_at=is.null&limit=1`),
-    client.request<OpportunityDecisionRow[]>(`opportunities?select=id,domain_id,version,payload&workspace_id=eq.${workspaceId}&archived_at=is.null`),
+  const [row, universe, blueprint] = await Promise.all([
+    materializeNetworkOpportunity(client, workspaceId, resolved.context.workspace!.executiveId, canonicalId),
+    loadNetworkOpportunities(300),
     client.request<BlueprintDecisionRow[]>(`executive_blueprint_revisions?select=id,payload&workspace_id=eq.${workspaceId}&order=revision_number.desc&limit=1`),
   ]);
-  if (record.error || universe.error || blueprint.error) throw new Error("The private decision context could not be loaded safely.");
-  const row = record.data?.[0], blueprintRow = blueprint.data?.[0];
+  if (blueprint.error) throw new Error("The private decision context could not be loaded safely.");
+  const blueprintRow = blueprint.data?.[0];
   if (!row) throw new Error("The canonical opportunity is no longer available.");
   if (!blueprintRow) throw new Error("Complete the Executive Blueprint before finalizing this decision.");
-  return { resolved, client, workspaceId, row, blueprintRow, universe: (universe.data ?? []).filter(item => item.domain_id.startsWith("discovered-")).map(item => ({ ...item.payload, id: item.domain_id }) as Opportunity) };
+  return { resolved, client, workspaceId, row, blueprintRow, universe: universe.map(item => ({ ...item.payload, id: item.domain_id }) as Opportunity) };
 }
 
 async function atlasWorkspaceContext(canonicalId: string) {

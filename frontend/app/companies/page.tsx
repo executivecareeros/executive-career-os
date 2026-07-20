@@ -4,22 +4,10 @@ import { LiveCompanies, type LiveCompanyRecord } from "@/components/companies/li
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { loadNetworkCompanies } from "@/lib/opportunity-network";
 
-type CompanyRow = { id: string; name: string; country?: string; official_domain?: string; careers_url?: string; ats_provider?: string; identity_confidence: number; last_observed_at?: string; payload?: Record<string, unknown> };
 type DirectoryMetrics = { canonicalEmployers?: number; verifiedEmployers?: number; hiringEmployers?: number; monitoredEmployerSources?: number };
 type CountryRow = { code: string; canonical_name: string };
-
-async function loadCanonicalCompanies(client: ReturnType<typeof createServerSupabaseClient>, workspaceId: string) {
-  const rows: CompanyRow[] = [];
-  const pageSize = 1_000;
-  for (let offset = 0; ; offset += pageSize) {
-    const response = await client.request<CompanyRow[]>(`companies?select=id,name,country,official_domain,careers_url,ats_provider,identity_confidence,last_observed_at,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null&order=name.asc`, { headers: { Range: `${offset}-${offset + pageSize - 1}` } });
-    if (response.error) throw new Error("Canonical company evidence could not be loaded safely.");
-    const page = response.data ?? [];
-    rows.push(...page);
-    if (page.length < pageSize) return rows;
-  }
-}
 
 function intelligenceNumber(payload: Record<string, unknown> | undefined, field: string) {
   const intelligence = payload?.intelligence;
@@ -33,10 +21,9 @@ export default async function CompaniesPage() {
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect("/login?next=/companies");
   const client = createServerSupabaseClient(resolved.accessToken);
-  const workspaceId = resolved.context.workspace!.workspaceId;
   const [companyRows, metricsResponse, countryResponse] = await Promise.all([
-    loadCanonicalCompanies(client, workspaceId),
-    client.request<DirectoryMetrics>("rpc/get_company_directory_metrics", { method: "POST", body: JSON.stringify({ target_workspace: workspaceId }) }),
+    loadNetworkCompanies(),
+    Promise.resolve({ data: undefined as DirectoryMetrics | undefined }),
     client.request<CountryRow[]>("world_country_registry?select=code,canonical_name&order=canonical_name.asc"),
   ]);
   const live: LiveCompanyRecord[] = companyRows.map((company) => {
@@ -57,5 +44,5 @@ export default async function CompaniesPage() {
       lastObservedAt: company.last_observed_at,
     };
   }).filter((company) => company.opportunityCount > 0);
-  return <LiveCompanies companies={live} canonicalEmployers={metricsResponse.data?.canonicalEmployers} verifiedEmployers={metricsResponse.data?.verifiedEmployers} monitoredSources={metricsResponse.data?.monitoredEmployerSources}/>;
+  return <LiveCompanies companies={live} canonicalEmployers={metricsResponse.data?.canonicalEmployers ?? companyRows.length} verifiedEmployers={metricsResponse.data?.verifiedEmployers} monitoredSources={metricsResponse.data?.monitoredEmployerSources}/>;
 }

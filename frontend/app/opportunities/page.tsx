@@ -14,26 +14,12 @@ import { confirmGeographicProfileAction, refreshOpportunityBoard } from "./actio
 import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
 import { executiveCareerContextFromRows, unknownGeographicProfile, type ExecutiveCareerContext } from "@/lib/opportunity-geography";
 import { currentSession } from "@/lib/auth/session";
+import { loadNetworkOpportunities } from "@/lib/opportunity-network";
 
 type OpportunityListRow = Record<string, unknown> & { domain_id: string };
 type ExperienceRow = { id: string; role_title?: string; notes?: string };
 
-const opportunityListSelect = [
-  "domain_id", "companyName:payload->>companyName", "companyInitials:payload->>companyInitials", "jobTitle:payload->>jobTitle",
-  "location:payload->>location", "country:payload->>country", "workArrangement:payload->>workArrangement", "employmentType:payload->>employmentType",
-  "industry:payload->>industry", "companySize:payload->>companySize", "source:payload->>source", "sourceUrl:payload->>sourceUrl",
-  "lastObservedAt:payload->>lastObservedAt", "publishedAt:payload->>publishedAt", "discoveredAt:payload->>discoveredAt", "salaryMin:payload->>salaryMin",
-  "salaryMax:payload->>salaryMax", "salaryCurrency:payload->>salaryCurrency", "salaryDisclosure:payload->>salaryDisclosure", "executiveFitScore:payload->>executiveFitScore",
-  "strategicOpportunityScore:payload->>strategicOpportunityScore", "overallScore:payload->>overallScore", "confidenceScore:payload->>confidenceScore",
-  "status:payload->>status", "priority:payload->>priority", "travelRequirement:payload->>travelRequirement", "requiredSkills:payload->requiredSkills",
-  "matchingStrengths:payload->matchingStrengths", "riskFlags:payload->riskFlags", "exclusions:payload->exclusions", "completenessScore:payload->>completenessScore",
-].join(",");
-
-// Keep the authenticated landing request inside the database's indexed active
-// opportunity window. The UI ranks this bounded candidate set for the current
-// executive; detail pages continue to load the complete canonical record.
 const opportunityListLimit = 300;
-const activeOpportunityStatuses = "Discovered,Evaluating,Qualified,Ready to Apply,Applied,Interview";
 
 function listOpportunity(row: OpportunityListRow): Opportunity {
   const number = (value: unknown) => value === null || value === undefined || value === "" ? undefined : Number(value);
@@ -73,13 +59,9 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
       const history = await createServerSupabaseClient(resolved.accessToken).request<ExperienceRow[]>(`professional_experiences?select=id,role_title,notes&workspace_id=eq.${resolved.context.workspace!.workspaceId}&executive_identity_id=eq.${resolved.context.workspace!.executiveId}&archived_at=is.null`);
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);
-      if ((await searchParams).cv === "complete") confirmedRoleCount = history.data?.length ?? 0;
-      // The composite active-opportunity index is ordered by workspace, status,
-      // and recency. Matching that order avoids sorting the complete and growing
-      // Opportunity Universe before the first executive result can be shown.
-      const rows = await createServerSupabaseClient(resolved.accessToken).request<OpportunityListRow[]>(`opportunities?select=${encodeURIComponent(opportunityListSelect)}&workspace_id=eq.${resolved.context.workspace!.workspaceId}&archived_at=is.null&status=in.(${encodeURIComponent(activeOpportunityStatuses)})&order=status.asc,updated_at.desc&limit=${opportunityListLimit}`);
-      if (rows.error) { console.error("Opportunity list query failed", { status: rows.status, code: rows.error.code, message: rows.error.message }); throw new Error(rows.error.message); }
-      collected = (rows.data ?? []).filter((row) => row.domain_id.startsWith("discovered-")).map(listOpportunity);
+      confirmedRoleCount = history.data?.length ?? 0;
+      const rows = await loadNetworkOpportunities(opportunityListLimit);
+      collected = rows.map((row) => listOpportunity({ ...row.payload, domain_id: row.domain_id }));
       // Once the live universe contains attributable collected opportunities,
       // keep the earlier acceptance-workflow record in its historical context
       // instead of presenting it as a current market opportunity.
@@ -90,7 +72,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     if (unavailable) return <LiveWorkspaceEmptyState eyebrow="Executive Opportunity Universe" title="Your opportunities are temporarily unavailable" description="ORENDALIS could not safely load your private opportunity context." emptyTitle="Your records remain unchanged" emptyDescription="No empty state or recommendation is being inferred from this interruption. Return to Today and try again when the connection is available." actionHref="/" actionLabel="Return to Today" />;
     const query = await searchParams;
     if (opportunity || collected.length) return <LiveOpportunityUniverse opportunity={opportunity} collected={collected} geographicProfile={geographicProfile} careerContext={executiveCareerContext} canConfirmFounderFixture={canConfirmFounderFixture} profileConfirmationAction={confirmGeographicProfileAction} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : typeof query.roles === "string" ? query.roles : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} collectionAction={refreshOpportunityBoard} />;
-    return <OpportunityUniverseEmpty collectionAction={refreshOpportunityBoard} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} />;
+    return <OpportunityUniverseEmpty collectionAction={refreshOpportunityBoard} cvComplete={query.cv === "complete"} profileComplete={confirmedRoleCount > 0} savedRoles={String(confirmedRoleCount)} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} />;
   }
   return <OpportunitiesWorkspace opportunities={opportunities} />;
 }

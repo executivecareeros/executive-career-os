@@ -17,6 +17,7 @@ import { buildProductOpportunityAssessment } from "@/lib/discovery/atlas-product
 import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-review";
 import { createAtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
 import { executiveCareerContextFromRows } from "@/lib/opportunity-geography";
+import { loadNetworkOpportunity, loadNetworkOpportunities } from "@/lib/opportunity-network";
 
 type OpportunityRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
 type BlueprintRow = { id: string; payload: Record<string, unknown> };
@@ -39,21 +40,23 @@ export default async function OpportunityDetailPage({ params, searchParams }: { 
   if (!resolved) redirect(`/login?next=${encodeURIComponent(`/opportunities/${id}`)}`);
   const client = createServerSupabaseClient(resolved.accessToken);
   const workspaceId = resolved.context.workspace!.workspaceId;
-  const [record, universe, blueprint, geographicProfile, experiences] = await Promise.all([
+  const [networkRecord, universe, privateRecord, blueprint, geographicProfile, experiences] = await Promise.all([
+    loadNetworkOpportunity(id),
+    loadNetworkOpportunities(300),
     client.request<OpportunityRow[]>(`opportunities?select=id,domain_id,version,payload&workspace_id=eq.${workspaceId}&domain_id=eq.${encodeURIComponent(id)}&archived_at=is.null&limit=1`),
-    client.request<OpportunityRow[]>(`opportunities?select=id,domain_id,version,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&order=updated_at.desc`),
     client.request<BlueprintRow[]>(`executive_blueprint_revisions?select=id,payload&workspace_id=eq.${workspaceId}&order=revision_number.desc&limit=1`),
     loadExecutiveGeographicProfile(client, resolved.context),
     client.request<ExperienceRow[]>(`professional_experiences?select=role_title,notes&workspace_id=eq.${workspaceId}&executive_identity_id=eq.${resolved.context.workspace!.executiveId}&archived_at=is.null`),
   ]);
-  if (record.error || universe.error || blueprint.error || experiences.error) throw new Error("Private opportunity intelligence could not be loaded safely.");
-  const row = record.data?.[0];
+  if (privateRecord.error || blueprint.error || experiences.error) throw new Error("Private opportunity intelligence could not be loaded safely.");
+  const row = privateRecord.data?.[0] ?? networkRecord;
   if (!row || !row.domain_id.startsWith("discovered-")) notFound();
   const canonical = { ...row.payload, id: row.domain_id } as Opportunity;
-  const all = (universe.data ?? []).filter((item) => item.domain_id.startsWith("discovered-")).map((item) => ({ ...item.payload, id: item.domain_id }) as Opportunity);
+  const all = universe.map((item) => ({ ...item.payload, id: item.domain_id }) as Opportunity);
   const blueprintRow = blueprint.data?.[0];
   const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(blueprintRow?.payload, blueprintRow?.id), all, undefined, geographicProfile, executiveCareerContextFromRows(experiences.data ?? []));
-  const persistedWorkspace = await loadAtlasDecisionWorkspace(client, workspaceId, row.id);
+  const privateRow = privateRecord.data?.[0];
+  const persistedWorkspace = privateRow ? await loadAtlasDecisionWorkspace(client, workspaceId, privateRow.id) : undefined;
   const stableCreatedAt = canonical.discoveredAt || canonical.lastObservedAt || "2026-01-01T00:00:00.000Z";
   const atlasWorkspace = persistedWorkspace?.workspace ?? createAtlasDecisionWorkspace(buildAtlasOpportunityReview(buildProductOpportunityAssessment(intelligence, stableCreatedAt), stableCreatedAt), stableCreatedAt);
   return <><CollectedOpportunityIntelligence locale={locale} opportunity={canonical} intelligence={intelligence} decisionNotice={query.decision} idempotencyKey={randomUUID()} /><AtlasDecisionWorkspacePanel opportunityId={canonical.id} workspace={atlasWorkspace} persisted={Boolean(persistedWorkspace)}/></>;
