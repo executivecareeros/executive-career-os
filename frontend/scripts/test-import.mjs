@@ -126,7 +126,7 @@ BS, International Business · (2001 - 2006)
 Page 5 of 5`;
 const linkedInDrafts=detectHistoryDrafts(linkedInPdfLayout);
 if(linkedInDrafts.length!==5)throw Error(`LinkedIn profile PDF expected 5 roles, found ${linkedInDrafts.length}`);
-if(linkedInDrafts[0].organizationName!=="Example Studio"||linkedInDrafts[0].location!=="Istanbul, Türkiye"||linkedInDrafts[0].companyDescription!==undefined)throw Error("LinkedIn profile role, location, or unknown company description was mapped incorrectly");
+if(linkedInDrafts[0].organizationName!=="Example Studio"||linkedInDrafts[0].location!=="Istanbul, Türkiye"||linkedInDrafts[0].companyDescription!=="AI-native creative production studio supporting global brands."||linkedInDrafts[0].roleDescription!=="Spearheading international expansion.")throw Error("LinkedIn profile company and role narratives were not kept separate");
 if(linkedInDrafts[1].organizationName!=="ORENDALIS"||linkedInDrafts[1].responsibilities?.[0]!=="Built the executive platform.")throw Error("LinkedIn profile bullet responsibility was not preserved");
 if(linkedInDrafts[2].companyDescription!=="Example Technology is an international technology company.")throw Error("Explicit LinkedIn company description was not preserved");
 if(linkedInDrafts.filter(item=>item.organizationName==="Türk Telekom").length!==2)throw Error("LinkedIn promotion history did not retain the employer");

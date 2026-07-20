@@ -134,6 +134,13 @@ function explicitCompanyDescription(value:string,organization:string){
   const escape=(candidate:string)=>candidate.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
   return new RegExp(`^(?:${escape(organization)}|${escape(lead)}(?:©)?)\\s+(?:is|was|started|offers|provides|develops)\\b`,"i").test(value)||/^(?:worked at\s+.+?,\s+)?a leading\b/i.test(value);
 }
+function descriptiveCompanyLead(value:string){
+  return !/^(?:I|we|spearheading|formulating|building|leading|managing|directing|driving|developing|responsible)\b/i.test(value)
+    && /\b(?:company|firm|group|organization|provider|operator|manufacturer|developer|platform|studio)\b/i.test(value);
+}
+function roleActionLead(value:string){
+  return /^(?:I|we|spearheading|formulating|building|leading|managing|directing|driving|developing|responsible|achieving|establishing|creating|delivering)\b/i.test(value);
+}
 
 const linkedInPageMarker=/^Page \d+ of \d+$/i;
 const linkedInDuration=/^\d+\s+(?:years?|months?)(?:\s+\d+\s+months?)?$/i;
@@ -202,8 +209,10 @@ function detectLinkedInEmploymentDrafts(input:string){
     const firstBullet=rawDetails.findIndex(line=>bulletLead.test(line));
     const narrativeRaw=firstBullet>=0?rawDetails.slice(0,firstBullet):rawDetails;
     const paragraphs=paragraphGroups(narrativeRaw);
-    const companyDescription=paragraphs.length&&explicitCompanyDescription(paragraphs[0],header.organizationName)?paragraphs.join(" "):undefined;
-    const roleNarrative=companyDescription?[]:paragraphs;
+    const explicitCompany=paragraphs.length>0&&explicitCompanyDescription(paragraphs[0],header.organizationName);
+    const inferredCompanyLead=!explicitCompany&&paragraphs.length>1&&descriptiveCompanyLead(paragraphs[0])&&paragraphs.slice(1).some(roleActionLead);
+    const companyDescription=explicitCompany?paragraphs.join(" "):inferredCompanyLead?paragraphs[0]:undefined;
+    const roleNarrative=explicitCompany?[]:inferredCompanyLead?paragraphs.slice(1):paragraphs;
     const responsibilities=bullets.length?bullets:[];
     const roleDescription=roleNarrative.filter(value=>!responsibilities.includes(value)).join(" ")||undefined;
     const achievements=responsibilities.filter(highConfidenceAchievement);
