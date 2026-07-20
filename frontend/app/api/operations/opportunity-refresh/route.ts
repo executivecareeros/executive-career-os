@@ -39,7 +39,8 @@ export async function GET(request: Request) {
       health: () => rawClient.health(),
     };
     const maximumJobs = Math.max(1, Math.min(18, Number(process.env.OPPORTUNITY_SCHEDULER_MAX_JOBS ?? 18) || 18));
-    const summary = await runOpportunityScheduler(client, undefined, maximumJobs);
+    const workerCount = Math.max(1, Math.min(2, Number(process.env.OPPORTUNITY_SCHEDULER_WORKERS ?? 2) || 2));
+    const summary = await runOpportunityScheduler(client, undefined, maximumJobs, workerCount);
     const schedules = await client.request<Array<{ workspace_id: string; created_by: string }>>("opportunity_provider_schedules?select=workspace_id,created_by&enabled=eq.true&order=created_at.desc&limit=1");
     const workspaceId = schedules.data?.[0]?.workspace_id;
     const companyActivationLimit = Math.max(0, Math.min(25, Number(process.env.COMPANY_INTELLIGENCE_ACTIVATION_LIMIT ?? 0) || 0));
@@ -64,7 +65,7 @@ export async function GET(request: Request) {
     const cpu = process.cpuUsage(cpuStart);
     const memory = process.memoryUsage();
     console.info("ODS3_OPERATIONAL_TELEMETRY", JSON.stringify({
-      scheduler: { ...summary, correlationId: undefined, maximumJobs, startedAt, finishedAt: new Date().toISOString(), durationMs: Math.round(performance.now() - wallStart), result: summary.failed ? "completed-with-failures" : "completed", workersUsed: 1, retryCount: queueByStatus.retrying ?? 0 },
+      scheduler: { ...summary, correlationId: undefined, maximumJobs, startedAt, finishedAt: new Date().toISOString(), durationMs: Math.round(performance.now() - wallStart), result: summary.failed ? "completed-with-failures" : "completed", workersUsed: workerCount, retryCount: queueByStatus.retrying ?? 0 },
       queue: { ...queueByStatus, observed: (queue?.data ?? []).length },
       resources: { cpuUserMs: Math.round(cpu.user / 1000), cpuSystemMs: Math.round(cpu.system / 1000), rssDeltaMiB: Number(((memory.rss - memoryStart.rss) / 1048576).toFixed(1)), heapUsedMiB: Number((memory.heapUsed / 1048576).toFixed(1)), networkRequests: database.calls, cacheHits: 0, aiTokens: 0 },
       database: { ...database, durationMs: Math.round(database.durationMs) },
