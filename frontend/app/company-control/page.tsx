@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { CompanyControlCenter } from "@/components/company-control/company-control-center";
 import { isSupabaseMode } from "@/lib/auth/configuration";
 import { createCompanySnapshot } from "@/lib/company-intelligence";
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { resolveFounderAccess } from "@/lib/auth/founder-access";
+import { currentSession } from "@/lib/auth/session";
 import { founderBootstrapStatus } from "@/lib/auth/founder-bootstrap";
 import type { ProductLearningDashboard } from "@/lib/product-learning";
 
@@ -17,6 +18,8 @@ export default async function CompanyControlPage() {
   let founderBootstrapComplete=false;
   let operations: Parameters<typeof CompanyControlCenter>[0]["operations"];
   if (isSupabaseMode()) {
+    const session=await currentSession();
+    if (!session) redirect("/login?next=/company-control");
     const resolved=await resolveFounderAccess();
     if (!resolved) notFound();
     if(resolved){
