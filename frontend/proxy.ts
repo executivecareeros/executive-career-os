@@ -8,6 +8,7 @@ const publicPaths = [
   "/reset-password",
   "/verify-email",
   "/auth/confirm",
+  "/auth/linkedin",
   "/robots.txt",
   "/llms.txt",
   "/sitemap.xml",
