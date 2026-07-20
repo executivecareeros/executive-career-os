@@ -50,6 +50,35 @@ if(multiDrafts.some(item=>/COMPETENC|EDUCATION/i.test(`${item.roleDescription??"
 if(multiDrafts[0].roleDescription!==undefined)throw Error("Unknown role description was guessed");
 const multiStructured=parseStructuredResume(multiLayout);
 if(multiStructured.profile.fullName!=="JANE EXAMPLE"||multiStructured.education.length!==1||multiStructured.skills.length<2)throw Error("Structured CV sections were not extracted safely");
+const executiveInlineLayout=`CUNEYT SEN
+FOUNDER | AI & INTERNATIONAL GROWTH EXECUTIVE
+Istanbul, Türkiye | executive@example.invalid | linkedin.com/in/example | EU & Turkish citizen
+EXECUTIVE PROFILE
+Founder and international commercial executive with evidence-backed experience.
+SELECTED LEADERSHIP VALUE
+• Built international channels.
+PROFESSIONAL EXPERIENCE
+ORENDALIS | Founder | Jan 2026 - Present
+Enterprise AI company building intelligent business platforms.
+• Founded and lead the company.
+ZERO DENSITY | Director of Sales & Business Development | Dec 2020 - Sep 2025
+Global provider of virtual production solutions.
+• Led EMEA business development.
+TÜRK TELEKOM | Regional Sales Manager | Jul 2008 - Sep 2010
+Türkiye's leading telecommunications operator.
+• Managed international wholesale services.
+CORE COMPETENCIES
+Artificial Intelligence (AI) • Enterprise Sales • Strategic Partnerships • P&L Management
+LANGUAGES
+Turkish — Native | English — Fluent / Bilingual Professional | Bulgarian — Limited Working
+EDUCATION
+OLD DOMINION UNIVERSITY | B.Sc. International Business, Minor in Marketing | 2001-2006`;
+const inlineDrafts=detectHistoryDrafts(executiveInlineLayout);
+if(inlineDrafts.length!==3)throw Error(`Inline executive CV expected 3 roles, found ${inlineDrafts.length}`);
+if(inlineDrafts[0].organizationName!=="ORENDALIS"||inlineDrafts[0].roleTitle!=="Founder"||inlineDrafts[0].companyDescription!=="Enterprise AI company building intelligent business platforms."||inlineDrafts[0].responsibilities?.[0]!=="Founded and lead the company.")throw Error("Inline company, role, description, or responsibility extraction failed");
+if(inlineDrafts.some(item=>item.roleDescription!==undefined))throw Error("Unknown inline role descriptions must remain blank");
+const inlineStructured=parseStructuredResume(executiveInlineLayout);
+if(inlineStructured.profile.citizenship!=="EU & Turkish citizen"||inlineStructured.languages.length!==3||inlineStructured.education.length!==1||inlineStructured.skills.length!==4||inlineStructured.highlights.length!==1)throw Error("Inline executive profile sections were not extracted completely");
 const workspace=readFileSync(new URL("../components/import/import-workspace.tsx",import.meta.url),"utf8");
 for(const required of ['accept=".pdf,.docx,.txt,.md,.csv,.json"','/api/import/extract','raw file is not retained','Ham dosya saklanmaz','Save my experience and see jobs'])if(!workspace.includes(required))throw Error(`Secure CV flow is missing: ${required}`);
 for(const forbidden of ['demoRecords','Career Passport','preview-only','Architecture placeholder'])if(workspace.includes(forbidden))throw Error(`Legacy import language remains: ${forbidden}`);
