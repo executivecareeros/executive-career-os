@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseBetaWorkflowRepository } from "@/lib/beta/repository";
+import { historyIdentityKey } from "@/lib/import/history-identity";
 
 type Draft = { organizationName: string; roleTitle: string; startDate?: string; endDate?: string; isCurrent: boolean; companyDescription?: string; roleDescription?: string; responsibilities?: string[]; achievements?: string[]; industries?: string[]; location?: string; employmentType?: string; leadershipScope?: string; teamSize?: string; geographicResponsibility?: string; revenueScope?: string; technologies?: string[] };
 const month = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -38,16 +39,22 @@ export async function confirmCvHistory(formData: FormData) {
   } catch {
     // The CV remains saveable when optional profile context is absent or malformed.
   }
-  const existing = await client.request<Array<{ organization_name: string; role_title: string; start_date?: string }>>(`professional_experiences?select=organization_name,role_title,start_date&workspace_id=eq.${workspaceId}&archived_at=is.null`);
+  const existing = await client.request<Array<{ id:string; organization_name:string; role_title:string; start_date?:string; end_date?:string; is_current:boolean; notes?:string }>>(`professional_experiences?select=id,organization_name,role_title,start_date,end_date,is_current,notes&workspace_id=eq.${workspaceId}&archived_at=is.null`);
   if (existing.error) throw new Error("Your existing history could not be checked safely.");
-  const keys = new Set((existing.data ?? []).map(item => `${item.organization_name}|${item.role_title}|${item.start_date?.slice(0, 7) ?? ""}`.toLowerCase()));
+  const records = new Map((existing.data ?? []).map(item => [historyIdentityKey({organizationName:item.organization_name,roleTitle:item.role_title,startDate:item.start_date}),item]));
   const repository = new SupabaseBetaWorkflowRepository(client, resolved.context);
-  let saved = 0;
+  let saved = 0,updated = 0;
   for (const draft of drafts) {
-    const key = `${draft.organizationName}|${draft.roleTitle}|${draft.startDate?.slice(0, 7) ?? ""}`.toLowerCase();
-    if (keys.has(key)) continue;
-    await repository.saveHistory({ organizationName: draft.organizationName, roleTitle: draft.roleTitle, startDate: draft.startDate, endDate: draft.isCurrent ? undefined : draft.endDate, isCurrent: draft.isCurrent, notes: JSON.stringify({ companyDescription: draft.companyDescription, roleDescription: draft.roleDescription, responsibilities: draft.responsibilities, achievements: draft.achievements, location: draft.location, employmentType: draft.employmentType, leadershipScope: draft.leadershipScope, teamSize: draft.teamSize, geographicResponsibility: draft.geographicResponsibility, revenueScope: draft.revenueScope, industries: draft.industries, technologies: draft.technologies, documentContext, sourceEvidence: "Confirmed from CV review" }), sourceType: "Document Import", sourceFilename: filename });
-    keys.add(key); saved++;
+    const key=historyIdentityKey(draft),notes=JSON.stringify({ companyDescription: draft.companyDescription, roleDescription: draft.roleDescription, responsibilities: draft.responsibilities, achievements: draft.achievements, location: draft.location, employmentType: draft.employmentType, leadershipScope: draft.leadershipScope, teamSize: draft.teamSize, geographicResponsibility: draft.geographicResponsibility, revenueScope: draft.revenueScope, industries: draft.industries, technologies: draft.technologies, documentContext, sourceEvidence: "Confirmed from CV review" });
+    const input={organizationName:draft.organizationName,roleTitle:draft.roleTitle,startDate:draft.startDate,endDate:draft.isCurrent?undefined:draft.endDate,isCurrent:draft.isCurrent,notes,sourceType:"Document Import" as const,sourceFilename:filename};
+    const prior=records.get(key);
+    if(prior){
+      const unchanged=prior.organization_name===input.organizationName&&prior.role_title===input.roleTitle&&(prior.start_date??undefined)===(input.startDate??undefined)&&(prior.end_date??undefined)===(input.endDate??undefined)&&prior.is_current===input.isCurrent&&(prior.notes??undefined)===(input.notes??undefined);
+      if(unchanged)continue;
+      await repository.updateHistory(prior.id,input);updated++;continue;
+    }
+    await repository.saveHistory(input);
+    records.set(key,{id:"new",organization_name:input.organizationName,role_title:input.roleTitle,start_date:input.startDate,end_date:input.endDate,is_current:input.isCurrent,notes:input.notes});saved++;
   }
-  redirect(`/opportunities?cv=complete&roles=${drafts.length}&newRoles=${saved}`);
+  redirect(`/opportunities?cv=complete&roles=${drafts.length}&newRoles=${saved}&updatedRoles=${updated}`);
 }

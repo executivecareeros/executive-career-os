@@ -4,6 +4,7 @@ import { detectHistoryConflicts } from "../lib/import/conflicts.ts";
 import { createFirstExecutiveBrief } from "../lib/import/brief.ts";
 import { detectHistoryDrafts } from "../lib/import/history-drafts.ts";
 import { parseStructuredResume } from "../lib/import/structured-resume.ts";
+import { historyIdentityKey } from "../lib/import/history-identity.ts";
 import { existsSync, readFileSync } from "node:fs";
 
 const provenance={source:"CSV",filename:"fictional.csv",importedAt:"2026-01-01T00:00:00Z",importVersion:"1.0",evidence:[]};
@@ -133,11 +134,14 @@ if(linkedInDrafts.some(item=>/Page \d+ of \d+|EDUCATION|LANGUAGES/i.test(item.ev
 const linkedInStructured=parseStructuredResume(linkedInPdfLayout);
 if(linkedInStructured.profile.fullName!=="JANE EXAMPLE"||linkedInStructured.profile.citizenship!=="EU & Turkish Citizen"||linkedInStructured.languages.length!==2||linkedInStructured.skills.length!==2||linkedInStructured.certifications.length!==1)throw Error("LinkedIn profile PDF sections were not mapped correctly");
 if(linkedInStructured.education[0]?.qualification!=="BS, International Business")throw Error("LinkedIn education punctuation was not normalized");
+if(historyIdentityKey({organizationName:"Türk Telekom",roleTitle:"Director of Sales & Business Development",startDate:"2020-12-01"})!==historyIdentityKey({organizationName:"Turk Telekom",roleTitle:"Director of Sales And Business Development",startDate:"2020-12"}))throw Error("Equivalent imported role identities are not deduplicated");
 const workspace=readFileSync(new URL("../components/import/import-workspace.tsx",import.meta.url),"utf8");
 for(const required of ['accept=".pdf,.docx,.txt,.md,.csv,.json"','/api/import/extract','raw file is not retained','Ham dosya saklanmaz','Save my experience and see jobs'])if(!workspace.includes(required))throw Error(`Secure CV flow is missing: ${required}`);
 for(const forbidden of ['demoRecords','Career Passport','preview-only','Architecture placeholder'])if(workspace.includes(forbidden))throw Error(`Legacy import language remains: ${forbidden}`);
 const actions=readFileSync(new URL("../app/import/actions.ts",import.meta.url),"utf8");
-if(!actions.includes('sourceType: "Document Import"')||!actions.includes("keys.has(key)"))throw Error("Confirmed CV history is not provenance-aware and replay-safe");
+for(const required of ['sourceType:"Document Import"','historyIdentityKey','repository.updateHistory','updatedRoles=${updated}'])if(!actions.includes(required))throw Error(`Confirmed CV history update flow is missing: ${required}`);
+const repository=readFileSync(new URL("../lib/beta/repository.ts",import.meta.url),"utf8");
+for(const required of ['async updateHistory','previousSnapshot','confirmedSnapshot','changeType:"Update"'])if(!repository.includes(required))throw Error(`Confirmed CV update audit is missing: ${required}`);
 const documentExtraction=readFileSync(new URL("../lib/import/document-extraction.ts",import.meta.url),"utf8");
 if(!documentExtraction.includes('mergePages:false')||!documentExtraction.includes('extracted.join("\\n")'))throw Error("PDF page structure is not preserved for role extraction");
 if(existsSync(new URL("../../../CuneytSenCV.pdf",import.meta.url))){
