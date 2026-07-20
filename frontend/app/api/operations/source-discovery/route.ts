@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   }
   try {
     const client = createSchedulerSupabaseClient();
-    const schedules = await client.request<Array<{ workspace_id: string; created_by: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,locator&enabled=eq.true&order=created_at.desc&limit=5000");
+    const schedules = await client.request<Array<{ workspace_id: string; created_by: string; source_key: string; locator?: { url?: string } }>>("opportunity_provider_schedules?select=workspace_id,created_by,source_key,locator&enabled=eq.true&order=created_at.desc&limit=5000");
     if (schedules.error) throw new Error(schedules.error.message);
     const workspaceId = schedules.data?.[0]?.workspace_id;
     const actorId = schedules.data?.[0]?.created_by;
@@ -26,6 +26,7 @@ export async function GET(request: Request) {
     const discoveryCursor = Math.floor(Date.now() / (discoveryIntervalMinutes * 60_000));
     const discovery = await discoverPublicEmployerSources({
       existingUrls: (schedules.data ?? []).flatMap(item => item.locator?.url ? [item.locator.url] : []),
+      existingSourceKeys: (schedules.data ?? []).map(item => item.source_key),
       maximumSources,
       concurrency: 16,
       discoveryCursor,

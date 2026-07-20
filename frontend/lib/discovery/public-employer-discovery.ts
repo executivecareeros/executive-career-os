@@ -49,6 +49,12 @@ export function publicEmployerSourceIdentity(value: string) {
   }
 }
 
+export function publicEmployerScheduleKey(provider: Definition["provider"], value: string) {
+  const url = new URL(value);
+  const pathname = url.pathname.replace(/\/+$/, "") || "/";
+  return `${provider}:${url.hostname.toLowerCase()}${pathname}`;
+}
+
 function interleaveCandidates(groups: Array<Array<{ definition: Definition; slug: string }>>) {
   const result: Array<{ definition: Definition; slug: string }> = [];
   const maximum = Math.max(0, ...groups.map(group => group.length));
@@ -182,11 +188,12 @@ async function verify(definition: Definition, slug: string, deadlineAt?: number)
   return { provider: definition.provider, employerName: String(content[0]?.company?.name || plainName(slug)).trim(), careersUrl: definition.careers(slug), activeJobs: total, maximumResults: 1_000, refreshMinutes: 720 };
 }
 
-export async function discoverPublicEmployerSources(input: { existingUrls: readonly string[]; maximumSources?: number; concurrency?: number; discoveryCursor?: number; timeBudgetMs?: number }) {
+export async function discoverPublicEmployerSources(input: { existingUrls: readonly string[]; existingSourceKeys?: readonly string[]; maximumSources?: number; concurrency?: number; discoveryCursor?: number; timeBudgetMs?: number }) {
   const deadlineAt = input.timeBudgetMs ? Date.now() + Math.max(1_000, input.timeBudgetMs) : undefined;
   const maximumSources = Math.max(0, Math.min(50, Math.trunc(input.maximumSources ?? 18)));
   if (!maximumSources) return { sources: [] as VerifiedEmployer[], candidates: 0, attempted: 0, failures: 0, advertisedActiveJobs: 0, aiTokens: 0 };
   const known = new Set(input.existingUrls.map(publicEmployerSourceIdentity));
+  const knownSourceKeys = new Set(input.existingSourceKeys ?? []);
   const indexes = await json("https://index.commoncrawl.org/collinfo.json", deadlineAt) as unknown as Array<{ "cdx-api": string }>;
   const recentIndexes = indexes.slice(0, 3).flatMap(index => index["cdx-api"] ? [index["cdx-api"]] : []);
   if (!recentIndexes.length) throw new Error("PUBLIC_INDEX_UNAVAILABLE");
@@ -200,7 +207,10 @@ export async function discoverPublicEmployerSources(input: { existingUrls: reado
       catch { indexFailures += 1; indexed.push([]); }
       if (index < definitions.length - 1) await pause(150);
     }
-    candidates = interleaveCandidates(indexed).filter(({ definition, slug }) => !known.has(publicEmployerSourceIdentity(definition.careers(slug))));
+    candidates = interleaveCandidates(indexed).filter(({ definition, slug }) => {
+      const careersUrl = definition.careers(slug);
+      return !known.has(publicEmployerSourceIdentity(careersUrl)) && !knownSourceKeys.has(publicEmployerScheduleKey(definition.provider, careersUrl));
+    });
     if (candidates.length) break;
   }
   if (!candidates.length) throw new Error("PUBLIC_EMPLOYER_INDEX_UNAVAILABLE");

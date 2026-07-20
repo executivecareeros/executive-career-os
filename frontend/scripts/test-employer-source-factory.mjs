@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { prepareEmployerSourceBatch, registerEmployerSourceBatch, scheduleRowsForEmployerSources, validateEmployerSourceBatch } from "../lib/discovery/employer-source-factory.ts";
-import { publicEmployerSourceIdentity } from "../lib/discovery/public-employer-discovery.ts";
+import { publicEmployerScheduleKey, publicEmployerSourceIdentity } from "../lib/discovery/public-employer-discovery.ts";
 
 assert.equal(publicEmployerSourceIdentity("https://Jobs.AshbyHQ.com/Example/"), publicEmployerSourceIdentity("https://jobs.ashbyhq.com/example"), "Discovery must not re-register a casing variant of an existing source");
+assert.equal(publicEmployerScheduleKey("ashby", "https://jobs.ashbyhq.com/example/"), "ashby:jobs.ashbyhq.com/example", "Canonical source keys must match scheduler persistence identity");
+assert.equal(publicEmployerScheduleKey("recruitee", "https://example.recruitee.com"), "recruitee:example.recruitee.com/", "Host-only provider keys must preserve the canonical root path");
 
 const batch = prepareEmployerSourceBatch([
   { employerName: "Acme Global", employerDomain: "https://www.acme.example/about", careersUrl: "https://careers.smartrecruiters.com/Acme/?tracking=ignored#jobs", country: "Netherlands", operatingRegions: ["European Union", "European Union"], industry: "Enterprise SaaS", refreshMinutes: 360 },

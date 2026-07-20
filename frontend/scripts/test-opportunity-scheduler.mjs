@@ -36,12 +36,14 @@ assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_LIMIT \?\? 50/, "The 
 assert.match(discoveryRoute, /registerEmployerSourceBatch/, "Verified employer sources must enter the common Coverage Engine");
 assert.match(discoveryRoute, /discoveryCursor/, "Every source cycle must advance public employer discovery");
 assert.match(discoveryRoute, /OPPORTUNITY_SOURCE_DISCOVERY_INTERVAL_MINUTES/, "Discovery cadence and candidate rotation must remain aligned");
+assert.match(discoveryRoute, /existingSourceKeys/, "Discovery must exclude canonical provider keys before spending verification capacity");
 assert.match(discoveryRoute, /timeBudgetMs:\s*150_000/, "Source discovery must retain a hard execution budget");
 assert.match(discoveryRoute, /Math\.min\(50/, "Each source cycle must cap newly registered sources");
 assert.match(discoveryRoute, /ZERO_TOKEN_SOURCE_DISCOVERY/, "Source discovery must expose aggregate operational evidence");
 assert.match(publicDiscovery, /cursorWindow \* sampleTarget/, "Public discovery must rotate across the indexed employer universe instead of replaying its alphabetical prefix");
 assert.match(publicDiscovery, /interleaveCandidates/, "Public discovery must distribute verification attempts across provider ecosystems");
 assert.match(publicDiscovery, /selectDiverseSources/, "A successful discovery window must activate healthy sources across provider ecosystems before filling by volume");
+assert.match(publicDiscovery, /knownSourceKeys\.has\(publicEmployerScheduleKey/, "Canonical provider keys must prevent URL variants from consuming discovery yield");
 assert.doesNotMatch(publicDiscovery, /Promise\.allSettled\(definitions/, "Common Crawl provider indexes must not be queried in a rate-limit-hostile parallel burst");
 assert.match(publicDiscovery, /await pause\(150\)/, "Public index requests must be politely spaced");
 assert.doesNotMatch(route + discoveryRoute, /OpenAI|anthropic|completion|embedding/i, "Source expansion must remain zero-token");
