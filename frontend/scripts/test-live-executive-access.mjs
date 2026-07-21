@@ -9,6 +9,7 @@ const repository = readFileSync(new URL("../lib/beta/repository.ts", import.meta
 const proxy = readFileSync(new URL("../proxy.ts", import.meta.url), "utf8");
 const session = readFileSync(new URL("../lib/auth/session.ts", import.meta.url), "utf8");
 const opportunitiesPage = readFileSync(new URL("../app/opportunities/page.tsx", import.meta.url), "utf8");
+const atlasPage = readFileSync(new URL("../app/assistant/page.tsx", import.meta.url), "utf8");
 
 if (!sidebar.includes('item.href !== "/company-control" || founderAccess')) throw new Error("Founder navigation is not hidden for ordinary executives.");
 if ((shell.match(/founderAccess=\{founderAccess\}/g) ?? []).length !== 2) throw new Error("Founder access is not enforced in both desktop and mobile navigation.");
@@ -23,5 +24,6 @@ if (!proxy.includes("response.cookies.set(REFRESH_COOKIE")) throw new Error("Rot
 if (!session.includes("storeSession(session, jar.get(REMEMBER_COOKIE)?.value === \"1\").catch")) throw new Error("A valid refreshed session can still be discarded when a Server Component cannot mutate cookies.");
 if (!opportunitiesPage.includes("Its absence must never block the live network")) throw new Error("Public accounts still require the retired invitation workflow to load opportunities.");
 if (!opportunitiesPage.includes("view ? toLiveOpportunity(view) : undefined")) throw new Error("The Opportunity Network cannot load without a legacy beta fixture.");
+if (!atlasPage.includes("Atlas needs your career profile") || atlasPage.includes("Atlas is {profile.atlasState.toLowerCase()}")) throw new Error("Atlas shows an unprofessional empty-profile status.");
 
 console.log("PASS Live executive profile and Founder authorization regression checks.");

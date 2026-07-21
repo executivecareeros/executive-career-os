@@ -76,6 +76,11 @@ async function LiveAtlas({ from, prompt }: { from?: string; prompt?: string }) {
     return !response;
   });
   const handoff = resolveAtlasHandoffContext(from);
+  const atlasContextTitle = profile.atlasState === "Needs CV"
+    ? "Atlas needs your career profile"
+    : profile.atlasState === "Learning"
+      ? "Atlas is learning from your confirmed profile"
+      : "Atlas is ready";
 
   return (
     <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6 lg:px-10">
@@ -89,7 +94,7 @@ async function LiveAtlas({ from, prompt }: { from?: string; prompt?: string }) {
       {prompt && <section className="mt-4 rounded-2xl border border-[#cfdaf0] bg-white p-5 shadow-sm"><p className="text-xs font-semibold uppercase tracking-[.17em] text-[#3457d5]">Selected question</p><p className="mt-2 text-base font-semibold text-[#30343a]">{prompt.slice(0, 300)}</p><p className="mt-2 text-sm text-[#626970]">Atlas has carried this question into your evidence review.</p></section>}
       <section className="mt-8 rounded-2xl border border-[#d8ddd9] bg-[#f6f8f6] p-6">
         <p className="text-xs font-semibold uppercase tracking-[.17em] text-[#55705d]">Current context</p>
-        <h2 className="mt-3 text-2xl font-semibold">Atlas is {profile.atlasState.toLowerCase()}</h2>
+        <h2 className="mt-3 text-2xl font-semibold">{atlasContextTitle}</h2>
         <p className="mt-3 text-sm leading-6 text-[#626970]">{profile.hasStructuredProfile ? `${profile.confirmedRoleCount} confirmed ${profile.confirmedRoleCount === 1 ? "role is" : "roles are"} available for opportunity analysis.` : "Atlas needs confirmed career history before it can provide personalized guidance."}</p>
       </section>
       {recommendation ? (
