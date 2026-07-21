@@ -164,7 +164,8 @@ function careerFit(opportunity: Opportunity, context?: ExecutiveCareerContext) {
   const profileLeadershipShare = context.roleTitles.filter((title) => leadershipTitle.test(normalize(title))).length / context.roleTitles.length;
   const opportunityTitle = normalize(opportunity.jobTitle);
   const opportunityIsLeadership = leadershipTitle.test(opportunityTitle);
-  const opportunityIsIndividualContributor = individualContributorTitle.test(opportunityTitle) && !opportunityIsLeadership;
+  const explicitlyIndividualContributor = /\bindividual contributor\b/.test(normalize(opportunity.summary));
+  const opportunityIsIndividualContributor = (individualContributorTitle.test(opportunityTitle) && !opportunityIsLeadership) || explicitlyIndividualContributor;
   const functionMismatch = opportunityFamilies.length > 0 && familyOverlap === 0;
   if (profileLeadershipShare >= .5 && opportunityIsIndividualContributor) titleFit = Math.min(titleFit, 12);
   else if (functionMismatch) titleFit = Math.min(titleFit, 24);
