@@ -8,6 +8,7 @@ const opportunities = [
   { ...base, id: "engineering", companyName: "Engineering Co", jobTitle: "VP Engineering", summary: "Lead platform engineering and developer infrastructure." },
   { ...base, id: "us-only", companyName: "US Co", jobTitle: "Chief Revenue Officer", country: "United States", location: "US residents only — Remote", workArrangement: "Remote" },
   { ...base, id: "support", companyName: "Support Co", jobTitle: "Technical Support Engineer", executiveFitScore: 96, overallScore: 96, summary: "Support an AI-enabled SaaS platform and its enterprise customers." },
+  { ...base, id: "tech-lead", companyName: "Fintech Co", jobTitle: "Technical Lead - Fintech", executiveFitScore: 96, overallScore: 96, summary: "Architect and lead a credit risk platform." },
 ];
 const careerContext = { roleTitles: ["Group Sales Director", "Managing Director", "Business Development Director"], industries: ["Enterprise Software", "Broadcast Technology"], capabilities: ["Sales", "Business Development", "Go-to-market"] };
 const profile = founderGeographicProfileFixture();
@@ -21,6 +22,9 @@ const support = assessOpportunityConfidence(opportunities[3], profile, careerCon
 assert.ok(commercial.opportunityConfidence - support.opportunityConfidence >= 15, "Broad technology keywords must not let an individual-contributor support role outrank confirmed commercial leadership");
 assert.match(support.professionalExplanation, /individual-contributor/, "Atlas must explain the leadership-level mismatch");
 assert.ok(support.opportunityConfidence < 40, "Clear career-function conflicts must remain below viable executive matches even with favorable geography");
+const techLead = assessOpportunityConfidence(opportunities[4], profile, careerContext);
+assert.ok(techLead.opportunityConfidence < 40, "A technical-lead title must not be promoted by general leadership language");
+assert.match(techLead.professionalExplanation, /not supported/, "Atlas must explain the technical function mismatch");
 const ambiguousCro = assessOpportunityConfidence({ ...base, id: "cro-marketing", companyName: "Growth Co", jobTitle: "Conversion Rate Optimization (CRO) Manager" }, profile, careerContext);
 assert.doesNotMatch(ambiguousCro.professionalExplanation, /align/, "CRO must not be interpreted as Chief Revenue Officer without explicit title evidence");
 assert.ok(assessOpportunityConfidence(opportunities[2], profile, careerContext).opportunityConfidence <= 20, "Hard eligibility rules must cap confidence");

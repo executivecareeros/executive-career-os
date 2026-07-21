@@ -124,10 +124,10 @@ const has = (text: string, expression: RegExp) => expression.test(text);
 const executiveRoleFamilies = {
   sales: ["sales", "account executive", "commercial director"],
   revenue: ["revenue", "chief revenue officer"],
-  businessDevelopment: ["business development", "partnership", "alliances"],
+  businessDevelopment: ["business development", "partnership", "partner funding", "fundraising", "alliances"],
   commercialLeadership: ["commercial leadership", "commercial strategy", "go to market", "gtm"],
   generalManagement: ["general manager", "managing director", "country manager", "business unit"],
-  technical: ["engineer", "engineering", "developer", "technical support", "solutions architect", "data scientist", "information technology"],
+  technical: ["engineer", "engineering", "developer", "technical lead", "tech lead", "technical support", "solutions architect", "data scientist", "information technology"],
   product: ["product manager", "product management", "product director", "chief product officer"],
   finance: ["finance", "financial", "accounting", "controller", "chief financial officer", "cfo"],
   people: ["human resources", "people officer", "talent", "recruiter"],
