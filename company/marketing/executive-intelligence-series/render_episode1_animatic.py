@@ -5,8 +5,11 @@ import sys
 
 ROOT = Path(__file__).resolve().parent
 NEURAL_FINAL = "--neural-final" in sys.argv
-NEURAL_SYNCED = "--neural-synced" in sys.argv or NEURAL_FINAL
-if NEURAL_FINAL:
+VISUAL_STORY = "--visual-story" in sys.argv
+NEURAL_SYNCED = "--neural-synced" in sys.argv or NEURAL_FINAL or VISUAL_STORY
+if VISUAL_STORY:
+    frame_directory = ".animatic-visual-story-frames"
+elif NEURAL_FINAL:
     frame_directory = ".animatic-neural-final-frames"
 elif NEURAL_SYNCED:
     frame_directory = ".animatic-neural-synced-frames"
@@ -19,6 +22,8 @@ W, H, FPS = 1280, 720, 12
 DURATION = 64 if NEURAL_SYNCED else 84
 NAVY, BLACK, WHITE = "#0B1220", "#070A0F", "#F7F9FC"
 BLUE, MINT, MUTED, STONE = "#6D8CFF", "#7DE2C6", "#8B95A5", "#E8DFD3"
+VISUALS = ROOT / "visual-story"
+PHOTO_CACHE = {}
 
 FONT_REG = "/System/Library/Fonts/SFNS.ttf"
 FONT_BOLD = "/System/Library/Fonts/SFNS.ttf"
@@ -93,6 +98,96 @@ def fragment(draw, x, y, w, h, title, detail, progress):
     draw.text((x+48, y+16), title, font=font(22, True), fill=WHITE)
     draw.text((x+22, y+54), detail, font=font(16), fill=MUTED)
 
+def photo_frame(filename, progress=0.0, darkness=0.22, pan_x=0.0, pan_y=0.0):
+    if filename not in PHOTO_CACHE:
+        PHOTO_CACHE[filename] = Image.open(VISUALS / filename).convert("RGB")
+    source = PHOTO_CACHE[filename]
+    zoom = 1.02 + 0.055 * ease(progress)
+    scale = max(W / source.width, H / source.height) * zoom
+    resized = source.resize((int(source.width * scale), int(source.height * scale)), Image.Resampling.LANCZOS)
+    room_x, room_y = max(0, resized.width - W), max(0, resized.height - H)
+    left = int(room_x * (0.5 + pan_x * (progress - 0.5)))
+    top = int(room_y * (0.5 + pan_y * (progress - 0.5)))
+    left = max(0, min(room_x, left)); top = max(0, min(room_y, top))
+    image = resized.crop((left, top, left + W, top + H))
+    return Image.blend(image, Image.new("RGB", (W, H), BLACK), darkness) if darkness else image
+
+def pill(draw, x, y, text, color=MINT):
+    f = font(16, True)
+    width = draw.textlength(text, font=f) + 38
+    draw.rounded_rectangle((x, y, x + width, y + 38), radius=19, fill="#0B1220", outline=color, width=2)
+    draw.text((x + 19, y + 9), text, font=f, fill=WHITE)
+
+def visual_story_scene(t):
+    if t < 10.4:
+        image = photo_frame("01-fragmented-search.png", t / 10.4, .28, .22)
+        d = ImageDraw.Draw(image)
+        if t < 2.7:
+            d.rounded_rectangle((54, 54, 650, 137), radius=20, fill="#070A0F")
+            d.text((82, 76), "LOOKING FOR YOUR NEXT EXECUTIVE ROLE?", font=font(27, True), fill=WHITE)
+        elif t < 4.6:
+            d.rounded_rectangle((54, 54, 635, 137), radius=20, fill="#070A0F")
+            d.text((82, 76), "THAT IS NOT THE REAL PROBLEM.", font=font(30, True), fill=WHITE)
+        else:
+            pill(d, 70, 74, "JOB BOARDS", BLUE); pill(d, 245, 74, "RECRUITERS", MINT); pill(d, 405, 74, "COMPANY SITES", STONE)
+        return image
+    if t < 27:
+        image = photo_frame("02-fragmented-evidence.png", (t - 10.4) / 16.6, .27, -.18, .08)
+        d = ImageDraw.Draw(image)
+        if t > 21.8:
+            d.rounded_rectangle((292, 555, 988, 632), radius=20, fill="#070A0F")
+            centered(d, "MORE ACCESS. MORE FRAGMENTS. LESS CLARITY.", 578, 26, WHITE, True, 1)
+        return image
+    if t < 32.7:
+        p = (t - 27) / 5.7
+        image = photo_frame("02-fragmented-evidence.png", 1, .58 + .12 * p, -.18, .08)
+        d = ImageDraw.Draw(image)
+        centered(d, "NOT A SHORTAGE OF JOBS.", 267, 34, STONE, True, 2)
+        if t > 29.8:
+            centered(d, "A SHORTAGE OF INTELLIGENCE.", 350, 45, WHITE, True, 2)
+            d.line((360, 420, 920, 420), fill=BLUE, width=4)
+        return image
+    if t < 47.95:
+        image = photo_frame("03-intelligence-convergence.png", (t - 32.7) / 15.25, .18, .12)
+        d = ImageDraw.Draw(image)
+        if t < 36.4:
+            d.rounded_rectangle((56, 55, 720, 139), radius=20, fill="#070A0F")
+            d.text((84, 77), "WHAT IF EVERY OPPORTUNITY ARRIVED WITH CONTEXT?", font=font(25, True), fill=WHITE)
+        elif t < 45:
+            for i, (label, color) in enumerate([("WHY IT FITS", MINT), ("WHY IT MAY NOT", STONE), ("CONFIRMED", MINT), ("UNKNOWN", MUTED), ("NEXT ACTION", BLUE)]):
+                pill(d, 58, 54 + i * 51, label, color)
+        else:
+            d.rounded_rectangle((54, 54, 560, 154), radius=22, fill="#070A0F")
+            d.text((84, 73), "EXECUTIVE", font=font(19, True), fill=BLUE)
+            d.text((84, 101), "INTELLIGENCE", font=font(36, True), fill=WHITE)
+        return image
+    if t < 53.6:
+        image = photo_frame("03-intelligence-convergence.png", 1, .43, .12)
+        d = ImageDraw.Draw(image)
+        d.rounded_rectangle((125, 224, 1155, 500), radius=30, fill="#070A0F")
+        d.text((205, 274), "MOST PLATFORMS", font=font(20, True), fill=MUTED)
+        d.text((205, 320), "APPLY", font=font(54, True), fill=WHITE)
+        d.line((580, 275, 580, 448), fill="#344056", width=2)
+        d.text((650, 274), "ORENDALIS", font=font(20, True), fill=BLUE)
+        d.text((650, 320), "DECIDE", font=font(54, True), fill=MINT)
+        return image
+    if t < 59.5:
+        image = photo_frame("04-decision-clarity.png", (t - 53.6) / 5.9, .13, -.08)
+        d = ImageDraw.Draw(image)
+        d.rounded_rectangle((54, 54, 670, 165), radius=22, fill="#070A0F")
+        if t < 56.15:
+            d.text((84, 76), "THE EXECUTIVE HIRING PROCESS", font=font(23, True), fill=STONE)
+            d.text((84, 111), "IS BROKEN.", font=font(35, True), fill=WHITE)
+        else:
+            d.text((84, 88), "IT IS TIME TO EXPECT BETTER.", font=font(31, True), fill=WHITE)
+        return image
+    image = Image.new("RGB", (W, H), BLACK)
+    d = ImageDraw.Draw(image); mark(d, 640, 238, .85)
+    centered(d, "EXECUTIVE INTELLIGENCE", 353, 24, BLUE, True, 4)
+    centered(d, "ORENDALIS", 405, 50, WHITE, True, 8)
+    centered(d, "orendalis.com", 492, 23, MUTED, False, 2)
+    return image
+
 def neural_visual_time(t):
     """Map approved narration beats to the matching visual scenes.
 
@@ -120,6 +215,8 @@ def neural_visual_time(t):
     return 83.999
 
 def scene(t):
+    if VISUAL_STORY:
+        return visual_story_scene(t)
     presentation_t = t
     if NEURAL_SYNCED:
         t = neural_visual_time(t)

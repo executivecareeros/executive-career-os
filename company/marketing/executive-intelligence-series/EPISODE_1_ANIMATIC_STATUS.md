@@ -4,7 +4,7 @@
 
 The 64-second synchronized neural Generation 1 cut establishes the current visual structure, scene order, typography, approved human-like narration, score and pacing for **The Executive Hiring Process Is Broken**. It supersedes the fixed-timeline neural cut and both macOS system-voice cuts.
 
-The clean public master is now available as a release candidate. Final public
+The cinematic visual-story cut is now available as the release candidate. Final public
 distribution remains subject to Founder viewing approval and the launch checks
 listed below.
 
@@ -14,6 +14,7 @@ listed below.
 - Format: 1280 × 720, H.264, 24 fps
 - Narration: Founder-approved Eleven v3 Generation 1 delivery at approximately 128 spoken words per minute; Founder narration is not required
 - Synchronization: visual beats follow the natural start and end of each spoken idea; narration is not stretched
+- Visual storytelling: four cinematic acts communicate fragmentation, evidence overload, intelligence convergence and regained decision clarity without relying on captions
 - Original score: procedural, rights-clear production draft
 - Captions: timed English subtitle track and editable SRT
 - Core message: “The executive hiring process is broken.”
@@ -42,9 +43,12 @@ listed below.
 - `ORENDALIS_EPISODE_1_NEURAL_SYNCED_CUT_GEN1.mp4` — current 64-second synchronized approval film
 - `ORENDALIS_EPISODE_1_NEURAL_SYNCED_CAPTIONS.srt` — phrase-accurate English captions for the approved narration
 - `ORENDALIS_EPISODE_1_PUBLIC_MASTER.mp4` — clean 64-second release candidate with selectable English captions
+- `ORENDALIS_EPISODE_1_VISUAL_STORY_CUT.mp4` — cinematic 64-second visual-story release candidate with selectable English captions
+- `visual-story/` — project-bound cinematic source plates used by the visual-story renderer
 - `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION.wav` — directed narration master
 - `CINEMATIC_NARRATION_DIRECTION.md` — final performance decision and script
 - `episode1_reference_voiceover.txt` — approved narration text
 - `episode1_reference_voiceover.aiff` — temporary timing track only
 - `render_episode1_animatic.py --neural-synced` — deterministic narration-synchronized approval renderer
 - `render_episode1_animatic.py --neural-final` — clean public-master renderer without production markings
+- `render_episode1_animatic.py --visual-story` — cinematic visual-story renderer
