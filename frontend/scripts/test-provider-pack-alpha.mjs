@@ -6,6 +6,7 @@ import { OpportunityProviderCatalog } from "../lib/discovery/providers/catalog.t
 import { productionProviderAdapters } from "../lib/discovery/providers/production-catalog.ts";
 import { JobicyOpportunityProvider } from "../lib/discovery/providers/jobicy.ts";
 import { ArbeitnowOpportunityProvider } from "../lib/discovery/providers/arbeitnow.ts";
+import { UsaJobsOpportunityProvider } from "../lib/discovery/providers/usajobs.ts";
 import { OpportunityCoverageEngine } from "../lib/discovery/coverage-engine.ts";
 import { MemoryOpportunityIngestionSink } from "../lib/discovery/pipeline.ts";
 
@@ -30,6 +31,16 @@ const arbeitnowBatch = await new ArbeitnowOpportunityProvider(arbeitnowFetch).co
 assert.equal(arbeitnowBatch.jobs[0].company.name, "EuropeCo");
 assert.equal(arbeitnowBatch.jobs[0].rawMetadata.attribution, "Arbeitnow");
 assert.equal(arbeitnowBatch.jobs[0].rawMetadata.workArrangement, "Remote");
+
+const usaJobsFetch = async (_url, init) => {
+  assert.equal(init.headers["Authorization-Key"], "test-key");
+  assert.equal(init.headers["User-Agent"], "operations@orendalis.com");
+  return new Response(JSON.stringify({ SearchResult: { SearchResultCountAll: 1, SearchResultItems: [{ MatchedObjectId: "123", MatchedObjectDescriptor: { PositionID: "SES-123", PositionTitle: "Director of Commercial Strategy", PositionURI: "https://www.usajobs.gov/job/123", ApplyURI: ["https://www.usajobs.gov/job/123/apply"], PositionLocationDisplay: "Washington, District of Columbia", PositionLocation: [{ LocationName: "Washington, District of Columbia", CountryCode: "United States" }], OrganizationName: "Department of Commerce", DepartmentName: "Department of Commerce", QualificationSummary: "Lead commercial strategy.", PositionRemuneration: [{ MinimumRange: "150000", MaximumRange: "190000", RateIntervalCode: "PA" }], PositionSchedule: [{ Name: "Full-time" }], PublicationStartDate: "2026-07-21T00:00:00Z", UserArea: { Details: { JobSummary: "Executive leadership role.", WhoMayApply: { Name: "The public" }, RemoteIndicator: false } } } }] } }), { status: 200 });
+};
+const usaJobsBatch = await new UsaJobsOpportunityProvider("test-key", "operations@orendalis.com", usaJobsFetch).collect({ runId: "usajobs-test", requestedAt: "2026-07-21T10:00:00Z", maximumResults: 10, filters: { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] } });
+assert.equal(usaJobsBatch.jobs[0].company.name, "Department of Commerce");
+assert.equal(usaJobsBatch.jobs[0].rawMetadata.attribution, "USAJOBS");
+assert.equal(usaJobsBatch.jobs[0].salary.minimum, 150000);
 
 const customProvider = { id: "future-approved-provider", source: { id: "future-approved-provider", name: "Future provider", category: "Verified Feed", description: "Test adapter", capabilities: ["jobs"] }, reliability: { type: "Verified Feed", rating: "high", score: 80, rationale: "Test", assessedAt: "2026-07-14T00:00:00Z" }, async collect() { return { providerId: "future-approved-provider", collectedAt: "2026-07-14T00:00:00Z", jobs: [] }; }, async health() { return { source: "future-approved-provider", status: "available", checkedAt: "2026-07-14T00:00:00Z", message: "Ready" }; } };
 const approvedEvaluation = { executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high", accessModel: "public-feed", reviewStatus: "approved", founderGateReasons: [], reviewedAt: "2026-07-14T00:00:00Z" };

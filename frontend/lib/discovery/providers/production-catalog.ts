@@ -9,6 +9,7 @@ import { SmartRecruitersOpportunityProvider, parseSmartRecruitersCompany } from 
 import { WorkableOpportunityProvider, parseWorkableAccount } from "./workable.ts";
 import { JobicyOpportunityProvider } from "./jobicy.ts";
 import { ArbeitnowOpportunityProvider } from "./arbeitnow.ts";
+import { UsaJobsOpportunityProvider } from "./usajobs.ts";
 import { OpportunityProviderCatalog } from "./catalog.ts";
 
 const reviewedAt = "2026-07-14T00:00:00.000Z";
@@ -61,6 +62,11 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
     id: "arbeitnow", name: "Arbeitnow", supports: (url) => url.hostname.toLowerCase() === "www.arbeitnow.com" && url.pathname === "/api/job-board-api",
     create: () => new ArbeitnowOpportunityProvider(),
     evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "moderate", dataQuality: "moderate", freshness: "high", legalCompliance: "high", reliability: "moderate", scalability: "high", engineeringEfficiency: "high" }, "public-feed"),
+  },
+  {
+    id: "usajobs", name: "USAJOBS", supports: (url) => url.hostname.toLowerCase() === "data.usajobs.gov" && url.pathname.toLowerCase() === "/api/search",
+    create: () => new UsaJobsOpportunityProvider(process.env.USAJOBS_API_KEY ?? "", process.env.USAJOBS_USER_AGENT_EMAIL ?? ""),
+    evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "moderate", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
   },
   {
     id: "corporate-career-site", name: "Company Career Site", supports: isSafePublicCareerUrl,

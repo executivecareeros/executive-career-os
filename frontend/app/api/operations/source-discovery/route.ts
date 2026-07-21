@@ -3,7 +3,7 @@ import { schedulerRequestAuthorized } from "@/lib/discovery/scheduler-auth";
 import { createSchedulerSupabaseClient } from "@/lib/supabase/scheduler";
 import { discoverPublicEmployerSources } from "@/lib/discovery/public-employer-discovery";
 import { prepareEmployerSourceBatch, registerEmployerSourceBatch, validateEmployerSourceBatch } from "@/lib/discovery/employer-source-factory";
-import { publicGlobalFeedSources } from "@/lib/discovery/public-global-feeds";
+import { credentialedGlobalFeedSources, publicGlobalFeedSources } from "@/lib/discovery/public-global-feeds";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 240;
@@ -45,11 +45,12 @@ export async function GET(request: Request) {
     const connected = prepared.prepared.map(source => ({ ...source, healthStatus: "connected" as const, healthMessage: "Verified through the provider's public active-job endpoint." }));
     const registration = await registerEmployerSourceBatch(client, { workspaceId, actorId, sources: connected });
     const existingSourceKeys = new Set(scheduleRegistry.map(item => item.source_key));
-    const globalFeedBatch = prepareEmployerSourceBatch(publicGlobalFeedSources);
+    const eligibleGlobalFeeds = [...publicGlobalFeedSources, ...credentialedGlobalFeedSources()];
+    const globalFeedBatch = prepareEmployerSourceBatch(eligibleGlobalFeeds);
     const pendingGlobalFeeds = { ...globalFeedBatch, prepared: globalFeedBatch.prepared.filter(source => !existingSourceKeys.has(source.sourceKey)) };
     const globalFeedValidation = await validateEmployerSourceBatch(pendingGlobalFeeds, 2);
     const globalFeedRegistration = await registerEmployerSourceBatch(client, { workspaceId, actorId, sources: globalFeedValidation.validated });
-    const result = { candidates: discovery.candidates, attempted: discovery.attempted, failures: discovery.failures, advertisedActiveJobs: discovery.advertisedActiveJobs, ...registration, globalFeeds: { eligible: publicGlobalFeedSources.length, failures: globalFeedValidation.failures.length, ...globalFeedRegistration }, aiTokens: 0 };
+    const result = { candidates: discovery.candidates, attempted: discovery.attempted, failures: discovery.failures, advertisedActiveJobs: discovery.advertisedActiveJobs, ...registration, globalFeeds: { eligible: eligibleGlobalFeeds.length, failures: globalFeedValidation.failures.length, ...globalFeedRegistration }, aiTokens: 0 };
     console.info("ZERO_TOKEN_SOURCE_DISCOVERY", JSON.stringify(result));
     return NextResponse.json(result);
   } catch (error) {
