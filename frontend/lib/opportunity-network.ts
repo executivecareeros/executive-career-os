@@ -60,27 +60,9 @@ export async function resolveOpportunityNetworkWorkspace() {
 
 export async function loadNetworkOpportunities(limit = EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT) {
   const client = createSchedulerSupabaseClient(), workspaceId = await resolveOpportunityNetworkWorkspace();
-  const projection = [
-    "id", "domain_id", "company_id", "version", "updated_at",
-    "companyName:payload->>companyName", "companyInitials:payload->>companyInitials", "jobTitle:payload->>jobTitle",
-    "location:payload->>location", "country:payload->>country", "workArrangement:payload->>workArrangement",
-    "employmentType:payload->>employmentType", "industry:payload->>industry", "companySize:payload->>companySize",
-    "source:payload->>source", "sourceUrl:payload->>sourceUrl", "canonicalUrl:payload->>canonicalUrl",
-    "verificationStatus:payload->>verificationStatus", "publishedAt:payload->>publishedAt", "discoveredAt:payload->>discoveredAt",
-    "salaryMin:payload->>salaryMin", "salaryMax:payload->>salaryMax", "salaryCurrency:payload->>salaryCurrency",
-    "salaryDisclosure:payload->>salaryDisclosure", "executiveFitScore:payload->>executiveFitScore",
-    "strategicOpportunityScore:payload->>strategicOpportunityScore", "overallScore:payload->>overallScore",
-    "confidenceScore:payload->>confidenceScore", "completenessScore:payload->>completenessScore",
-    "status:payload->>status", "priority:payload->>priority", "travelRequirement:payload->>travelRequirement",
-    "requiredSkills:payload->requiredSkills", "matchingStrengths:payload->matchingStrengths", "riskFlags:payload->riskFlags",
-    "exclusions:payload->exclusions", "freshness:payload->freshness", "industryClassification:payload->industryClassification",
-  ].join(",");
-  const response = await client.request<Array<Omit<NetworkOpportunityRow, "payload"> & Record<string, unknown>>>(`opportunities?select=${projection}&workspace_id=eq.${workspaceId}&archived_at=is.null&domain_id=like.discovered-*&status=in.(Discovered,Evaluating,Qualified,Ready%20to%20Apply,Applied,Interview)&order=updated_at.desc&limit=${Math.max(1, Math.min(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, limit))}`);
+  const response = await client.request<NetworkOpportunityRow[]>(`opportunities?select=id,domain_id,company_id,version,payload,updated_at&workspace_id=eq.${workspaceId}&archived_at=is.null&domain_id=like.discovered-*&status=in.(Discovered,Evaluating,Qualified,Ready%20to%20Apply,Applied,Interview)&order=updated_at.desc&limit=${Math.max(1, Math.min(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, limit))}`);
   if (response.error) throw new Error("The Opportunity Network could not be loaded safely.");
-  return (response.data ?? []).map((row) => {
-    const { id, domain_id, company_id, version, updated_at, ...payload } = row;
-    return { id, domain_id, company_id, version, updated_at, payload } satisfies NetworkOpportunityRow;
-  });
+  return response.data ?? [];
 }
 
 export async function loadNetworkOpportunity(domainId: string) {
