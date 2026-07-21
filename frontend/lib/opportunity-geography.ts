@@ -123,7 +123,7 @@ const has = (text: string, expression: RegExp) => expression.test(text);
 
 const executiveRoleFamilies = {
   sales: ["sales", "account executive", "commercial director"],
-  revenue: ["revenue", "cro", "chief revenue officer"],
+  revenue: ["revenue", "chief revenue officer"],
   businessDevelopment: ["business development", "partnership", "alliances"],
   commercialLeadership: ["commercial leadership", "commercial strategy", "go to market", "gtm"],
   generalManagement: ["general manager", "managing director", "country manager", "business unit"],
@@ -150,7 +150,7 @@ function relatedFamilyOverlap(profileFamilies: Set<string>, opportunityFamilies:
 
 function careerFit(opportunity: Opportunity, context?: ExecutiveCareerContext) {
   const baseline = clamp(opportunity.executiveFitScore || opportunity.overallScore || 0);
-  if (!context || !context.roleTitles.length) return { professionalFit: baseline, industryFit: clamp(opportunity.strategicOpportunityScore || 50), explanation: "Professional fit is not yet personalized because no confirmed role history is available." };
+  if (!context || !context.roleTitles.length) return { professionalFit: baseline, industryFit: clamp(opportunity.strategicOpportunityScore || 50), mismatch: false, explanation: "Professional fit is not yet personalized because no confirmed role history is available." };
   const roleEvidence = context.roleTitles.join(" ");
   const profileFamilies = new Set(familyMatches(roleEvidence));
   // Role function is determined from the title. Industry and skill language in
@@ -186,7 +186,7 @@ function careerFit(opportunity: Opportunity, context?: ExecutiveCareerContext) {
         : familyOverlap > 0
           ? "The role function aligns with confirmed career-title evidence."
           : "The confirmed career titles provide limited evidence for this role function.";
-  return { professionalFit, industryFit, explanation };
+  return { professionalFit, industryFit, mismatch: functionMismatch || (profileLeadershipShare >= .5 && opportunityIsIndividualContributor), explanation };
 }
 
 export function classifyGeographicEligibility(opportunity: Opportunity, profile: ExecutiveGeographicProfile): { state: EligibilityState; explanation: string; missingInformation: string[] } {
@@ -263,7 +263,11 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const dataCompleteness = clamp(opportunity.completenessScore ?? [opportunity.companyName, opportunity.jobTitle, opportunity.location, opportunity.country, opportunity.summary, opportunity.sourceUrl].filter(Boolean).length / 6 * 100);
   const missingPenalty = eligibility.missingInformation.length * 3 + (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 8 : 0);
   const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .30 + skillsFit * .15 + industryFit * .10 + userPreferenceFit * .10 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
-  const opportunityConfidence = Math.min(hardCap[eligibility.state], clamp(weighted));
+  let opportunityConfidence = Math.min(hardCap[eligibility.state], clamp(weighted));
+  // Clear career-function conflicts are not strong recommendations even when
+  // the role has favorable location evidence. Geography can disqualify a role;
+  // it cannot manufacture professional fit.
+  if (career.mismatch && careerContext?.roleTitles.length) opportunityConfidence = Math.min(opportunityConfidence, 39);
   const evidenceCompleteness = clamp(100 - eligibility.missingInformation.length * 15 - (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 20 : 0));
   const label: OpportunityConfidenceResult["label"] = eligibility.state === "Not Currently Eligible" ? "Not Currently Eligible" : eligibility.state === "Relocation Required" || eligibility.state === "Sponsorship Required" ? "Stretch or Relocation Option" : eligibility.state === "Eligibility Unknown" ? "Eligibility Unclear" : opportunityConfidence >= 85 ? "Excellent Opportunity" : opportunityConfidence >= 70 ? "Strong Opportunity" : opportunityConfidence >= 50 ? "Worth Reviewing" : "Possible Fit";
   const hardExclusions = eligibility.state === "Not Currently Eligible" ? [eligibility.explanation] : [];

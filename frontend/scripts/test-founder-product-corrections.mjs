@@ -20,6 +20,9 @@ assert.ok(commercial.opportunityConfidence - engineering.opportunityConfidence >
 const support = assessOpportunityConfidence(opportunities[3], profile, careerContext);
 assert.ok(commercial.opportunityConfidence - support.opportunityConfidence >= 15, "Broad technology keywords must not let an individual-contributor support role outrank confirmed commercial leadership");
 assert.match(support.professionalExplanation, /individual-contributor/, "Atlas must explain the leadership-level mismatch");
+assert.ok(support.opportunityConfidence < 40, "Clear career-function conflicts must remain below viable executive matches even with favorable geography");
+const ambiguousCro = assessOpportunityConfidence({ ...base, id: "cro-marketing", companyName: "Growth Co", jobTitle: "Conversion Rate Optimization (CRO) Manager" }, profile, careerContext);
+assert.doesNotMatch(ambiguousCro.professionalExplanation, /align/, "CRO must not be interpreted as Chief Revenue Officer without explicit title evidence");
 assert.ok(assessOpportunityConfidence(opportunities[2], profile, careerContext).opportunityConfidence <= 20, "Hard eligibility rules must cap confidence");
 
 const review = await readFile(new URL("../components/opportunities/collected-opportunity-intelligence.tsx", import.meta.url), "utf8");
