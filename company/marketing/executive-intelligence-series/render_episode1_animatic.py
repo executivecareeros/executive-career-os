@@ -1,12 +1,15 @@
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import math
+import sys
 
 ROOT = Path(__file__).resolve().parent
-FRAMES = ROOT / ".animatic-frames"
+NEURAL_SYNCED = "--neural-synced" in sys.argv
+FRAMES = ROOT / (".animatic-neural-synced-frames" if NEURAL_SYNCED else ".animatic-frames")
 FRAMES.mkdir(exist_ok=True)
 
-W, H, FPS, DURATION = 1280, 720, 12, 84
+W, H, FPS = 1280, 720, 12
+DURATION = 64 if NEURAL_SYNCED else 84
 NAVY, BLACK, WHITE = "#0B1220", "#070A0F", "#F7F9FC"
 BLUE, MINT, MUTED, STONE = "#6D8CFF", "#7DE2C6", "#8B95A5", "#E8DFD3"
 
@@ -83,7 +86,36 @@ def fragment(draw, x, y, w, h, title, detail, progress):
     draw.text((x+48, y+16), title, font=font(22, True), fill=WHITE)
     draw.text((x+22, y+54), detail, font=font(16), fill=MUTED)
 
+def neural_visual_time(t):
+    """Map approved narration beats to the matching visual scenes.
+
+    The neural narration is never stretched. Instead, each visual scene is
+    retimed to the phrase it illustrates. The unspoken Atlas UI scene is
+    intentionally omitted from this approval cut.
+    """
+    timeline = [
+        (0.00, 2.70, 0.00, 3.00),    # Looking for your next executive role?
+        (2.70, 4.60, 3.00, 9.00),    # That is not the real problem.
+        (4.60, 10.40, 9.00, 15.00),  # The roles are everywhere + sources.
+        (10.40, 27.00, 15.00, 26.00),# Career fragments + more fragments.
+        (27.00, 32.70, 26.00, 36.00),# Shortage of intelligence.
+        (32.70, 36.40, 36.00, 45.00),# Opportunity with context.
+        (36.40, 45.00, 52.00, 59.00),# Why, evidence, unknowns, next action.
+        (45.00, 47.95, 45.00, 52.00),# Executive Intelligence system.
+        (47.95, 53.60, 67.00, 73.00),# Apply versus decide.
+        (53.60, 59.50, 73.00, 81.00),# Broken process / expect better.
+        (59.50, 64.00, 81.00, 84.00),# End card.
+    ]
+    for start, end, visual_start, visual_end in timeline:
+        if start <= t < end or (t >= 64 and end == 64):
+            progress = (t - start) / max(0.001, end - start)
+            return visual_start + progress * (visual_end - visual_start)
+    return 83.999
+
 def scene(t):
+    presentation_t = t
+    if NEURAL_SYNCED:
+        t = neural_visual_time(t)
     img, d = base(t)
     # 01 — interruption
     if t < 3:
@@ -164,8 +196,9 @@ def scene(t):
 
     # Frame-safe production watermark, deliberately absent from the final end card.
     if t < 81:
-        d.text((45, 668), "EPISODE 1 · APPROVAL ANIMATIC", font=font(13, True), fill="#526078")
-        d.text((1060, 668), f"{int(t):02d}:00", font=font(13), fill="#526078")
+        label = "EPISODE 1 · NARRATION SYNC" if NEURAL_SYNCED else "EPISODE 1 · APPROVAL ANIMATIC"
+        d.text((45, 668), label, font=font(13, True), fill="#526078")
+        d.text((1060, 668), f"{int(presentation_t):02d}:00", font=font(13), fill="#526078")
     return img
 
 for frame in range(DURATION * FPS):
