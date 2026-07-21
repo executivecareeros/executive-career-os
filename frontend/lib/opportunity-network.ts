@@ -60,7 +60,10 @@ export async function resolveOpportunityNetworkWorkspace() {
 
 export async function loadNetworkOpportunities(limit = EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT) {
   const client = createSchedulerSupabaseClient(), workspaceId = await resolveOpportunityNetworkWorkspace();
-  const response = await client.request<NetworkOpportunityRow[]>(`opportunities?select=id,domain_id,company_id,version,payload,updated_at&workspace_id=eq.${workspaceId}&archived_at=is.null&domain_id=like.discovered-*&status=in.(Discovered,Evaluating,Qualified,Ready%20to%20Apply,Applied,Interview)&order=updated_at.desc&limit=${Math.max(1, Math.min(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, limit))}`);
+  const response = await client.request<NetworkOpportunityRow[]>("rpc/get_opportunity_candidates", {
+    method: "POST",
+    body: JSON.stringify({ target_workspace: workspaceId, candidate_limit: Math.max(1, Math.min(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, limit)) }),
+  });
   if (response.error) throw new Error("The Opportunity Network could not be loaded safely.");
   return response.data ?? [];
 }
