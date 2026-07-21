@@ -39,6 +39,13 @@ export type NetworkCoverageMetrics = {
   freshOpportunities?: number;
 };
 
+/**
+ * A bounded live decision window. Large enough to give Search and Atlas broad
+ * employer/geography coverage, while keeping authenticated page payloads fast
+ * on mobile. All opportunity decision surfaces must use the same window.
+ */
+export const EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT = 1_000;
+
 let networkWorkspaceCache: { id: string; expiresAt: number } | undefined;
 
 export async function resolveOpportunityNetworkWorkspace() {
@@ -51,9 +58,9 @@ export async function resolveOpportunityNetworkWorkspace() {
   return id;
 }
 
-export async function loadNetworkOpportunities(limit = 300) {
+export async function loadNetworkOpportunities(limit = EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT) {
   const client = createSchedulerSupabaseClient(), workspaceId = await resolveOpportunityNetworkWorkspace();
-  const response = await client.request<NetworkOpportunityRow[]>(`opportunities?select=id,domain_id,company_id,version,payload,updated_at&workspace_id=eq.${workspaceId}&archived_at=is.null&domain_id=like.discovered-*&status=in.(Discovered,Evaluating,Qualified,Ready%20to%20Apply,Applied,Interview)&order=updated_at.desc&limit=${Math.max(1, Math.min(500, limit))}`);
+  const response = await client.request<NetworkOpportunityRow[]>(`opportunities?select=id,domain_id,company_id,version,payload,updated_at&workspace_id=eq.${workspaceId}&archived_at=is.null&domain_id=like.discovered-*&status=in.(Discovered,Evaluating,Qualified,Ready%20to%20Apply,Applied,Interview)&order=updated_at.desc&limit=${Math.max(1, Math.min(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, limit))}`);
   if (response.error) throw new Error("The Opportunity Network could not be loaded safely.");
   return response.data ?? [];
 }

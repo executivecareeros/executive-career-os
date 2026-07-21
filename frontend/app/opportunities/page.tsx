@@ -14,12 +14,10 @@ import { confirmGeographicProfileAction, refreshOpportunityBoard } from "./actio
 import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
 import { executiveCareerContextFromRows, unknownGeographicProfile, type ExecutiveCareerContext } from "@/lib/opportunity-geography";
 import { currentSession } from "@/lib/auth/session";
-import { loadNetworkOpportunities } from "@/lib/opportunity-network";
+import { EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, loadNetworkOpportunities } from "@/lib/opportunity-network";
 
 type OpportunityListRow = Record<string, unknown> & { domain_id: string };
 type ExperienceRow = { id: string; role_title?: string; notes?: string };
-
-const opportunityListLimit = 300;
 
 function listOpportunity(row: OpportunityListRow): Opportunity {
   const number = (value: unknown) => value === null || value === undefined || value === "" ? undefined : Number(value);
@@ -60,7 +58,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);
       confirmedRoleCount = history.data?.length ?? 0;
-      const rows = await loadNetworkOpportunities(opportunityListLimit);
+      const rows = await loadNetworkOpportunities(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT);
       collected = rows.map((row) => listOpportunity({ ...row.payload, domain_id: row.domain_id }));
       // Once the live universe contains attributable collected opportunities,
       // keep the earlier acceptance-workflow record in its historical context

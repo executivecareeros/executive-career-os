@@ -17,7 +17,7 @@ import { buildProductOpportunityAssessment } from "@/lib/discovery/atlas-product
 import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-review";
 import { createAtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
 import { executiveCareerContextFromRows } from "@/lib/opportunity-geography";
-import { loadNetworkOpportunity, loadNetworkOpportunities } from "@/lib/opportunity-network";
+import { EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, loadNetworkOpportunity, loadNetworkOpportunities } from "@/lib/opportunity-network";
 
 type OpportunityRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
 type BlueprintRow = { id: string; payload: Record<string, unknown> };
@@ -42,7 +42,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: { 
   const workspaceId = resolved.context.workspace!.workspaceId;
   const [networkRecord, universe, privateRecord, blueprint, geographicProfile, experiences] = await Promise.all([
     loadNetworkOpportunity(id),
-    loadNetworkOpportunities(300),
+    loadNetworkOpportunities(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT),
     client.request<OpportunityRow[]>(`opportunities?select=id,domain_id,version,payload&workspace_id=eq.${workspaceId}&domain_id=eq.${encodeURIComponent(id)}&archived_at=is.null&limit=1`),
     client.request<BlueprintRow[]>(`executive_blueprint_revisions?select=id,payload&workspace_id=eq.${workspaceId}&order=revision_number.desc&limit=1`),
     loadExecutiveGeographicProfile(client, resolved.context),

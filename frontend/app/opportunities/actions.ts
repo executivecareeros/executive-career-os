@@ -15,7 +15,7 @@ import { appendAtlasDecisionWorkspace, loadAtlasDecisionWorkspace } from "@/lib/
 import { buildProductOpportunityAssessment } from "@/lib/discovery/atlas-product-integration";
 import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-review";
 import { addDecisionNote, addWorkspaceEvidence, addWorkspaceQuestion, addWorkspaceTask, changeDecisionStage, changeWorkspaceTask, completeWorkspaceQuestion, createAtlasDecisionWorkspace, decisionJourneyStages, reassessAtlasOpportunity, recordWorkspaceDecision, reviewWorkspaceEvidence, type AtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
-import { loadNetworkOpportunities, materializeNetworkOpportunity } from "@/lib/opportunity-network";
+import { EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, loadNetworkOpportunities, materializeNetworkOpportunity } from "@/lib/opportunity-network";
 
 type DecisionAction = "Pursue" | "Watch" | "Skip";
 type BlueprintDecisionRow = { id: string; payload: Record<string, unknown> };
@@ -34,7 +34,7 @@ async function decisionContext(canonicalId: string) {
   const client = createServerSupabaseClient(resolved.accessToken), workspaceId = resolved.context.workspace!.workspaceId;
   const [row, universe, blueprint] = await Promise.all([
     materializeNetworkOpportunity(client, workspaceId, resolved.context.workspace!.executiveId, canonicalId),
-    loadNetworkOpportunities(300),
+    loadNetworkOpportunities(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT),
     client.request<BlueprintDecisionRow[]>(`executive_blueprint_revisions?select=id,payload&workspace_id=eq.${workspaceId}&order=revision_number.desc&limit=1`),
   ]);
   if (blueprint.error) throw new Error("The private decision context could not be loaded safely.");
