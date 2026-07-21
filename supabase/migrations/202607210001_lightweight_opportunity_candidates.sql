@@ -32,7 +32,7 @@ as $$
       'matchingStrengths',opportunity.payload->'matchingStrengths','riskFlags',opportunity.payload->'riskFlags','exclusions',opportunity.payload->'exclusions'
     )), opportunity.updated_at
   from public.opportunities opportunity
-  where public.is_active_workspace_member(target_workspace)
+  where (auth.role()='service_role' or public.is_active_workspace_member(target_workspace))
     and opportunity.workspace_id=target_workspace and opportunity.archived_at is null
     and opportunity.domain_id like 'discovered-%'
     and opportunity.status in('Discovered','Evaluating','Qualified','Ready to Apply','Applied','Interview')
