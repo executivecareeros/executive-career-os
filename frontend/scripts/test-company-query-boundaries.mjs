@@ -6,10 +6,10 @@ const detail = readFileSync(new URL("../app/companies/[id]/page.tsx", import.met
 
 assert.doesNotMatch(directory, /opportunities\?select=/, "Company directory must use cached canonical aggregates, not read the opportunity universe.");
 assert.match(directory, /activeOpportunities/);
-assert.match(directory, /limit=1000/);
-assert.match(detail, /name=eq\.\$\{encodeURIComponent\(companyName\)\}/);
-assert.match(detail, /company_id=eq\.\$\{company\.id\}/);
-assert.match(detail, /limit=500/);
+assert.match(directory, /loadNetworkCoverageMetrics/);
+assert.match(directory, /hiringEmployers=\{networkMetrics\?\.employers\}/);
+assert.match(detail, /loadNetworkCompanyByName\(companyName\)/);
+assert.match(detail, /loadNetworkOpportunitiesForCompany\(company\.id\)/);
 assert.doesNotMatch(detail, /\.find\(\(row\) => row\.name/);
 assert.doesNotMatch(detail, /\.filter\(\(row\) => row\.company_id/);
 console.log("Company query boundary checks passed.");

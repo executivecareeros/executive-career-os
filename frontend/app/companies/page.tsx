@@ -4,9 +4,8 @@ import { LiveCompanies, type LiveCompanyRecord } from "@/components/companies/li
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { loadNetworkCompanies } from "@/lib/opportunity-network";
+import { loadNetworkCompanies, loadNetworkCoverageMetrics } from "@/lib/opportunity-network";
 
-type DirectoryMetrics = { canonicalEmployers?: number; verifiedEmployers?: number; hiringEmployers?: number; monitoredEmployerSources?: number };
 type CountryRow = { code: string; canonical_name: string };
 
 function intelligenceNumber(payload: Record<string, unknown> | undefined, field: string) {
@@ -21,9 +20,9 @@ export default async function CompaniesPage() {
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect("/login?next=/companies");
   const client = createServerSupabaseClient(resolved.accessToken);
-  const [companyRows, metricsResponse, countryResponse] = await Promise.all([
+  const [companyRows, networkMetrics, countryResponse] = await Promise.all([
     loadNetworkCompanies(),
-    Promise.resolve({ data: undefined as DirectoryMetrics | undefined }),
+    loadNetworkCoverageMetrics(),
     client.request<CountryRow[]>("world_country_registry?select=code,canonical_name&order=canonical_name.asc"),
   ]);
   const live: LiveCompanyRecord[] = companyRows.map((company) => {
@@ -44,5 +43,5 @@ export default async function CompaniesPage() {
       lastObservedAt: company.last_observed_at,
     };
   }).filter((company) => company.opportunityCount > 0);
-  return <LiveCompanies companies={live} canonicalEmployers={metricsResponse.data?.canonicalEmployers ?? companyRows.length} verifiedEmployers={metricsResponse.data?.verifiedEmployers} monitoredSources={metricsResponse.data?.monitoredEmployerSources}/>;
+  return <LiveCompanies companies={live} canonicalEmployers={companyRows.length} hiringEmployers={networkMetrics?.employers} measuredAt={networkMetrics?.measuredAt}/>;
 }

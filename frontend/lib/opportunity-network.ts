@@ -32,6 +32,13 @@ export type NetworkCompanyRow = {
   payload?: Record<string, unknown>;
 };
 
+export type NetworkCoverageMetrics = {
+  measuredAt?: string;
+  canonicalOpportunities?: number;
+  employers?: number;
+  freshOpportunities?: number;
+};
+
 let networkWorkspaceCache: { id: string; expiresAt: number } | undefined;
 
 export async function resolveOpportunityNetworkWorkspace() {
@@ -76,6 +83,16 @@ export async function loadNetworkCompanies() {
     rows.push(...page);
     if (page.length < pageSize) return rows;
   }
+}
+
+export async function loadNetworkCoverageMetrics() {
+  const client = createSchedulerSupabaseClient(), workspaceId = await resolveOpportunityNetworkWorkspace();
+  const response = await client.request<NetworkCoverageMetrics>("rpc/get_operational_coverage_summary", {
+    method: "POST",
+    body: JSON.stringify({ target_workspace: workspaceId }),
+  });
+  if (response.error) throw new Error("The live Opportunity Network metrics could not be measured safely.");
+  return response.data;
 }
 
 export async function loadNetworkCompanyByName(name: string) {
