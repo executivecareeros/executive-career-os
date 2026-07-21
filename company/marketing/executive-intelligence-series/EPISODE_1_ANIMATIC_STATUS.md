@@ -11,6 +11,8 @@ It is an approval prototype, not the final public film.
 - Duration: 84 seconds
 - Format: 1280 × 720, H.264, 24 fps
 - Audio: temporary English reference narration
+- Original score: procedural, rights-clear production draft
+- Captions: timed English subtitle track and editable SRT
 - Core message: “The executive hiring process is broken.”
 - Brand reveal: after the category argument
 - End card: Executive Intelligence, ORENDALIS, orendalis.com
@@ -27,6 +29,10 @@ It is an approval prototype, not the final public film.
 ## Files
 
 - `ORENDALIS_EPISODE_1_APPROVAL_ANIMATIC.mp4` — timed approval film
+- `ORENDALIS_EPISODE_1_SCORED_APPROVAL_CUT.mp4` — scored cut with selectable English captions
+- `ORENDALIS_EPISODE_1_ORIGINAL_SCORE.wav` — original 48 kHz stereo score master
+- `ORENDALIS_EPISODE_1_CAPTIONS.srt` — editable caption master
+- `FOUNDER_VOICE_RECORDING_GUIDE.md` — performance and recording instructions
 - `episode1_reference_voiceover.txt` — approved narration text
 - `episode1_reference_voiceover.aiff` — temporary timing track only
 - `render_episode1_animatic.py` — deterministic visual renderer
