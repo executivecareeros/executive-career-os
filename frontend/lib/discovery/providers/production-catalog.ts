@@ -7,6 +7,8 @@ import { PersonioOpportunityProvider, parsePersonioAccount } from "./personio.ts
 import { RecruiteeOpportunityProvider, parseRecruiteeCompany } from "./recruitee.ts";
 import { SmartRecruitersOpportunityProvider, parseSmartRecruitersCompany } from "./smartrecruiters.ts";
 import { WorkableOpportunityProvider, parseWorkableAccount } from "./workable.ts";
+import { JobicyOpportunityProvider } from "./jobicy.ts";
+import { ArbeitnowOpportunityProvider } from "./arbeitnow.ts";
 import { OpportunityProviderCatalog } from "./catalog.ts";
 
 const reviewedAt = "2026-07-14T00:00:00.000Z";
@@ -49,6 +51,16 @@ export const productionProviderAdapters: readonly OpportunityProviderAdapter[] =
     id: "workable", name: "Workable", supports: (url) => url.hostname.toLowerCase() === "apply.workable.com" || (url.hostname.toLowerCase() === "www.workable.com" && url.pathname.startsWith("/api/accounts/")),
     create: (locator) => new WorkableOpportunityProvider(parseWorkableAccount(locator)),
     evaluation: approved({ executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high" }),
+  },
+  {
+    id: "jobicy", name: "Jobicy", supports: (url) => url.hostname.toLowerCase() === "jobicy.com" && url.pathname === "/api/v2/remote-jobs",
+    create: () => new JobicyOpportunityProvider(),
+    evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "moderate", dataQuality: "moderate", freshness: "high", legalCompliance: "high", reliability: "moderate", scalability: "moderate", engineeringEfficiency: "high" }, "public-feed"),
+  },
+  {
+    id: "arbeitnow", name: "Arbeitnow", supports: (url) => url.hostname.toLowerCase() === "www.arbeitnow.com" && url.pathname === "/api/job-board-api",
+    create: () => new ArbeitnowOpportunityProvider(),
+    evaluation: approved({ executiveCoverage: "moderate", executiveRelevance: "moderate", dataQuality: "moderate", freshness: "high", legalCompliance: "high", reliability: "moderate", scalability: "high", engineeringEfficiency: "high" }, "public-feed"),
   },
   {
     id: "corporate-career-site", name: "Company Career Site", supports: isSafePublicCareerUrl,

@@ -4,6 +4,8 @@ import { LeverOpportunityProvider, parseLeverBoard } from "../lib/discovery/prov
 import { providerFromCareersUrl } from "../lib/discovery/providers/factory.ts";
 import { OpportunityProviderCatalog } from "../lib/discovery/providers/catalog.ts";
 import { productionProviderAdapters } from "../lib/discovery/providers/production-catalog.ts";
+import { JobicyOpportunityProvider } from "../lib/discovery/providers/jobicy.ts";
+import { ArbeitnowOpportunityProvider } from "../lib/discovery/providers/arbeitnow.ts";
 import { OpportunityCoverageEngine } from "../lib/discovery/coverage-engine.ts";
 import { MemoryOpportunityIngestionSink } from "../lib/discovery/pipeline.ts";
 
@@ -12,8 +14,22 @@ assert.equal(parseAshbyBoard("https://jobs.ashbyhq.com/Acme/job-id"), "Acme");
 assert.equal(providerFromCareersUrl("https://boards.greenhouse.io/acme").id, "greenhouse");
 assert.equal(providerFromCareersUrl("https://jobs.lever.co/acme").id, "lever");
 assert.equal(providerFromCareersUrl("https://jobs.ashbyhq.com/acme").id, "ashby");
+assert.equal(providerFromCareersUrl("https://jobicy.com/api/v2/remote-jobs").id, "jobicy");
+assert.equal(providerFromCareersUrl("https://www.arbeitnow.com/api/job-board-api").id, "arbeitnow");
 assert.equal(providerFromCareersUrl("https://example.com/jobs").id, "corporate-career-site");
 assert.equal(productionProviderAdapters.every((adapter) => adapter.evaluation.reviewStatus === "approved" && adapter.evaluation.legalCompliance === "high"), true);
+
+const jobicyFetch = async () => new Response(JSON.stringify({ apiVersion: "2.2", lastUpdate: "2026-07-21T09:00:00Z", jobs: [{ id: 17, url: "https://jobicy.com/jobs/17-cro", jobTitle: "Chief Revenue Officer", companyName: "RemoteCo", jobIndustry: ["Business"], jobType: ["Full-Time"], jobGeo: "Europe", jobLevel: "Executive", jobDescription: "<p>Lead global revenue.</p>", pubDate: "2026-07-21T08:00:00Z", salaryMin: 180000, salaryMax: 230000, salaryCurrency: "EUR" }] }), { status: 200 });
+const jobicyBatch = await new JobicyOpportunityProvider(jobicyFetch).collect({ runId: "jobicy-test", requestedAt: "2026-07-21T10:00:00Z", maximumResults: 100, filters: { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] } });
+assert.equal(jobicyBatch.jobs[0].company.name, "RemoteCo");
+assert.equal(jobicyBatch.jobs[0].rawMetadata.attribution, "Jobicy");
+assert.equal(jobicyBatch.jobs[0].salary?.currency, "EUR");
+
+const arbeitnowFetch = async () => new Response(JSON.stringify({ data: [{ slug: "cro-1", company_name: "EuropeCo", title: "Chief Revenue Officer", description: "<p>Lead European growth.</p>", remote: true, url: "https://www.arbeitnow.com/jobs/companies/europeco/cro-1", tags: ["Sales"], job_types: ["Full-time"], location: "Berlin", created_at: 1784620800 }], links: { next: null }, meta: { current_page: 1 } }), { status: 200 });
+const arbeitnowBatch = await new ArbeitnowOpportunityProvider(arbeitnowFetch).collect({ runId: "arbeitnow-test", requestedAt: "2026-07-21T10:00:00Z", maximumResults: 500, filters: { countries: [], industries: [], executiveLevels: [], languages: [], keywords: [], exclusionKeywords: [] } });
+assert.equal(arbeitnowBatch.jobs[0].company.name, "EuropeCo");
+assert.equal(arbeitnowBatch.jobs[0].rawMetadata.attribution, "Arbeitnow");
+assert.equal(arbeitnowBatch.jobs[0].rawMetadata.workArrangement, "Remote");
 
 const customProvider = { id: "future-approved-provider", source: { id: "future-approved-provider", name: "Future provider", category: "Verified Feed", description: "Test adapter", capabilities: ["jobs"] }, reliability: { type: "Verified Feed", rating: "high", score: 80, rationale: "Test", assessedAt: "2026-07-14T00:00:00Z" }, async collect() { return { providerId: "future-approved-provider", collectedAt: "2026-07-14T00:00:00Z", jobs: [] }; }, async health() { return { source: "future-approved-provider", status: "available", checkedAt: "2026-07-14T00:00:00Z", message: "Ready" }; } };
 const approvedEvaluation = { executiveCoverage: "high", executiveRelevance: "high", dataQuality: "high", freshness: "high", legalCompliance: "high", reliability: "high", scalability: "high", engineeringEfficiency: "high", accessModel: "public-feed", reviewStatus: "approved", founderGateReasons: [], reviewedAt: "2026-07-14T00:00:00Z" };

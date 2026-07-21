@@ -35,7 +35,7 @@ The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTOR
 - **P1:** improve strict corporate-domain verification separately from ATS-source verification; do not infer domains from names or ATS slugs.
 - **P1 engineering economics:** validate the installed transaction-safe batch persistence path under live scheduler load before the 1,000,000-opportunity tier.
 - **Next highest-value task:** expose the 10,000-opportunity inventory in the executive experience, while separately pursuing a compliant Russia-relevant provider and batch persistence.
-- **Last completed task:** expanded public-index discovery across historical and regional Greenhouse hosts plus indexed SmartRecruiters job URLs, while collapsing equivalent canonical employer candidates before verification. A bounded read-only proof observed 6,376 candidates and verified five active employers advertising 59 jobs from 14 attempts with zero AI tokens; no live records were changed by the proof.
+- **Last completed task:** added two approval-free, attributed public-feed connectors within the common Coverage Engine: Jobicy for global remote roles and Arbeitnow for European roles. Their published access rules are enforced through hourly-or-slower schedules, original-listing links, explicit source attribution, moderate job-board confidence, and employer-direct precedence. A bounded read-only proof observed 600 jobs, 355 unique employer names, 38 executive/commercial roles and 153 remote roles with zero AI tokens.
 
 ## Quality state
 

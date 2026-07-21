@@ -13,6 +13,7 @@ const route = await readFile(resolve(root, "frontend/app/api/operations/opportun
 const discoveryRoute = await readFile(resolve(root, "frontend/app/api/operations/source-discovery/route.ts"), "utf8");
 const runtime = await readFile(resolve(root, "frontend/lib/discovery/scheduler-runtime.ts"), "utf8");
 const publicDiscovery = await readFile(resolve(root, "frontend/lib/discovery/public-employer-discovery.ts"), "utf8");
+const globalFeeds = await readFile(resolve(root, "frontend/lib/discovery/public-global-feeds.ts"), "utf8");
 const proxy = await readFile(resolve(root, "frontend/proxy.ts"), "utf8");
 const migration = await readFile(resolve(root, "supabase/migrations/202607170003_provider_schedule_concurrency.sql"), "utf8");
 const persistenceScopeMigration = await readFile(resolve(root, "supabase/migrations/202607200002_scope_opportunity_source_reconciliation.sql"), "utf8");
@@ -51,6 +52,9 @@ assert.match(publicDiscovery, /boards\.greenhouse\.io\//, "Historical Greenhouse
 assert.match(publicDiscovery, /boards\.eu\.greenhouse\.io\//, "Regional Greenhouse board URLs must remain discoverable");
 assert.match(publicDiscovery, /jobs\.smartrecruiters\.com\//, "Indexed SmartRecruiters job URLs must resolve into canonical employer sources");
 assert.match(publicDiscovery, /uniqueCanonicalCandidates\(interleaveCandidates\(indexed\)\)/, "Equivalent ATS URL variants must collapse before verification capacity is spent");
+assert.match(globalFeeds, /jobicy\.com\/api\/v2\/remote-jobs/, "The attributed global remote feed must remain registered through its official no-key API");
+assert.match(globalFeeds, /arbeitnow\.com\/api\/job-board-api/, "The attributed European feed must remain registered through its official no-key API");
+assert.match(discoveryRoute, /validateEmployerSourceBatch\(pendingGlobalFeeds, 2\)/, "Public feeds must pass live provider health validation before registration");
 assert.match(publicDiscovery, /selectDiverseSources/, "A successful discovery window must activate healthy sources across provider ecosystems before filling by volume");
 assert.match(publicDiscovery, /knownSourceKeys\.has\(publicEmployerScheduleKey/, "Canonical provider keys must prevent URL variants from consuming discovery yield");
 assert.doesNotMatch(publicDiscovery, /Promise\.allSettled\(definitions/, "Common Crawl provider indexes must not be queried in a rate-limit-hostile parallel burst");
