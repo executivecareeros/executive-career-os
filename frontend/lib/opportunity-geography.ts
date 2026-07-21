@@ -136,7 +136,7 @@ const executiveRoleFamilies = {
 } as const;
 
 const leadershipTitle = /\b(chief|c[a-z]o|founder|president|vice president|vp|director|head|managing director|country manager|general manager|partner)\b/;
-const individualContributorTitle = /\b(engineer|developer|specialist|coordinator|analyst|representative|associate|administrator|technician|consultant)\b/;
+const individualContributorTitle = /\b(engineer|developer|specialist|coordinator|analyst|representative|associate|administrator|technician|consultant|planner)\b/;
 
 function familyMatches(text: string) {
   const padded = ` ${normalize(text)} `;
