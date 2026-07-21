@@ -193,7 +193,7 @@ add_p("Pacing law", "Heading 2")
 add_p("The first half accelerates; the second half breathes. Fragmentation is cut on rhythm. Intelligence is revealed through slower, deliberate motion. The viewer must feel the difference before it is described.")
 
 add_p("4. Final voiceover", "Heading 1")
-add_callout("Performance", "Founder voice. 118–124 words per minute. Calm, observant and certain. Never perform urgency; let the edit create it.", fill="EEF1FF")
+add_callout("Performance", "Cinematic English narrator. Calm, observant and certain. Direct each thought independently. Never perform urgency; let the edit create it.", fill="EEF1FF")
 vo = [
     "Looking for your next executive role?",
     "That’s not the real problem.",
@@ -375,11 +375,11 @@ add_p("Upload the video natively. Use the first sentence before the fold. Do not
 page_break()
 add_p("15. Production plan", "Heading 1")
 plan = [
-    ("1", "Voice reference", "Record two complete founder reads and one whisper-quiet read.", "Clean 48 kHz WAV"),
+    ("1", "Voice direction", "Build the narration as individually directed thoughts with deliberate silence.", "Clean 48 kHz WAV"),
     ("2", "Animatic", "Build timing with typography, temp UI and temp score.", "84-second approval cut"),
     ("3", "UI capture", "Capture only approved truthful states after animatic lock.", "4K lossless plates"),
     ("4", "Motion design", "Create fragmentation and intelligence systems as reusable comps.", "Picture-lock candidate"),
-    ("5", "Sound", "Original score, action-based sound design and final founder VO.", "Stereo mix + stems"),
+    ("5", "Sound", "Original score, action-based sound design and final cinematic narration.", "Stereo mix + stems"),
     ("6", "Finishing", "Grade, captions, legal/source review, mobile safe-zone review.", "Master + social exports"),
     ("7", "Validation", "Test first 3 seconds, thesis recall and completion with executives.", "Go/no-go evidence"),
 ]
@@ -421,7 +421,7 @@ add_bullets([
     "Use black as thinking space, not as a fashionable dark theme.",
     "Let tension accelerate and intelligence decelerate.",
     "Use blue for connection, mint for confirmed evidence and white for argument.",
-    "Keep the founder voice calm, specific and free of startup language.",
+    "Keep the narrator calm, specific and free of startup language.",
     "Reveal the category before the brand; reveal the brand before the URL.",
     "End with a statement worth remembering, not a list of features.",
 ])

@@ -2,7 +2,7 @@
 
 ## Status
 
-The 84-second approval animatic establishes the complete visual structure, scene order, typography, pacing and temporary narration timing for **The Executive Hiring Process Is Broken**.
+The 84-second cinematic cut establishes the complete visual structure, scene order, typography, pacing, directed narration, score and captions for **The Executive Hiring Process Is Broken**.
 
 It is an approval prototype, not the final public film.
 
@@ -10,7 +10,7 @@ It is an approval prototype, not the final public film.
 
 - Duration: 84 seconds
 - Format: 1280 × 720, H.264, 24 fps
-- Audio: temporary English reference narration
+- Narration: completed as a phrase-directed cinematic English performance; Founder narration is not required
 - Original score: procedural, rights-clear production draft
 - Captions: timed English subtitle track and editable SRT
 - Core message: “The executive hiring process is broken.”
@@ -20,11 +20,9 @@ It is an approval prototype, not the final public film.
 
 ## Required before public release
 
-1. Replace temporary narration with the Founder performance.
-2. Add the licensed original score and final sound design.
-3. Replace approval-only visual labels with final motion finishing.
-4. Validate mobile legibility, first-three-second comprehension and message recall with executives.
-5. Complete legal, source, caption and export review.
+1. Replace approval-only visual labels with final motion finishing.
+2. Validate mobile legibility, first-three-second comprehension and message recall with executives.
+3. Complete legal, source, caption and export review.
 
 ## Files
 
@@ -32,7 +30,9 @@ It is an approval prototype, not the final public film.
 - `ORENDALIS_EPISODE_1_SCORED_APPROVAL_CUT.mp4` — scored cut with selectable English captions
 - `ORENDALIS_EPISODE_1_ORIGINAL_SCORE.wav` — original 48 kHz stereo score master
 - `ORENDALIS_EPISODE_1_CAPTIONS.srt` — editable caption master
-- `FOUNDER_VOICE_RECORDING_GUIDE.md` — performance and recording instructions
+- `ORENDALIS_EPISODE_1_CINEMATIC_CUT.mp4` — final cinematic narration, score and selectable English captions
+- `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION.wav` — directed narration master
+- `CINEMATIC_NARRATION_DIRECTION.md` — final performance decision and script
 - `episode1_reference_voiceover.txt` — approved narration text
 - `episode1_reference_voiceover.aiff` — temporary timing track only
 - `render_episode1_animatic.py` — deterministic visual renderer
