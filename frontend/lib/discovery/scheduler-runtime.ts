@@ -7,6 +7,7 @@ import { OpportunityProviderRegistry } from "./registry";
 import { SupabaseCoverageRunStore, SupabaseOpportunityIngestionSink } from "./supabase-ingestion";
 import { providerFromCareersUrl } from "./providers/factory";
 import type { CoverageQueueItem, DiscoveryFilter, OpportunityIngestionOutcome } from "./types";
+import { failedScheduleNextRun } from "./scheduler-policy";
 
 type ScheduleRow = {
   id: string; workspace_id: string; provider_id: string; source_key: string; enabled: boolean;
@@ -60,7 +61,10 @@ async function executeClaim(client: SupabaseDataClient, schedule: ScheduleRow, c
   const retry = failed && outcome.nextRetryAt && claimed.attempt < claimed.maximum_attempts;
   const job = await client.request(`opportunity_provider_jobs?id=eq.${claimed.id}`, { method: "PATCH", body: JSON.stringify({ status: retry ? "retrying" : failed ? "failed" : "completed", available_at: retry ? outcome.nextRetryAt : outcome.nextRefreshAt ?? now, lease_owner: null, lease_expires_at: null, last_error: failed ? outcome.run.errors[0] ?? null : null, updated_at: new Date().toISOString() }) });
   if (job.error) throw new Error(job.error.message);
-  const scheduleUpdate = await client.request(`opportunity_provider_schedules?id=eq.${schedule.id}`, { method: "PATCH", body: JSON.stringify({ next_run_at: retry ? outcome.nextRetryAt : outcome.nextRefreshAt ?? later(now, schedule.cadence_minutes), last_success_at: failed ? schedule.last_success_at : outcome.run.finishedAt, last_failure_at: failed ? outcome.run.finishedAt : schedule.last_failure_at, updated_at: new Date().toISOString() }) });
+  const nextRunAt = failed
+    ? failedScheduleNextRun(schedule, now, retry ? outcome.nextRetryAt : undefined)
+    : outcome.nextRefreshAt ?? later(now, schedule.cadence_minutes);
+  const scheduleUpdate = await client.request(`opportunity_provider_schedules?id=eq.${schedule.id}`, { method: "PATCH", body: JSON.stringify({ next_run_at: nextRunAt, last_success_at: failed ? schedule.last_success_at : outcome.run.finishedAt, last_failure_at: failed ? outcome.run.finishedAt : schedule.last_failure_at, updated_at: new Date().toISOString() }) });
   if (scheduleUpdate.error) throw new Error(scheduleUpdate.error.message);
   return outcome;
 }

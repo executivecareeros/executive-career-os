@@ -2,11 +2,17 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { schedulerRequestAuthorized } from "../lib/discovery/scheduler-auth.ts";
+import { failedScheduleNextRun } from "../lib/discovery/scheduler-policy.ts";
 
 assert.equal(schedulerRequestAuthorized(null, "secret"), false);
 assert.equal(schedulerRequestAuthorized("Bearer wrong", "secret"), false);
 assert.equal(schedulerRequestAuthorized("Bearer secret", "secret"), true);
 assert.equal(schedulerRequestAuthorized("Bearer secret", undefined), false);
+
+const now = "2026-07-21T12:00:00.000Z";
+assert.equal(failedScheduleNextRun({ cadence_minutes: 720, last_success_at: "2026-07-21T10:00:00.000Z", last_failure_at: null }, now, "2026-07-21T12:15:00.000Z"), "2026-07-21T12:15:00.000Z");
+assert.equal(failedScheduleNextRun({ cadence_minutes: 720, last_success_at: "2026-07-20T10:00:00.000Z", last_failure_at: "2026-07-21T10:00:00.000Z" }, now, "2026-07-21T12:15:00.000Z"), "2026-07-28T12:00:00.000Z");
+assert.equal(failedScheduleNextRun({ cadence_minutes: 20_000, last_success_at: null, last_failure_at: "2026-07-21T10:00:00.000Z" }, now), "2026-08-04T09:20:00.000Z");
 
 const root = resolve(import.meta.dirname, "../..");
 const route = await readFile(resolve(root, "frontend/app/api/operations/opportunity-refresh/route.ts"), "utf8");
@@ -29,6 +35,8 @@ assert.match(route, /OPPORTUNITY_SCHEDULER_WORKERS \?\? 2/, "The Opportunity Fac
 assert.match(route, /Math\.min\(2,/, "Worker concurrency must remain hard-capped");
 assert.match(route, /runOpportunityScheduler\(client, undefined, maximumJobs, workerCount\)/, "The bounded bulk and worker limits must reach the scheduler runtime");
 assert.match(runtime, /Promise\.all\(batch\.map/, "Provider waits must execute through a bounded concurrent batch");
+const schedulerPolicy = await readFile(resolve(root, "frontend/lib/discovery/scheduler-policy.ts"), "utf8");
+assert.match(schedulerPolicy, /SOURCE_FAILURE_COOLDOWN_MINUTES/, "Repeatedly unavailable employer sources must yield scheduler capacity to healthy sources");
 assert.match(route, /OPPORTUNITY_SCHEDULER_MAX_JOBS \?\? 20/, "The safe twenty-job ceiling must be the default throughput");
 assert.match(route, /shouldRefreshEmployerIntelligence\(startedAt\)/, "Derived employer intelligence must not block every ingestion cycle");
 assert.doesNotMatch(route, /discoverPublicEmployerSources/, "Public-index latency must not consume the canonical ingestion execution window");
