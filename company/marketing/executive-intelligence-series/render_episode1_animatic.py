@@ -4,8 +4,15 @@ import math
 import sys
 
 ROOT = Path(__file__).resolve().parent
-NEURAL_SYNCED = "--neural-synced" in sys.argv
-FRAMES = ROOT / (".animatic-neural-synced-frames" if NEURAL_SYNCED else ".animatic-frames")
+NEURAL_FINAL = "--neural-final" in sys.argv
+NEURAL_SYNCED = "--neural-synced" in sys.argv or NEURAL_FINAL
+if NEURAL_FINAL:
+    frame_directory = ".animatic-neural-final-frames"
+elif NEURAL_SYNCED:
+    frame_directory = ".animatic-neural-synced-frames"
+else:
+    frame_directory = ".animatic-frames"
+FRAMES = ROOT / frame_directory
 FRAMES.mkdir(exist_ok=True)
 
 W, H, FPS = 1280, 720, 12
@@ -195,7 +202,7 @@ def scene(t):
         centered(d, "orendalis.com", 492, 23, MUTED, False, 2)
 
     # Frame-safe production watermark, deliberately absent from the final end card.
-    if t < 81:
+    if t < 81 and not NEURAL_FINAL:
         label = "EPISODE 1 · NARRATION SYNC" if NEURAL_SYNCED else "EPISODE 1 · APPROVAL ANIMATIC"
         d.text((45, 668), label, font=font(13, True), fill="#526078")
         d.text((1060, 668), f"{int(presentation_t):02d}:00", font=font(13), fill="#526078")

@@ -4,7 +4,9 @@
 
 The 64-second synchronized neural Generation 1 cut establishes the current visual structure, scene order, typography, approved human-like narration, score and pacing for **The Executive Hiring Process Is Broken**. It supersedes the fixed-timeline neural cut and both macOS system-voice cuts.
 
-It is an approval prototype, not the final public film.
+The clean public master is now available as a release candidate. Final public
+distribution remains subject to Founder viewing approval and the launch checks
+listed below.
 
 ## Validated
 
@@ -38,8 +40,11 @@ It is an approval prototype, not the final public film.
 - `ORENDALIS_EPISODE_1_NEURAL_NARRATION_GEN1.mp3` — Founder-approved neural narration master
 - `ORENDALIS_EPISODE_1_NEURAL_CUT_GEN1.mp4` — superseded fixed-timeline neural cut retained as production history
 - `ORENDALIS_EPISODE_1_NEURAL_SYNCED_CUT_GEN1.mp4` — current 64-second synchronized approval film
+- `ORENDALIS_EPISODE_1_NEURAL_SYNCED_CAPTIONS.srt` — phrase-accurate English captions for the approved narration
+- `ORENDALIS_EPISODE_1_PUBLIC_MASTER.mp4` — clean 64-second release candidate with selectable English captions
 - `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION.wav` — directed narration master
 - `CINEMATIC_NARRATION_DIRECTION.md` — final performance decision and script
 - `episode1_reference_voiceover.txt` — approved narration text
 - `episode1_reference_voiceover.aiff` — temporary timing track only
-- `render_episode1_animatic.py --neural-synced` — deterministic narration-synchronized visual renderer
+- `render_episode1_animatic.py --neural-synced` — deterministic narration-synchronized approval renderer
+- `render_episode1_animatic.py --neural-final` — clean public-master renderer without production markings
