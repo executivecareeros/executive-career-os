@@ -5,6 +5,7 @@ import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-con
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { loadNetworkCompanies, loadNetworkCoverageMetrics } from "@/lib/opportunity-network";
+import { canonicalCountry, countryFromExplicitLocation } from "@/lib/discovery/country-normalization";
 
 type CountryRow = { code: string; canonical_name: string };
 
@@ -29,12 +30,13 @@ export default async function CompaniesPage() {
     const opportunityCount = intelligenceNumber(company.payload, "activeOpportunities");
     const normalizedCountry = company.country?.trim().toLowerCase();
     const registeredCountry = countryResponse.data?.find(country => country.code.toLowerCase() === normalizedCountry || country.canonical_name.toLowerCase() === normalizedCountry);
+    const evidencedCountry = registeredCountry?.canonical_name ?? canonicalCountry(company.country) ?? countryFromExplicitLocation(company.country);
     return {
       name: company.name,
       website: company.official_domain ? `https://${company.official_domain}` : undefined,
       careersUrl: company.careers_url,
-      country: registeredCountry?.canonical_name ?? company.country,
-      countryCode: registeredCountry?.code,
+      country: evidencedCountry,
+      countryCode: registeredCountry?.code ?? countryResponse.data?.find(country => country.canonical_name === evidencedCountry)?.code,
       opportunityCount,
       executiveOpportunityCount: intelligenceNumber(company.payload, "executiveOpportunities"),
       sourceNames: company.ats_provider ? [company.ats_provider] : [],

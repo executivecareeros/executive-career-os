@@ -10,7 +10,7 @@ import type { LiveOpportunityViewModel } from "@/lib/live-opportunity";
 import type { Opportunity } from "@/types/opportunity";
 import { toPlainText } from "@/lib/plain-text";
 import { assessOpportunityFreshness, opportunitySourceLabel } from "@/lib/opportunity-universe";
-import { assessOpportunityConfidence, sortOpportunitiesForExecutive, type ExecutiveCareerContext, type ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
+import { assessOpportunityConfidence, diversifyExecutiveRecommendations, sortOpportunitiesForExecutive, type ExecutiveCareerContext, type ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
 import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchSuggestions, type ExecutiveSearchFilters } from "@/lib/executive-search";
 import { LiveOpportunityCard } from "./live-opportunity-card";
 import { OpportunityApplicationLink } from "./opportunity-application-link";
@@ -44,7 +44,7 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
   }), [collected]);
   const suggestions = useMemo(() => searchSuggestions(draft.query, collected, recent), [collected, draft.query, recent]);
 
-  const rankedOpportunities = useMemo(() => sortOpportunitiesForExecutive(collected, geographicProfile, careerContext).filter((item) => assessOpportunityConfidence(item, geographicProfile, careerContext).eligibility !== "Not Currently Eligible"), [careerContext, collected, geographicProfile]);
+  const rankedOpportunities = useMemo(() => diversifyExecutiveRecommendations(sortOpportunitiesForExecutive(collected, geographicProfile, careerContext).filter((item) => assessOpportunityConfidence(item, geographicProfile, careerContext).eligibility !== "Not Currently Eligible")), [careerContext, collected, geographicProfile]);
   const searchedOpportunities = useMemo(() => {
     const filtered = collected.filter((item) => matchesExecutiveSearch(item, applied)).filter((item) => {
       if (!eligibleOnly) return true;

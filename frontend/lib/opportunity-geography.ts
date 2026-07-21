@@ -213,16 +213,15 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const worldwideRemotePreference = profile.remotePreference.value === "Worldwide" && opportunity.workArrangement === "Remote" && has(text, /\b(worldwide|global remote|work from anywhere|anywhere)\b/);
   const preferenceFit = worldwideRemotePreference || (preferred.length && includesAny(text, preferred)) ? 100 : preferred.length ? 45 : 50;
   const manual = profile.manualPreferences;
-  const manualSignals = [
-    !manual.countries.length || includesAny(text, manual.countries),
-    !manual.locations.length || includesAny(text, manual.locations),
-    !manual.industries.length || includesAny(normalize(`${opportunity.industry} ${opportunity.summary}`), manual.industries),
-    !manual.titles.length || includesAny(normalize(opportunity.jobTitle), manual.titles),
-    !manual.employmentTypes.length || manual.employmentTypes.includes(opportunity.employmentType),
-    !manual.remotePreferences.length || manual.remotePreferences.includes(opportunity.workArrangement),
-    !manual.companySizes.length || manual.companySizes.some((size) => normalize(opportunity.companySize).includes(normalize(size))),
-  ];
-  const userPreferenceFit = manual.updatedAt ? clamp(manualSignals.filter(Boolean).length / manualSignals.length * 100) : preferenceFit;
+  const manualSignals: boolean[] = [];
+  if (manual.countries.length) manualSignals.push(includesAny(text, manual.countries));
+  if (manual.locations.length) manualSignals.push(includesAny(text, manual.locations));
+  if (manual.industries.length) manualSignals.push(includesAny(normalize(`${opportunity.industry} ${opportunity.summary}`), manual.industries));
+  if (manual.titles.length) manualSignals.push(includesAny(normalize(opportunity.jobTitle), manual.titles));
+  if (manual.employmentTypes.length) manualSignals.push(manual.employmentTypes.includes(opportunity.employmentType));
+  if (manual.remotePreferences.length) manualSignals.push(manual.remotePreferences.includes(opportunity.workArrangement));
+  if (manual.companySizes.length) manualSignals.push(manual.companySizes.some((size) => normalize(opportunity.companySize).includes(normalize(size))));
+  const userPreferenceFit = manual.updatedAt && manualSignals.length ? clamp(manualSignals.filter(Boolean).length / manualSignals.length * 100) : preferenceFit;
   const ageHours = opportunity.freshness?.ageHours;
   const freshness = ageHours === undefined ? ({ Fresh: 100, Recent: 75, Stale: 25, Unknown: 45 }[opportunity.freshness?.status ?? "Unknown"]) : ageHours <= 48 ? 100 : ageHours <= 168 ? 75 : ageHours <= 720 ? 45 : 20;
   const sourceConfidence = clamp(opportunity.confidenceScore ?? 0);
@@ -239,6 +238,22 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
 export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext) {
   return [...opportunities].sort((left, right) => {
     const a = assessOpportunityConfidence(left, profile, careerContext), b = assessOpportunityConfidence(right, profile, careerContext);
-    return b.opportunityConfidence - a.opportunityConfidence || b.recommendationConfidence - a.recommendationConfidence || Date.parse(right.publishedAt) - Date.parse(left.publishedAt) || left.companyName.localeCompare(right.companyName);
+    return b.opportunityConfidence - a.opportunityConfidence || b.professionalFit - a.professionalFit || b.preferenceFit - a.preferenceFit || b.recommendationConfidence - a.recommendationConfidence || Date.parse(right.publishedAt) - Date.parse(left.publishedAt) || left.companyName.localeCompare(right.companyName);
   });
+}
+
+/**
+ * Prevents one freshly ingested employer cohort from occupying the entire first
+ * recommendation page while preserving every opportunity for later review.
+ */
+export function diversifyExecutiveRecommendations(opportunities: readonly Opportunity[], perEmployer = 2) {
+  const visible: Opportunity[] = [], overflow: Opportunity[] = [], counts = new Map<string, number>();
+  for (const opportunity of opportunities) {
+    const employer = normalize(opportunity.companyName || "unknown employer");
+    const count = counts.get(employer) ?? 0;
+    if (count < Math.max(1, perEmployer)) visible.push(opportunity);
+    else overflow.push(opportunity);
+    counts.set(employer, count + 1);
+  }
+  return [...visible, ...overflow];
 }

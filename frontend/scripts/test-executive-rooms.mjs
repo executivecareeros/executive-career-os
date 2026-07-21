@@ -29,6 +29,7 @@ assert.doesNotMatch(migration,/public discovery|service.role|service_role/i);
 assert.match(roomsPage,/Join open conversations or private rooms shared with you/i);
 assert.match(roomsPage,/Open to every verified executive/i);
 assert.match(roomsPage,/Invitation only/i);
+assert.match(roomsPage,/room\.topic\.trim\(\)\.toLowerCase\(\)!==room\.short_purpose\.trim\(\)\.toLowerCase\(\)/, "Identical room purpose and explanation must not be rendered twice");
 assert.match(roomPage,/Atlas is not monitoring this room/i);
 assert.match(roomPage,/Sources preserved/);
 assert.match(roomPage,/90-day bounded archive window/);
