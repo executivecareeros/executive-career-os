@@ -32,6 +32,12 @@ assert.equal(intelligence.relatedOpportunities[0].opportunityId, related.id);
 assert.deepEqual(intelligence.similarCompanies, ["Blue Star"]);
 assert.deepEqual(intelligence.similarRoles, ["VP Revenue"]);
 
+const careerContext = { roleTitles: ["Sales Director", "Managing Director", "Business Development Director"], industries: ["Technology"], capabilities: ["Revenue leadership"] };
+const personalized = buildExecutiveOpportunityIntelligence(base, blueprint, [base], "2026-07-14T10:00:00Z", geographicProfile, careerContext);
+assert.ok(personalized.strengths.some((item) => item.includes("role function") && item.includes("leadership level")), "Confirmed professional fit must appear in Atlas strengths, not only in raw evidence");
+const mismatched = buildExecutiveOpportunityIntelligence({ ...base, jobTitle: "Technical Support Engineer", executiveFitScore: 96 }, blueprint, [base], "2026-07-14T10:00:00Z", geographicProfile, careerContext);
+assert.ok(mismatched.concerns.some((item) => item.includes("individual-contributor")), "A confirmed leadership-level mismatch must appear in Atlas concerns");
+
 const conflict = buildExecutiveOpportunityIntelligence({ ...base, country: "Germany", industry: "Media", salaryMin: 150000 }, blueprint, [base], "2026-07-14T10:00:00Z");
 assert.equal(conflict.recommendation, "Deprioritize");
 assert.equal(conflict.concerns.length, 3);

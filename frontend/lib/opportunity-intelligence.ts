@@ -128,6 +128,8 @@ export function buildExecutiveOpportunityIntelligence(opportunity: Opportunity, 
     evidence.push({ label: "Leadership-level comparison", value: match ? `Role title contains “${blueprint.leadershipLevel}”` : `Role title does not confirm “${blueprint.leadershipLevel}”`, certainty: "Estimated", source: blueprint.revisionId ? "Active Blueprint and published role title" : "Published role title" });
   }
   if (!blueprint.revisionId) missingInformation.push("Active Executive Blueprint for a personal fit comparison");
+  if (careerContext?.roleTitles.length && opportunityConfidence.professionalFit >= 65) strengths.push(opportunityConfidence.professionalExplanation);
+  else if (careerContext?.roleTitles.length && opportunityConfidence.professionalFit <= 39) concerns.push(opportunityConfidence.professionalExplanation);
   if (opportunityConfidence.eligibility === "Eligible" || opportunityConfidence.eligibility === "Probably Eligible") strengths.push(opportunityConfidence.explanation);
   else if (opportunityConfidence.eligibility === "Not Currently Eligible" || opportunityConfidence.eligibility === "Sponsorship Required" || opportunityConfidence.eligibility === "Relocation Required") concerns.push(opportunityConfidence.explanation);
   missingInformation.push(...opportunityConfidence.missingInformation);
