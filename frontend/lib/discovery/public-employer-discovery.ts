@@ -24,8 +24,14 @@ const personioCandidate = (url: URL) => {
 
 const definitions: readonly Definition[] = [
   { provider: "greenhouse", indexedPattern: "job-boards.greenhouse.io/", careers: slug => `https://job-boards.greenhouse.io/${slug}`, candidate: pathCandidate },
+  // Historical and regional Greenhouse hosts remain heavily represented in
+  // public indexes even after employers move to the current job-board host.
+  // They resolve through the same official board API and canonical careers URL.
+  { provider: "greenhouse", indexedPattern: "boards.greenhouse.io/", careers: slug => `https://job-boards.greenhouse.io/${slug}`, candidate: pathCandidate },
+  { provider: "greenhouse", indexedPattern: "boards.eu.greenhouse.io/", careers: slug => `https://job-boards.greenhouse.io/${slug}`, candidate: pathCandidate },
   { provider: "ashby", indexedPattern: "jobs.ashbyhq.com/", careers: slug => `https://jobs.ashbyhq.com/${slug}`, candidate: pathCandidate },
   { provider: "smartrecruiters", indexedPattern: "careers.smartrecruiters.com/", careers: slug => `https://careers.smartrecruiters.com/${slug}`, candidate: pathCandidate },
+  { provider: "smartrecruiters", indexedPattern: "jobs.smartrecruiters.com/", careers: slug => `https://careers.smartrecruiters.com/${slug}`, candidate: pathCandidate },
   { provider: "lever", indexedPattern: "jobs.lever.co/", careers: slug => `https://jobs.lever.co/${slug}`, candidate: pathCandidate },
   { provider: "lever", indexedPattern: "jobs.eu.lever.co/", careers: slug => `https://jobs.eu.lever.co/${slug}`, candidate: pathCandidate },
   { provider: "workable", indexedPattern: "apply.workable.com/", careers: slug => `https://apply.workable.com/${slug}`, candidate: pathCandidate },
@@ -62,6 +68,16 @@ function interleaveCandidates(groups: Array<Array<{ definition: Definition; slug
     for (const group of groups) if (group[index]) result.push(group[index]);
   }
   return result;
+}
+
+function uniqueCanonicalCandidates(candidates: Array<{ definition: Definition; slug: string }>) {
+  const identities = new Set<string>();
+  return candidates.filter(({ definition, slug }) => {
+    const identity = publicEmployerScheduleKey(definition.provider, definition.careers(slug));
+    if (identities.has(identity)) return false;
+    identities.add(identity);
+    return true;
+  });
 }
 
 function selectDiverseSources(accepted: VerifiedEmployer[], maximumSources: number) {
@@ -207,7 +223,7 @@ export async function discoverPublicEmployerSources(input: { existingUrls: reado
       catch { indexFailures += 1; indexed.push([]); }
       if (index < definitions.length - 1) await pause(150);
     }
-    candidates = interleaveCandidates(indexed).filter(({ definition, slug }) => {
+    candidates = uniqueCanonicalCandidates(interleaveCandidates(indexed)).filter(({ definition, slug }) => {
       const careersUrl = definition.careers(slug);
       return !known.has(publicEmployerSourceIdentity(careersUrl)) && !knownSourceKeys.has(publicEmployerScheduleKey(definition.provider, careersUrl));
     });

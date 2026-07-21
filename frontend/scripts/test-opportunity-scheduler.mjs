@@ -47,6 +47,10 @@ assert.match(discoveryRoute, /Math\.min\(50/, "Each source cycle must cap newly 
 assert.match(discoveryRoute, /ZERO_TOKEN_SOURCE_DISCOVERY/, "Source discovery must expose aggregate operational evidence");
 assert.match(publicDiscovery, /cursorWindow \* sampleTarget/, "Public discovery must rotate across the indexed employer universe instead of replaying its alphabetical prefix");
 assert.match(publicDiscovery, /interleaveCandidates/, "Public discovery must distribute verification attempts across provider ecosystems");
+assert.match(publicDiscovery, /boards\.greenhouse\.io\//, "Historical Greenhouse board URLs must feed the canonical public API path");
+assert.match(publicDiscovery, /boards\.eu\.greenhouse\.io\//, "Regional Greenhouse board URLs must remain discoverable");
+assert.match(publicDiscovery, /jobs\.smartrecruiters\.com\//, "Indexed SmartRecruiters job URLs must resolve into canonical employer sources");
+assert.match(publicDiscovery, /uniqueCanonicalCandidates\(interleaveCandidates\(indexed\)\)/, "Equivalent ATS URL variants must collapse before verification capacity is spent");
 assert.match(publicDiscovery, /selectDiverseSources/, "A successful discovery window must activate healthy sources across provider ecosystems before filling by volume");
 assert.match(publicDiscovery, /knownSourceKeys\.has\(publicEmployerScheduleKey/, "Canonical provider keys must prevent URL variants from consuming discovery yield");
 assert.doesNotMatch(publicDiscovery, /Promise\.allSettled\(definitions/, "Common Crawl provider indexes must not be queried in a rate-limit-hostile parallel burst");

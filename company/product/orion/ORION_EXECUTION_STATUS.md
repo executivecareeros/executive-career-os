@@ -1,6 +1,6 @@
 # Orion Execution Status
 
-Last updated: 2026-07-18 · Owner: Sol · Handover: Orion stable; Opportunity Factory X100 operating in isolated network staging
+Last updated: 2026-07-21 · Owner: Sol · Handover: Orion stable; zero-token Opportunity Factory expansion active
 
 | Field | Current truth |
 |---|---|
@@ -35,7 +35,7 @@ The authoritative point-in-time inventory is recorded in `AUTHORITATIVE_INVENTOR
 - **P1:** improve strict corporate-domain verification separately from ATS-source verification; do not infer domains from names or ATS slugs.
 - **P1 engineering economics:** validate the installed transaction-safe batch persistence path under live scheduler load before the 1,000,000-opportunity tier.
 - **Next highest-value task:** expose the 10,000-opportunity inventory in the executive experience, while separately pursuing a compliant Russia-relevant provider and batch persistence.
-- **Last completed task:** added bounded transactional persistence, durable retry telemetry, a 249-entry world registry, and deterministic country/industry/provider coverage reporting without changing canonical identity or lifecycle rules.
+- **Last completed task:** expanded public-index discovery across historical and regional Greenhouse hosts plus indexed SmartRecruiters job URLs, while collapsing equivalent canonical employer candidates before verification. A bounded read-only proof observed 6,376 candidates and verified five active employers advertising 59 jobs from 14 attempts with zero AI tokens; no live records were changed by the proof.
 
 ## Quality state
 
