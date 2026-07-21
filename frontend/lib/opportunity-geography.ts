@@ -66,6 +66,7 @@ export type OpportunityConfidenceResult = {
   recommendationConfidence: number;
   label: "Excellent Opportunity" | "Strong Opportunity" | "Worth Reviewing" | "Possible Fit" | "Stretch or Relocation Option" | "Eligibility Unclear" | "Not Currently Eligible";
   explanation: string;
+  professionalExplanation: string;
   missingInformation: string[];
   hardExclusions: string[];
 };
@@ -126,32 +127,66 @@ const executiveRoleFamilies = {
   businessDevelopment: ["business development", "partnership", "alliances"],
   commercialLeadership: ["commercial leadership", "commercial strategy", "go to market", "gtm"],
   generalManagement: ["general manager", "managing director", "country manager", "business unit"],
-  enterpriseTechnology: ["enterprise software", "saas", "artificial intelligence", "cybersecurity", "broadcast technology", "media technology"],
+  technical: ["engineer", "engineering", "developer", "technical support", "solutions architect", "data scientist", "information technology"],
+  product: ["product manager", "product management", "product director", "chief product officer"],
+  finance: ["finance", "financial", "accounting", "controller", "chief financial officer", "cfo"],
+  people: ["human resources", "people officer", "talent", "recruiter"],
+  marketing: ["marketing", "brand", "communications", "chief marketing officer", "cmo"],
+  operations: ["operations", "operational", "chief operating officer", "coo"],
 } as const;
+
+const leadershipTitle = /\b(chief|c[a-z]o|founder|president|vice president|vp|director|head|managing director|country manager|general manager|partner)\b/;
+const individualContributorTitle = /\b(engineer|developer|specialist|coordinator|analyst|representative|associate|administrator|technician|consultant)\b/;
 
 function familyMatches(text: string) {
   const padded = ` ${normalize(text)} `;
   return Object.entries(executiveRoleFamilies).filter(([, terms]) => terms.some((term) => padded.includes(` ${normalize(term)} `))).map(([family]) => family);
 }
 
+const commercialFamilies = new Set(["sales", "revenue", "businessDevelopment", "commercialLeadership"]);
+function relatedFamilyOverlap(profileFamilies: Set<string>, opportunityFamilies: string[]) {
+  return opportunityFamilies.filter((family) => profileFamilies.has(family) || (commercialFamilies.has(family) && [...profileFamilies].some((profileFamily) => commercialFamilies.has(profileFamily)))).length;
+}
+
 function careerFit(opportunity: Opportunity, context?: ExecutiveCareerContext) {
   const baseline = clamp(opportunity.executiveFitScore || opportunity.overallScore || 0);
-  if (!context || !context.roleTitles.length) return { professionalFit: baseline, industryFit: clamp(opportunity.strategicOpportunityScore || 50) };
+  if (!context || !context.roleTitles.length) return { professionalFit: baseline, industryFit: clamp(opportunity.strategicOpportunityScore || 50), explanation: "Professional fit is not yet personalized because no confirmed role history is available." };
   const roleEvidence = context.roleTitles.join(" ");
   const profileFamilies = new Set(familyMatches(roleEvidence));
-  const opportunityFamilies = familyMatches(`${opportunity.jobTitle} ${opportunity.summary}`);
-  const familyOverlap = opportunityFamilies.filter((family) => profileFamilies.has(family)).length;
+  // Role function is determined from the title. Industry and skill language in
+  // the description must not turn an unrelated function into a career match.
+  const opportunityFamilies = familyMatches(opportunity.jobTitle);
+  const familyOverlap = relatedFamilyOverlap(profileFamilies, opportunityFamilies);
   const roleTokens = new Set(normalize(roleEvidence).split(" ").filter((token) => token.length > 3));
   const opportunityTokens = new Set(normalize(opportunity.jobTitle).split(" ").filter((token) => token.length > 3));
   const tokenOverlap = [...opportunityTokens].filter((token) => roleTokens.has(token)).length;
-  const titleFit = opportunityFamilies.length ? clamp(42 + familyOverlap * 24 + tokenOverlap * 8) : clamp(38 + tokenOverlap * 12);
+  let titleFit = opportunityFamilies.length ? clamp(38 + familyOverlap * 28 + tokenOverlap * 8) : clamp(32 + tokenOverlap * 12);
+  const profileLeadershipShare = context.roleTitles.filter((title) => leadershipTitle.test(normalize(title))).length / context.roleTitles.length;
+  const opportunityTitle = normalize(opportunity.jobTitle);
+  const opportunityIsLeadership = leadershipTitle.test(opportunityTitle);
+  const opportunityIsIndividualContributor = individualContributorTitle.test(opportunityTitle) && !opportunityIsLeadership;
+  const functionMismatch = opportunityFamilies.length > 0 && familyOverlap === 0;
+  if (profileLeadershipShare >= .5 && opportunityIsIndividualContributor) titleFit = Math.min(titleFit, 12);
+  else if (functionMismatch) titleFit = Math.min(titleFit, 24);
+  else if (profileLeadershipShare >= .5 && opportunityIsLeadership && familyOverlap > 0) titleFit = Math.max(titleFit, 82);
   const opportunityCapabilityText = normalize([opportunity.summary, ...opportunity.requiredSkills, ...opportunity.keyResponsibilities].join(" "));
   const capabilityMatches = context.capabilities.filter((capability) => opportunityCapabilityText.includes(normalize(capability))).length;
   const capabilityFit = context.capabilities.length ? clamp(35 + (capabilityMatches / Math.min(context.capabilities.length, 8)) * 65) : 50;
   const industryText = normalize(`${opportunity.industry} ${opportunity.summary}`);
   const industryMatches = context.industries.filter((industry) => industryText.includes(normalize(industry))).length;
   const industryFit = context.industries.length ? clamp(35 + (industryMatches / Math.min(context.industries.length, 4)) * 65) : clamp(opportunity.strategicOpportunityScore || 50);
-  return { professionalFit: clamp(baseline * .25 + titleFit * .55 + capabilityFit * .20), industryFit };
+  let professionalFit = clamp(baseline * .15 + titleFit * .70 + capabilityFit * .15);
+  if (profileLeadershipShare >= .5 && opportunityIsIndividualContributor) professionalFit = Math.min(professionalFit, 30);
+  const explanation = profileLeadershipShare >= .5 && opportunityIsIndividualContributor
+    ? "The role is an individual-contributor position and does not align with the confirmed executive leadership history."
+    : functionMismatch
+      ? "The role function is not supported by the confirmed career-title evidence."
+      : familyOverlap > 0 && opportunityIsLeadership
+        ? "The role function and leadership level align with confirmed career-title evidence."
+        : familyOverlap > 0
+          ? "The role function aligns with confirmed career-title evidence."
+          : "The confirmed career titles provide limited evidence for this role function.";
+  return { professionalFit, industryFit, explanation };
 }
 
 export function classifyGeographicEligibility(opportunity: Opportunity, profile: ExecutiveGeographicProfile): { state: EligibilityState; explanation: string; missingInformation: string[] } {
@@ -232,7 +267,7 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const evidenceCompleteness = clamp(100 - eligibility.missingInformation.length * 15 - (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 20 : 0));
   const label: OpportunityConfidenceResult["label"] = eligibility.state === "Not Currently Eligible" ? "Not Currently Eligible" : eligibility.state === "Relocation Required" || eligibility.state === "Sponsorship Required" ? "Stretch or Relocation Option" : eligibility.state === "Eligibility Unknown" ? "Eligibility Unclear" : opportunityConfidence >= 85 ? "Excellent Opportunity" : opportunityConfidence >= 70 ? "Strong Opportunity" : opportunityConfidence >= 50 ? "Worth Reviewing" : "Possible Fit";
   const hardExclusions = eligibility.state === "Not Currently Eligible" ? [eligibility.explanation] : [];
-  return { eligibility: eligibility.state, professionalFit, leadershipFit, experienceFit, skillsFit, industryFit, languageFit, preferenceFit: userPreferenceFit, freshness, sourceConfidence, dataCompleteness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, missingInformation: eligibility.missingInformation, hardExclusions };
+  return { eligibility: eligibility.state, professionalFit, leadershipFit, experienceFit, skillsFit, industryFit, languageFit, preferenceFit: userPreferenceFit, freshness, sourceConfidence, dataCompleteness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, professionalExplanation: career.explanation, missingInformation: eligibility.missingInformation, hardExclusions };
 }
 
 export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext) {

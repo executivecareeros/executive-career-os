@@ -7,6 +7,7 @@ const opportunities = [
   { ...base, id: "commercial", companyName: "Commercial Co", jobTitle: "Chief Revenue Officer", summary: "Lead enterprise SaaS revenue, sales and go-to-market strategy." },
   { ...base, id: "engineering", companyName: "Engineering Co", jobTitle: "VP Engineering", summary: "Lead platform engineering and developer infrastructure." },
   { ...base, id: "us-only", companyName: "US Co", jobTitle: "Chief Revenue Officer", country: "United States", location: "US residents only — Remote", workArrangement: "Remote" },
+  { ...base, id: "support", companyName: "Support Co", jobTitle: "Technical Support Engineer", executiveFitScore: 96, overallScore: 96, summary: "Support an AI-enabled SaaS platform and its enterprise customers." },
 ];
 const careerContext = { roleTitles: ["Group Sales Director", "Managing Director", "Business Development Director"], industries: ["Enterprise Software", "Broadcast Technology"], capabilities: ["Sales", "Business Development", "Go-to-market"] };
 const profile = founderGeographicProfileFixture();
@@ -16,6 +17,9 @@ assert.equal(ranked.at(-1).id, "us-only", "A US-residence restriction must remai
 const commercial = assessOpportunityConfidence(opportunities[0], profile, careerContext);
 const engineering = assessOpportunityConfidence(opportunities[1], profile, careerContext);
 assert.ok(commercial.opportunityConfidence - engineering.opportunityConfidence >= 8, "Best Match must create useful score separation");
+const support = assessOpportunityConfidence(opportunities[3], profile, careerContext);
+assert.ok(commercial.opportunityConfidence - support.opportunityConfidence >= 15, "Broad technology keywords must not let an individual-contributor support role outrank confirmed commercial leadership");
+assert.match(support.professionalExplanation, /individual-contributor/, "Atlas must explain the leadership-level mismatch");
 assert.ok(assessOpportunityConfidence(opportunities[2], profile, careerContext).opportunityConfidence <= 20, "Hard eligibility rules must cap confidence");
 
 const review = await readFile(new URL("../components/opportunities/collected-opportunity-intelligence.tsx", import.meta.url), "utf8");
