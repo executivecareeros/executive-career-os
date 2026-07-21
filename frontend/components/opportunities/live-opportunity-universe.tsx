@@ -15,6 +15,7 @@ import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchR
 import { LiveOpportunityCard } from "./live-opportunity-card";
 import { OpportunityApplicationLink } from "./opportunity-application-link";
 import { resolvePublishedCompensation } from "@/lib/discovery/published-compensation";
+import { canonicalCountryOptions } from "@/lib/discovery/country-normalization";
 
 type JobsView = "Search" | "Recommended";
 type Props = { opportunity?: LiveOpportunityViewModel; collected: Opportunity[]; geographicProfile: ExecutiveGeographicProfile; careerContext: ExecutiveCareerContext; canConfirmFounderFixture: boolean; profileConfirmationAction: () => void | Promise<void>; collectionNotice?: string; collectionMessage?: string; imported?: string; found?: string; collectionAction: (formData: FormData) => void | Promise<void>; initialQuery?: string; cvComplete?: boolean; savedRoles?: string; newRoles?: string };
@@ -35,7 +36,7 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const options = useMemo(() => ({
-    countries: values(collected.map(searchCountry).filter((value): value is string => Boolean(value))), cities: values(collected.map(searchCity).filter((value): value is string => Boolean(value))),
+    countries: values([...canonicalCountryOptions, ...collected.map(searchCountry).filter((value): value is string => Boolean(value))]), cities: values(collected.map(searchCity).filter((value): value is string => Boolean(value))),
     regions: [...EXECUTIVE_SEARCH_REGIONS], industries: [...EXECUTIVE_SEARCH_INDUSTRIES],
     titles: values(collected.map((item) => item.jobTitle)), departments: ["Sales", "Commercial", "Revenue", "Business Development", "Operations", "Finance", "Technology", "Product", "Marketing"],
     seniorities: ["C-suite", "Chief", "Executive", "Vice President", "VP", "Director", "Head"], employmentTypes: values(collected.map((item) => item.employmentType)),

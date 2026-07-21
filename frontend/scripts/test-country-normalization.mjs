@@ -1,5 +1,10 @@
 import assert from "node:assert/strict";
-import { canonicalCountry, countryFromExplicitLocation } from "../lib/discovery/country-normalization.ts";
+import { canonicalCountry, canonicalCountryOptions, countryFromExplicitLocation } from "../lib/discovery/country-normalization.ts";
+
+assert.ok(canonicalCountryOptions.length >= 240, "Search must expose the complete ISO country registry");
+assert.ok(canonicalCountryOptions.includes("Türkiye"));
+assert.ok(canonicalCountryOptions.includes("United States"));
+assert.deepEqual(canonicalCountryOptions, [...canonicalCountryOptions].sort((left, right) => left.localeCompare(right, "en")));
 
 assert.equal(canonicalCountry("TR"), "Türkiye");
 assert.equal(canonicalCountry("Turkey"), "Türkiye");

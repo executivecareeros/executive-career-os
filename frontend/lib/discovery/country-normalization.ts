@@ -23,6 +23,12 @@ for (const code of ISO_COUNTRY_CODES) {
 }
 for (const [alias, code] of Object.entries(aliasToCode)) nameToCode.set(normalize(alias), code);
 
+/** Complete alphabetical ISO country/territory registry for user-controlled search. */
+export const canonicalCountryOptions = [...ISO_COUNTRY_CODES]
+  .map(code => canonicalOverrides[code] ?? displayNames.of(code))
+  .filter((name): name is string => Boolean(name))
+  .sort((left, right) => left.localeCompare(right, "en"));
+
 /** Returns a country only when the supplied evidence explicitly identifies one. */
 export function canonicalCountry(value: string | undefined | null) {
   const candidate = value?.trim();
