@@ -6,28 +6,28 @@ import subprocess
 ROOT = Path(__file__).resolve().parent
 TAKES = ROOT / ".cinematic-voice-takes"
 TAKES.mkdir(exist_ok=True)
-OUT = ROOT / "ORENDALIS_EPISODE_1_CINEMATIC_NARRATION.wav"
+OUT = ROOT / "ORENDALIS_EPISODE_1_CINEMATIC_NARRATION_V2.wav"
 
 # Every line is directed independently. Starts follow picture, not sentence density.
 # The final public cut may replace the selected system voice with a commissioned actor
 # without changing the approved timing or editorial intent.
 SEGMENTS = [
-    (0.30, 136, "Looking for your next executive role?"),
-    (3.35, 126, "That’s not the real problem."),
-    (9.45, 132, "The roles are everywhere."),
-    (11.80, 175, "LinkedIn. Job boards. Recruiters. Company sites."),
-    (16.90, 165, "But the truth about a career decision lives somewhere else."),
-    (20.80, 185, "In a CV version. A saved link. An interview note. A salary file. A conversation you meant to revisit."),
-    (29.20, 155, "More access created more fragments. Not more clarity."),
-    (34.35, 150, "Because the problem isn’t a shortage of jobs."),
-    (38.10, 130, "It’s a shortage of intelligence."),
-    (41.20, 145, "What if every opportunity arrived with context?"),
-    (45.35, 152, "Why it fits. Why it may not. What is confirmed. What is unknown. What deserves your attention next."),
-    (58.90, 126, "That is Executive Intelligence."),
-    (66.95, 140, "Most platforms help people apply."),
-    (70.35, 118, "Orendalis helps executives decide."),
-    (74.35, 124, "The executive hiring process is broken."),
-    (78.60, 125, "It’s time to expect better."),
+    (0.20, 188, "Looking for your next executive role?"),
+    (2.55, 184, "That’s not the real problem."),
+    (7.35, 190, "The roles are everywhere."),
+    (9.20, 205, "LinkedIn. Job boards. Recruiters. Company sites."),
+    (13.85, 198, "But the truth about a career decision lives somewhere else."),
+    (17.50, 215, "In a CV version. A saved link. An interview note. A salary file. A conversation you meant to revisit."),
+    (25.10, 198, "More access created more fragments. Not more clarity."),
+    (29.30, 190, "Because the problem isn’t a shortage of jobs."),
+    (32.60, 178, "It’s a shortage of intelligence."),
+    (35.15, 192, "What if every opportunity arrived with context?"),
+    (38.80, 205, "Why it fits. Why it may not. What is confirmed. What is unknown. What deserves your attention next."),
+    (46.05, 184, "That is Executive Intelligence."),
+    (48.70, 195, "Most platforms help people apply."),
+    (51.40, 180, "Orendalis helps executives decide."),
+    (54.55, 180, "The executive hiring process is broken."),
+    (57.80, 174, "It’s time to expect better."),
 ]
 
 ffmpeg = os.environ.get("FFMPEG") or shutil.which("ffmpeg")
@@ -42,7 +42,7 @@ inputs = []
 filters = []
 for index, (start, rate, line) in enumerate(SEGMENTS):
     take = TAKES / f"take-{index:02d}.aiff"
-    subprocess.run(["say", "-v", "Reed", "-r", str(rate), line, "-o", str(take)], check=True)
+    subprocess.run(["say", "-v", "Eddy (İngilizce (ABD))", "-r", str(rate), line, "-o", str(take)], check=True)
     inputs.extend(["-i", str(take)])
     delay = int(start * 1000)
     filters.append(
@@ -55,7 +55,7 @@ filter_graph = ";".join(filters) + ";" + labels + (
     f"amix=inputs={len(SEGMENTS)}:duration=longest:normalize=0,"
     "acompressor=threshold=-20dB:ratio=2.2:attack=20:release=220:makeup=2dB,"
     "equalizer=f=180:t=q:w=1.1:g=1.3,equalizer=f=4200:t=q:w=1.2:g=1.0,"
-    "loudnorm=I=-18:TP=-2:LRA=6,apad=pad_dur=84,atrim=0:84,aresample=48000[narration]"
+    "loudnorm=I=-18:TP=-2:LRA=6,apad=pad_dur=64,atrim=0:64,aresample=48000[narration]"
 )
 
 command = [ffmpeg, "-y", *inputs, "-filter_complex", filter_graph,

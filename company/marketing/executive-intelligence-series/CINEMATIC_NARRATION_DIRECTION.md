@@ -4,12 +4,12 @@
 
 Episode 1 uses a professionally directed cinematic English narration. The Founder does not narrate.
 
-The selected voice is restrained, authoritative and human in rhythm. It must sound like an intelligent documentary argument—not a commercial, trailer parody or startup advertisement.
+The selected V2 voice is faster, conversational and human in rhythm. It must sound like an intelligent documentary argument—not a commercial, trailer parody or startup advertisement. The slow Reed-based V1 performance was rejected and is superseded.
 
 ## Performance system
 
-- Each thought is recorded and positioned independently.
-- Deliberate silence separates recognition, tension, intelligence and resolution.
+- Each thought is recorded and positioned independently with no overlapping lines.
+- Brief silence separates recognition, tension, intelligence and resolution without slowing momentum.
 - Fragmentation passages move faster; the intelligence passages breathe.
 - Emphasis is limited to: **problem**, **fragments**, **intelligence**, **apply**, **decide**.
 - Dialogue is processed for warmth and presence, while avoiding exaggerated bass or theatrical effects.
@@ -51,6 +51,6 @@ It’s time to expect better.
 
 ## Master files
 
-- `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION.wav` — directed 48 kHz, 24-bit narration master
-- `ORENDALIS_EPISODE_1_CINEMATIC_CUT.mp4` — narration, score and selectable English captions
+- `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION_V2.wav` — current directed 48 kHz, 24-bit narration master
+- `ORENDALIS_EPISODE_1_CINEMATIC_CUT_V2.mp4` — current 64-second narration, score and selectable English captions
 - `produce_cinematic_narration.py` — reproducible phrase-level direction and mastering
