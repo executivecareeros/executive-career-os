@@ -51,9 +51,16 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     const founderEmail = process.env.COMPANY_CONTROL_FOUNDER_EMAIL?.trim().toLowerCase();
     const canConfirmFounderFixture = Boolean(founderEmail && session?.user.email?.trim().toLowerCase() === founderEmail);
     try {
-      const view = await new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken), resolved.context).load();
+      let view;
+      try {
+        view = await new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken), resolved.context).load();
+      } catch (error) {
+        // Public accounts receive a personal workspace, not the retired beta
+        // acceptance fixture. Its absence must never block the live network.
+        if (!(error instanceof Error) || error.message !== "Beta workflow was not provisioned for this invitation.") throw error;
+      }
       geographicProfile = await loadExecutiveGeographicProfile(createServerSupabaseClient(resolved.accessToken), resolved.context);
-      opportunity = toLiveOpportunity(view);
+      opportunity = view ? toLiveOpportunity(view) : undefined;
       const history = await createServerSupabaseClient(resolved.accessToken).request<ExperienceRow[]>(`professional_experiences?select=id,role_title,notes&workspace_id=eq.${resolved.context.workspace!.workspaceId}&executive_identity_id=eq.${resolved.context.workspace!.executiveId}&archived_at=is.null`);
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);

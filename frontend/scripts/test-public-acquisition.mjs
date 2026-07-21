@@ -12,6 +12,7 @@ const shell = await readFile(new URL("../components/app-shell.tsx", import.meta.
 const register = await readFile(new URL("../app/register/page.tsx", import.meta.url), "utf8");
 const authActions = await readFile(new URL("../app/auth-actions.ts", import.meta.url), "utf8");
 const onboardingRepository = await readFile(new URL("../lib/repositories/supabase/onboarding-repository.ts", import.meta.url), "utf8");
+const publicOnboardingMigration = await readFile(new URL("../../supabase/migrations/202607210002_public_executive_onboarding.sql", import.meta.url), "utf8");
 
 assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/);
 assert.match(layout, /Find your next executive opportunity/);
@@ -53,5 +54,7 @@ assert.match(register, /Start your executive search/);
 assert.doesNotMatch(register, /Invitation required|Registration cannot continue without/);
 assert.match(authActions, /if \(inviteToken\)/, "Invitation validation must remain optional and supported");
 assert.match(onboardingRepository, /rpc\/provision_personal_workspace/, "Public executives must receive isolated personal workspaces");
+assert.match(publicOnboardingMigration, /grant execute on function public\.provision_personal_workspace\(jsonb\) to authenticated/);
+assert.match(publicOnboardingMigration, /revoke all on function public\.provision_personal_workspace\(jsonb\) from public, anon/);
 
 console.log("Public acquisition checks passed.");
