@@ -3,9 +3,10 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path) => readFile(resolve(root, path), "utf8");
-const [proxy, opportunityIndex, opportunity, companies, applications, compensation] = await Promise.all([
+const [proxy, opportunityIndex, opportunityNetwork, opportunity, companies, applications, compensation] = await Promise.all([
   read("proxy.ts"),
   read("app/opportunities/page.tsx"),
+  read("lib/opportunity-network.ts"),
   read("app/opportunities/[id]/page.tsx"),
   read("components/companies/live-companies.tsx"),
   read("app/applications/page.tsx"),
@@ -20,7 +21,7 @@ const checks = {
   company_evidence_is_explicit: companies.includes("Identity confidence") && companies.includes("Average executive relevance") && companies.includes("Company overview is not inferred"),
   applications_use_workspace_records: applications.includes("applications?select=") && applications.includes("application_activities?select=") && applications.includes("application_documents?select="),
   no_invented_application_activity: applications.includes("never invents employer actions") && applications.includes("not an employer application"),
-  opportunity_list_uses_bounded_indexed_projection: opportunityIndex.includes("encodeURIComponent(opportunityListSelect)") && opportunityIndex.includes("status=in.(${encodeURIComponent(activeOpportunityStatuses)})") && opportunityIndex.includes("order=status.asc,updated_at.desc") && opportunityIndex.includes("limit=${opportunityListLimit}") && !opportunityIndex.includes("select=domain_id,payload&workspace_id"),
+  opportunity_list_uses_bounded_indexed_projection: opportunityIndex.includes("loadNetworkOpportunities(opportunityListLimit)") && opportunityNetwork.includes("select=id,domain_id,company_id,version,payload,updated_at") && opportunityNetwork.includes("status=in.(Discovered,Evaluating,Qualified,Ready%20to%20Apply,Applied,Interview)") && opportunityNetwork.includes("limit=${Math.max(1, Math.min(500, limit))}") && !opportunityIndex.includes("select=domain_id,payload&workspace_id"),
 };
 
 const failures = Object.entries(checks).filter(([, passed]) => !passed);

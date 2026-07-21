@@ -10,15 +10,15 @@ const [arrival, login, register, onboarding, jobs, navigation, settings, atlas, 
   read("data/project-simplicity-personas.ts"), read("lib/locale.ts"),
 ]);
 const checks = {
-  public_promise_is_clear: locale.includes("Find your next executive opportunity") && locale.includes("Bir sonraki yönetici fırsatını bul"),
+  public_promise_is_clear: locale.includes("Find your next executive opportunity") && locale.includes('getLocale(): Promise<Locale> { return "en"; }'),
   public_actions_are_obvious: arrival.includes("/login?next=/opportunities") && arrival.includes("/login?next=/import"),
-  auth_is_bilingual: login.includes("Tekrar hoş geldin") || login.includes("copy[locale]"),
-  registration_explains_next_value: register.includes("go straight to job search") && register.includes("doğrudan iş arayabilirsin"),
+  auth_uses_production_locale_registry: login.includes("copy[locale]") && locale.includes("English is the only enabled production locale"),
+  registration_explains_next_value: register.includes("go straight to job search") && register.includes('locale="en"') && !register.includes("private beta"),
   onboarding_is_optional: onboarding.includes('value="upload"') && onboarding.includes('value="skip"'),
   search_and_recommendations_are_separate: jobs.includes('type JobsView = "Search" | "Recommended"'),
   navigation_is_familiar: ["Home", "Jobs", "Companies", "Applications", "Profile"].every((label) => navigation.includes(`label: "${label}"`)),
   notifications_are_opt_in: settings.includes('name="dailySummary"') && settings.includes("does not send email today"),
-  atlas_introduction_is_skippable: atlas.includes("Skip for now") && atlas.includes("Şimdilik geç"),
+  atlas_introduction_is_skippable: atlas.includes("Skip for now"),
   ten_isolated_personas_exist: (personas.match(/id:"ps-/g) ?? []).length === 10 && personas.includes('language:"tr"') && personas.includes('language:"en"'),
 };
 const failures = Object.entries(checks).filter(([, passed]) => !passed);

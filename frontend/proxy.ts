@@ -34,11 +34,11 @@ const demoOnlyModules: Array<[prefix: string, module: string]> = [
 
 export function proxy(request: NextRequest) {
   const requestedLanguage = request.nextUrl.searchParams.get("lang");
-  if (requestedLanguage === "en" || requestedLanguage === "tr") {
+  if (requestedLanguage) {
     const url = request.nextUrl.clone();
     url.searchParams.delete("lang");
     const response = NextResponse.redirect(url);
-    response.cookies.set("orendalis-language", requestedLanguage, { maxAge: 31_536_000, sameSite: "lax", secure: request.nextUrl.protocol === "https:" });
+    response.cookies.delete("orendalis-language");
     return response;
   }
   if (process.env.NEXT_PUBLIC_DATA_ACCESS_MODE !== "supabase") return NextResponse.next();

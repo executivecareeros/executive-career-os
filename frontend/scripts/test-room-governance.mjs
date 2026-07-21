@@ -22,7 +22,7 @@ assert.match(rooms,/enter any other language/);
 assert.match(rooms,/Join room/);
 assert.match(rooms,/Founder review/);
 assert.match(room,/serviceCategory/);
-assert.match(control,/Room Permanence Decisions/);
+assert.match(control,/Room permanence decisions/i);
 assert.match(control,/Make permanent/);
 assert.match(actions,/decide_room_permanence/);
 assert.match(actions,/post_executive_room_message_v2/);
