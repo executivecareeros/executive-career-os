@@ -25,7 +25,7 @@ export default async function Login({
         <>
           {locale === "tr" ? "ORENDALIS’e ilk kez mi geliyorsun? " : "Entering ORENDALIS for the first time? "}
           <Link className="font-medium text-[#936b3f] hover:text-[#6f4d2d]" href="/register">
-            {locale === "tr" ? "Davetini kabul et" : "Accept your invitation"}
+            Create an account
           </Link>
         </>
       }

@@ -9,7 +9,6 @@ import {applicationOrigin} from "@/lib/auth/application-origin";
 import {
   acceptRememberedInvitation,
   inspectInvitation,
-  inspectRememberedInvitation,
   rememberInvitation,
 } from "@/lib/beta/invitations";
 
@@ -51,17 +50,16 @@ export async function registerAction(form: FormData) {
   const password = value(form, "password"),
     email = value(form, "email"),
     inviteToken = value(form, "inviteToken");
+  const registrationQuery = inviteToken ? `invite=${encodeURIComponent(inviteToken)}&` : "";
   if (password.length < 8)
-    redirect(
-      `/register?invite=${encodeURIComponent(inviteToken)}&error=Password%20must%20contain%20at%20least%208%20characters`,
-    );
+    redirect(`/register?${registrationQuery}error=Password%20must%20contain%20at%20least%208%20characters`);
   try {
-    const invitation = await inspectInvitation(email, inviteToken);
-    if (invitation.invitation_status !== "Pending")
-      throw new Error(
-        `Invitation is ${invitation.invitation_status.toLowerCase()}.`,
-      );
-    await rememberInvitation(inviteToken);
+    if (inviteToken) {
+      const invitation = await inspectInvitation(email, inviteToken);
+      if (invitation.invitation_status !== "Pending")
+        throw new Error(`Invitation is ${invitation.invitation_status.toLowerCase()}.`);
+      await rememberInvitation(inviteToken);
+    }
     await supabaseAuth.signUp(
       email,
       password,
@@ -69,12 +67,12 @@ export async function registerAction(form: FormData) {
     );
   } catch (error) {
     redirect(
-      `/register?invite=${encodeURIComponent(inviteToken)}&error=${encodeURIComponent(error instanceof Error ? error.message : "Unable to register")}`,
+      `/register?${registrationQuery}error=${encodeURIComponent(error instanceof Error ? error.message : "Unable to register")}`,
     );
   }
   redirect(`/verify-email?email=${encodeURIComponent(email)}&sent=1`);
 }
-export async function resendVerificationAction(form:FormData){const email=value(form,"email").toLowerCase();let outcome="sent";try{const invitation=await inspectRememberedInvitation(email);if(invitation.invitation_status!=="Pending")outcome=invitation.invitation_status.toLowerCase();else await supabaseAuth.resendVerification(email,`${await origin()}/auth/confirm?next=/onboarding`);}catch{}redirect(`/verify-email?email=${encodeURIComponent(email)}&${outcome}=1`);}
+export async function resendVerificationAction(form:FormData){const email=value(form,"email").toLowerCase();try{await supabaseAuth.resendVerification(email,`${await origin()}/auth/confirm?next=/onboarding`);}catch{}redirect(`/verify-email?email=${encodeURIComponent(email)}&sent=1`);}
 export async function forgotPasswordAction(form: FormData) {
   try {
     await supabaseAuth.recover(

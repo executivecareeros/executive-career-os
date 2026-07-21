@@ -9,6 +9,9 @@ const sitemap = await readFile(new URL("../app/sitemap.ts", import.meta.url), "u
 const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
 const machineSummary = await readFile(new URL("../app/llms.txt/route.ts", import.meta.url), "utf8");
 const shell = await readFile(new URL("../components/app-shell.tsx", import.meta.url), "utf8");
+const register = await readFile(new URL("../app/register/page.tsx", import.meta.url), "utf8");
+const authActions = await readFile(new URL("../app/auth-actions.ts", import.meta.url), "utf8");
+const onboardingRepository = await readFile(new URL("../lib/repositories/supabase/onboarding-repository.ts", import.meta.url), "utf8");
 
 assert.match(layout, /metadataBase: new URL\("https:\/\/www\.orendalis\.com"\)/);
 assert.match(layout, /Find your next executive opportunity/);
@@ -46,5 +49,9 @@ assert.ok(proxy.includes('"/llms.txt"'), "truthful machine-readable product cont
 assert.ok(proxy.includes('"/brand/"'), "social and brand assets must be reachable without authentication");
 assert.match(machineSummary, /Unknown information remains unknown/);
 assert.match(machineSummary, /Private CV, profile, application, and decision data is never public content/);
+assert.match(register, /Start your executive search/);
+assert.doesNotMatch(register, /Invitation required|Registration cannot continue without/);
+assert.match(authActions, /if \(inviteToken\)/, "Invitation validation must remain optional and supported");
+assert.match(onboardingRepository, /rpc\/provision_personal_workspace/, "Public executives must receive isolated personal workspaces");
 
 console.log("Public acquisition checks passed.");

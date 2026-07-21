@@ -6,6 +6,8 @@ const layout = readFileSync(new URL("../app/layout.tsx", import.meta.url), "utf8
 const founderPage = readFileSync(new URL("../app/company-control/page.tsx", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/home/simple-executive-home.tsx", import.meta.url), "utf8");
 const repository = readFileSync(new URL("../lib/beta/repository.ts", import.meta.url), "utf8");
+const proxy = readFileSync(new URL("../proxy.ts", import.meta.url), "utf8");
+const session = readFileSync(new URL("../lib/auth/session.ts", import.meta.url), "utf8");
 
 if (!sidebar.includes('item.href !== "/company-control" || founderAccess')) throw new Error("Founder navigation is not hidden for ordinary executives.");
 if ((shell.match(/founderAccess=\{founderAccess\}/g) ?? []).length !== 2) throw new Error("Founder access is not enforced in both desktop and mobile navigation.");
@@ -15,5 +17,8 @@ const profileLoad = home.indexOf("await loadExecutiveProfileState");
 const optionalBriefing = home.indexOf("const [view, decision] = await Promise.all");
 if (profileLoad < 0 || optionalBriefing < 0 || profileLoad > optionalBriefing) throw new Error("Stored profile truth can still be discarded by an optional briefing failure.");
 if (!repository.includes('await this.advance("Blueprint","Professional History",{active_import_session_id:session},false)')) throw new Error("Live profile save still requires a legacy beta workflow.");
+if (!proxy.includes("refreshRequestSession(request)") || !proxy.includes("request.cookies.set(ACCESS_COOKIE")) throw new Error("Protected routes do not refresh expired sessions before rendering.");
+if (!proxy.includes("response.cookies.set(REFRESH_COOKIE")) throw new Error("Rotated refresh credentials are not persisted on the response.");
+if (!session.includes("storeSession(session, jar.get(REMEMBER_COOKIE)?.value === \"1\").catch")) throw new Error("A valid refreshed session can still be discarded when a Server Component cannot mutate cookies.");
 
 console.log("PASS Live executive profile and Founder authorization regression checks.");
