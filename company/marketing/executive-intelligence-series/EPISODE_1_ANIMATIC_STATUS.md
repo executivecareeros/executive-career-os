@@ -2,7 +2,7 @@
 
 ## Status
 
-The 64-second V2 cinematic cut establishes the current visual structure, scene order, typography, faster pacing, directed narration, score and captions for **The Executive Hiring Process Is Broken**. It supersedes the rejected 84-second narration cut.
+The 64-second neural Generation 1 cut establishes the current visual structure, scene order, typography, approved human-like narration, score and pacing for **The Executive Hiring Process Is Broken**. It supersedes both macOS system-voice cuts.
 
 It is an approval prototype, not the final public film.
 
@@ -10,7 +10,7 @@ It is an approval prototype, not the final public film.
 
 - Duration: 64 seconds
 - Format: 1280 × 720, H.264, 24 fps
-- Narration: modern conversational English voice, 174–215 words-per-minute by phrase, with no overlapping lines; Founder narration is not required
+- Narration: Founder-approved Eleven v3 Generation 1 delivery at approximately 128 spoken words per minute; Founder narration is not required
 - Original score: procedural, rights-clear production draft
 - Captions: timed English subtitle track and editable SRT
 - Core message: “The executive hiring process is broken.”
@@ -31,9 +31,11 @@ It is an approval prototype, not the final public film.
 - `ORENDALIS_EPISODE_1_ORIGINAL_SCORE.wav` — original 48 kHz stereo score master
 - `ORENDALIS_EPISODE_1_CAPTIONS.srt` — editable caption master
 - `ORENDALIS_EPISODE_1_CINEMATIC_CUT.mp4` — final cinematic narration, score and selectable English captions
-- `ORENDALIS_EPISODE_1_CINEMATIC_CUT_V2.mp4` — current faster cut; supersedes the rejected narration version
-- `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION_V2.wav` — current dialogue master
+- `ORENDALIS_EPISODE_1_CINEMATIC_CUT_V2.mp4` — superseded system-voice cut retained as production history
+- `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION_V2.wav` — superseded system-voice dialogue retained as production history
 - `ORENDALIS_EPISODE_1_CAPTIONS_V2.srt` — current 64-second caption master
+- `ORENDALIS_EPISODE_1_NEURAL_NARRATION_GEN1.mp3` — Founder-approved neural narration master
+- `ORENDALIS_EPISODE_1_NEURAL_CUT_GEN1.mp4` — current 64-second approval film; supersedes the system-voice cuts
 - `ORENDALIS_EPISODE_1_CINEMATIC_NARRATION.wav` — directed narration master
 - `CINEMATIC_NARRATION_DIRECTION.md` — final performance decision and script
 - `episode1_reference_voiceover.txt` — approved narration text
