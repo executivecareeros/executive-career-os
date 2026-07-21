@@ -3,8 +3,9 @@ import type { ConnectorContext, DiscoveryJob, DiscoveryResult, OpportunityNormal
 import { classifyOpportunityIndustry } from "./industry-classification.ts";
 import { extractPublishedCompensation } from "./published-compensation.ts";
 import { canonicalCountry, countryFromExplicitLocation } from "./country-normalization.ts";
+import { extractPublishedRoleSections } from "./published-role-sections.ts";
 
-export const NORMALIZATION_VERSION = "1.2.0";
+export const NORMALIZATION_VERSION = "1.3.0";
 
 export function opportunityContentFingerprint(job: DiscoveryJob) {
   const value = [job.title, job.company.canonicalKey ?? job.company.name, job.location, job.country, job.description, job.employmentType, job.publishedAt]
@@ -26,6 +27,7 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
     const canonicalUrl = job.originalUrl?.replace(/[?#].*$/, "");
     const industry = classifyOpportunityIndustry(job);
     const compensation = job.salary ?? extractPublishedCompensation(job.description);
+    const publishedRoleSections = extractPublishedRoleSections(job.description);
     let employerDomain: string | undefined;
     // An ATS posting URL identifies the publishing system, not the employer.
     // Only an employer-controlled website may establish employerDomain.
@@ -75,9 +77,9 @@ export class DefaultOpportunityNormalizer implements OpportunityNormalizer {
       legitimacyState: reliability.score >= 75 ? "Verified" : reliability.score >= 50 ? "Probable" : "Unverified",
       status: "Discovered",
       priority: "Low",
-      travelRequirement: "Not assessed",
+      travelRequirement: publishedRoleSections.travelRequirement ?? "Not assessed",
       summary: job.description ?? "Awaiting assessment.",
-      keyResponsibilities: [], requiredSkills: [], preferredSkills: [], matchingStrengths: [], missingRequirements: [], riskFlags: [], exclusions: [],
+      keyResponsibilities: publishedRoleSections.responsibilities, requiredSkills: publishedRoleSections.requirements, preferredSkills: [], matchingStrengths: [], missingRequirements: [], riskFlags: [], exclusions: [],
       decisionRationale: "Awaiting Atlas assessment.", recommendedCVProfile: "Not assessed", coverLetterRecommended: false, notes: "",
     };
 

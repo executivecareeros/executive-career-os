@@ -18,6 +18,7 @@ import { buildAtlasOpportunityReview } from "@/lib/discovery/atlas-opportunity-r
 import { createAtlasDecisionWorkspace } from "@/lib/discovery/atlas-decision-workspace";
 import { executiveCareerContextFromRows } from "@/lib/opportunity-geography";
 import { EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, loadNetworkOpportunity, loadNetworkOpportunities } from "@/lib/opportunity-network";
+import { extractPublishedRoleSections } from "@/lib/discovery/published-role-sections";
 
 type OpportunityRow = { id: string; domain_id: string; version: number; payload: Record<string, unknown> };
 type BlueprintRow = { id: string; payload: Record<string, unknown> };
@@ -51,7 +52,14 @@ export default async function OpportunityDetailPage({ params, searchParams }: { 
   if (privateRecord.error || blueprint.error || experiences.error) throw new Error("Private opportunity intelligence could not be loaded safely.");
   const row = privateRecord.data?.[0] ?? networkRecord;
   if (!row || !row.domain_id.startsWith("discovered-")) notFound();
-  const canonical = { ...row.payload, id: row.domain_id } as Opportunity;
+  const stored = { ...row.payload, id: row.domain_id } as Opportunity;
+  const publishedRoleSections = extractPublishedRoleSections(stored.summary);
+  const canonical = {
+    ...stored,
+    keyResponsibilities: stored.keyResponsibilities?.length ? stored.keyResponsibilities : publishedRoleSections.responsibilities,
+    requiredSkills: stored.requiredSkills?.length ? stored.requiredSkills : publishedRoleSections.requirements,
+    travelRequirement: stored.travelRequirement && !/^(unknown|not assessed)$/i.test(stored.travelRequirement) ? stored.travelRequirement : publishedRoleSections.travelRequirement ?? stored.travelRequirement,
+  } as Opportunity;
   const all = universe.map((item) => ({ ...item.payload, id: item.domain_id }) as Opportunity);
   const blueprintRow = blueprint.data?.[0];
   const intelligence = buildExecutiveOpportunityIntelligence(canonical, opportunityIntelligenceBlueprint(blueprintRow?.payload, blueprintRow?.id), all, undefined, geographicProfile, executiveCareerContextFromRows(experiences.data ?? []));

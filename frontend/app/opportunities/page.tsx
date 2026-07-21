@@ -31,7 +31,7 @@ function listOpportunity(row: OpportunityListRow): Opportunity {
     salaryMin: number(row.salaryMin), salaryMax: number(row.salaryMax), executiveFitScore: number(row.executiveFitScore) ?? 0,
     strategicOpportunityScore: number(row.strategicOpportunityScore) ?? 0, overallScore: number(row.overallScore) ?? 0, confidenceScore: number(row.confidenceScore) ?? 0,
     completenessScore: number(row.completenessScore), status: (row.status ?? "Discovered") as Opportunity["status"], priority: (row.priority ?? "Low") as Opportunity["priority"],
-    travelRequirement: String(row.travelRequirement ?? "Unknown"), summary: "", keyResponsibilities: [], requiredSkills: strings(row.requiredSkills), preferredSkills: [],
+    travelRequirement: String(row.travelRequirement ?? "Unknown"), summary: String(row.summary ?? ""), keyResponsibilities: strings(row.keyResponsibilities), requiredSkills: strings(row.requiredSkills), preferredSkills: strings(row.preferredSkills),
     matchingStrengths: strings(row.matchingStrengths), missingRequirements: [], riskFlags: strings(row.riskFlags), exclusions: strings(row.exclusions), decisionRationale: "",
     recommendedCVProfile: "", coverLetterRecommended: false, notes: "",
   } as Opportunity;
