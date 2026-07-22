@@ -11,7 +11,7 @@ import type { Opportunity } from "@/types/opportunity";
 import { toPlainText } from "@/lib/plain-text";
 import { assessOpportunityFreshness, opportunitySourceLabel } from "@/lib/opportunity-universe";
 import { assessOpportunityConfidence, diversifyExecutiveRecommendations, sortOpportunitiesForExecutive, type ExecutiveBehaviorProfile, type ExecutiveCareerContext, type ExecutiveGeographicProfile } from "@/lib/opportunity-geography";
-import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchSuggestions, type ExecutiveSearchFilters } from "@/lib/executive-search";
+import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchSuggestions, searchTitle, type ExecutiveSearchFilters } from "@/lib/executive-search";
 import { LiveOpportunityCard } from "./live-opportunity-card";
 import { OpportunityApplicationLink } from "./opportunity-application-link";
 import { resolvePublishedCompensation } from "@/lib/discovery/published-compensation";
@@ -38,7 +38,7 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
   const options = useMemo(() => ({
     countries: values([...canonicalCountryOptions, ...collected.map(searchCountry).filter((value): value is string => Boolean(value))]), cities: values(collected.map(searchCity).filter((value): value is string => Boolean(value))),
     regions: [...EXECUTIVE_SEARCH_REGIONS], industries: [...EXECUTIVE_SEARCH_INDUSTRIES],
-    titles: values(collected.map((item) => item.jobTitle)), departments: ["Sales", "Commercial", "Revenue", "Business Development", "Operations", "Finance", "Technology", "Product", "Marketing"],
+    titles: values(collected.map((item) => searchTitle(item.jobTitle)).filter((value): value is string => Boolean(value))), departments: ["Sales", "Commercial", "Revenue", "Business Development", "Operations", "Finance", "Technology", "Product", "Marketing"],
     seniorities: ["C-suite", "Chief", "Executive", "Vice President", "VP", "Director", "Head"], employmentTypes: values(collected.map((item) => item.employmentType)),
     remoteOptions: values(collected.map((item) => item.workArrangement)), companySizes: values(collected.map((item) => item.companySize)),
   }), [collected]);

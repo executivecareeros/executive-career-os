@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchIndustries, searchRegions, searchSuggestions } from "../lib/executive-search.ts";
+import { EXECUTIVE_SEARCH_INDUSTRIES, EXECUTIVE_SEARCH_REGIONS, executiveSearchRelevance, matchesExecutiveSearch, searchCity, searchCountry, searchIndustries, searchRegions, searchSuggestions, searchTitle } from "../lib/executive-search.ts";
 import { classifyOpportunityIndustry } from "../lib/discovery/industry-classification.ts";
 
 const opportunity = {
@@ -22,6 +22,12 @@ assert.equal(searchCity({ country: "United States", location: "Arizona" }), unde
 assert.equal(searchCity({ country: "Canada", location: "Ontario" }), undefined, "Canadian provinces must not appear in Cities");
 assert.equal(searchCity({ country: "United Kingdom", location: "England" }), undefined, "UK constituent countries must not appear in Cities");
 assert.equal(searchCity({ country: "Belgium", location: "Belgium-Brussels Office" }), "Brussels", "provider country-office labels must resolve to the explicit city");
+assert.equal(searchCity({ country: "Unknown", location: "$150K: $75K base" }), undefined, "salary fragments must never appear in Cities");
+assert.equal(searchCity({ country: "Germany", location: "AT002 Industriestraße 2" }), undefined, "street addresses must never appear in Cities");
+assert.equal(searchCity({ country: "Germany", location: "Academia Holding | Landwehrstraße 2" }), undefined, "organization and address fragments must never appear in Cities");
+assert.equal(searchCity({ country: "United States", location: "Winston-Salem, NC" }), "Winston-Salem", "valid hyphenated city names must remain available");
+assert.equal(searchTitle("$150K: $75K base"), undefined, "salary fragments must never appear in Titles");
+assert.equal(searchTitle("Chief Revenue Officer"), "Chief Revenue Officer", "valid executive titles must remain available");
 assert.deepEqual(searchRegions({ country: "France", location: "Paris, France", workArrangement: "Hybrid" }), ["EU", "Europe", "EMEA"]);
 assert.ok(EXECUTIVE_SEARCH_REGIONS.includes("North America") && EXECUTIVE_SEARCH_REGIONS.includes("MENA"), "the complete region taxonomy must remain available");
 assert.equal(matchesExecutiveSearch({ ...opportunity, country: "VA", location: "Richmond, VA" }, { ...filters, query: "", countries: ["United States"], cities: [], regions: [], industries: [], departments: [], seniorities: [], employmentTypes: [], remoteOptions: [], companySizes: [], salaryMinimum: "", salaryMaximum: "", salaryCurrency: "" }), true, "country-only search must work");
