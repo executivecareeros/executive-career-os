@@ -26,6 +26,13 @@ assert.match(layout, /"@type": "WebSite"/);
 assert.match(layout, /"@type": "SoftwareApplication"/);
 await access(new URL("../public/brand/orendalis-social-preview.png", import.meta.url));
 await access(new URL("../app/icon.svg", import.meta.url));
+await access(new URL("../public/media/orendalis-episode-1.mp4", import.meta.url));
+await access(new URL("../public/media/orendalis-episode-1-poster.png", import.meta.url));
+await access(new URL("../public/media/orendalis-episode-1-captions.vtt", import.meta.url));
+assert.match(landing, /The executive hiring process is broken/);
+assert.match(landing, /orendalis-episode-1\.mp4/);
+assert.match(landing, /orendalis-episode-1-captions\.vtt/);
+assert.match(landing, /Create my private workspace/);
 
 for (const phrase of ["Find your next executive opportunity.", "Upload your CV", "Search jobs", "Sign in"]) {
   assert.ok(`${landing}\n${locale}`.includes(phrase), `Missing English public acquisition copy: ${phrase}`);

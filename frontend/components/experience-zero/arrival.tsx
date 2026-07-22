@@ -9,6 +9,12 @@ const principles = [
   ["Your career memory", "Keep your experience, decisions, applications, and next actions connected in one private workspace."],
 ] as const;
 
+const journey = [
+  ["Bring your experience", "Upload your CV or build your profile manually. You review every fact before it becomes part of your private record."],
+  ["See what fits", "Search the Opportunity Universe and let your background, preferences, and work authorization shape the order."],
+  ["Decide with Atlas", "Understand the evidence for and against an opportunity, the unknowns that matter, and the next question worth asking."],
+] as const;
+
 export function ExperienceZeroArrival({ locale: _locale }: { locale: Locale }) {
   void _locale;
   return (
@@ -19,8 +25,8 @@ export function ExperienceZeroArrival({ locale: _locale }: { locale: Locale }) {
         <nav className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10" aria-label="Primary navigation">
           <Link href="/" className="rounded-xl bg-white px-3 py-2 text-[#0b1220] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d8cff]"><OrendalisMark /></Link>
           <div className="flex items-center gap-2">
-            <Link href="/executive-jobs" className="hidden px-3 py-2 text-sm font-semibold text-[#b8c2d4] transition hover:text-white md:inline-flex">Executive jobs</Link>
-            <Link href="/executive-career-intelligence" className="hidden px-3 py-2 text-sm font-semibold text-[#b8c2d4] transition hover:text-white lg:inline-flex">How Atlas helps</Link>
+            <Link href="#film" className="hidden px-3 py-2 text-sm font-semibold text-[#b8c2d4] transition hover:text-white md:inline-flex">Watch the film</Link>
+            <Link href="#how-it-works" className="hidden px-3 py-2 text-sm font-semibold text-[#b8c2d4] transition hover:text-white lg:inline-flex">How it works</Link>
             <Link href="/login" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-px hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8ea6ff]">Sign in</Link>
             <Link href="/register" className="hidden min-h-11 items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#0b1220] shadow-lg shadow-black/10 transition hover:-translate-y-px hover:bg-[#f4f7ff] sm:inline-flex">Create your workspace</Link>
           </div>
@@ -32,8 +38,8 @@ export function ExperienceZeroArrival({ locale: _locale }: { locale: Locale }) {
             <h1 className="orendalis-display orendalis-gradient-text mt-6 max-w-4xl text-5xl leading-[1.01] tracking-[-.055em] sm:text-7xl lg:text-[5.25rem]">Your next move deserves more than a job search.</h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-[#b8c2d4] sm:text-xl">ORENDALIS brings executive opportunities, company evidence, and your career context together—then Atlas helps you decide what is genuinely worth your attention.</p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link href="/login?next=/import" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#6d8cff] px-6 text-sm font-semibold text-white shadow-[0_14px_38px_rgba(77,111,230,.32)] transition hover:-translate-y-px hover:bg-[#7c98ff]">Upload my CV</Link>
-              <Link href="/login?next=/opportunities" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/[.06] px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/[.11]">Explore the Opportunity Universe</Link>
+              <Link href="/register" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#6d8cff] px-6 text-sm font-semibold text-white shadow-[0_14px_38px_rgba(77,111,230,.32)] transition hover:-translate-y-px hover:bg-[#7c98ff]">Create my private workspace</Link>
+              <Link href="#film" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/[.06] px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/[.11]">Watch the 58-second film</Link>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs font-medium text-[#97a4b8]">
               <span>Private by design</span><span>Evidence before opinion</span><span>Your judgment stays yours</span>
@@ -53,8 +59,37 @@ export function ExperienceZeroArrival({ locale: _locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="border-b border-[#dfe5ee] bg-white px-6 py-24 sm:px-10">
+      <section id="film" className="scroll-mt-8 border-b border-[#dfe5ee] bg-[#0b1220] px-6 py-20 text-white sm:px-10 sm:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:items-center">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8ea6ff]">The ORENDALIS story · Episode 1</p>
+              <h2 className="orendalis-display mt-4 text-4xl leading-tight tracking-[-.045em] sm:text-5xl">The executive hiring process is broken.</h2>
+              <p className="mt-6 text-base leading-7 text-[#b8c2d4]">Executive opportunities are everywhere. The context required to make a confident career decision is not. This is why ORENDALIS exists.</p>
+              <p className="mt-5 text-sm leading-6 text-[#8f9db2]">Watch with sound, or follow the English captions. The film remains understandable either way.</p>
+            </div>
+            <div className="overflow-hidden rounded-[1.5rem] border border-white/15 bg-black shadow-[0_28px_90px_rgba(0,0,0,.35)]">
+              <video className="aspect-video w-full bg-black" controls playsInline preload="metadata" poster="/media/orendalis-episode-1-poster.png" aria-label="ORENDALIS Episode 1: The executive hiring process is broken">
+                <source src="/media/orendalis-episode-1.mp4" type="video/mp4" />
+                <track src="/media/orendalis-episode-1-captions.vtt" kind="captions" srcLang="en" label="English" default />
+                Your browser does not support the ORENDALIS launch film.
+              </video>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="scroll-mt-8 border-b border-[#dfe5ee] bg-white px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-6xl"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#3457d5]">One calm place to decide</p><h2 className="orendalis-display mt-4 max-w-3xl text-4xl leading-tight tracking-[-.045em] sm:text-5xl">Less searching. Better judgment. A career record that gets more valuable over time.</h2><div className="mt-14 grid gap-6 md:grid-cols-3">{principles.map(([title, body], index) => <article key={title} className="rounded-2xl border border-[#dfe5ee] bg-[#f8faff] p-6"><span className="text-xs font-bold text-[#3457d5]">0{index + 1}</span><h3 className="mt-5 text-lg font-semibold tracking-[-.02em]">{title}</h3><p className="mt-3 text-sm leading-6 text-[#5f6b7a]">{body}</p></article>)}</div></div>
+      </section>
+
+      <section className="bg-[#f5f7fb] px-6 py-24 sm:px-10">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-xs font-bold uppercase tracking-[.18em] text-[#3457d5]">How ORENDALIS works</p>
+          <h2 className="orendalis-display mt-4 max-w-3xl text-4xl leading-tight tracking-[-.045em] sm:text-5xl">From experience to a decision worth making.</h2>
+          <ol className="mt-14 grid gap-6 lg:grid-cols-3">{journey.map(([title, body], index) => <li key={title} className="relative overflow-hidden rounded-2xl border border-[#dfe5ee] bg-white p-7 shadow-[0_16px_45px_rgba(31,49,84,.05)]"><span className="text-5xl font-semibold tracking-[-.06em] text-[#dce4ff]">{index + 1}</span><h3 className="mt-8 text-xl font-semibold tracking-[-.025em]">{title}</h3><p className="mt-4 text-sm leading-7 text-[#5f6b7a]">{body}</p></li>)}</ol>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row"><Link href="/register" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#0b1220] px-6 text-sm font-semibold text-white transition hover:-translate-y-px hover:bg-[#18243a]">Create my account</Link><Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#cfd7e5] bg-white px-6 text-sm font-semibold text-[#263246] transition hover:border-[#9cadd0]">I already have an account</Link></div>
+        </div>
       </section>
 
       <section className="mx-auto grid max-w-6xl gap-12 px-6 py-24 sm:px-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
