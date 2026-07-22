@@ -83,16 +83,25 @@ export async function loadNetworkOpportunitiesForCompany(companyId: string, limi
   return response.data ?? [];
 }
 
-export async function loadNetworkCompanies() {
+export async function loadNetworkCompanies({ hiringOnly = false }: { hiringOnly?: boolean } = {}) {
   const client = createSchedulerSupabaseClient(), workspaceId = await resolveOpportunityNetworkWorkspace();
   const rows: NetworkCompanyRow[] = [], pageSize = 1_000;
+  const hiringFilter = hiringOnly ? "&payload->intelligence->>activeOpportunities=gt.0" : "";
   for (let offset = 0; ; offset += pageSize) {
-    const response = await client.request<NetworkCompanyRow[]>(`companies?select=id,domain_id,name,country,industry,ownership_type,canonical_key,aliases,official_domain,careers_url,ats_provider,identity_confidence,first_discovered_at,last_observed_at,last_verified_at,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null&order=name.asc`, { headers: { Range: `${offset}-${offset + pageSize - 1}` } });
+    const response = await client.request<NetworkCompanyRow[]>(`companies?select=id,domain_id,name,country,industry,ownership_type,canonical_key,aliases,official_domain,careers_url,ats_provider,identity_confidence,first_discovered_at,last_observed_at,last_verified_at,payload&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null${hiringFilter}&order=name.asc`, { headers: { Range: `${offset}-${offset + pageSize - 1}` } });
     if (response.error) throw new Error("The company network could not be loaded safely.");
     const page = response.data ?? [];
     rows.push(...page);
     if (page.length < pageSize) return rows;
   }
+}
+
+export async function countNetworkCompanies() {
+  const client = createSchedulerSupabaseClient(), workspaceId = await resolveOpportunityNetworkWorkspace();
+  const response = await client.request<Array<{ id: string }>>(`companies?select=id&workspace_id=eq.${workspaceId}&archived_at=is.null&canonical_key=not.is.null&limit=1`, { headers: { Prefer: "count=exact" } });
+  if (response.error) throw new Error("The company network count could not be loaded safely.");
+  const total = response.headers?.get("content-range")?.split("/")[1];
+  return total && total !== "*" ? Number(total) : response.data?.length ?? 0;
 }
 
 export async function loadNetworkCoverageMetrics() {

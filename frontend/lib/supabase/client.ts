@@ -1,6 +1,6 @@
 import type { SupabaseConfiguration, SupabaseErrorPayload } from "./types";
 
-export interface SupabaseResponse<T> { data?: T; error?: SupabaseErrorPayload; status: number }
+export interface SupabaseResponse<T> { data?: T; error?: SupabaseErrorPayload; status: number; headers?: Headers }
 export interface SupabaseDataClient { request<T>(path: string, init?: RequestInit): Promise<SupabaseResponse<T>>; health(): Promise<boolean> }
 
 export function createSupabaseDataClient(configuration: SupabaseConfiguration, accessToken?: string): SupabaseDataClient {
@@ -9,7 +9,7 @@ export function createSupabaseDataClient(configuration: SupabaseConfiguration, a
     async request<T>(path: string, init?: RequestInit): Promise<SupabaseResponse<T>> {
       const response = await fetch(`${configuration.url}/rest/v1/${path}`, { ...init, headers: { ...headers, ...init?.headers } });
       const body = await response.json().catch(() => undefined) as T | SupabaseErrorPayload | undefined;
-      return response.ok ? { data: body as T, status: response.status } : { error: (body as SupabaseErrorPayload | undefined) ?? { message: `Supabase request failed (${response.status})` }, status: response.status };
+      return response.ok ? { data: body as T, status: response.status, headers: response.headers } : { error: (body as SupabaseErrorPayload | undefined) ?? { message: `Supabase request failed (${response.status})` }, status: response.status, headers: response.headers };
     },
     async health() {
       const response = await fetch(`${configuration.url}/rest/v1/`, { headers });

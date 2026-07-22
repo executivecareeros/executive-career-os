@@ -4,7 +4,7 @@ import { LiveCompanies, type LiveCompanyRecord } from "@/components/companies/li
 import { resolveAuthenticatedRepositoryContext } from "@/lib/auth/repository-context";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { loadNetworkCompanies, loadNetworkCoverageMetrics } from "@/lib/opportunity-network";
+import { countNetworkCompanies, loadNetworkCompanies, loadNetworkCoverageMetrics } from "@/lib/opportunity-network";
 import { canonicalCountry, countryFromExplicitLocation } from "@/lib/discovery/country-normalization";
 
 type CountryRow = { code: string; canonical_name: string };
@@ -21,8 +21,9 @@ export default async function CompaniesPage() {
   const resolved = await resolveAuthenticatedRepositoryContext();
   if (!resolved) redirect("/login?next=/companies");
   const client = createServerSupabaseClient(resolved.accessToken);
-  const [companyRows, networkMetrics, countryResponse] = await Promise.all([
-    loadNetworkCompanies(),
+  const [companyRows, canonicalEmployerCount, networkMetrics, countryResponse] = await Promise.all([
+    loadNetworkCompanies({ hiringOnly: true }),
+    countNetworkCompanies(),
     loadNetworkCoverageMetrics(),
     client.request<CountryRow[]>("world_country_registry?select=code,canonical_name&order=canonical_name.asc"),
   ]);
@@ -45,5 +46,5 @@ export default async function CompaniesPage() {
       lastObservedAt: company.last_observed_at,
     };
   }).filter((company) => company.opportunityCount > 0);
-  return <LiveCompanies companies={live} canonicalEmployers={companyRows.length} hiringEmployers={networkMetrics?.employers} measuredAt={networkMetrics?.measuredAt}/>;
+  return <LiveCompanies companies={live} canonicalEmployers={canonicalEmployerCount} hiringEmployers={networkMetrics?.employers} measuredAt={networkMetrics?.measuredAt}/>;
 }
