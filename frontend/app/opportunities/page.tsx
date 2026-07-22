@@ -12,7 +12,8 @@ import { LiveWorkspaceEmptyState } from "@/components/live-workspace-empty-state
 import type { Opportunity } from "@/types/opportunity";
 import { confirmGeographicProfileAction, refreshOpportunityBoard } from "./actions";
 import { loadExecutiveGeographicProfile } from "@/lib/geographic-profile-repository";
-import { executiveCareerContextFromRows, unknownGeographicProfile, type ExecutiveCareerContext } from "@/lib/opportunity-geography";
+import { emptyExecutiveBehaviorProfile, executiveCareerContextFromRows, unknownGeographicProfile, type ExecutiveCareerContext } from "@/lib/opportunity-geography";
+import { loadExecutiveBehaviorProfile } from "@/lib/atlas-behavior";
 import { currentSession } from "@/lib/auth/session";
 import { EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT, loadNetworkOpportunities } from "@/lib/opportunity-network";
 
@@ -45,7 +46,8 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     let collected: Opportunity[] = [];
     let confirmedRoleCount = 0;
     let geographicProfile = unknownGeographicProfile();
-    let executiveCareerContext: ExecutiveCareerContext = { roleTitles: [], industries: [], capabilities: [], languages: [] };
+    let executiveCareerContext: ExecutiveCareerContext = { roleTitles: [], industries: [], capabilities: [], languages: [], achievements: [], leadershipScopes: [], geographicResponsibilities: [], revenueScopes: [], employmentTypes: [] };
+    let executiveBehavior = emptyExecutiveBehaviorProfile();
     let unavailable = false;
     const session = await currentSession();
     const founderEmail = process.env.COMPANY_CONTROL_FOUNDER_EMAIL?.trim().toLowerCase();
@@ -64,6 +66,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
       const history = await createServerSupabaseClient(resolved.accessToken).request<ExperienceRow[]>(`professional_experiences?select=id,role_title,notes&workspace_id=eq.${resolved.context.workspace!.workspaceId}&executive_identity_id=eq.${resolved.context.workspace!.executiveId}&archived_at=is.null`);
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);
+      executiveBehavior = await loadExecutiveBehaviorProfile(createServerSupabaseClient(resolved.accessToken), resolved.context.workspace!.workspaceId);
       confirmedRoleCount = history.data?.length ?? 0;
       const rows = await loadNetworkOpportunities(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT);
       collected = rows.map((row) => listOpportunity({ ...row.payload, domain_id: row.domain_id }));
@@ -76,7 +79,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     }
     if (unavailable) return <LiveWorkspaceEmptyState eyebrow="Executive Opportunity Universe" title="Your opportunities are temporarily unavailable" description="ORENDALIS could not safely load your private opportunity context." emptyTitle="Your records remain unchanged" emptyDescription="No empty state or recommendation is being inferred from this interruption. Return to Today and try again when the connection is available." actionHref="/" actionLabel="Return to Today" />;
     const query = await searchParams;
-    if (opportunity || collected.length) return <LiveOpportunityUniverse opportunity={opportunity} collected={collected} geographicProfile={geographicProfile} careerContext={executiveCareerContext} canConfirmFounderFixture={canConfirmFounderFixture} profileConfirmationAction={confirmGeographicProfileAction} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : typeof query.roles === "string" ? query.roles : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} collectionAction={refreshOpportunityBoard} />;
+    if (opportunity || collected.length) return <LiveOpportunityUniverse opportunity={opportunity} collected={collected} geographicProfile={geographicProfile} careerContext={executiveCareerContext} behaviorProfile={executiveBehavior} canConfirmFounderFixture={canConfirmFounderFixture} profileConfirmationAction={confirmGeographicProfileAction} initialQuery={typeof query.q === "string" ? query.q : ""} collectionNotice={typeof query.collection === "string" ? query.collection : undefined} collectionMessage={typeof query.message === "string" ? query.message : undefined} imported={typeof query.imported === "string" ? query.imported : undefined} found={typeof query.found === "string" ? query.found : undefined} cvComplete={query.cv === "complete"} savedRoles={query.cv === "complete" ? String(confirmedRoleCount) : typeof query.roles === "string" ? query.roles : undefined} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} collectionAction={refreshOpportunityBoard} />;
     return <OpportunityUniverseEmpty collectionAction={refreshOpportunityBoard} cvComplete={query.cv === "complete"} profileComplete={confirmedRoleCount > 0} savedRoles={String(confirmedRoleCount)} newRoles={typeof query.newRoles === "string" ? query.newRoles : undefined} />;
   }
   return <OpportunitiesWorkspace opportunities={opportunities} />;

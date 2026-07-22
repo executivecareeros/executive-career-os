@@ -34,18 +34,33 @@ export type ExecutiveCareerContext = {
   industries: string[];
   capabilities: string[];
   languages: string[];
+  achievements?: string[];
+  leadershipScopes?: string[];
+  geographicResponsibilities?: string[];
+  revenueScopes?: string[];
+  employmentTypes?: string[];
 };
 
 export function executiveCareerContextFromRows(rows: Array<{ role_title?: string; notes?: string }>): ExecutiveCareerContext {
   const industries = new Set<string>();
   const capabilities = new Set<string>();
   const languages = new Set<string>();
+  const achievements = new Set<string>();
+  const leadershipScopes = new Set<string>();
+  const geographicResponsibilities = new Set<string>();
+  const revenueScopes = new Set<string>();
+  const employmentTypes = new Set<string>();
   for (const row of rows) {
     if (!row.notes) continue;
     try {
-      const notes = JSON.parse(row.notes) as { industries?: unknown; technologies?: unknown; responsibilities?: unknown; documentContext?: unknown };
+      const notes = JSON.parse(row.notes) as { industries?: unknown; technologies?: unknown; responsibilities?: unknown; achievements?: unknown; leadershipScope?: unknown; geographicResponsibility?: unknown; revenueScope?: unknown; employmentType?: unknown; documentContext?: unknown };
       for (const value of Array.isArray(notes.industries) ? notes.industries : []) if (typeof value === "string" && value.trim()) industries.add(value.trim());
       for (const value of [...(Array.isArray(notes.technologies) ? notes.technologies : []), ...(Array.isArray(notes.responsibilities) ? notes.responsibilities : [])]) if (typeof value === "string" && value.trim()) capabilities.add(value.trim());
+      for (const value of Array.isArray(notes.achievements) ? notes.achievements : []) if (typeof value === "string" && value.trim()) achievements.add(value.trim());
+      if (typeof notes.leadershipScope === "string" && notes.leadershipScope.trim()) leadershipScopes.add(notes.leadershipScope.trim());
+      if (typeof notes.geographicResponsibility === "string" && notes.geographicResponsibility.trim()) geographicResponsibilities.add(notes.geographicResponsibility.trim());
+      if (typeof notes.revenueScope === "string" && notes.revenueScope.trim()) revenueScopes.add(notes.revenueScope.trim());
+      if (typeof notes.employmentType === "string" && notes.employmentType.trim()) employmentTypes.add(notes.employmentType.trim());
       const documentContext = typeof notes.documentContext === "string" ? JSON.parse(notes.documentContext) as { skills?: unknown; languages?: unknown } : null;
       for (const skill of Array.isArray(documentContext?.skills) ? documentContext.skills : []) {
         if (skill && typeof skill === "object" && "name" in skill && typeof skill.name === "string" && skill.name.trim()) capabilities.add(skill.name.trim());
@@ -55,8 +70,19 @@ export function executiveCareerContextFromRows(rows: Array<{ role_title?: string
       }
     } catch { /* Plain-text legacy notes are not promoted into ranking evidence. */ }
   }
-  return { roleTitles: rows.map((row) => row.role_title?.trim()).filter((value): value is string => Boolean(value)), industries: [...industries], capabilities: [...capabilities].slice(0, 80), languages: [...languages] };
+  return { roleTitles: rows.map((row) => row.role_title?.trim()).filter((value): value is string => Boolean(value)), industries: [...industries], capabilities: [...capabilities].slice(0, 80), languages: [...languages], achievements: [...achievements].slice(0, 40), leadershipScopes: [...leadershipScopes], geographicResponsibilities: [...geographicResponsibilities], revenueScopes: [...revenueScopes], employmentTypes: [...employmentTypes] };
 }
+
+export type ExecutiveBehaviorProfile = {
+  evidenceCount: number;
+  titleFamilies: Record<string, number>;
+  industries: Record<string, number>;
+  countries: Record<string, number>;
+  workArrangements: Record<string, number>;
+  employmentTypes: Record<string, number>;
+};
+
+export const emptyExecutiveBehaviorProfile = (): ExecutiveBehaviorProfile => ({ evidenceCount: 0, titleFamilies: {}, industries: {}, countries: {}, workArrangements: {}, employmentTypes: {} });
 
 export type EligibilityState = "Eligible" | "Probably Eligible" | "Eligibility Unknown" | "Relocation Required" | "Sponsorship Required" | "Not Currently Eligible";
 export type OpportunityConfidenceResult = {
@@ -67,6 +93,14 @@ export type OpportunityConfidenceResult = {
   skillsFit: number;
   industryFit: number;
   languageFit: number;
+  seniorityFit: number;
+  achievementFit: number;
+  leadershipScopeFit: number;
+  compensationFit: number;
+  workModelFit: number;
+  travelFit: number;
+  behaviorFit: number;
+  behaviorEvidenceCount: number;
   preferenceFit: number;
   freshness: number;
   sourceConfidence: number;
@@ -161,6 +195,60 @@ function familyMatches(text: string) {
   return Object.entries(executiveRoleFamilies).filter(([, terms]) => terms.some((term) => padded.includes(` ${normalize(term)} `))).map(([family]) => family);
 }
 
+const seniorityLevel = (title: string) => {
+  const value = normalize(title);
+  if (/\b(chief|c[a-z]o|founder|president)\b/.test(value)) return 5;
+  if (/\b(svp|evp|vice president|vp)\b/.test(value)) return 4;
+  if (/\b(director|head|managing director|general manager|country manager|partner)\b/.test(value)) return 3;
+  if (/\b(manager|lead)\b/.test(value)) return 2;
+  return 1;
+};
+
+function seniorityFitFor(opportunity: Opportunity, context?: ExecutiveCareerContext) {
+  if (!context?.roleTitles.length) return 50;
+  const profile = Math.max(...context.roleTitles.map(seniorityLevel));
+  const role = seniorityLevel(opportunity.jobTitle);
+  const distance = role - profile;
+  return distance === 0 ? 100 : distance === 1 ? 82 : distance > 1 ? 52 : distance === -1 ? 42 : 15;
+}
+
+function evidenceOverlap(values: string[], evidence: string, matched = 88, unknown = 50) {
+  if (!values.length) return unknown;
+  const matches = values.filter((value) => evidenceSupports(value, evidence)).length;
+  return matches ? clamp(55 + Math.min(1, matches / Math.min(values.length, 4)) * (matched - 55)) : 35;
+}
+
+function publishedCompensationFit(opportunity: Opportunity, profile: ExecutiveGeographicProfile) {
+  const minimum = profile.manualPreferences.salaryMinimum;
+  if (!minimum) return 50;
+  if (!opportunity.salaryMin && !opportunity.salaryMax) return 50;
+  const expectedCurrency = profile.manualPreferences.salaryCurrency;
+  if (expectedCurrency && opportunity.salaryCurrency && expectedCurrency !== opportunity.salaryCurrency) return 50;
+  const maximum = opportunity.salaryMax ?? opportunity.salaryMin ?? 0;
+  return maximum >= minimum ? 100 : maximum >= minimum * .9 ? 65 : 15;
+}
+
+function travelFitFor(opportunity: Opportunity, profile: ExecutiveGeographicProfile) {
+  const preference = profile.manualPreferences.travelPreference ?? profile.travelPreference.value;
+  if (!preference) return 50;
+  if (/flexible/i.test(preference)) return 100;
+  const allowed = Number(preference.match(/\d+/)?.[0] ?? (/no travel/i.test(preference) ? 0 : NaN));
+  const required = Number(opportunity.travelRequirement.match(/\d+/)?.[0] ?? NaN);
+  if (!Number.isFinite(allowed) || !Number.isFinite(required)) return 50;
+  return required <= allowed ? 100 : required <= allowed + 10 ? 60 : 20;
+}
+
+function learnedBehaviorFit(opportunity: Opportunity, behavior?: ExecutiveBehaviorProfile) {
+  if (!behavior || behavior.evidenceCount < 3) return 50;
+  const values = [
+    ...familyMatches(opportunity.jobTitle).map((family) => behavior.titleFamilies[family]),
+    behavior.industries[normalize(opportunity.industry)], behavior.countries[normalize(opportunity.country)],
+    behavior.workArrangements[normalize(opportunity.workArrangement)], behavior.employmentTypes[normalize(opportunity.employmentType)],
+  ].filter((value): value is number => typeof value === "number");
+  if (!values.length) return 50;
+  return clamp(50 + values.reduce((sum, value) => sum + value, 0) / values.length * 10);
+}
+
 const commercialFamilies = new Set(["sales", "revenue", "businessDevelopment", "commercialLeadership"]);
 function relatedFamilyOverlap(profileFamilies: Set<string>, opportunityFamilies: string[]) {
   return opportunityFamilies.filter((family) => profileFamilies.has(family) || (commercialFamilies.has(family) && [...profileFamilies].some((profileFamily) => commercialFamilies.has(profileFamily)))).length;
@@ -251,7 +339,7 @@ function geographicFitScore(opportunity: Opportunity, eligibility: EligibilitySt
   return ({ Eligible: 90, "Probably Eligible": 85, "Relocation Required": 60, "Sponsorship Required": 50, "Eligibility Unknown": 40, "Not Currently Eligible": 0 } as Record<EligibilityState, number>)[eligibility];
 }
 
-export function assessOpportunityConfidence(opportunity: Opportunity, profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext): OpportunityConfidenceResult {
+export function assessOpportunityConfidence(opportunity: Opportunity, profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext, behavior?: ExecutiveBehaviorProfile): OpportunityConfidenceResult {
   const eligibility = classifyGeographicEligibility(opportunity, profile);
   const career = careerFit(opportunity, careerContext);
   const professionalFit = career.professionalFit;
@@ -272,6 +360,12 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const languageFit = postingLanguages.length
     ? (postingLanguages.some((language) => confirmedLanguages.some((confirmed) => normalize(confirmed) === normalize(language))) ? 100 : 20)
     : 50;
+  const seniorityFit = seniorityFitFor(opportunity, careerContext);
+  const roleEvidence = normalize([opportunity.jobTitle, opportunity.summary, ...opportunity.keyResponsibilities, ...required].join(" "));
+  const achievementFit = evidenceOverlap(careerContext?.achievements ?? [], roleEvidence);
+  const leadershipScopeFit = evidenceOverlap(careerContext?.leadershipScopes ?? [], roleEvidence);
+  const compensationFit = publishedCompensationFit(opportunity, profile);
+  const travelFit = travelFitFor(opportunity, profile);
   const preferred = profile.preferredCountries.value.map(normalize);
   const worldwideRemotePreference = profile.remotePreference.value === "Worldwide" && opportunity.workArrangement === "Remote" && has(text, /\b(worldwide|global remote|work from anywhere|anywhere)\b/);
   const preferenceFit = worldwideRemotePreference || (preferred.length && includesAny(text, preferred)) ? 100 : preferred.length ? 45 : 50;
@@ -285,13 +379,24 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   if (manual.remotePreferences.length) manualSignals.push(manual.remotePreferences.includes(opportunity.workArrangement));
   if (manual.companySizes.length) manualSignals.push(manual.companySizes.some((size) => normalize(opportunity.companySize).includes(normalize(size))));
   const userPreferenceFit = manual.updatedAt && manualSignals.length ? clamp(manualSignals.filter(Boolean).length / manualSignals.length * 100) : preferenceFit;
+  const workModelSignals = [
+    manual.employmentTypes.length ? manual.employmentTypes.includes(opportunity.employmentType) : undefined,
+    manual.remotePreferences.length ? manual.remotePreferences.includes(opportunity.workArrangement) : undefined,
+    manual.companySizes.length ? manual.companySizes.some((size) => normalize(opportunity.companySize).includes(normalize(size))) : undefined,
+  ].filter((value): value is boolean => typeof value === "boolean");
+  const workModelFit = workModelSignals.length ? clamp(workModelSignals.filter(Boolean).length / workModelSignals.length * 100) : 50;
+  const behaviorFit = learnedBehaviorFit(opportunity, behavior);
   const ageHours = opportunity.freshness?.ageHours;
   const freshness = ageHours === undefined ? ({ Fresh: 100, Recent: 75, Stale: 25, Unknown: 45 }[opportunity.freshness?.status ?? "Unknown"]) : ageHours <= 48 ? 100 : ageHours <= 168 ? 75 : ageHours <= 720 ? 45 : 20;
   const sourceConfidence = clamp(opportunity.confidenceScore ?? 0);
   const dataCompleteness = clamp(opportunity.completenessScore ?? [opportunity.companyName, opportunity.jobTitle, opportunity.location, opportunity.country, opportunity.summary, opportunity.sourceUrl].filter(Boolean).length / 6 * 100);
   const missingPenalty = eligibility.missingInformation.length * 3 + (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 8 : 0);
-  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .28 + skillsFit * .15 + industryFit * .10 + userPreferenceFit * .07 + languageFit * .05 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
+  const evidenceWeightedCareer = professionalFit * .17 + seniorityFit * .08 + skillsFit * .14 + industryFit * .08 + achievementFit * .04 + leadershipScopeFit * .04;
+  const preferenceAndConditions = userPreferenceFit * .06 + languageFit * .05 + compensationFit * .03 + workModelFit * .03 + travelFit * .02;
+  const behaviorAdjustment = behavior && behavior.evidenceCount >= 3 ? (behaviorFit - 50) * Math.min(.12, behavior.evidenceCount * .012) : 0;
+  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + evidenceWeightedCareer + preferenceAndConditions + ((freshness + sourceConfidence) / 2) * .06 + behaviorAdjustment - missingPenalty;
   let opportunityConfidence = Math.min(hardCap[eligibility.state], clamp(weighted));
+  if (postingLanguages.length && languageFit < 50) opportunityConfidence = Math.max(0, opportunityConfidence - 10);
   // Clear career-function conflicts are not strong recommendations even when
   // the role has favorable location evidence. Geography can disqualify a role;
   // it cannot manufacture professional fit.
@@ -299,12 +404,12 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const evidenceCompleteness = clamp(100 - eligibility.missingInformation.length * 15 - (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 20 : 0));
   const label: OpportunityConfidenceResult["label"] = eligibility.state === "Not Currently Eligible" ? "Not Currently Eligible" : eligibility.state === "Relocation Required" || eligibility.state === "Sponsorship Required" ? "Stretch or Relocation Option" : eligibility.state === "Eligibility Unknown" ? "Eligibility Unclear" : opportunityConfidence >= 85 ? "Excellent Opportunity" : opportunityConfidence >= 70 ? "Strong Opportunity" : opportunityConfidence >= 50 ? "Worth Reviewing" : "Possible Fit";
   const hardExclusions = eligibility.state === "Not Currently Eligible" ? [eligibility.explanation] : [];
-  return { eligibility: eligibility.state, professionalFit, leadershipFit, experienceFit, skillsFit, industryFit, languageFit, preferenceFit: userPreferenceFit, freshness, sourceConfidence, dataCompleteness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, professionalExplanation: career.explanation, missingInformation: eligibility.missingInformation, hardExclusions };
+  return { eligibility: eligibility.state, professionalFit, leadershipFit, experienceFit, skillsFit, industryFit, languageFit, seniorityFit, achievementFit, leadershipScopeFit, compensationFit, workModelFit, travelFit, behaviorFit, behaviorEvidenceCount: behavior?.evidenceCount ?? 0, preferenceFit: userPreferenceFit, freshness, sourceConfidence, dataCompleteness, opportunityConfidence, recommendationConfidence: clamp(evidenceCompleteness * .7 + profile.profileConfidence * 100 * .3), label, explanation: eligibility.explanation, professionalExplanation: `${career.explanation} Seniority alignment: ${seniorityFit}%.${behavior && behavior.evidenceCount >= 3 ? ` Private decision calibration: ${behaviorFit}% from ${behavior.evidenceCount} actions.` : ""}`, missingInformation: eligibility.missingInformation, hardExclusions };
 }
 
-export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext) {
+export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext, behavior?: ExecutiveBehaviorProfile) {
   return [...opportunities].sort((left, right) => {
-    const a = assessOpportunityConfidence(left, profile, careerContext), b = assessOpportunityConfidence(right, profile, careerContext);
+    const a = assessOpportunityConfidence(left, profile, careerContext, behavior), b = assessOpportunityConfidence(right, profile, careerContext, behavior);
     return b.opportunityConfidence - a.opportunityConfidence || b.professionalFit - a.professionalFit || b.preferenceFit - a.preferenceFit || b.recommendationConfidence - a.recommendationConfidence || Date.parse(right.publishedAt) - Date.parse(left.publishedAt) || left.companyName.localeCompare(right.companyName);
   });
 }
