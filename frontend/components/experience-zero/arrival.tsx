@@ -66,12 +66,11 @@ export function ExperienceZeroArrival({ locale: _locale }: { locale: Locale }) {
               <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8ea6ff]">The ORENDALIS story · Episode 1</p>
               <h2 className="orendalis-display mt-4 text-4xl leading-tight tracking-[-.045em] sm:text-5xl">The executive hiring process is broken.</h2>
               <p className="mt-6 text-base leading-7 text-[#b8c2d4]">Executive opportunities are everywhere. The context required to make a confident career decision is not. This is why ORENDALIS exists.</p>
-              <p className="mt-5 text-sm leading-6 text-[#8f9db2]">Watch with sound, or follow the English captions. The film remains understandable either way.</p>
+              <p className="mt-5 text-sm leading-6 text-[#8f9db2]">Watch with sound or muted. English subtitles are already included in the film.</p>
             </div>
             <div className="overflow-hidden rounded-[1.5rem] border border-white/15 bg-black shadow-[0_28px_90px_rgba(0,0,0,.35)]">
               <video className="aspect-video w-full bg-black" controls playsInline preload="metadata" poster="/media/orendalis-episode-1-poster.png" aria-label="ORENDALIS Episode 1: The executive hiring process is broken">
                 <source src="/media/orendalis-episode-1.mp4" type="video/mp4" />
-                <track src="/media/orendalis-episode-1-captions.vtt" kind="captions" srcLang="en" label="English" default />
                 Your browser does not support the ORENDALIS launch film.
               </video>
             </div>
