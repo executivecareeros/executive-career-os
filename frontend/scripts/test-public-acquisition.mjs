@@ -55,6 +55,7 @@ assert.ok(proxy.includes('"/sitemap.xml"'), "sitemap.xml must be reachable witho
 assert.ok(proxy.includes('"/icon.svg"'), "brand icon must be reachable without authentication");
 assert.ok(proxy.includes('"/llms.txt"'), "truthful machine-readable product context must be public");
 assert.ok(proxy.includes('"/brand/"'), "social and brand assets must be reachable without authentication");
+assert.ok(proxy.includes('"/media/"'), "public welcome media must be reachable without authentication");
 assert.match(machineSummary, /Unknown information remains unknown/);
 assert.match(machineSummary, /Private CV, profile, application, and decision data is never public content/);
 assert.match(register, /Start your executive search/);

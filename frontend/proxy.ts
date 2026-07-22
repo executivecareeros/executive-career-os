@@ -52,6 +52,7 @@ const publicPaths = [
   "/sitemap.xml",
   "/icon.svg",
   "/brand/",
+  "/media/",
   "/about",
   "/executive-jobs",
   "/executive-career-intelligence",
