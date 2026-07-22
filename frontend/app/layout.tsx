@@ -7,6 +7,7 @@ import { getLocale } from "@/lib/locale";
 import { currentSession } from "@/lib/auth/session";
 import { resolveExecutiveDisplayName } from "@/lib/auth/executive-display-name";
 import { resolveFounderAccess } from "@/lib/auth/founder-access";
+import Script from "next/script";
 
 const geistSans = localFont({
   src: "./fonts/geist-sans.woff2",
@@ -77,6 +78,23 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#f5f7fb]">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18342066615"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-consent" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  analytics_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  wait_for_update: 500
+});
+gtag('config', 'AW-18342066615');`}
+        </Script>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(publicStructuredData).replace(/</g, "\\u003c") }} />
         <AppShell publicExperience={publicExperience} locale={locale} signedInName={signedInName} signedInEmail={session?.user.email} founderAccess={founderAccess}>{children}</AppShell>
       </body>
