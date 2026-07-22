@@ -3,7 +3,7 @@ import "server-only";
 import type { CurrentExecutiveSession } from "./types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-type IdentityRow = { profile?: unknown };
+type IdentityRow = { id: string; profile?: unknown };
 type ExperienceRow = { notes?: string | null };
 
 function record(value: unknown): Record<string, unknown> | undefined {
@@ -49,15 +49,17 @@ function nameFromExperienceNotes(notes: string | null | undefined): string | und
 export async function resolveExecutiveDisplayName(session: CurrentExecutiveSession): Promise<string | undefined> {
   const client = createServerSupabaseClient(session.accessToken);
   const identity = await client.request<IdentityRow[]>(
-    `executive_identities?select=profile&auth_user_id=eq.${encodeURIComponent(session.user.id)}&limit=1`,
+    `executive_identities?select=id,profile&auth_user_id=eq.${encodeURIComponent(session.user.id)}&status=eq.Active&limit=1`,
   );
   const profile = identity.data?.[0]?.profile;
   const profileName = confirmedExecutiveName(profile);
   const hasFullProfileName = Boolean(record(profile)?.fullName ?? record(profile)?.full_name);
   if (profileName && hasFullProfileName) return profileName;
 
+  const executiveIdentityId = identity.data?.[0]?.id;
+  if (!executiveIdentityId) return profileName;
   const history = await client.request<ExperienceRow[]>(
-    "professional_experiences?select=notes&archived_at=is.null&order=created_at.desc&limit=10",
+    `professional_experiences?select=notes&executive_identity_id=eq.${encodeURIComponent(executiveIdentityId)}&archived_at=is.null&order=created_at.desc&limit=10`,
   );
   for (const experience of history.data ?? []) {
     const name = nameFromExperienceNotes(experience.notes);

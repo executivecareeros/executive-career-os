@@ -10,7 +10,8 @@ const importer = read("components/import/import-workspace.tsx");
 const referral = read("components/referrals/executive-referral-share.tsx");
 const login = read("app/login/page.tsx");
 
-assert.match(callback, /workspace_memberships\?select=id/);
+assert.match(callback, /resolveActiveMembership\(body\.accessToken, user\.id\)/);
+assert.doesNotMatch(callback, /workspace_memberships\?select=id/);
 assert.match(callback, /existing ORENDALIS executives/);
 assert.match(callback, /email_confirmed_at/);
 assert.match(callbackPage, /useRef\(false\)/);

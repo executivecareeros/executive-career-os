@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { clearSession, storeSession } from "@/lib/auth/cookies";
 import { currentSession } from "@/lib/auth/session";
 import { supabaseAuth } from "@/lib/auth/supabase-auth";
+import { resolveActiveMembership } from "@/lib/auth/active-membership";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseOnboardingRepository } from "@/lib/repositories/supabase/onboarding-repository";
 import {applicationOrigin} from "@/lib/auth/application-origin";
@@ -33,12 +34,7 @@ export async function loginAction(form: FormData) {
     );
     await acceptRememberedInvitation(session.access_token);
     await storeSession(session, form.get("remember") === "on");
-    const membership = await createServerSupabaseClient(
-      session.access_token,
-    ).request<Array<{ id: string }>>(
-      "workspace_memberships?select=id&status=eq.Active&archived_at=is.null&limit=1",
-    );
-    hasWorkspace = Boolean(membership.data?.length);
+    hasWorkspace = Boolean(await resolveActiveMembership(session.access_token, session.user.id));
   } catch (error) {
     redirect(
       `/login?error=${encodeURIComponent(error instanceof Error ? error.message : "Unable to sign in")}`,

@@ -2,14 +2,14 @@ import { redirect } from "next/navigation";
 import { AuthField, AuthFrame, FormMessage } from "@/components/auth/auth-frame";
 import { currentSession } from "@/lib/auth/session";
 import { getLocale } from "@/lib/locale";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { resolveActiveMembership } from "@/lib/auth/active-membership";
 import { onboardingAction } from "../auth-actions";
 
 export default async function Onboarding({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const [q, session, locale] = await Promise.all([searchParams, currentSession(), getLocale()]);
   if (!session) redirect("/login?next=/onboarding");
-  const membership = await createServerSupabaseClient(session.accessToken).request<Array<{ id: string }>>("workspace_memberships?select=id&status=eq.Active&archived_at=is.null&limit=1");
-  if (membership.data?.length) redirect("/");
+  const membership = await resolveActiveMembership(session.accessToken, session.user.id);
+  if (membership) redirect("/");
   const tr = locale === "tr";
   return <AuthFrame locale={locale} eyebrow={tr ? "ORENDALIS’e hoş geldin" : "Welcome to ORENDALIS"} title={tr ? "Nasıl başlamak istersin?" : "How would you like to begin?"} description={tr ? "CV’ni yükle ve temel bilgileri Atlas hazırlasın veya doğrudan yönetici pozisyonlarını ara. Profilini daha sonra tamamlayabilirsin." : "Upload your CV and let Atlas prepare the basics, or go straight to executive job search. You can complete your profile later."}>
     <FormMessage message={q.error} />
