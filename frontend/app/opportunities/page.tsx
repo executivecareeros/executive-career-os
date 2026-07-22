@@ -45,7 +45,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     let collected: Opportunity[] = [];
     let confirmedRoleCount = 0;
     let geographicProfile = unknownGeographicProfile();
-    let executiveCareerContext: ExecutiveCareerContext = { roleTitles: [], industries: [], capabilities: [] };
+    let executiveCareerContext: ExecutiveCareerContext = { roleTitles: [], industries: [], capabilities: [], languages: [] };
     let unavailable = false;
     const session = await currentSession();
     const founderEmail = process.env.COMPANY_CONTROL_FOUNDER_EMAIL?.trim().toLowerCase();

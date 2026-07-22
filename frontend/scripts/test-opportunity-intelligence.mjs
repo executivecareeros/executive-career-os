@@ -32,7 +32,7 @@ assert.equal(intelligence.relatedOpportunities[0].opportunityId, related.id);
 assert.deepEqual(intelligence.similarCompanies, ["Blue Star"]);
 assert.deepEqual(intelligence.similarRoles, ["VP Revenue"]);
 
-const careerContext = { roleTitles: ["Sales Director", "Managing Director", "Business Development Director"], industries: ["Technology"], capabilities: ["Revenue leadership"] };
+const careerContext = { roleTitles: ["Sales Director", "Managing Director", "Business Development Director"], industries: ["Technology"], capabilities: ["Revenue leadership"], languages: [] };
 const personalized = buildExecutiveOpportunityIntelligence(base, blueprint, [base], "2026-07-14T10:00:00Z", geographicProfile, careerContext);
 assert.ok(personalized.strengths.some((item) => item.includes("role function") && item.includes("leadership level")), "Confirmed professional fit must appear in Atlas strengths, not only in raw evidence");
 const mismatched = buildExecutiveOpportunityIntelligence({ ...base, jobTitle: "Technical Support Engineer", executiveFitScore: 96 }, blueprint, [base], "2026-07-14T10:00:00Z", geographicProfile, careerContext);

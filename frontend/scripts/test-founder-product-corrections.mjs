@@ -12,7 +12,7 @@ const opportunities = [
   { ...base, id: "planner", companyName: "Research Co", jobTitle: "Network Research Planner", executiveFitScore: 96, overallScore: 96, summary: "Plan research operations." },
   { ...base, id: "manager-ic", companyName: "Training Co", jobTitle: "Senior Manager, Commercial Sales", executiveFitScore: 96, overallScore: 96, summary: "This is an individual contributor position." },
 ];
-const careerContext = { roleTitles: ["Group Sales Director", "Managing Director", "Business Development Director"], industries: ["Enterprise Software", "Broadcast Technology"], capabilities: ["Sales", "Business Development", "Go-to-market"] };
+const careerContext = { roleTitles: ["Group Sales Director", "Managing Director", "Business Development Director"], industries: ["Enterprise Software", "Broadcast Technology"], capabilities: ["Sales", "Business Development", "Go-to-market"], languages: [] };
 const profile = founderGeographicProfileFixture();
 const ranked = sortOpportunitiesForExecutive(opportunities, profile, careerContext);
 assert.equal(ranked[0].id, "commercial", "Confirmed commercial leadership must outrank an unrelated engineering role");

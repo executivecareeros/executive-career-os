@@ -33,20 +33,29 @@ export type ExecutiveCareerContext = {
   roleTitles: string[];
   industries: string[];
   capabilities: string[];
+  languages: string[];
 };
 
 export function executiveCareerContextFromRows(rows: Array<{ role_title?: string; notes?: string }>): ExecutiveCareerContext {
   const industries = new Set<string>();
   const capabilities = new Set<string>();
+  const languages = new Set<string>();
   for (const row of rows) {
     if (!row.notes) continue;
     try {
-      const notes = JSON.parse(row.notes) as { industries?: unknown; technologies?: unknown; responsibilities?: unknown };
+      const notes = JSON.parse(row.notes) as { industries?: unknown; technologies?: unknown; responsibilities?: unknown; documentContext?: unknown };
       for (const value of Array.isArray(notes.industries) ? notes.industries : []) if (typeof value === "string" && value.trim()) industries.add(value.trim());
       for (const value of [...(Array.isArray(notes.technologies) ? notes.technologies : []), ...(Array.isArray(notes.responsibilities) ? notes.responsibilities : [])]) if (typeof value === "string" && value.trim()) capabilities.add(value.trim());
+      const documentContext = typeof notes.documentContext === "string" ? JSON.parse(notes.documentContext) as { skills?: unknown; languages?: unknown } : null;
+      for (const skill of Array.isArray(documentContext?.skills) ? documentContext.skills : []) {
+        if (skill && typeof skill === "object" && "name" in skill && typeof skill.name === "string" && skill.name.trim()) capabilities.add(skill.name.trim());
+      }
+      for (const language of Array.isArray(documentContext?.languages) ? documentContext.languages : []) {
+        if (language && typeof language === "object" && "language" in language && typeof language.language === "string" && language.language.trim()) languages.add(language.language.trim());
+      }
     } catch { /* Plain-text legacy notes are not promoted into ranking evidence. */ }
   }
-  return { roleTitles: rows.map((row) => row.role_title?.trim()).filter((value): value is string => Boolean(value)), industries: [...industries], capabilities: [...capabilities].slice(0, 40) };
+  return { roleTitles: rows.map((row) => row.role_title?.trim()).filter((value): value is string => Boolean(value)), industries: [...industries], capabilities: [...capabilities].slice(0, 80), languages: [...languages] };
 }
 
 export type EligibilityState = "Eligible" | "Probably Eligible" | "Eligibility Unknown" | "Relocation Required" | "Sponsorship Required" | "Not Currently Eligible";
@@ -120,6 +129,15 @@ const includesAny = (text: string, values: string[]) => values.some(value => tex
 const clamp = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
 const opportunityText = (opportunity: Opportunity) => normalize([opportunity.country, opportunity.location, opportunity.workArrangement, opportunity.summary, ...(opportunity.exclusions ?? []), ...(opportunity.riskFlags ?? [])].join(" "));
 const has = (text: string, expression: RegExp) => expression.test(text);
+const signalTokens = (value: string) => normalize(value).split(" ").filter((token) => token.length > 2 && !["and", "the", "for", "with", "from", "into", "across"].includes(token));
+function evidenceSupports(term: string, evidence: string) {
+  const normalizedTerm = normalize(term);
+  if (!normalizedTerm) return false;
+  if (evidence.includes(normalizedTerm)) return true;
+  const tokens = signalTokens(normalizedTerm);
+  return tokens.length > 0 && tokens.filter((token) => evidence.includes(token)).length / tokens.length >= .6;
+}
+const knownLanguages = ["English", "French", "German", "Spanish", "Italian", "Portuguese", "Dutch", "Turkish", "Bulgarian", "Russian", "Arabic", "Mandarin", "Chinese", "Japanese", "Korean", "Hindi", "Polish", "Swedish", "Norwegian", "Danish", "Finnish", "Greek", "Romanian", "Czech", "Hungarian"];
 
 const executiveRoleFamilies = {
   sales: ["sales", "account executive", "commercial director"],
@@ -171,7 +189,7 @@ function careerFit(opportunity: Opportunity, context?: ExecutiveCareerContext) {
   else if (functionMismatch) titleFit = Math.min(titleFit, 24);
   else if (profileLeadershipShare >= .5 && opportunityIsLeadership && familyOverlap > 0) titleFit = Math.max(titleFit, 82);
   const opportunityCapabilityText = normalize([opportunity.summary, ...opportunity.requiredSkills, ...opportunity.keyResponsibilities].join(" "));
-  const capabilityMatches = context.capabilities.filter((capability) => opportunityCapabilityText.includes(normalize(capability))).length;
+  const capabilityMatches = context.capabilities.filter((capability) => evidenceSupports(capability, opportunityCapabilityText)).length;
   const capabilityFit = context.capabilities.length ? clamp(35 + (capabilityMatches / Math.min(context.capabilities.length, 8)) * 65) : 50;
   const industryText = normalize(`${opportunity.industry} ${opportunity.summary}`);
   const industryMatches = context.industries.filter((industry) => industryText.includes(normalize(industry))).length;
@@ -242,9 +260,18 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const required = opportunity.requiredSkills ?? [];
   const strengths = opportunity.matchingStrengths ?? [];
   const text = opportunityText(opportunity);
-  const skillsFit = required.length ? clamp(strengths.length / required.length * 100) : 50;
+  const confirmedCapabilityEvidence = normalize([...(careerContext?.capabilities ?? []), ...strengths].join(" "));
+  const skillsFit = required.length
+    ? clamp(required.filter((skill) => evidenceSupports(skill, confirmedCapabilityEvidence)).length / required.length * 100)
+    : careerContext?.capabilities.length
+      ? (careerContext.capabilities.some((capability) => evidenceSupports(capability, normalize([opportunity.jobTitle, opportunity.summary, ...opportunity.keyResponsibilities].join(" ")))) ? 75 : 50)
+      : 50;
   const industryFit = career.industryFit;
-  const languageFit = profile.languagePreferences.value.length ? (profile.languagePreferences.value.some(language => text.includes(normalize(language))) ? 100 : 50) : 50;
+  const confirmedLanguages = [...new Set([...profile.languagePreferences.value, ...(careerContext?.languages ?? [])])];
+  const postingLanguages = knownLanguages.filter((language) => text.includes(normalize(language)) || required.some((skill) => normalize(skill).includes(normalize(language))));
+  const languageFit = postingLanguages.length
+    ? (postingLanguages.some((language) => confirmedLanguages.some((confirmed) => normalize(confirmed) === normalize(language))) ? 100 : 20)
+    : 50;
   const preferred = profile.preferredCountries.value.map(normalize);
   const worldwideRemotePreference = profile.remotePreference.value === "Worldwide" && opportunity.workArrangement === "Remote" && has(text, /\b(worldwide|global remote|work from anywhere|anywhere)\b/);
   const preferenceFit = worldwideRemotePreference || (preferred.length && includesAny(text, preferred)) ? 100 : preferred.length ? 45 : 50;
@@ -263,7 +290,7 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
   const sourceConfidence = clamp(opportunity.confidenceScore ?? 0);
   const dataCompleteness = clamp(opportunity.completenessScore ?? [opportunity.companyName, opportunity.jobTitle, opportunity.location, opportunity.country, opportunity.summary, opportunity.sourceUrl].filter(Boolean).length / 6 * 100);
   const missingPenalty = eligibility.missingInformation.length * 3 + (opportunity.verificationStatus === "Unverified LinkedIn observation" ? 8 : 0);
-  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .30 + skillsFit * .15 + industryFit * .10 + userPreferenceFit * .10 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
+  const weighted = geographicFitScore(opportunity, eligibility.state) * .30 + professionalFit * .28 + skillsFit * .15 + industryFit * .10 + userPreferenceFit * .07 + languageFit * .05 + ((freshness + sourceConfidence) / 2) * .05 - missingPenalty;
   let opportunityConfidence = Math.min(hardCap[eligibility.state], clamp(weighted));
   // Clear career-function conflicts are not strong recommendations even when
   // the role has favorable location evidence. Geography can disqualify a role;
