@@ -53,22 +53,26 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     const founderEmail = process.env.COMPANY_CONTROL_FOUNDER_EMAIL?.trim().toLowerCase();
     const canConfirmFounderFixture = Boolean(founderEmail && session?.user.email?.trim().toLowerCase() === founderEmail);
     try {
-      let view;
-      try {
-        view = await new SupabaseBetaWorkflowRepository(createServerSupabaseClient(resolved.accessToken), resolved.context).load();
-      } catch (error) {
+      const client = createServerSupabaseClient(resolved.accessToken);
+      const betaView = new SupabaseBetaWorkflowRepository(client, resolved.context).load().catch((error: unknown) => {
         // Public accounts receive a personal workspace, not the retired beta
         // acceptance fixture. Its absence must never block the live network.
-        if (!(error instanceof Error) || error.message !== "Beta workflow was not provisioned for this invitation.") throw error;
-      }
-      geographicProfile = await loadExecutiveGeographicProfile(createServerSupabaseClient(resolved.accessToken), resolved.context);
+        if (error instanceof Error && error.message === "Beta workflow was not provisioned for this invitation.") return undefined;
+        throw error;
+      });
+      const [view, loadedGeographicProfile, history, loadedBehavior, rows] = await Promise.all([
+        betaView,
+        loadExecutiveGeographicProfile(client, resolved.context),
+        client.request<ExperienceRow[]>(`professional_experiences?select=id,role_title,notes&workspace_id=eq.${resolved.context.workspace!.workspaceId}&executive_identity_id=eq.${resolved.context.workspace!.executiveId}&archived_at=is.null`),
+        loadExecutiveBehaviorProfile(client, resolved.context.workspace!.workspaceId),
+        loadNetworkOpportunities(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT),
+      ]);
+      geographicProfile = loadedGeographicProfile;
       opportunity = view ? toLiveOpportunity(view) : undefined;
-      const history = await createServerSupabaseClient(resolved.accessToken).request<ExperienceRow[]>(`professional_experiences?select=id,role_title,notes&workspace_id=eq.${resolved.context.workspace!.workspaceId}&executive_identity_id=eq.${resolved.context.workspace!.executiveId}&archived_at=is.null`);
       if (history.error) throw new Error(history.error.message);
       executiveCareerContext = executiveCareerContextFromRows(history.data ?? []);
-      executiveBehavior = await loadExecutiveBehaviorProfile(createServerSupabaseClient(resolved.accessToken), resolved.context.workspace!.workspaceId);
+      executiveBehavior = loadedBehavior;
       confirmedRoleCount = history.data?.length ?? 0;
-      const rows = await loadNetworkOpportunities(EXECUTIVE_OPPORTUNITY_CANDIDATE_LIMIT);
       collected = rows.map((row) => listOpportunity({ ...row.payload, domain_id: row.domain_id }));
       // Once the live universe contains attributable collected opportunities,
       // keep the earlier acceptance-workflow record in its historical context
