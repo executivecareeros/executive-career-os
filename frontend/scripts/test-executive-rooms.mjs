@@ -11,6 +11,8 @@ const actions=await readFile(path.join(root,"frontend/app/rooms/actions.ts"),"ut
 const live=await readFile(path.join(root,"frontend/components/rooms/room-live-refresh.tsx"),"utf8");
 const openMessaging=await readFile(path.join(root,"supabase/migrations/202607230002_room_open_channel_messaging.sql"),"utf8");
 const clearConversation=await readFile(path.join(root,"supabase/migrations/202607230003_room_conversation_clear.sql"),"utf8");
+const displayNames=await readFile(path.join(root,"supabase/migrations/202607230004_room_member_display_names.sql"),"utf8");
+const enterToSend=await readFile(path.join(root,"frontend/components/rooms/room-enter-to-send.tsx"),"utf8");
 const navigation=await readFile(path.join(root,"frontend/lib/navigation.ts"),"utf8");
 
 for(const table of ["executive_rooms","executive_room_memberships","executive_room_invitations","executive_room_messages","executive_room_pins","executive_room_bookmarks","executive_room_moderation_events"]){
@@ -45,6 +47,11 @@ assert.match(clearConversation,/has_room_role\(target_room,array\['Owner'\]\)/);
 assert.match(clearConversation,/room_record\.platform_managed and public\.is_configured_founder\(\)/);
 assert.match(clearConversation,/event_type,actor_identity_id,safe_metadata/);
 assert.match(roomPage,/Clear all chat/);
+assert.match(displayNames,/profile->>'preferredName'/);
+assert.match(displayNames,/profile->>'displayName'/);
+assert.match(enterToSend,/event\.key !== "Enter"/);
+assert.match(enterToSend,/event\.shiftKey/);
+assert.match(enterToSend,/requestSubmit\(\)/);
 assert.match(roomsPage,/Invitation only/i);
 assert.match(roomsPage,/room\.topic\.trim\(\)\.toLowerCase\(\)!==room\.short_purpose\.trim\(\)\.toLowerCase\(\)/, "Identical room purpose and explanation must not be rendered twice");
 assert.match(roomPage,/Atlas is not monitoring this room/i);
