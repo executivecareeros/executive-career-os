@@ -44,8 +44,9 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
   }), [collected]);
   const suggestions = useMemo(() => searchSuggestions(draft.query, collected, recent), [collected, draft.query, recent]);
 
-  const rankedOpportunities = useMemo(() => diversifyExecutiveRecommendations(sortOpportunitiesForExecutive(collected, geographicProfile, careerContext, behaviorProfile).filter((item) => assessOpportunityConfidence(item, geographicProfile, careerContext, behaviorProfile).eligibility !== "Not Currently Eligible")), [behaviorProfile, careerContext, collected, geographicProfile]);
+  const rankedOpportunities = useMemo(() => view === "Recommended" ? diversifyExecutiveRecommendations(sortOpportunitiesForExecutive(collected, geographicProfile, careerContext, behaviorProfile).filter((item) => assessOpportunityConfidence(item, geographicProfile, careerContext, behaviorProfile).eligibility !== "Not Currently Eligible")) : [], [behaviorProfile, careerContext, collected, geographicProfile, view]);
   const searchedOpportunities = useMemo(() => {
+    if (view !== "Search") return [];
     const filtered = collected.filter((item) => matchesExecutiveSearch(item, applied)).filter((item) => {
       if (!eligibleOnly) return true;
       const state = assessOpportunityConfidence(item, geographicProfile, careerContext, behaviorProfile).eligibility;
@@ -53,7 +54,7 @@ export function LiveOpportunityUniverse({ opportunity, collected, geographicProf
     });
     if (sort === "newest") return [...filtered].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
     return sortOpportunitiesForExecutive(filtered, geographicProfile, careerContext, behaviorProfile).sort((a, b) => executiveSearchRelevance(b, applied) - executiveSearchRelevance(a, applied));
-  }, [applied, behaviorProfile, careerContext, collected, eligibleOnly, geographicProfile, sort]);
+  }, [applied, behaviorProfile, careerContext, collected, eligibleOnly, geographicProfile, sort, view]);
   const activeOpportunities = view === "Recommended" ? rankedOpportunities : searchedOpportunities;
   const pageCount = Math.max(1, Math.ceil(activeOpportunities.length / pageSize));
   const safePage = Math.min(page, pageCount - 1);

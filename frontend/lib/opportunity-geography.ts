@@ -408,10 +408,12 @@ export function assessOpportunityConfidence(opportunity: Opportunity, profile: E
 }
 
 export function sortOpportunitiesForExecutive(opportunities: readonly Opportunity[], profile: ExecutiveGeographicProfile, careerContext?: ExecutiveCareerContext, behavior?: ExecutiveBehaviorProfile) {
-  return [...opportunities].sort((left, right) => {
-    const a = assessOpportunityConfidence(left, profile, careerContext, behavior), b = assessOpportunityConfidence(right, profile, careerContext, behavior);
-    return b.opportunityConfidence - a.opportunityConfidence || b.professionalFit - a.professionalFit || b.preferenceFit - a.preferenceFit || b.recommendationConfidence - a.recommendationConfidence || Date.parse(right.publishedAt) - Date.parse(left.publishedAt) || left.companyName.localeCompare(right.companyName);
-  });
+  // Confidence assessment is the expensive part of ranking. Decorate once so
+  // Array.sort does not recompute the complete Atlas model for every comparison.
+  return opportunities.map((opportunity) => ({ opportunity, assessment: assessOpportunityConfidence(opportunity, profile, careerContext, behavior) })).sort((left, right) => {
+    const a = left.assessment, b = right.assessment;
+    return b.opportunityConfidence - a.opportunityConfidence || b.professionalFit - a.professionalFit || b.preferenceFit - a.preferenceFit || b.recommendationConfidence - a.recommendationConfidence || Date.parse(right.opportunity.publishedAt) - Date.parse(left.opportunity.publishedAt) || left.opportunity.companyName.localeCompare(right.opportunity.companyName);
+  }).map(({ opportunity }) => opportunity);
 }
 
 /**
