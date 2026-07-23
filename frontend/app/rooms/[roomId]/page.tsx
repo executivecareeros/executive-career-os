@@ -8,6 +8,8 @@ import { RoomPresenceHeartbeat } from "@/components/rooms/room-presence-heartbea
 import { RoomInviteLinkManager } from "@/components/rooms/room-invite-link-manager";
 import { RoomLiveRefresh } from "@/components/rooms/room-live-refresh";
 import { RoomEnterToSend } from "@/components/rooms/room-enter-to-send";
+import { currentSession } from "@/lib/auth/session";
+import { resolveExecutiveDisplayName } from "@/lib/auth/executive-display-name";
 
 type Room={id:string;title:string;topic:string;short_purpose:string;language_name:string;access_mode:"Open"|"InvitationOnly";room_type:string;status:string;is_temporary:boolean;closes_at?:string;created_at:string;permanence_status:string;platform_managed:boolean;operator_label?:string};
 type Membership={executive_identity_id:string;display_name:string;role:string};
@@ -17,6 +19,7 @@ type JoinLink={id:string;status:string;expires_at:string;max_uses:number;use_cou
 
 export default async function RoomPage({params,searchParams}:{params:Promise<{roomId:string}>;searchParams:Promise<Record<string,string|undefined>>}) {
   const resolved=await resolveAuthenticatedRepositoryContext(); if(!resolved) redirect("/login?next=/rooms");
+  const session=await currentSession();
   const {roomId}=await params; if(!/^[0-9a-f-]{36}$/i.test(roomId)) notFound();
   const client=createServerSupabaseClient(resolved.accessToken);
   const [roomResponse,membersResponse,messagesResponse,pinsResponse,bookmarksResponse,linksResponse,founderResponse]=await Promise.all([
@@ -31,6 +34,8 @@ export default async function RoomPage({params,searchParams}:{params:Promise<{ro
   const room=roomResponse.data?.[0]; if(!room) notFound();
   const members=membersResponse.data??[]; const messages=messagesResponse.data??[];
   const names=new Map(members.map(member=>[member.executive_identity_id,member.display_name]));
+  const ownDisplayName=session?await resolveExecutiveDisplayName(session).catch(()=>undefined):undefined;
+  if(ownDisplayName)names.set(resolved.context.actorId,ownDisplayName);
   const myRole=members.find(member=>member.executive_identity_id===resolved.context.actorId)?.role;
   const pinned=new Set((pinsResponse.data??[]).map(pin=>pin.message_id)); const bookmarked=new Set((bookmarksResponse.data??[]).map(bookmark=>bookmark.message_id));
   const notice=(await searchParams).notice; const isFounder=founderResponse.data===true; const canModerate=myRole==="Owner"||myRole==="Moderator"; const canClear=myRole==="Owner"||(room.platform_managed&&isFounder);
