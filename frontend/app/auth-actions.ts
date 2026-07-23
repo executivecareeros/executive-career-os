@@ -40,7 +40,8 @@ export async function loginAction(form: FormData) {
       `/login?error=${encodeURIComponent(error instanceof Error ? error.message : "Unable to sign in")}`,
     );
   }
-  redirect(safePath(value(form, "next")) ?? (hasWorkspace ? "/" : "/welcome"));
+  const requested = safePath(value(form, "next"));
+  redirect(hasWorkspace ? requested ?? "/" : "/welcome");
 }
 export async function registerAction(form: FormData) {
   const password = value(form, "password"),
