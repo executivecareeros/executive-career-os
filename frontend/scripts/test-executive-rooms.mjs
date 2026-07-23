@@ -10,6 +10,7 @@ const roomPage=await readFile(path.join(root,"frontend/app/rooms/[roomId]/page.t
 const actions=await readFile(path.join(root,"frontend/app/rooms/actions.ts"),"utf8");
 const live=await readFile(path.join(root,"frontend/components/rooms/room-live-refresh.tsx"),"utf8");
 const openMessaging=await readFile(path.join(root,"supabase/migrations/202607230002_room_open_channel_messaging.sql"),"utf8");
+const clearConversation=await readFile(path.join(root,"supabase/migrations/202607230003_room_conversation_clear.sql"),"utf8");
 const navigation=await readFile(path.join(root,"frontend/lib/navigation.ts"),"utf8");
 
 for(const table of ["executive_rooms","executive_room_memberships","executive_room_invitations","executive_room_messages","executive_room_pins","executive_room_bookmarks","executive_room_moderation_events"]){
@@ -30,13 +31,20 @@ assert.doesNotMatch(migration,/public discovery|service.role|service_role/i);
 
 assert.match(roomsPage,/Join open conversations or private rooms shared with you/i);
 assert.match(roomsPage,/Open to every verified executive/i);
+assert.match(roomsPage,/query\.directory!=="1"/);
+assert.match(roomsPage,/redirect\(`\/rooms\/\$\{defaultRoom\.id\}`\)/);
 assert.match(roomPage,/first message automatically joins/i);
 assert.match(roomPage,/One continuous conversation/);
+assert.match(roomPage,/href="\/rooms\?directory=1"/);
 assert.doesNotMatch(roomPage,/Write a focused reply/);
 assert.match(roomPage,/initials\(author\)/);
 assert.match(live,/setInterval\(refresh, 4_000\)/);
 assert.match(openMessaging,/room_record\.access_mode<>'Open'/);
 assert.match(openMessaging,/insert into executive_room_memberships/);
+assert.match(clearConversation,/has_room_role\(target_room,array\['Owner'\]\)/);
+assert.match(clearConversation,/room_record\.platform_managed and public\.is_configured_founder\(\)/);
+assert.match(clearConversation,/event_type,actor_identity_id,safe_metadata/);
+assert.match(roomPage,/Clear all chat/);
 assert.match(roomsPage,/Invitation only/i);
 assert.match(roomsPage,/room\.topic\.trim\(\)\.toLowerCase\(\)!==room\.short_purpose\.trim\(\)\.toLowerCase\(\)/, "Identical room purpose and explanation must not be rendered twice");
 assert.match(roomPage,/Atlas is not monitoring this room/i);

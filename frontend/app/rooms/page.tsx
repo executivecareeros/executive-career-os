@@ -11,6 +11,7 @@ type Membership={room_id:string;role:string}; type Invitation={id:string;room_id
 
 export default async function RoomsPage({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
   const resolved=await resolveAuthenticatedRepositoryContext(); if(!resolved)redirect("/login?next=/rooms");
+  const query=await searchParams;
   const client=createServerSupabaseClient(resolved.accessToken);
   const [roomsResponse,membershipsResponse,invitationsResponse,identityResponse]=await Promise.all([
     client.request<Room[]>("executive_rooms?select=id,title,topic,short_purpose,language_name,access_mode,status,is_temporary,closes_at,updated_at,permanence_status,platform_managed,operator_label&order=platform_managed.desc,updated_at.desc"),
@@ -18,7 +19,14 @@ export default async function RoomsPage({searchParams}:{searchParams:Promise<Rec
     client.request<Invitation[]>(`executive_room_invitations?select=id,room_id,intended_role,expires_at&intended_identity_id=eq.${resolved.context.actorId}&status=eq.Pending&order=created_at.desc`),
     client.request<Identity[]>(`executive_identities?select=profile&id=eq.${resolved.context.actorId}&limit=1`),
   ]);
-  const rooms=roomsResponse.data??[]; const roles=new Map((membershipsResponse.data??[]).map(item=>[item.room_id,item.role])); const roomById=new Map(rooms.map(room=>[room.id,room])); const notice=(await searchParams).notice; const displayName=confirmedExecutiveName(identityResponse.data?.[0]?.profile)??"Executive";
+  const rooms=roomsResponse.data??[]; const roles=new Map((membershipsResponse.data??[]).map(item=>[item.room_id,item.role])); const roomById=new Map(rooms.map(room=>[room.id,room])); const notice=query.notice; const displayName=confirmedExecutiveName(identityResponse.data?.[0]?.profile)??"Executive";
+  if(query.directory!=="1"){
+    const liveRooms=rooms.filter(room=>room.status==="Active");
+    const defaultRoom=liveRooms.find(room=>roles.has(room.id))
+      ??liveRooms.find(room=>room.platform_managed&&room.access_mode==="Open")
+      ??liveRooms.find(room=>room.access_mode==="Open");
+    if(defaultRoom)redirect(`/rooms/${defaultRoom.id}`);
+  }
   return <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-10">
     <PageHeader eyebrow="Live executive community" title="Executive Rooms" description="Join open conversations or private rooms shared with you. Every room is for verified ORENDALIS executives and stays focused on its stated purpose."/>
     {notice&&<p role="status" className="mt-6 rounded-xl border border-[#b9d9c3] bg-[#edf8f0] px-4 py-3 text-sm text-[#285a37]">{notice}</p>}

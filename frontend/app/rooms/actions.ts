@@ -92,3 +92,11 @@ export async function archiveRoomAction(formData: FormData) {
   revalidatePath("/rooms");
   redirect("/rooms?notice=Room%20archived");
 }
+
+export async function clearRoomConversationAction(formData: FormData) {
+  const roomId = value(formData, "roomId", 36);
+  if (formData.get("confirmClear") !== "yes") throw new Error("Conversation clear was not confirmed.");
+  const cleared = await rpc<number>("clear_executive_room_conversation", { target_room: roomId });
+  revalidatePath(`/rooms/${roomId}`);
+  redirect(`/rooms/${roomId}?notice=${encodeURIComponent(`${cleared} messages cleared`)}`);
+}
