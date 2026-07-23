@@ -1,7 +1,10 @@
 export type ProductLearningDashboard = {
   windowDays: number;
   generatedAt: string;
+  verifiedAccounts: number;
   registeredExecutives: number;
+  accountsAwaitingWorkspace: number;
+  linkedInAccounts: number;
   activeNow: number;
   executives: number;
   sessions: number;

@@ -23,7 +23,7 @@ export default async function ProductLearningPage() {
   if (response.error || !data) throw new Error("Founder product-learning aggregates are unavailable.");
 
   const headline = [
-    ["Registered executives", data.registeredExecutives], ["Active now", data.activeNow], ["Active · 30 days", data.executives], ["Sessions", data.sessions], ["Returning executives", data.returningExecutives], ["Average session", `${Math.floor(data.averageSessionSeconds / 60)}m ${data.averageSessionSeconds % 60}s`],
+    ["Verified accounts", data.verifiedAccounts], ["Active executive workspaces", data.registeredExecutives], ["Accounts awaiting setup", data.accountsAwaitingWorkspace], ["LinkedIn accounts", data.linkedInAccounts], ["Active now", data.activeNow], ["Active · 30 days", data.executives], ["Sessions", data.sessions], ["Returning executives", data.returningExecutives], ["Average session", `${Math.floor(data.averageSessionSeconds / 60)}m ${data.averageSessionSeconds % 60}s`],
   ] as const;
   return <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8">
     <PageHeader eyebrow="Internal — Founder Access" title="Real Executive Product Learning" description="Aggregate controlled-beta signals show where executives find value and where they stop. Raw activity, identities and sensitive profile content are not exposed." />
